@@ -1,0 +1,45 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": ["post"],
+      "route": "user/update"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "$return"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "in",
+      "name": "userToUpdate",
+      "databaseName": "lounge",
+      "collectionName": "users",
+      "connectionStringSetting": "mk8dxloungetemp_DOCUMENTDB",
+      "sqlQuery": "select * from users u where u.Name = {name}"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "in",
+      "name": "existingUser",
+      "databaseName": "lounge",
+      "collectionName": "users",
+      "connectionStringSetting": "mk8dxloungetemp_DOCUMENTDB",
+      "sqlQuery": "select * from users u where u.Name = {new_name}"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "out",
+      "name": "updatedUser",
+      "databaseName": "lounge",
+      "collectionName": "users",
+      "createIfNotExists": "false",
+      "connectionStringSetting": "mk8dxloungetemp_DOCUMENTDB"
+    }
+  ]
+}
