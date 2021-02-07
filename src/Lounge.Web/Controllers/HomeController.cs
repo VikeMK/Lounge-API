@@ -145,6 +145,7 @@ namespace Lounge.Web.Controllers
             {
                 PlayerId = player.Id,
                 Name = player.Name,
+                MkcId = player.MKCId,
                 MaxMmr = player.MaxMmr,
                 Mmr = player.Mmr,
                 MmrChanges = mmrChanges,
@@ -153,10 +154,7 @@ namespace Lounge.Web.Controllers
             return View(vm);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        [Route("/error")]
+        public IActionResult Error() => Problem();
     }
 }

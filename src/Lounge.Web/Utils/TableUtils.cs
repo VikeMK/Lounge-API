@@ -106,14 +106,12 @@ namespace Lounge.Web.Utils
                 foreach ((string player, _, int currentMmr, double mult) in scores[i])
                 {
                     int delta = teamDelta;
-                    if (delta < 0)
-                    {
-                        // apply any multipliers
-                        delta = (int)Math.Round(delta * mult);
 
-                        // ensure the final mmr does not go below 0
-                        delta = Math.Max(delta, -currentMmr);
-                    }
+                    // apply any multipliers
+                    delta = (int)Math.Round(delta * mult);
+
+                    // ensure the final mmr does not go below 0
+                    delta = Math.Max(delta, -currentMmr);
 
                     deltas[player] = delta;
                 }

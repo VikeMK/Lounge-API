@@ -10,6 +10,8 @@ namespace Lounge.Web.Models.ViewModels
 
         public string Name { get; set; }
 
+        public int MkcId { get; set; }
+
         [Display(Name = "MMR")]
         [DisplayFormat(NullDisplayText = "Placement")]
         public int? Mmr { get; set; }
@@ -19,6 +21,9 @@ namespace Lounge.Web.Models.ViewModels
         public int? MaxMmr { get; set; }
 
         public List<MmrChange> MmrChanges { get; set; }
+
+        [Display(Name = "Forum Link")]
+        public string ForumLink => $"https://www.mariokartcentral.com/forums/index.php?members/{MkcId}/";
 
         public class MmrChange
         {

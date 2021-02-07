@@ -21,6 +21,12 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.MaxMmr)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ForumLink)
+        </dt>
+        <dd class="col-sm-10">
+            <a href="@Model.ForumLink">Link</a>
+        </dd>
     </dl>
     <br />
     <table class="table">

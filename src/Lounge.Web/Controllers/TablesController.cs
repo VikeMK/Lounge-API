@@ -52,7 +52,7 @@ namespace Lounge.Web.Controllers
                 return BadRequest("Must supply 12 scores");
 
             var playerNames = vm.Scores.Select(s => s.PlayerName).ToHashSet();
-            var normalizedPlayerNames = playerNames.Select(s => s.ToUpperInvariant()).ToHashSet();
+            var normalizedPlayerNames = playerNames.Select(PlayerUtils.NormalizeName).ToHashSet();
             if (playerNames.Count != vm.Scores.Count)
                 return BadRequest("Duplicate player name in scores");
 
@@ -60,7 +60,7 @@ namespace Lounge.Web.Controllers
             if (players.Count != playerNames.Count)
             {
                 var foundPlayers = players.Select(p => p.NormalizedName).ToHashSet();
-                var invalidPlayers = playerNames.Where(name => !foundPlayers.Contains(name.ToUpperInvariant())).ToArray();
+                var invalidPlayers = playerNames.Where(name => !foundPlayers.Contains(PlayerUtils.NormalizeName(name))).ToArray();
                 return NotFound($"Invalid players: {string.Join(", ", invalidPlayers)}");
             }
 
@@ -119,6 +119,42 @@ namespace Lounge.Web.Controllers
             return CreatedAtAction(nameof(GetTable), new { tableId = table.Id }, table);
         }
 
+        [HttpPost("setMultipliers")]
+        public async Task<IActionResult> SetMultipliers(int tableId, [FromBody] Dictionary<string, double> multipliers)
+        {
+            var table = await _context.Tables
+                .Include(t => t.Scores)
+                .ThenInclude(t => t.Player)
+                .FirstOrDefaultAsync(t => t.Id == tableId);
+
+            if (table is null)
+                return NotFound();
+
+            if (table.VerifiedOn is not null)
+                return BadRequest("Table has already been verified");
+
+            foreach ((string name, double multiplier) in multipliers)
+            {
+                bool foundPlayer = false;
+                foreach (var score in table.Scores)
+                {
+                    if (PlayerUtils.NormalizeName(name) == score.Player.NormalizedName)
+                    {
+                        foundPlayer = true;
+                        score.Multiplier = multiplier;
+                        break;
+                    }
+                }
+
+                if (!foundPlayer)
+                    return BadRequest($"Player '{name}' is not in table");
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         [HttpPost("verify")]
         public async Task<ActionResult<Dictionary<string, int>>> Verify(int tableId)
         {
@@ -132,6 +168,9 @@ namespace Lounge.Web.Controllers
 
             if (table.VerifiedOn is not null)
                 return BadRequest("Table has already been verified");
+
+            if (table.DeletedOn is not null)
+                return BadRequest("Table has been deleted and can't be verified");
 
             int numTeams = table.NumTeams;
 

@@ -7,6 +7,7 @@ using Lounge.Web.Data;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Lounge.Web.Utils;
 
 namespace Lounge.Web.Controllers
 {
@@ -109,6 +110,6 @@ namespace Lounge.Web.Controllers
         }
 
         private Task<Player> GetPlayerByNameAsync(string name) =>
-            _context.Players.Include(p => p.Penalties).SingleOrDefaultAsync(p => p.NormalizedName == name.ToUpperInvariant());
+            _context.Players.Include(p => p.Penalties).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
     }
 }

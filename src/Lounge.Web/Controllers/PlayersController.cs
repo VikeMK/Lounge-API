@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Lounge.Web.Models.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
+using Lounge.Web.Utils;
 
 namespace Lounge.Web.Controllers
 {
@@ -40,7 +41,7 @@ namespace Lounge.Web.Controllers
                 .Include(p => p.Penalties)
                 .Include(p => p.TableScores)
                     .ThenInclude(s => s.Table)
-                .FirstOrDefaultAsync(p => p.NormalizedName == name.ToUpperInvariant());
+                .FirstOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
             if (player is null)
                 return NotFound();
 
@@ -135,6 +136,7 @@ namespace Lounge.Web.Controllers
             {
                 PlayerId = player.Id,
                 Name = player.Name,
+                MkcId = player.MKCId,
                 MaxMmr = player.MaxMmr,
                 Mmr = player.Mmr,
                 MmrChanges = mmrChanges,
@@ -146,7 +148,7 @@ namespace Lounge.Web.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<Player>> Create(string name, int mkcId, int? mmr)
         {
-            Player player = new() { Name = name, NormalizedName = name.ToUpperInvariant(), MKCId = mkcId };
+            Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId };
             if (mmr is not null)
             {
                 player.PlacedOn = DateTime.UtcNow;
@@ -156,7 +158,23 @@ namespace Lounge.Web.Controllers
             }
 
             _context.Players.Add(player);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                var nameMatchExists = await _context.Players.AnyAsync(p => p.NormalizedName == player.NormalizedName);
+                if (nameMatchExists)
+                    return BadRequest("User with that name already exists");
+
+                var mkcIdMatchExists = await _context.Players.AnyAsync(p => p.MKCId == player.MKCId);
+                if (mkcIdMatchExists)
+                    return BadRequest("User with that MKC ID already exists");
+
+                throw;
+            }
 
             return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, player);
         }
@@ -189,8 +207,20 @@ namespace Lounge.Web.Controllers
                 return NotFound();
 
             player.Name = newName;
-            player.NormalizedName = newName.ToUpperInvariant();
-            await _context.SaveChangesAsync();
+            player.NormalizedName = PlayerUtils.NormalizeName(newName);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                var nameMatchExists = await _context.Players.AnyAsync(p => p.NormalizedName == player.NormalizedName);
+                if (nameMatchExists)
+                    return BadRequest("User with that name already exists");
+
+                throw;
+            }
 
             return NoContent();
         }
@@ -203,12 +233,23 @@ namespace Lounge.Web.Controllers
                 return NotFound();
 
             player.MKCId = newMkcId;
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                var mkcIdMatchExists = await _context.Players.AnyAsync(p => p.MKCId == player.MKCId);
+                if (mkcIdMatchExists)
+                    return BadRequest("User with that MKC ID already exists");
+
+                throw;
+            }
 
             return NoContent();
         }
 
         private Task<Player> GetPlayerByNameAsync(string name) =>
-            _context.Players.SingleOrDefaultAsync(p => p.NormalizedName == name.ToUpperInvariant());
+            _context.Players.SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
     }
 }
