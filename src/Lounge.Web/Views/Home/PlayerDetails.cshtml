@@ -1,0 +1,61 @@
+﻿@model Lounge.Web.Models.ViewModels.PlayerDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h1>@Model.Name</h1>
+<hr />
+
+<div>
+    <dl>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Mmr)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Mmr)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MaxMmr)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MaxMmr)
+        </dd>
+    </dl>
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.MmrChanges[0].Reason)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MmrChanges[0].Time)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MmrChanges[0].MmrDelta)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MmrChanges[0].NewMMR)
+                </th>
+            </tr>
+        </thead>
+        @foreach (var change in Model.MmrChanges)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => change.Reason)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => change.Time)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => change.MmrDelta)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => change.NewMMR)
+                </td>
+            </tr>
+        }
+    </table>
+</div>

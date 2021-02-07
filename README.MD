@@ -9,7 +9,7 @@
 ## Running
 Once you have installed .NET 5, you just need to run the following command:
 
-    `dotnet run --project .\src\Lounge.Web\`
+    dotnet run --project .\src\Lounge.Web\
 
 Then you can test on:
 - https://localhost:5001/

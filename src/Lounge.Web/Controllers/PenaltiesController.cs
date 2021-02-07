@@ -39,7 +39,14 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            return player.Penalties.ToList();
+            var penalties = new List<Penalty>();
+            foreach (var penalty in player.Penalties)
+            {
+                penalty.Player = null;
+                penalties.Add(penalty);
+            }
+
+            return penalties;
         }
 
         [HttpPost("create")]
@@ -52,23 +59,53 @@ namespace Lounge.Web.Controllers
             if (player.Mmr is null)
                 return BadRequest("Player has not been placed yet, so penalty can't be given");
 
-            int prevMMR = player.Mmr.Value;
+            int prevMmr = player.Mmr.Value;
 
             if (amount < 0)
                 return BadRequest("Penalty amount must be a non-negative integer");
+
+            var newMmr = Math.Max(0, prevMmr - amount);
 
             Penalty penalty = new()
             {
                 AwardedOn = DateTime.UtcNow,
                 IsStrike = isStrike,
-                PrevMMR = prevMMR,
-                NewMMR = Math.Max(0, prevMMR - amount),
+                PrevMmr = prevMmr,
+                NewMmr = newMmr,
             };
+
+            player.Mmr = newMmr;
+            player.MaxMmr = Math.Max(player.MaxMmr!.Value, player.Mmr!.Value);
 
             player.Penalties.Add(penalty);
             await _context.SaveChangesAsync();
 
+            penalty.Player = null;
+
             return CreatedAtAction(nameof(GetPenalty), new { id = penalty.Id }, penalty);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var penalty = await _context.Penalties.Include(p => p.Player).FirstOrDefaultAsync(p => p.Id == id);
+            if (penalty is null)
+                return NotFound();
+
+            if (penalty.DeletedOn is not null)
+                return BadRequest("Table has already been deleted");
+
+            penalty.DeletedOn = DateTime.UtcNow;
+
+            var curMMR = penalty.Player.Mmr!.Value;
+            var diff = penalty.NewMmr - penalty.PrevMmr;
+            var newMMR = Math.Max(0, curMMR - diff);
+            penalty.Player.Mmr = newMMR;
+            penalty.Player.MaxMmr = Math.Max(penalty.Player.MaxMmr!.Value, newMMR);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         private Task<Player> GetPlayerByNameAsync(string name) =>

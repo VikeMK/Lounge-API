@@ -1,0 +1,37 @@
+﻿@model Lounge.Web.Models.ViewModels.LeaderboardViewModel
+
+@{
+    ViewData["Title"] = "Leaderboard";
+}
+
+<div class="text-center">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Players[0].Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Players[0].Mmr)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Players[0].MaxMmr)
+                </th>
+            </tr>
+        </thead>
+        @foreach (var player in Model.Players)
+        {
+            <tr>
+                <td>
+                    <a asp-action="PlayerDetails" asp-route-id="@player.Id">@Html.DisplayFor(modelItem => player.Name)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => player.Mmr)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => player.MaxMmr)
+                </td>
+            </tr>
+        }
+    </table>
+</div>

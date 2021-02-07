@@ -30,11 +30,16 @@ namespace Lounge.Web.Controllers
             var table = await _context.Tables
                 .Include(t => t.Scores)
                 .ThenInclude(s => s.Player)
+                .AsNoTracking()
                 .SingleOrDefaultAsync(t => t.Id == tableId);
 
             if (table is null)
-            {
                 return NotFound();
+
+            foreach (var score in table.Scores)
+            {
+                score.Table = null;
+                score.Player.TableScores = null;
             }
 
             return table;
@@ -105,11 +110,17 @@ namespace Lounge.Web.Controllers
             await _context.Tables.AddAsync(table);
             await _context.SaveChangesAsync();
 
+            foreach (var score in table.Scores)
+            {
+                score.Table = null;
+                score.Player.TableScores = null;
+            }
+
             return CreatedAtAction(nameof(GetTable), new { tableId = table.Id }, table);
         }
 
         [HttpPost("verify")]
-        public async Task<IActionResult> Verify(int tableId)
+        public async Task<ActionResult<Dictionary<string, int>>> Verify(int tableId)
         {
             var table = await _context.Tables
                 .Include(t => t.Scores)
@@ -123,7 +134,6 @@ namespace Lounge.Web.Controllers
                 return BadRequest("Table has already been verified");
 
             int numTeams = table.NumTeams;
-            int playersPerTeam = 12 / numTeams;
 
             var unplacedPlayers = table.Scores.Where(s => s.Player.Mmr == null).Select(s => s.Player.Name).ToArray();
             if (unplacedPlayers.Any())
@@ -150,6 +160,68 @@ namespace Lounge.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(mmrDeltas);
+        }
+
+        [HttpPost("preview")]
+        public async Task<ActionResult<Dictionary<string, int>>> Preview(int tableId)
+        {
+            var table = await _context.Tables
+                .Include(t => t.Scores)
+                .ThenInclude(t => t.Player)
+                .FirstOrDefaultAsync(t => t.Id == tableId);
+
+            if (table is null)
+                return NotFound();
+
+            if (table.VerifiedOn is not null)
+                return BadRequest("Table has already been verified");
+
+            int numTeams = table.NumTeams;
+
+            var unplacedPlayers = table.Scores.Where(s => s.Player.Mmr == null).Select(s => s.Player.Name).ToArray();
+            if (unplacedPlayers.Any())
+                return BadRequest($"The following players have not been placed yet: {string.Join(", ", unplacedPlayers)}");
+
+            var scores = new (string Player, int Score, int CurrentMmr, double Multiplier)[numTeams][];
+            for (int i = 0; i < numTeams; i++)
+                scores[i] = table.Scores.Where(score => score.Team == i).Select(s => (s.Player.Name, s.Score, s.Player.Mmr!.Value, s.Multiplier)).ToArray();
+
+            var mmrDeltas = TableUtils.GetMMRDeltas(scores);
+
+            return Ok(mmrDeltas);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int tableId)
+        {
+            var table = await _context.Tables
+                .Include(t => t.Scores)
+                .ThenInclude(t => t.Player)
+                .FirstOrDefaultAsync(t => t.Id == tableId);
+
+            if (table is null)
+                return NotFound();
+
+            if (table.DeletedOn is not null)
+                return BadRequest("Table has already been deleted");
+
+            table.DeletedOn = DateTime.UtcNow;
+
+            if (table.VerifiedOn is not null)
+            {
+                foreach (var score in table.Scores)
+                {
+                    var curMMR = score.Player.Mmr!.Value;
+                    var diff = score.NewMmr!.Value - score.PrevMmr!.Value;
+                    var newMMR = Math.Max(0, curMMR - diff);
+                    score.Player.Mmr = newMMR;
+                    score.Player.MaxMmr = Math.Max(score.Player.MaxMmr!.Value, newMMR);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

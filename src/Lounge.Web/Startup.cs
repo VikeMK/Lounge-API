@@ -33,7 +33,7 @@ namespace Lounge.Web
                 .AddJsonOptions(o =>
                 {
                     o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                    //o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
                 });
 
             services.AddAuthentication("Basic")

@@ -8,6 +8,7 @@ namespace Lounge.Web.Models
         public int Id { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? VerifiedOn { get; set; }
+        public DateTime? DeletedOn { get; set; }
         public int NumTeams { get; set; }
         public string Url { get; set; } = default!;
         public string Tier { get; set; } = default!;
