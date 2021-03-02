@@ -1,4 +1,5 @@
-﻿@model Lounge.Web.Models.ViewModels.PlayerDetailsViewModel
+﻿@using Lounge.Web.Models.ViewModels
+@model PlayerDetailsViewModel
 
 @{
     ViewData["Title"] = Model.Name;
@@ -29,6 +30,8 @@
         </dd>
     </dl>
     <br />
+    @if (Model.MmrChanges.Count > 0)
+    {
     <table class="table">
         <thead>
             <tr>
@@ -42,26 +45,34 @@
                     @Html.DisplayNameFor(model => model.MmrChanges[0].MmrDelta)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.MmrChanges[0].NewMMR)
+                    @Html.DisplayNameFor(model => model.MmrChanges[0].NewMmr)
                 </th>
             </tr>
         </thead>
         @foreach (var change in Model.MmrChanges)
         {
-            <tr>
-                <td>
+        <tr>
+            <td>
+                @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table or PlayerDetailsViewModel.MmrChangeReason.TableDelete)
+                {
+                    <a asp-action="TableDetails" asp-route-id="@change.ChangeId">@Html.DisplayFor(modelItem => change.Reason)</a>
+                }
+                else
+                {
                     @Html.DisplayFor(modelItem => change.Reason)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => change.Time)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => change.MmrDelta)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => change.NewMMR)
-                </td>
-            </tr>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => change.Time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => change.MmrDelta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => change.NewMmr)
+            </td>
+        </tr>
         }
     </table>
+    }
 </div>

@@ -6,6 +6,16 @@ namespace Lounge.Web.Models.ViewModels
 {
     public class PlayerDetailsViewModel
     {
+        public PlayerDetailsViewModel(int playerId, string name, int mkcId, int? mmr, int? maxMmr, List<MmrChange> mmrChanges)
+        {
+            PlayerId = playerId;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            MkcId = mkcId;
+            Mmr = mmr;
+            MaxMmr = maxMmr;
+            MmrChanges = mmrChanges ?? throw new ArgumentNullException(nameof(mmrChanges));
+        }
+
         public int PlayerId { get; set; }
 
         public string Name { get; set; }
@@ -27,12 +37,22 @@ namespace Lounge.Web.Models.ViewModels
 
         public class MmrChange
         {
+            public MmrChange(int? changeId, int newMmr, int mmrDelta, MmrChangeReason reason, DateTime time)
+            {
+                ChangeId = changeId;
+                NewMmr = newMmr;
+                MmrDelta = mmrDelta;
+                Reason = reason;
+                Time = time;
+            }
+
             public int? ChangeId { get; set; }
 
             [Display(Name = "MMR")]
-            public int NewMMR { get; set; }
+            public int NewMmr { get; set; }
 
             [Display(Name = "MMR Delta")]
+            [DisplayFormat(DataFormatString = "{0:+#;-#;0}")]
             public int MmrDelta { get; set; }
 
             public MmrChangeReason Reason { get; set; }

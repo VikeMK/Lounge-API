@@ -11,6 +11,7 @@ namespace Lounge.Web.Models
         public DateTime? DeletedOn { get; set; }
         public int NumTeams { get; set; }
         public string Url { get; set; } = default!;
+        public string TableImageData { get; set; } = default!;
         public string Tier { get; set; } = default!;
 
         public ICollection<TableScore> Scores { get; set; } = default!;

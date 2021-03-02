@@ -1,12 +1,10 @@
 ﻿using Lounge.Web.Data;
-using Lounge.Web.Models;
 using Lounge.Web.Models.ViewModels;
+using Lounge.Web.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,15 +30,11 @@ namespace Lounge.Web.Controllers
         public async Task<IActionResult> Leaderboard()
         {
             var playerEntities = await _context.Players.OrderByDescending(p => p.Mmr).ToListAsync();
-            var playerViewModels = playerEntities.Select(p => new LeaderboardViewModel.Player
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Mmr = p.Mmr,
-                MaxMmr = p.MaxMmr,
-            }).ToList();
+            var playerViewModels = playerEntities
+                .Select(p => new LeaderboardViewModel.Player(id: p.Id, name: p.Name, mmr: p.Mmr, maxMmr: p.MaxMmr))
+                .ToList();
 
-            return View(new LeaderboardViewModel { Players = playerViewModels });
+            return View(new LeaderboardViewModel(playerViewModels));
         }
 
         [Route("PlayerDetails/{id}")]
@@ -51,107 +45,41 @@ namespace Lounge.Web.Controllers
                 .Include(p => p.TableScores)
                     .ThenInclude(s => s.Table)
                 .FirstOrDefaultAsync(p => p.Id == id);
+
             if (player is null)
                 return NotFound();
 
-            var mmrChanges = new List<PlayerDetailsViewModel.MmrChange>();
-            if (player.InitialMmr is not null)
+            return View(PlayerUtils.GetPlayerDetails(player));
+        }
+
+        [Route("TableDetails/{id}")]
+        public async Task<IActionResult> TableDetails(int id)
+        {
+            var table = await _context.Tables
+                .Include(t => t.Scores)
+                .ThenInclude(s => s.Player)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (table is null)
+                return NotFound();
+
+            return View(TableUtils.GetTableDetails(table));
+        }
+
+
+        [Route("TableImage/{id}.png")]
+        public async Task<IActionResult> TableImage(int id)
+        {
+            var table = await _context.Tables.FindAsync(id);
+
+            if (table.TableImageData is null)
             {
-                mmrChanges.Add(new PlayerDetailsViewModel.MmrChange()
-                {
-                    ChangeId = null,
-                    NewMMR = player.InitialMmr.Value,
-                    MmrDelta = 0,
-                    Reason = PlayerDetailsViewModel.MmrChangeReason.Placement,
-                    Time = player.PlacedOn!.Value
-                });
+                table.TableImageData = await TableUtils.GetImageAsBase64UrlAsync(table.Url);
+                _ = await _context.SaveChangesAsync();
             }
 
-            foreach (var tableScore in player.TableScores)
-            {
-                if (tableScore.Table.VerifiedOn is null)
-                    continue;
-
-                var newMmr = tableScore.NewMmr!.Value;
-                var delta = newMmr - tableScore.PrevMmr!.Value;
-
-                mmrChanges.Add(new PlayerDetailsViewModel.MmrChange()
-                {
-                    ChangeId = tableScore.TableId,
-                    NewMMR = newMmr,
-                    MmrDelta = delta,
-                    Reason = PlayerDetailsViewModel.MmrChangeReason.Table,
-                    Time = tableScore.Table.VerifiedOn!.Value,
-                });
-
-                if (tableScore.Table.DeletedOn is not null)
-                {
-                    mmrChanges.Add(new PlayerDetailsViewModel.MmrChange()
-                    {
-                        ChangeId = tableScore.TableId,
-                        NewMMR = -1,
-                        MmrDelta = -delta,
-                        Reason = PlayerDetailsViewModel.MmrChangeReason.TableDelete,
-                        Time = tableScore.Table.DeletedOn!.Value,
-                    });
-                }
-            }
-
-            foreach (var penalty in player.Penalties)
-            {
-                var newMmr = penalty.NewMmr;
-                var delta = newMmr - penalty.PrevMmr;
-
-                mmrChanges.Add(new PlayerDetailsViewModel.MmrChange()
-                {
-                    ChangeId = penalty.Id,
-                    NewMMR = newMmr,
-                    MmrDelta = delta,
-                    Reason = PlayerDetailsViewModel.MmrChangeReason.Penalty,
-                    Time = penalty.AwardedOn,
-                });
-
-                if (penalty.DeletedOn is not null)
-                {
-                    mmrChanges.Add(new PlayerDetailsViewModel.MmrChange()
-                    {
-                        ChangeId = penalty.Id,
-                        NewMMR = -1,
-                        MmrDelta = -delta,
-                        Reason = PlayerDetailsViewModel.MmrChangeReason.PenaltyDelete,
-                        Time = penalty.DeletedOn!.Value,
-                    });
-                }
-            }
-
-            mmrChanges = mmrChanges.OrderBy(c => c.Time).ToList();
-
-            int mmr = 0;
-            foreach (var change in mmrChanges)
-            {
-                if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete or PlayerDetailsViewModel.MmrChangeReason.PenaltyDelete)
-                {
-                    change.NewMMR = Math.Max(0, mmr + change.MmrDelta);
-                    change.MmrDelta = change.NewMMR - mmr;
-                }
-
-                mmr = change.NewMMR;
-            }
-
-            // sort descending
-            mmrChanges.Reverse();
-
-            var vm = new PlayerDetailsViewModel
-            {
-                PlayerId = player.Id,
-                Name = player.Name,
-                MkcId = player.MKCId,
-                MaxMmr = player.MaxMmr,
-                Mmr = player.Mmr,
-                MmrChanges = mmrChanges,
-            };
-
-            return View(vm);
+            var bytes = Convert.FromBase64String(table.TableImageData);
+            return File(bytes, "image/png");
         }
 
         [Route("/error")]

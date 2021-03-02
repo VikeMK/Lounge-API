@@ -97,6 +97,7 @@ namespace Lounge.Web.Controllers
             }
 
             string tableUrl = TableUtils.BuildUrl(vm.Tier, scores);
+            string dataUrl = await TableUtils.GetImageAsBase64UrlAsync(tableUrl);
 
             var table = new Table
             {
@@ -104,7 +105,8 @@ namespace Lounge.Web.Controllers
                 NumTeams = numTeams,
                 Url = tableUrl,
                 Tier = vm.Tier,
-                Scores = tableScores
+                Scores = tableScores,
+                TableImageData = dataUrl,
             };
 
             await _context.Tables.AddAsync(table);

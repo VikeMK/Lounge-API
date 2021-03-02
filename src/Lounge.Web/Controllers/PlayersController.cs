@@ -25,9 +25,22 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Player>> GetPlayer(string name)
+        public async Task<ActionResult<Player>> GetPlayer(string name, int? mkcId)
         {
-            var player = await GetPlayerByNameAsync(name);
+            Player player;
+            if (name is not null)
+            {
+                player = await GetPlayerByNameAsync(name);
+            }
+            else if (mkcId is not null)
+            {
+                player = await GetPlayerByMKCIdAsync(mkcId.Value);
+            }
+            else
+            {
+                return BadRequest("Must provide name or MKC ID");
+            }
+
             if (player is null)
                 return NotFound();
 
@@ -42,107 +55,11 @@ namespace Lounge.Web.Controllers
                 .Include(p => p.TableScores)
                     .ThenInclude(s => s.Table)
                 .FirstOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
+
             if (player is null)
                 return NotFound();
 
-            var mmrChanges = new List<PlayerDetailsViewModel.MmrChange>();
-            if (player.InitialMmr is not null)
-            {
-                mmrChanges.Add(new PlayerDetailsViewModel.MmrChange()
-                {
-                    ChangeId = null,
-                    NewMMR = player.InitialMmr.Value,
-                    MmrDelta = 0,
-                    Reason = PlayerDetailsViewModel.MmrChangeReason.Placement,
-                    Time = player.PlacedOn!.Value
-                });
-            }
-
-            foreach (var tableScore in player.TableScores)
-            {
-                if (tableScore.Table.VerifiedOn is null)
-                    continue;
-
-                var newMmr = tableScore.NewMmr!.Value;
-                var delta = newMmr - tableScore.PrevMmr!.Value;
-
-                mmrChanges.Add(new PlayerDetailsViewModel.MmrChange()
-                {
-                    ChangeId = tableScore.TableId,
-                    NewMMR = newMmr,
-                    MmrDelta = delta,
-                    Reason = PlayerDetailsViewModel.MmrChangeReason.Table,
-                    Time = tableScore.Table.VerifiedOn!.Value,
-                });
-
-                if (tableScore.Table.DeletedOn is not null)
-                {
-                    mmrChanges.Add(new PlayerDetailsViewModel.MmrChange()
-                    {
-                        ChangeId = tableScore.TableId,
-                        NewMMR = -1,
-                        MmrDelta = -delta,
-                        Reason = PlayerDetailsViewModel.MmrChangeReason.TableDelete,
-                        Time = tableScore.Table.DeletedOn!.Value,
-                    });
-                }
-            }
-
-            foreach (var penalty in player.Penalties)
-            {
-                var newMmr = penalty.NewMmr;
-                var delta = newMmr - penalty.PrevMmr;
-
-                mmrChanges.Add(new PlayerDetailsViewModel.MmrChange()
-                {
-                    ChangeId = penalty.Id,
-                    NewMMR = newMmr,
-                    MmrDelta = delta,
-                    Reason = PlayerDetailsViewModel.MmrChangeReason.Penalty,
-                    Time = penalty.AwardedOn,
-                });
-
-                if (penalty.DeletedOn is not null)
-                {
-                    mmrChanges.Add(new PlayerDetailsViewModel.MmrChange()
-                    {
-                        ChangeId = penalty.Id,
-                        NewMMR = -1,
-                        MmrDelta = -delta,
-                        Reason = PlayerDetailsViewModel.MmrChangeReason.PenaltyDelete,
-                        Time = penalty.DeletedOn!.Value,
-                    });
-                }
-            }
-
-            mmrChanges = mmrChanges.OrderBy(c => c.Time).ToList();
-
-            int mmr = 0;
-            foreach (var change in mmrChanges)
-            {
-                if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete or PlayerDetailsViewModel.MmrChangeReason.PenaltyDelete)
-                {
-                    change.NewMMR = Math.Max(0, mmr + change.MmrDelta);
-                    change.MmrDelta = change.NewMMR - mmr;
-                }
-
-                mmr = change.NewMMR;
-            }
-
-            // sort descending
-            mmrChanges.Reverse();
-
-            var vm = new PlayerDetailsViewModel
-            {
-                PlayerId = player.Id,
-                Name = player.Name,
-                MkcId = player.MKCId,
-                MaxMmr = player.MaxMmr,
-                Mmr = player.Mmr,
-                MmrChanges = mmrChanges,
-            };
-
-            return vm;
+            return PlayerUtils.GetPlayerDetails(player);
         }
 
         [HttpPost("create")]
@@ -251,5 +168,8 @@ namespace Lounge.Web.Controllers
 
         private Task<Player> GetPlayerByNameAsync(string name) =>
             _context.Players.SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
+
+        private Task<Player> GetPlayerByMKCIdAsync(int mkcId) =>
+            _context.Players.SingleOrDefaultAsync(p => p.MKCId == mkcId);
     }
 }

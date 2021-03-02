@@ -1,7 +1,12 @@
-﻿using System;
+﻿using Lounge.Web.Models;
+using Lounge.Web.Models.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Lounge.Web.Utils
 {
@@ -41,6 +46,13 @@ namespace Lounge.Web.Utils
 
             string data = Uri.EscapeDataString(tableData.ToString());
             return $"https://gb.hlorenzi.com/table.png?data={data}";
+        }
+
+        public async static Task<string> GetImageAsBase64UrlAsync(string url)
+        {
+            using var client = new HttpClient();
+            var bytes = await client.GetByteArrayAsync(url);
+            return Convert.ToBase64String(bytes);
         }
 
         public static Dictionary<string, int> GetMMRDeltas((string Player, int Score, int CurrentMmr, double Multiplier)[][] scores)
@@ -140,6 +152,52 @@ namespace Lounge.Web.Utils
             }
 
             return placements;
+        }
+
+        public static TableDetailsViewModel GetTableDetails(Table table)
+        {
+            var teams = new List<TableDetailsViewModel.Team>();
+
+            int rank = 1;
+            int prevTotalScore = 0;
+            int prevRank = 1;
+            foreach (var team in table.Scores
+                .GroupBy(s => s.Team)
+                .OrderByDescending(t => t.Sum(t => t.Score)))
+            {
+                int totalScore = team.Sum(t => t.Score);
+
+                var scores = new List<TableDetailsViewModel.TableScore>();
+                foreach (var score in team)
+                {
+                    scores.Add(new TableDetailsViewModel.TableScore(
+                        score.Score,
+                        score.Multiplier,
+                        score.PrevMmr,
+                        score.NewMmr,
+                        score.PlayerId,
+                        score.Player.Name));
+                }
+
+                int actualRank = totalScore == prevTotalScore ? prevRank : rank;
+                teams.Add(new TableDetailsViewModel.Team(rank: actualRank, scores: scores));
+
+                prevRank = actualRank;
+                prevTotalScore = totalScore;
+                rank++;
+            }
+
+            var url = $"/TableImage/{table.Id}.png";
+
+            return new TableDetailsViewModel(
+                id: table.Id,
+                createdOn: table.CreatedOn,
+                verifiedOn: table.VerifiedOn,
+                deletedOn: table.DeletedOn,
+                numTeams: table.NumTeams,
+                url: url,
+                tier: table.Tier,
+                teams: teams);
         }
     }
 }

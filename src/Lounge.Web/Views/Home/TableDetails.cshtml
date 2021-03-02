@@ -1,0 +1,109 @@
+﻿@model Lounge.Web.Models.ViewModels.TableDetailsViewModel
+
+@{
+    ViewData["Title"] = "Table Details";
+}
+
+<div>
+    <dl>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedOn)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreatedOn)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.VerifiedOn)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.VerifiedOn)
+        </dd>
+        @if (Model.DeletedOn is not null)
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.DeletedOn)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.DeletedOn)
+            </dd>
+        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Format)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Format)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Tier)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Tier)
+        </dd>
+    </dl>
+    <hr />
+    <h2>@Html.DisplayNameFor(model => model.Url)</h2>
+    <img src="@Model.Url" class="img-fluid"/>
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Teams[0].Rank)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Teams[0].Scores[0].PlayerName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Teams[0].Scores[0].Score)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Teams[0].Scores[0].MultiplierString)
+                </th>
+                @if (Model.VerifiedOn is not null)
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => model.Teams[0].Scores[0].PrevMmr)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Teams[0].Scores[0].Delta)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Teams[0].Scores[0].NewMmr)
+                    </th>
+                }
+            </tr>
+        </thead>
+        @foreach (var team in Model.Teams)
+        {
+            @foreach (var score in team.Scores)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => team.Rank)
+                    </td>
+                    <td>
+                        <a asp-action="PlayerDetails" asp-route-id="@score.PlayerId">@Html.DisplayFor(modelItem => score.PlayerName)</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => score.Score)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => score.MultiplierString)
+                    </td>
+                    @if (Model.VerifiedOn is not null)
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => score.PrevMmr)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => score.Delta)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => score.NewMmr)
+                        </td>
+                    }
+                </tr>
+            }
+        }
+    </table>
+</div>
