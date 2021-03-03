@@ -43,7 +43,7 @@ namespace Lounge.Web.Controllers
             var penalties = new List<Penalty>();
             foreach (var penalty in player.Penalties)
             {
-                penalty.Player = null;
+                penalty.Player = null!;
                 penalties.Add(penalty);
             }
 
@@ -81,7 +81,7 @@ namespace Lounge.Web.Controllers
             player.Penalties.Add(penalty);
             await _context.SaveChangesAsync();
 
-            penalty.Player = null;
+            penalty.Player = null!;
 
             return CreatedAtAction(nameof(GetPenalty), new { id = penalty.Id }, penalty);
         }

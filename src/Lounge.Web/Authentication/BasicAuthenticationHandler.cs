@@ -26,7 +26,7 @@ namespace Lounge.Web.Authentication
             try
             {
                 var authenticationHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
-                var credentialBytes = Convert.FromBase64String(authenticationHeader.Parameter);
+                var credentialBytes = Convert.FromBase64String(authenticationHeader.Parameter!);
                 var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':');
                 var username = credentials[0];
                 var password = credentials[1];

@@ -55,6 +55,8 @@ namespace Lounge.Web
                 {
                     [new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Basic" } }] = new List<string>()
                 });
+
+                c.CustomSchemaIds(s => s.FullName);
             });
         }
 

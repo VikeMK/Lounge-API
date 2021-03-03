@@ -25,7 +25,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Table>> GetTable(int tableId)
+        public async Task<ActionResult<TableDetailsViewModel>> GetTable(int tableId)
         {
             var table = await _context.Tables
                 .Include(t => t.Scores)
@@ -36,17 +36,24 @@ namespace Lounge.Web.Controllers
             if (table is null)
                 return NotFound();
 
-            foreach (var score in table.Scores)
-            {
-                score.Table = null;
-                score.Player.TableScores = null;
-            }
+            return TableUtils.GetTableDetails(table);
+        }
 
-            return table;
+        [HttpGet("list")]
+        public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to)
+        {
+            var tables = await _context.Tables
+                .Include(t => t.Scores)
+                .ThenInclude(s => s.Player)
+                .AsNoTracking()
+                .Where(t => t.CreatedOn >= from && (to == null || t.CreatedOn <= to))
+                .ToListAsync();
+
+            return tables.Select(TableUtils.GetTableDetails).ToList();
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<Table>> Create(NewTableViewModel vm)
+        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm)
         {
             if (vm.Scores.Count != 12)
                 return BadRequest("Must supply 12 scores");
@@ -112,13 +119,7 @@ namespace Lounge.Web.Controllers
             await _context.Tables.AddAsync(table);
             await _context.SaveChangesAsync();
 
-            foreach (var score in table.Scores)
-            {
-                score.Table = null;
-                score.Player.TableScores = null;
-            }
-
-            return CreatedAtAction(nameof(GetTable), new { tableId = table.Id }, table);
+            return CreatedAtAction(nameof(GetTable), new { tableId = table.Id }, TableUtils.GetTableDetails(table));
         }
 
         [HttpPost("setMultipliers")]

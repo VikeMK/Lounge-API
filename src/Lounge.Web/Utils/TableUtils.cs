@@ -45,7 +45,7 @@ namespace Lounge.Web.Utils
             }
 
             string data = Uri.EscapeDataString(tableData.ToString());
-            return $"https://gb.hlorenzi.com/table.png?data={data}";
+            return $"https://gb.hlorenzi.com/table.png?data={data}&loungeapi=true";
         }
 
         public async static Task<string> GetImageAsBase64UrlAsync(string url)
