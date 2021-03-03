@@ -14,6 +14,7 @@ namespace Lounge.Web.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : Controller
     {
+        private const int PageSize = 50;
         private readonly ApplicationDbContext _context;
 
         public HomeController(ApplicationDbContext context)
@@ -27,9 +28,14 @@ namespace Lounge.Web.Controllers
         }
 
         [Route("Leaderboard")]
-        public async Task<IActionResult> Leaderboard()
+        public async Task<IActionResult> Leaderboard(int page = 1)
         {
-            var playerEntities = await _context.Players.OrderByDescending(p => p.Mmr).ToListAsync();
+            var playerEntities = await _context.Players
+                .OrderByDescending(p => p.Mmr)
+                .Skip(PageSize * (page - 1))
+                .Take(PageSize)
+                .ToListAsync();
+
             var playerViewModels = playerEntities
                 .Select(p => new LeaderboardViewModel.Player(id: p.Id, name: p.Name, mmr: p.Mmr, maxMmr: p.MaxMmr))
                 .ToList();

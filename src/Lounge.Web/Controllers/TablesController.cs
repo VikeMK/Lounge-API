@@ -52,6 +52,19 @@ namespace Lounge.Web.Controllers
             return tables.Select(TableUtils.GetTableDetails).ToList();
         }
 
+        [HttpGet("unverified")]
+        public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables()
+        {
+            var tables = await _context.Tables
+                .Include(t => t.Scores)
+                .ThenInclude(s => s.Player)
+                .AsNoTracking()
+                .Where(t => t.VerifiedOn == null)
+                .ToListAsync();
+
+            return tables.Select(TableUtils.GetTableDetails).ToList();
+        }
+
         [HttpPost("create")]
         public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm)
         {
@@ -159,7 +172,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("verify")]
-        public async Task<ActionResult<Dictionary<string, int>>> Verify(int tableId)
+        public async Task<ActionResult<TableDetailsViewModel>> Verify(int tableId, bool preview=false)
         {
             var table = await _context.Tables
                 .Include(t => t.Scores)
@@ -198,39 +211,14 @@ namespace Lounge.Web.Controllers
                 score.Player.MaxMmr = Math.Max(score.Player.MaxMmr!.Value, newMmr);
             }
 
-            table.VerifiedOn = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
+            if (!preview)
+            {
+                table.VerifiedOn = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
 
-            return Ok(mmrDeltas);
-        }
-
-        [HttpPost("preview")]
-        public async Task<ActionResult<Dictionary<string, int>>> Preview(int tableId)
-        {
-            var table = await _context.Tables
-                .Include(t => t.Scores)
-                .ThenInclude(t => t.Player)
-                .FirstOrDefaultAsync(t => t.Id == tableId);
-
-            if (table is null)
-                return NotFound();
-
-            if (table.VerifiedOn is not null)
-                return BadRequest("Table has already been verified");
-
-            int numTeams = table.NumTeams;
-
-            var unplacedPlayers = table.Scores.Where(s => s.Player.Mmr == null).Select(s => s.Player.Name).ToArray();
-            if (unplacedPlayers.Any())
-                return BadRequest($"The following players have not been placed yet: {string.Join(", ", unplacedPlayers)}");
-
-            var scores = new (string Player, int Score, int CurrentMmr, double Multiplier)[numTeams][];
-            for (int i = 0; i < numTeams; i++)
-                scores[i] = table.Scores.Where(score => score.Team == i).Select(s => (s.Player.Name, s.Score, s.Player.Mmr!.Value, s.Multiplier)).ToArray();
-
-            var mmrDeltas = TableUtils.GetMMRDeltas(scores);
-
-            return Ok(mmrDeltas);
+            var vm = TableUtils.GetTableDetails(table);
+            return Ok(vm);
         }
 
         [HttpDelete]
