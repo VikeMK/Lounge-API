@@ -9,6 +9,9 @@
         <thead>
             <tr>
                 <th>
+                    @Html.DisplayNameFor(model => model.Players[0].Rank)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Players[0].Name)
                 </th>
                 <th>
@@ -17,11 +20,34 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Players[0].MaxMmr)
                 </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Players[0].WinRate)
+                </th>
+                <th>
+                    Win - Loss<br/>(Last 10)
+                    @*@Html.DisplayNameFor(model => model.Players[0].WinLossLastTen)*@
+                </th>
+                <th>
+                    Gain/Loss<br/>(Last 10)
+                    @*@Html.DisplayNameFor(model => model.Players[0].GainLossLastTen)*@
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Players[0].EventsPlayed)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Players[0].LargestGain)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Players[0].LargestLoss)
+                </th>
             </tr>
         </thead>
         @foreach (var player in Model.Players)
         {
             <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => player.Rank)
+                </td>
                 <td>
                     <a asp-action="PlayerDetails" asp-route-id="@player.Id">@Html.DisplayFor(modelItem => player.Name)</a>
                 </td>
@@ -30,6 +56,24 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => player.MaxMmr)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => player.WinRate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => player.WinLossLastTen)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => player.GainLossLastTen)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => player.EventsPlayed)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => player.LargestGain)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => player.LargestLoss)
                 </td>
             </tr>
         }

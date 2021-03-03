@@ -15,25 +15,44 @@ namespace Lounge.Web.Models.ViewModels
 
         public class Player
         {
-            public Player(int id, string name, int? mmr, int? maxMmr)
-            {
-                Id = id;
-                Name = name ?? throw new ArgumentNullException(nameof(name));
-                Mmr = mmr;
-                MaxMmr = maxMmr;
-            }
+            public int Id { get; init; }
 
-            public int Id { get; set; }
+            public int Rank { get; init; }
 
-            public string Name { get; set; }
+            public string Name { get; init; }
 
             [Display(Name = "MMR")]
             [DisplayFormat(NullDisplayText = "Placement")]
-            public int? Mmr { get; set; }
+            public int? Mmr { get; init; }
 
             [Display(Name = "Peak MMR")]
-            [DisplayFormat(NullDisplayText = "Placement")]
-            public int? MaxMmr { get; set; }
+            [DisplayFormat(NullDisplayText = "N/A")]
+            public int? MaxMmr { get; init; }
+
+            [Display(Name = "Win Rate")]
+            [DisplayFormat(NullDisplayText = "N/A")]
+            public decimal? WinRate { get; init; }
+
+            public int WinsLastTen { get; init; }
+
+            public int LossesLastTen { get; init; }
+
+            [Display(Name = "Win - Loss (Last 10)")]
+            public string WinLossLastTen => $"{WinsLastTen} - {LossesLastTen}";
+
+            [Display(Name = "Gain/Loss (Last 10)")]
+            public int GainLossLastTen { get; init; }
+
+            [Display(Name = "Events Played")]
+            public int EventsPlayed { get; init; }
+
+            [Display(Name = "Largest Gain")]
+            [DisplayFormat(NullDisplayText = "-")]
+            public int? LargestGain { get; init; }
+
+            [Display(Name = "Largest Loss")]
+            [DisplayFormat(NullDisplayText = "-")]
+            public int? LargestLoss { get; init; }
         }
     }
 }
