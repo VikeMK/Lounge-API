@@ -2,7 +2,6 @@
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Utils;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,7 +15,7 @@ namespace Lounge.Web.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : Controller
     {
-        private const int PageSize = 50;
+        private const int PageSize = 100;
         private readonly ApplicationDbContext _context;
 
         public HomeController(ApplicationDbContext context)
@@ -32,6 +31,11 @@ namespace Lounge.Web.Controllers
         [Route("Leaderboard")]
         public async Task<IActionResult> Leaderboard(int page = 1)
         {
+            if (page <= 0)
+            {
+                return BadRequest("Page must be a number 1 or greater");
+            }
+
             var playerEntities = await _context.Players
                 .AsNoTracking()
                 .OrderByDescending(p => p.Mmr)
@@ -56,20 +60,24 @@ namespace Lounge.Web.Controllers
                 })
                 .ToListAsync();
 
+            var playerCount = await _context.Players.CountAsync();
+            var maxPageNum = (int)Math.Ceiling(playerCount / (decimal)PageSize);
+            page = Math.Clamp(page, 1, maxPageNum);
+
             var playerViewModels = new List<LeaderboardViewModel.Player>();
             int? prevMMR = -1;
-            int rank = 1 + 50 * (page - 1);
+            int rank = 1 + PageSize * (page - 1);
             int prevRank = 0;
             foreach (var p in playerEntities)
             {
                 var playerRank = prevMMR == p.Mmr ? prevRank : rank;
 
-                decimal? winRate = p.EventsPlayed == 0 ? null : (100m * p.Wins) / p.EventsPlayed;
+                decimal? winRate = p.EventsPlayed == 0 ? null : (decimal)p.Wins / p.EventsPlayed;
 
                 playerViewModels.Add(new LeaderboardViewModel.Player
                 {
                     Id = p.Id,
-                    Rank = playerRank,
+                    OverallRank = playerRank,
                     Name = p.Name,
                     Mmr = p.Mmr,
                     MaxMmr = p.MaxMmr,
@@ -79,7 +87,9 @@ namespace Lounge.Web.Controllers
                     LossesLastTen = p.LastTen.Count(t => t <= 0),
                     GainLossLastTen = p.LastTen.Sum(t => t ?? 0),
                     LargestGain = p.LargestGain < 0 ? null : p.LargestGain,
-                    LargestLoss = p.LargestLoss > 0 ? null : p.LargestLoss
+                    LargestLoss = p.LargestLoss > 0 ? null : p.LargestLoss,
+                    MmrRank = RankUtils.GetRank(p.Mmr),
+                    MaxMmrRank = RankUtils.GetRank(p.MaxMmr)
                 });
 
                 prevMMR = p.Mmr;
@@ -87,7 +97,13 @@ namespace Lounge.Web.Controllers
                 rank++;
             }
 
-            return View(new LeaderboardViewModel(playerViewModels));
+            return View(new LeaderboardViewModel
+            {
+                Players = playerViewModels,
+                Page = page,
+                HasNextPage = page < maxPageNum,
+                HasPrevPage = page > 1
+            });
         }
 
         [Route("PlayerDetails/{id}")]

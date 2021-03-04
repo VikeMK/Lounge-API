@@ -87,6 +87,7 @@ namespace Lounge.Web.Models.ViewModels
             public int? NewMmr { get; set; }
 
             [Display(Name = "Change")]
+            [DisplayFormat(DataFormatString = "{0:+#;-#;0}")]
             public int? Delta => NewMmr - PrevMmr;
 
             public int PlayerId { get; set; }

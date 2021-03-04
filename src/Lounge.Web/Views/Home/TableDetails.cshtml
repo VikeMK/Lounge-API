@@ -44,30 +44,30 @@
     <h2>@Html.DisplayNameFor(model => model.Url)</h2>
     <img src="@Model.Url" class="img-fluid"/>
     <hr />
-    <table class="table">
+    <table class="table table-striped table-dark">
         <thead>
             <tr>
-                <th>
+                <th scope="col">
                     @Html.DisplayNameFor(model => model.Teams[0].Rank)
                 </th>
-                <th>
+                <th scope="col">
                     @Html.DisplayNameFor(model => model.Teams[0].Scores[0].PlayerName)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Teams[0].Scores[0].Score)
                 </th>
-                <th>
+                <th scope="col">
                     @Html.DisplayNameFor(model => model.Teams[0].Scores[0].MultiplierString)
                 </th>
                 @if (Model.VerifiedOn is not null)
                 {
-                    <th>
+                    <th scope="col">
                         @Html.DisplayNameFor(model => model.Teams[0].Scores[0].PrevMmr)
                     </th>
-                    <th>
+                    <th scope="col">
                         @Html.DisplayNameFor(model => model.Teams[0].Scores[0].Delta)
                     </th>
-                    <th>
+                    <th scope="col">
                         @Html.DisplayNameFor(model => model.Teams[0].Scores[0].NewMmr)
                     </th>
                 }
@@ -78,9 +78,9 @@
             @foreach (var score in team.Scores)
             {
                 <tr>
-                    <td>
+                    <th scope="row">
                         @Html.DisplayFor(modelItem => team.Rank)
-                    </td>
+                    </th>
                     <td>
                         <a asp-action="PlayerDetails" asp-route-id="@score.PlayerId">@Html.DisplayFor(modelItem => score.PlayerName)</a>
                     </td>
