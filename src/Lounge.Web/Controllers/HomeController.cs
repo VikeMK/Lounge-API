@@ -36,28 +36,11 @@ namespace Lounge.Web.Controllers
                 return BadRequest("Page must be a number 1 or greater");
             }
 
-            var playerEntities = await _context.Players
+            var playerEntities = await _context.PlayerStats
                 .AsNoTracking()
-                .OrderByDescending(p => p.Mmr)
+                .OrderBy(p => p.Rank)
                 .Skip(PageSize * (page - 1))
                 .Take(PageSize)
-                .Select(p => new
-                {
-                    p.Mmr,
-                    p.Id,
-                    p.Name,
-                    p.MaxMmr,
-                    EventsPlayed = p.TableScores.Count(t => t.NewMmr != null),
-                    Wins = p.TableScores.Count(t => t.NewMmr != null && t.NewMmr > t.PrevMmr),
-                    LastTen = p.TableScores
-                        .Where(t => t.Table.VerifiedOn != null)
-                        .OrderByDescending(t => t.Table.VerifiedOn)
-                        .Take(10)
-                        .Select(t => t.NewMmr - t.PrevMmr)
-                        .ToList(),
-                    LargestGain = p.TableScores.Where(t => t.NewMmr != null).Max(t => t.NewMmr - t.PrevMmr),
-                    LargestLoss = p.TableScores.Where(t => t.NewMmr != null).Min(t => t.NewMmr - t.PrevMmr),
-                })
                 .ToListAsync();
 
             var playerCount = await _context.Players.CountAsync();
@@ -65,36 +48,27 @@ namespace Lounge.Web.Controllers
             page = Math.Clamp(page, 1, maxPageNum);
 
             var playerViewModels = new List<LeaderboardViewModel.Player>();
-            int? prevMMR = -1;
-            int rank = 1 + PageSize * (page - 1);
-            int prevRank = 0;
             foreach (var p in playerEntities)
             {
-                var playerRank = prevMMR == p.Mmr ? prevRank : rank;
-
-                decimal? winRate = p.EventsPlayed == 0 ? null : (decimal)p.Wins / p.EventsPlayed;
+                decimal? winRate = p.EventsPlayed == 0 ? null : p.Wins / p.EventsPlayed;
 
                 playerViewModels.Add(new LeaderboardViewModel.Player
                 {
                     Id = p.Id,
-                    OverallRank = playerRank,
+                    OverallRank = p.Rank,
                     Name = p.Name,
                     Mmr = p.Mmr,
                     MaxMmr = p.MaxMmr,
                     EventsPlayed = p.EventsPlayed,
                     WinRate = winRate,
-                    WinsLastTen = p.LastTen.Count(t => t > 0),
-                    LossesLastTen = p.LastTen.Count(t => t <= 0),
-                    GainLossLastTen = p.LastTen.Sum(t => t ?? 0),
+                    WinsLastTen = p.LastTenWins,
+                    LossesLastTen = p.LastTenLosses,
+                    GainLossLastTen = p.LastTenGainLoss,
                     LargestGain = p.LargestGain < 0 ? null : p.LargestGain,
                     LargestLoss = p.LargestLoss > 0 ? null : p.LargestLoss,
                     MmrRank = RankUtils.GetRank(p.Mmr),
                     MaxMmrRank = RankUtils.GetRank(p.MaxMmr)
                 });
-
-                prevMMR = p.Mmr;
-                prevRank = playerRank;
-                rank++;
             }
 
             return View(new LeaderboardViewModel

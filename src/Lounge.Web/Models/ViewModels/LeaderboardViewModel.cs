@@ -43,8 +43,8 @@ namespace Lounge.Web.Models.ViewModels
             public string WinLossLastTen => $"{WinsLastTen} - {LossesLastTen}";
 
             [Display(Name = "Gain/Loss (Last 10)")]
-            [DisplayFormat(DataFormatString = "{0:+#;-#;0}")]
-            public int GainLossLastTen { get; init; }
+            [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:+#;-#;0}")]
+            public int? GainLossLastTen { get; init; }
 
             [Display(Name = "Events Played")]
             public int EventsPlayed { get; init; }

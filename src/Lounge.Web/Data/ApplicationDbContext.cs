@@ -14,6 +14,7 @@ namespace Lounge.Web.Data
         public DbSet<Table> Tables => Set<Table>();
         public DbSet<TableScore> TableScores => Set<TableScore>();
         public DbSet<Penalty> Penalties => Set<Penalty>();
+        public DbSet<PlayerStat> PlayerStats => Set<PlayerStat>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +38,10 @@ namespace Lounge.Web.Data
 
             modelBuilder.Entity<Penalty>()
                 .HasIndex(p => p.AwardedOn);
+
+            modelBuilder.Entity<PlayerStat>()
+                .HasNoKey()
+                .ToView("View_PlayerStats");
         }
     }
 }
