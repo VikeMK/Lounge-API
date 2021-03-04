@@ -13,6 +13,8 @@ namespace Lounge.Web.Models
         public string Url { get; set; } = default!;
         public string TableImageData { get; set; } = default!;
         public string Tier { get; set; } = default!;
+        public int? TableMessageId { get; set; }
+        public int? UpdateMessageId { get; set; }
 
         public ICollection<TableScore> Scores { get; set; } = default!;
     }

@@ -171,6 +171,36 @@ namespace Lounge.Web.Controllers
             return Ok();
         }
 
+        [HttpPost("setTableMessageId")]
+        public async Task<IActionResult> SetTableMessageId(int tableId, int tableMessageId)
+        {
+            var table = await _context.Tables.FirstOrDefaultAsync(t => t.Id == tableId);
+
+            if (table is null)
+                return NotFound();
+
+            table.TableMessageId = tableMessageId;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("setUpdateMessageId")]
+        public async Task<IActionResult> SetUpdateMessageId(int tableId, int updateMessageId)
+        {
+            var table = await _context.Tables.FirstOrDefaultAsync(t => t.Id == tableId);
+
+            if (table is null)
+                return NotFound();
+
+            table.UpdateMessageId = updateMessageId;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         [HttpPost("verify")]
         public async Task<ActionResult<TableDetailsViewModel>> Verify(int tableId, bool preview=false)
         {

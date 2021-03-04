@@ -197,7 +197,9 @@ namespace Lounge.Web.Utils
                 numTeams: table.NumTeams,
                 url: url,
                 tier: table.Tier,
-                teams: teams);
+                teams: teams,
+                tableMessageId: table.TableMessageId,
+                updateMessageId: table.UpdateMessageId);
         }
     }
 }
