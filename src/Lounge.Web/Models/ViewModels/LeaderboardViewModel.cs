@@ -14,6 +14,8 @@ namespace Lounge.Web.Models.ViewModels
 
         public bool HasNextPage { get; init; }
 
+        public string? Filter { get; init; }
+
         public class Player
         {
             public int Id { get; init; }

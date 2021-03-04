@@ -29,15 +29,18 @@ namespace Lounge.Web.Controllers
         }
 
         [Route("Leaderboard")]
-        public async Task<IActionResult> Leaderboard(int page = 1)
+        public async Task<IActionResult> Leaderboard(int page = 1, string? filter = null)
         {
             if (page <= 0)
             {
                 return BadRequest("Page must be a number 1 or greater");
             }
 
+            var normalizedFilter = filter == null ? null : PlayerUtils.NormalizeName(filter);
+
             var playerEntities = await _context.PlayerStats
                 .AsNoTracking()
+                .Where(s => filter == null || s.NormalizedName.Contains(normalizedFilter))
                 .OrderBy(p => p.Rank)
                 .Skip(PageSize * (page - 1))
                 .Take(PageSize)
@@ -76,7 +79,8 @@ namespace Lounge.Web.Controllers
                 Players = playerViewModels,
                 Page = page,
                 HasNextPage = page < maxPageNum,
-                HasPrevPage = page > 1
+                HasPrevPage = page > 1,
+                Filter = filter
             });
         }
 
