@@ -44,6 +44,9 @@
     <h2>@Html.DisplayNameFor(model => model.Url)</h2>
     <img src="@Model.Url" class="img-fluid"/>
     <hr />
+    @{
+        var showMultiplier = Model.Teams.Any(t => t.Scores.Any(s => s.Multiplier != 1));
+    }
     <table class="table table-striped table-dark">
         <thead>
             <tr>
@@ -56,9 +59,12 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Teams[0].Scores[0].Score)
                 </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Teams[0].Scores[0].MultiplierString)
-                </th>
+                @if (showMultiplier)
+                {
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Teams[0].Scores[0].MultiplierString)
+                    </th>
+                }
                 @if (Model.VerifiedOn is not null)
                 {
                     <th scope="col">
@@ -87,9 +93,12 @@
                     <td>
                         @Html.DisplayFor(modelItem => score.Score)
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => score.MultiplierString)
-                    </td>
+                    @if (showMultiplier)
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => score.MultiplierString)
+                        </td>
+                    }
                     @if (Model.VerifiedOn is not null)
                     {
                         <td>
