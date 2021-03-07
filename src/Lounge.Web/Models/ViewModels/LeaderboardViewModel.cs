@@ -21,7 +21,8 @@ namespace Lounge.Web.Models.ViewModels
             public int Id { get; init; }
 
             [Display(Name = "Rank")]
-            public int OverallRank { get; init; }
+            [DisplayFormat(NullDisplayText = "-")]
+            public int? OverallRank { get; init; }
 
             public string Name { get; init; }
 

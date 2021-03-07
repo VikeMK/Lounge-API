@@ -8,7 +8,7 @@ namespace Lounge.Web.Migrations
         {
             migrationBuilder.Sql(@"CREATE VIEW View_PlayerStats AS
 SELECT
-	CONVERT(INT, RANK() OVER(ORDER BY Mmr DESC)) as Rank,
+	CONVERT(INT, RANK() OVER(ORDER BY (CASE WHEN AllTime.EventsPlayed = 0 THEN 0 ELSE 1 END) DESC, Mmr DESC)) as Rank,
 	Id,
 	Name,
 	Mmr,

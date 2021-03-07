@@ -58,7 +58,7 @@ namespace Lounge.Web.Controllers
                 playerViewModels.Add(new LeaderboardViewModel.Player
                 {
                     Id = p.Id,
-                    OverallRank = p.Rank,
+                    OverallRank = p.EventsPlayed == 0 ? null : p.Rank,
                     Name = p.Name,
                     Mmr = p.Mmr,
                     MaxMmr = p.MaxMmr,
