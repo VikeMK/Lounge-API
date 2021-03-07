@@ -90,6 +90,7 @@ namespace Lounge.Web.Controllers
             var player = await _context.Players
                 .AsNoTracking()
                 .Include(p => p.Penalties)
+                .Include(p => p.Bonuses)
                 .Include(p => p.TableScores)
                     .ThenInclude(s => s.Table)
                 .FirstOrDefaultAsync(p => p.Id == id);

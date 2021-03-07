@@ -65,12 +65,16 @@ namespace Lounge.Web.Models.ViewModels
             Placement,
             Table,
             Penalty,
+            Bonus,
 
             [Display(Name = "Deleted Table")]
             TableDelete,
 
             [Display(Name = "Deleted Penalty")]
-            PenaltyDelete
+            PenaltyDelete,
+
+            [Display(Name = "Deleted Bonus")]
+            BonusDelete
         }
     }
 }

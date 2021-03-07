@@ -72,6 +72,29 @@ namespace Lounge.Web.Utils
                 }
             }
 
+            foreach (var bonus in player.Bonuses)
+            {
+                var newMmr = bonus.NewMmr;
+                var delta = newMmr - bonus.PrevMmr;
+
+                mmrChanges.Add(new PlayerDetailsViewModel.MmrChange(
+                    changeId: bonus.Id,
+                    newMmr: newMmr,
+                    mmrDelta: delta,
+                    reason: PlayerDetailsViewModel.MmrChangeReason.Bonus,
+                    time: bonus.AwardedOn));
+
+                if (bonus.DeletedOn is not null)
+                {
+                    mmrChanges.Add(new PlayerDetailsViewModel.MmrChange(
+                        changeId: bonus.Id,
+                        newMmr: -1,
+                        mmrDelta: -delta,
+                        reason: PlayerDetailsViewModel.MmrChangeReason.BonusDelete,
+                        time: bonus.DeletedOn.Value));
+                }
+            }
+
             mmrChanges = mmrChanges.OrderBy(c => c.Time).ToList();
 
             int mmr = 0;

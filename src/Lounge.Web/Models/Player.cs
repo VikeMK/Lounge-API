@@ -17,5 +17,6 @@ namespace Lounge.Web.Models
 
         public ICollection<TableScore> TableScores { get; set; } = default!;
         public ICollection<Penalty> Penalties { get; set; } = default!;
+        public ICollection<Bonus> Bonuses { get; set; } = default!;
     }
 }

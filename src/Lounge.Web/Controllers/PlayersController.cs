@@ -6,8 +6,6 @@ using Lounge.Web.Models;
 using Lounge.Web.Data;
 using Microsoft.AspNetCore.Authorization;
 using Lounge.Web.Models.ViewModels;
-using System.Collections.Generic;
-using System.Linq;
 using Lounge.Web.Utils;
 
 namespace Lounge.Web.Controllers
@@ -52,6 +50,7 @@ namespace Lounge.Web.Controllers
         {
             var player = await _context.Players
                 .Include(p => p.Penalties)
+                .Include(p => p.Bonuses)
                 .Include(p => p.TableScores)
                     .ThenInclude(s => s.Table)
                 .FirstOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));

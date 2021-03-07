@@ -94,7 +94,7 @@ namespace Lounge.Web.Controllers
                 return NotFound();
 
             if (penalty.DeletedOn is not null)
-                return BadRequest("Table has already been deleted");
+                return BadRequest("Penalty has already been deleted");
 
             penalty.DeletedOn = DateTime.UtcNow;
 
