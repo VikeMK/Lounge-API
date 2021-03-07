@@ -76,7 +76,8 @@ namespace Lounge.Web.Controllers
             };
 
             player.Mmr = newMmr;
-            player.MaxMmr = Math.Max(player.MaxMmr!.Value, player.Mmr!.Value);
+            
+            // no need to update max mmr, since a penalty will only ever decrease their MMR
 
             player.Penalties.Add(penalty);
             await _context.SaveChangesAsync();
@@ -100,9 +101,13 @@ namespace Lounge.Web.Controllers
 
             var curMMR = penalty.Player.Mmr!.Value;
             var diff = penalty.NewMmr - penalty.PrevMmr;
-            var newMMR = Math.Max(0, curMMR - diff);
-            penalty.Player.Mmr = newMMR;
-            penalty.Player.MaxMmr = Math.Max(penalty.Player.MaxMmr!.Value, newMMR);
+            var newMmr = Math.Max(0, curMMR - diff);
+
+            penalty.Player.Mmr = newMmr;
+            if (penalty.Player.MaxMmr is int maxMMR)
+            {
+                penalty.Player.MaxMmr = Math.Max(maxMMR, newMmr);
+            }
 
             await _context.SaveChangesAsync();
 

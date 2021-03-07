@@ -70,7 +70,6 @@ namespace Lounge.Web.Controllers
                 player.PlacedOn = DateTime.UtcNow;
                 player.InitialMmr = mmr;
                 player.Mmr = mmr;
-                player.MaxMmr = mmr;
             }
 
             _context.Players.Add(player);
@@ -108,7 +107,6 @@ namespace Lounge.Web.Controllers
             player.PlacedOn = DateTime.UtcNow;
             player.InitialMmr = mmr;
             player.Mmr = mmr;
-            player.MaxMmr = mmr;
 
             await _context.SaveChangesAsync();
 

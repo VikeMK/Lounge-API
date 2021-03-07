@@ -238,7 +238,19 @@ namespace Lounge.Web.Controllers
                 score.NewMmr = newMmr;
 
                 score.Player.Mmr = newMmr;
-                score.Player.MaxMmr = Math.Max(score.Player.MaxMmr!.Value, newMmr);
+                if (score.Player.MaxMmr is int maxMmr)
+                {
+                    score.Player.MaxMmr = Math.Max(maxMmr, newMmr);
+                }
+                else
+                {
+                    var playerTotalMatches = await _context.TableScores.CountAsync(s => s.PlayerId == score.PlayerId && s.Table.VerifiedOn != null);
+                    if (playerTotalMatches >= 4)
+                    {
+                        score.Player.MaxMmr = newMmr;
+                    }
+                }
+
             }
 
             if (!preview)
@@ -275,7 +287,10 @@ namespace Lounge.Web.Controllers
                     var diff = score.NewMmr!.Value - score.PrevMmr!.Value;
                     var newMMR = Math.Max(0, curMMR - diff);
                     score.Player.Mmr = newMMR;
-                    score.Player.MaxMmr = Math.Max(score.Player.MaxMmr!.Value, newMMR);
+                    if (score.Player.MaxMmr is int maxMmr)
+                    {
+                        score.Player.MaxMmr = Math.Max(maxMmr, newMMR);
+                    }
                 }
             }
 

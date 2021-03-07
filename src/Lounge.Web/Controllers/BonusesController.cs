@@ -74,7 +74,10 @@ namespace Lounge.Web.Controllers
             };
 
             player.Mmr = newMmr;
-            player.MaxMmr = Math.Max(player.MaxMmr!.Value, player.Mmr!.Value);
+            if (player.MaxMmr is int maxMMR)
+            {
+                player.MaxMmr = Math.Max(maxMMR, newMmr);
+            }
 
             player.Bonuses.Add(bonus);
             await _context.SaveChangesAsync();
@@ -98,9 +101,11 @@ namespace Lounge.Web.Controllers
 
             var curMMR = bonus.Player.Mmr!.Value;
             var diff = bonus.NewMmr - bonus.PrevMmr;
-            var newMMR = Math.Max(0, curMMR - diff);
-            bonus.Player.Mmr = newMMR;
-            bonus.Player.MaxMmr = Math.Max(bonus.Player.MaxMmr!.Value, newMMR);
+            var newMmr = Math.Max(0, curMMR - diff);
+
+            bonus.Player.Mmr = newMmr;
+
+            // no need to update max mmr since deleting a bonus will only cause their MMR to decrease
 
             await _context.SaveChangesAsync();
 
