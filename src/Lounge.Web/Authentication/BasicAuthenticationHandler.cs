@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -12,15 +13,20 @@ namespace Lounge.Web.Authentication
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        public BasicAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
+        private readonly string apiUsername;
+        private readonly string apiPassword;
+
+        public BasicAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, IConfiguration configuration) : base(options, logger, encoder, clock)
         {
+            apiUsername = configuration["APICredentials:Username"];
+            apiPassword = configuration["APICredentials:Password"];
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             if (!Request.Headers.ContainsKey("Authorization") || !Request.Headers["Authorization"].ToString().StartsWith("Basic "))
             {
-                return Task.FromResult(AuthenticateResult.Fail("Missing Authorization header"));
+                return Task.FromResult(AuthenticateResult.NoResult());
             }
 
             try
@@ -31,7 +37,7 @@ namespace Lounge.Web.Authentication
                 var username = credentials[0];
                 var password = credentials[1];
 
-                if (username == "admin" && password == "admin")
+                if (username == this.apiUsername && password == this.apiPassword)
                 {
                     var claims = new[] { new Claim(ClaimTypes.NameIdentifier, username) };
                     var identity = new ClaimsIdentity(claims, Scheme.Name);

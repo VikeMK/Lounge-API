@@ -10,6 +10,35 @@ namespace Lounge.Web.Utils
     {
         public static string NormalizeName(string name) => string.Join("", name.Split(' ', StringSplitOptions.RemoveEmptyEntries)).ToUpperInvariant();
 
+        public static IQueryable<Player> SelectPropertiesForPlayerDetails(this IQueryable<Player> players) =>
+            players.Select(p => new Player
+            {
+                Id = p.Id,
+                InitialMmr = p.InitialMmr,
+                MaxMmr = p.MaxMmr,
+                MKCId = p.MKCId,
+                Mmr = p.Mmr,
+                Name = p.Name,
+                PlacedOn = p.PlacedOn,
+                NormalizedName = p.NormalizedName,
+                Bonuses = p.Bonuses.Select(b => new Bonus { Id = b.Id, AwardedOn = b.AwardedOn, DeletedOn = b.DeletedOn, NewMmr = b.NewMmr, PrevMmr = b.PrevMmr }).ToList(),
+                Penalties = p.Penalties.Select(pen => new Penalty { Id = pen.Id, AwardedOn = pen.AwardedOn, DeletedOn = pen.DeletedOn, NewMmr = pen.NewMmr, PrevMmr = pen.PrevMmr }).ToList(),
+                TableScores = p.TableScores.Select(t => new TableScore
+                {
+                    TableId = t.TableId,
+                    NewMmr = t.NewMmr,
+                    Score = t.Score,
+                    PrevMmr = t.PrevMmr,
+                    Team = t.Team,
+                    Table = new Table
+                    {
+                        VerifiedOn = t.Table.VerifiedOn,
+                        DeletedOn = t.Table.DeletedOn,
+                        Scores = t.Table.Scores.Select(s => new TableScore { Score = s.Score, Team = s.Team, PlayerId = s.PlayerId }).ToList()
+                    }
+                }).ToList(),
+            });
+
         public static PlayerDetailsViewModel GetPlayerDetails(Player player)
         {
             var mmrChanges = new List<PlayerDetailsViewModel.MmrChange>();
@@ -36,7 +65,12 @@ namespace Lounge.Web.Utils
                     newMmr: newMmr,
                     mmrDelta: delta,
                     reason: PlayerDetailsViewModel.MmrChangeReason.Table,
-                    time: tableScore.Table.VerifiedOn!.Value));
+                    time: tableScore.Table.VerifiedOn!.Value,
+                    score: tableScore.Score,
+                    partnerScores: tableScore.Table.Scores
+                        .Where(s => s.Team == tableScore.Team && s.PlayerId != player.Id)
+                        .Select(s => s.Score)
+                        .ToList())) ;
 
                 if (tableScore.Table.DeletedOn is not null)
                 {
@@ -58,7 +92,7 @@ namespace Lounge.Web.Utils
                     changeId: penalty.Id,
                     newMmr: newMmr,
                     mmrDelta: delta,
-                    reason: PlayerDetailsViewModel.MmrChangeReason.Penalty,
+                    reason: penalty.IsStrike ? PlayerDetailsViewModel.MmrChangeReason.Strike : PlayerDetailsViewModel.MmrChangeReason.Penalty,
                     time: penalty.AwardedOn));
 
                 if (penalty.DeletedOn is not null)
@@ -67,7 +101,7 @@ namespace Lounge.Web.Utils
                         changeId: penalty.Id,
                         newMmr: -1,
                         mmrDelta: -delta,
-                        reason: PlayerDetailsViewModel.MmrChangeReason.PenaltyDelete,
+                        reason: penalty.IsStrike ? PlayerDetailsViewModel.MmrChangeReason.StrikeDelete : PlayerDetailsViewModel.MmrChangeReason.PenaltyDelete,
                         time: penalty.DeletedOn.Value));
                 }
             }

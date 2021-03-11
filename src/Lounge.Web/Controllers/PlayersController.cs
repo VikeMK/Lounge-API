@@ -7,6 +7,7 @@ using Lounge.Web.Data;
 using Microsoft.AspNetCore.Authorization;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Utils;
+using System.Linq;
 
 namespace Lounge.Web.Controllers
 {
@@ -49,10 +50,8 @@ namespace Lounge.Web.Controllers
         public async Task<ActionResult<PlayerDetailsViewModel>> Details(string name)
         {
             var player = await _context.Players
-                .Include(p => p.Penalties)
-                .Include(p => p.Bonuses)
-                .Include(p => p.TableScores)
-                    .ThenInclude(s => s.Table)
+                .AsNoTracking()
+                .SelectPropertiesForPlayerDetails()
                 .FirstOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
 
             if (player is null)
@@ -161,6 +160,17 @@ namespace Lounge.Web.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpGet("list")]
+        public async Task<PlayerListViewModel> Players(int? minMmr, int? maxMmr)
+        {
+            var players = await _context.Players
+                .Where(p => (minMmr == null || (p.Mmr != null && p.Mmr >= minMmr)) && (maxMmr == null || (p.Mmr != null && p.Mmr <= maxMmr)))
+                .Select(p => new PlayerListViewModel.Player(p.Name, p.MKCId, p.Mmr))
+                .ToListAsync();
+
+            return new PlayerListViewModel { Players = players };
         }
 
         private Task<Player> GetPlayerByNameAsync(string name) =>

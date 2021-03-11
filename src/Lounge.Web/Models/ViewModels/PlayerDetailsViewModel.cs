@@ -37,13 +37,15 @@ namespace Lounge.Web.Models.ViewModels
 
         public class MmrChange
         {
-            public MmrChange(int? changeId, int newMmr, int mmrDelta, MmrChangeReason reason, DateTime time)
+            public MmrChange(int? changeId, int newMmr, int mmrDelta, MmrChangeReason reason, DateTime time, int? score = null, IReadOnlyList<int>? partnerScores = null)
             {
                 ChangeId = changeId;
                 NewMmr = newMmr;
                 MmrDelta = mmrDelta;
                 Reason = reason;
                 Time = time;
+                Score = score;
+                PartnerScores = partnerScores;
             }
 
             public int? ChangeId { get; set; }
@@ -58,6 +60,8 @@ namespace Lounge.Web.Models.ViewModels
             public MmrChangeReason Reason { get; set; }
 
             public DateTime Time { get; set; }
+            public int? Score { get; set; }
+            public IReadOnlyList<int>? PartnerScores { get; set; }
         }
 
         public enum MmrChangeReason
@@ -65,6 +69,7 @@ namespace Lounge.Web.Models.ViewModels
             Placement,
             Table,
             Penalty,
+            Strike,
             Bonus,
 
             [Display(Name = "Deleted Table")]
@@ -72,6 +77,9 @@ namespace Lounge.Web.Models.ViewModels
 
             [Display(Name = "Deleted Penalty")]
             PenaltyDelete,
+
+            [Display(Name = "Deleted Strike")]
+            StrikeDelete,
 
             [Display(Name = "Deleted Bonus")]
             BonusDelete

@@ -66,7 +66,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm)
+        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, bool squadQueue = false)
         {
             if (vm.Scores.Count != 12)
                 return BadRequest("Must supply 12 scores");
@@ -172,7 +172,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("setTableMessageId")]
-        public async Task<IActionResult> SetTableMessageId(int tableId, int tableMessageId)
+        public async Task<IActionResult> SetTableMessageId(int tableId, string tableMessageId)
         {
             var table = await _context.Tables.FirstOrDefaultAsync(t => t.Id == tableId);
 
@@ -187,7 +187,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("setUpdateMessageId")]
-        public async Task<IActionResult> SetUpdateMessageId(int tableId, int updateMessageId)
+        public async Task<IActionResult> SetUpdateMessageId(int tableId, string updateMessageId)
         {
             var table = await _context.Tables.FirstOrDefaultAsync(t => t.Id == tableId);
 
@@ -224,9 +224,11 @@ namespace Lounge.Web.Controllers
             if (unplacedPlayers.Any())
                 return BadRequest($"The following players have not been placed yet: {string.Join(", ", unplacedPlayers)}");
 
+            double sqMultiplier = TableUtils.GetSquadQueueMultiplier(table);
+
             var scores = new (string Player, int Score, int CurrentMmr, double Multiplier)[numTeams][];
             for (int i = 0; i < numTeams; i++)
-                scores[i] = table.Scores.Where(score => score.Team == i).Select(s => (s.Player.Name, s.Score, s.Player.Mmr!.Value, s.Multiplier)).ToArray();
+                scores[i] = table.Scores.Where(score => score.Team == i).Select(s => (s.Player.Name, s.Score, s.Player.Mmr!.Value, sqMultiplier * s.Multiplier)).ToArray();
 
             var mmrDeltas = TableUtils.GetMMRDeltas(scores);
             foreach (var score in table.Scores)

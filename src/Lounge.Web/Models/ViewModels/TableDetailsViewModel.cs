@@ -6,7 +6,7 @@ namespace Lounge.Web.Models.ViewModels
 {
     public class TableDetailsViewModel
     {
-        public TableDetailsViewModel(int id, DateTime createdOn, DateTime? verifiedOn, DateTime? deletedOn, int numTeams, string url, string tier, List<Team> teams, int? tableMessageId, int? updateMessageId)
+        public TableDetailsViewModel(int id, DateTime createdOn, DateTime? verifiedOn, DateTime? deletedOn, int numTeams, string url, string tier, List<Team> teams, string? tableMessageId, string? updateMessageId)
         {
             Id = id;
             CreatedOn = createdOn;
@@ -51,9 +51,9 @@ namespace Lounge.Web.Models.ViewModels
 
         public List<Team> Teams { get; set; }
 
-        public int? TableMessageId { get; set; }
+        public string? TableMessageId { get; set; }
 
-        public int? UpdateMessageId { get; set; }
+        public string? UpdateMessageId { get; set; }
 
         public class Team
         {

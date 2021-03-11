@@ -1,5 +1,6 @@
 ﻿using Lounge.Web.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Lounge.Web.Data
 {
@@ -47,6 +48,29 @@ namespace Lounge.Web.Data
             modelBuilder.Entity<PlayerStat>()
                 .HasNoKey()
                 .ToView("View_PlayerStats");
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime))
+                    {
+                        modelBuilder.Entity(entityType.ClrType)
+                         .Property<DateTime>(property.Name)
+                         .HasConversion(
+                          v => v.ToUniversalTime(),
+                          v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+                    }
+                    else if (property.ClrType == typeof(DateTime?))
+                    {
+                        modelBuilder.Entity(entityType.ClrType)
+                         .Property<DateTime?>(property.Name)
+                         .HasConversion(
+                          v => v.HasValue ? v.Value.ToUniversalTime() : v,
+                          v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v);
+                    }
+                }
+            }
         }
     }
 }

@@ -63,7 +63,9 @@
                 }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => change.Time)
+                <span class="utc-to-local" data-time="@change.Time.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
+                    @Html.DisplayFor(modelItem => change.Time)
+                </span>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => change.MmrDelta)

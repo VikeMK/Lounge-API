@@ -1,4 +1,5 @@
 ﻿using Lounge.Web.Data;
+using Lounge.Web.Models;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -89,10 +90,7 @@ namespace Lounge.Web.Controllers
         {
             var player = await _context.Players
                 .AsNoTracking()
-                .Include(p => p.Penalties)
-                .Include(p => p.Bonuses)
-                .Include(p => p.TableScores)
-                    .ThenInclude(s => s.Table)
+                .SelectPropertiesForPlayerDetails()
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (player is null)

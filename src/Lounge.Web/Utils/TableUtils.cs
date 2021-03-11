@@ -158,6 +158,8 @@ namespace Lounge.Web.Utils
         {
             var teams = new List<TableDetailsViewModel.Team>();
 
+            var sqMultiplier = GetSquadQueueMultiplier(table);
+
             int rank = 1;
             int prevTotalScore = 0;
             int prevRank = 1;
@@ -172,7 +174,7 @@ namespace Lounge.Web.Utils
                 {
                     scores.Add(new TableDetailsViewModel.TableScore(
                         score.Score,
-                        score.Multiplier,
+                        sqMultiplier * score.Multiplier,
                         score.PrevMmr,
                         score.NewMmr,
                         score.PlayerId,
@@ -200,6 +202,11 @@ namespace Lounge.Web.Utils
                 teams: teams,
                 tableMessageId: table.TableMessageId,
                 updateMessageId: table.UpdateMessageId);
+        }
+
+        public static double GetSquadQueueMultiplier(Table table)
+        {
+            return string.Equals(table.Tier, "SQ", StringComparison.OrdinalIgnoreCase) ? 0.75 : 1;
         }
     }
 }

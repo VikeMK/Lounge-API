@@ -1,6 +1,7 @@
 ﻿using Lounge.Web.Models.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace Lounge.Web.Models.ViewModels
 {

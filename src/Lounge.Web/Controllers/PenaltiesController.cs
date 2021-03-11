@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Lounge.Web.Data;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using Lounge.Web.Utils;
+using Lounge.Web.Models.ViewModels;
 
 namespace Lounge.Web.Controllers
 {
@@ -24,34 +24,39 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Penalty>> GetPenalty(int id)
+        public async Task<ActionResult<PenaltyViewModel>> GetPenalty(int id)
         {
-            var penalty = await _context.Penalties.FindAsync(id);
+            var penalty = await _context.Penalties.Include(p => p.Player).FirstOrDefaultAsync(p => p.Id == id);
             if (penalty is null)
                 return NotFound();
 
-            return penalty;
+            return PenaltyUtils.GetPenaltyDetails(penalty);
         }
 
         [HttpGet("list")]
-        public async Task<ActionResult<List<Penalty>>> GetPenalties(string name)
+        public async Task<ActionResult<List<PenaltyViewModel>>> GetPenalties(string name, bool? isStrike = null, DateTime? from = null)
         {
             var player = await GetPlayerByNameAsync(name);
             if (player is null)
                 return NotFound();
 
-            var penalties = new List<Penalty>();
+            var penalties = new List<PenaltyViewModel>();
             foreach (var penalty in player.Penalties)
             {
-                penalty.Player = null!;
-                penalties.Add(penalty);
+                if (isStrike is not null && penalty.IsStrike != isStrike)
+                    continue;
+
+                if (from is not null && penalty.AwardedOn < from)
+                    continue;
+
+                penalties.Add(PenaltyUtils.GetPenaltyDetails(penalty));
             }
 
             return penalties;
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<Penalty>> Penalise(string name, int amount, bool isStrike)
+        public async Task<ActionResult<PenaltyViewModel>> Penalise(string name, int amount, bool isStrike)
         {
             var player = await GetPlayerByNameAsync(name);
             if (player is null)
@@ -82,9 +87,7 @@ namespace Lounge.Web.Controllers
             player.Penalties.Add(penalty);
             await _context.SaveChangesAsync();
 
-            penalty.Player = null!;
-
-            return CreatedAtAction(nameof(GetPenalty), new { id = penalty.Id }, penalty);
+            return CreatedAtAction(nameof(GetPenalty), new { id = penalty.Id }, PenaltyUtils.GetPenaltyDetails(penalty));
         }
 
         [HttpDelete]

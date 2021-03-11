@@ -10,13 +10,22 @@
             @Html.DisplayNameFor(model => model.CreatedOn)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedOn)
+            <span class="utc-to-local" data-time="@Model.CreatedOn.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
+                @Html.DisplayFor(model => model.CreatedOn)
+            </span>
         </dd>
+
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.VerifiedOn)
         </dt>
+        @{
+            var isVerified = Model.VerifiedOn != null;
+            var verifiedClass = isVerified ? "utc-to-local" : "";
+        }
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.VerifiedOn)
+            <span class="@verifiedClass" data-time="@Model.VerifiedOn?.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
+                @Html.DisplayFor(model => model.VerifiedOn)
+            </span>
         </dd>
         @if (Model.DeletedOn is not null)
         {
@@ -24,7 +33,9 @@
                 @Html.DisplayNameFor(model => model.DeletedOn)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.DeletedOn)
+                <span class="utc-to-local" data-time="@Model.DeletedOn.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
+                    @Html.DisplayFor(model => model.DeletedOn)
+                </span>
             </dd>
         }
         <dt class="col-sm-2">
