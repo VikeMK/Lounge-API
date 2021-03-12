@@ -34,12 +34,13 @@ namespace Lounge.Web.Utils
                     {
                         VerifiedOn = t.Table.VerifiedOn,
                         DeletedOn = t.Table.DeletedOn,
+                        NumTeams = t.Table.NumTeams,
                         Scores = t.Table.Scores.Select(s => new TableScore { Score = s.Score, Team = s.Team, PlayerId = s.PlayerId }).ToList()
                     }
                 }).ToList(),
             });
 
-        public static PlayerDetailsViewModel GetPlayerDetails(Player player)
+        public static PlayerDetailsViewModel GetPlayerDetails(Player player, PlayerStat playerStat)
         {
             var mmrChanges = new List<PlayerDetailsViewModel.MmrChange>();
             if (player.InitialMmr is not null)
@@ -60,6 +61,15 @@ namespace Lounge.Web.Utils
                 var newMmr = tableScore.NewMmr!.Value;
                 var delta = newMmr - tableScore.PrevMmr!.Value;
 
+                int numTeams = tableScore.Table.NumTeams;
+                int[] teamTotals = new int[tableScore.Table.NumTeams];
+                foreach (var score in tableScore.Table.Scores)
+                    teamTotals[score.Team] += score.Score;
+
+                int playerTeamTotal = teamTotals[tableScore.Team];
+                Array.Sort(teamTotals);
+                var rank = numTeams - Array.LastIndexOf(teamTotals, playerTeamTotal);
+
                 mmrChanges.Add(new PlayerDetailsViewModel.MmrChange(
                     changeId: tableScore.TableId,
                     newMmr: newMmr,
@@ -70,7 +80,8 @@ namespace Lounge.Web.Utils
                     partnerScores: tableScore.Table.Scores
                         .Where(s => s.Team == tableScore.Team && s.PlayerId != player.Id)
                         .Select(s => s.Score)
-                        .ToList())) ;
+                        .ToList(),
+                    rank: rank)) ;
 
                 if (tableScore.Table.DeletedOn is not null)
                 {
@@ -146,13 +157,23 @@ namespace Lounge.Web.Utils
             // sort descending
             mmrChanges.Reverse();
 
+            decimal? winRate = playerStat.EventsPlayed == 0 ? null : playerStat.Wins / playerStat.EventsPlayed;
+
             var vm = new PlayerDetailsViewModel(
                 playerId: player.Id,
                 name: player.Name,
                 mkcId: player.MKCId,
                 mmr: player.Mmr,
                 maxMmr: player.MaxMmr,
-                mmrChanges: mmrChanges);
+                overallRank: playerStat.Rank,
+                mmrChanges: mmrChanges,
+                eventsPlayed: playerStat.EventsPlayed,
+                winRate: winRate,
+                winsLastTen: playerStat.LastTenWins,
+                lossesLastTen: playerStat.LastTenLosses,
+                gainLossLastTen: playerStat.LastTenGainLoss,
+                largestGain: playerStat.LargestGain < 0 ? null : playerStat.LargestGain,
+                largestLoss: playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss);
 
             return vm;
         }

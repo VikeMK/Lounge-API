@@ -96,7 +96,9 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            return View(PlayerUtils.GetPlayerDetails(player));
+            var playerStat = await _context.PlayerStats.FirstOrDefaultAsync(p => p.Id == id);
+
+            return View(PlayerUtils.GetPlayerDetails(player, playerStat));
         }
 
         [Route("TableDetails/{id}")]

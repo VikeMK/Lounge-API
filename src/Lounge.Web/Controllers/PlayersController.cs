@@ -57,7 +57,9 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            return PlayerUtils.GetPlayerDetails(player);
+            var playerStat = await _context.PlayerStats.FirstOrDefaultAsync(p => p.Id == player.Id);
+
+            return PlayerUtils.GetPlayerDetails(player, playerStat);
         }
 
         [HttpPost("create")]

@@ -66,6 +66,7 @@ namespace Lounge.Web
             {
                 app.UseDeveloperExceptionPage();
                 app.UseMigrationsEndPoint();
+                app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Lounge_API v1"));
             }
             else
             {
@@ -74,7 +75,6 @@ namespace Lounge.Web
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Lounge_API v1"));
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

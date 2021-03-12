@@ -6,7 +6,7 @@ namespace Lounge.Web.Models.ViewModels
 {
     public class PlayerDetailsViewModel
     {
-        public PlayerDetailsViewModel(int playerId, string name, int mkcId, int? mmr, int? maxMmr, List<MmrChange> mmrChanges)
+        public PlayerDetailsViewModel(int playerId, string name, int mkcId, int? mmr, int? maxMmr, int overallRank, List<MmrChange> mmrChanges, int eventsPlayed, decimal? winRate, int winsLastTen, int lossesLastTen, int? gainLossLastTen, int? largestGain, int? largestLoss)
         {
             PlayerId = playerId;
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -14,6 +14,14 @@ namespace Lounge.Web.Models.ViewModels
             Mmr = mmr;
             MaxMmr = maxMmr;
             MmrChanges = mmrChanges ?? throw new ArgumentNullException(nameof(mmrChanges));
+            OverallRank = overallRank;
+            EventsPlayed = eventsPlayed;
+            WinRate = winRate;
+            WinsLastTen = winsLastTen;
+            LossesLastTen = lossesLastTen;
+            GainLossLastTen = gainLossLastTen;
+            LargestGain = largestGain;
+            LargestLoss = largestLoss;
         }
 
         public int PlayerId { get; set; }
@@ -30,6 +38,22 @@ namespace Lounge.Web.Models.ViewModels
         [DisplayFormat(NullDisplayText = "Placement")]
         public int? MaxMmr { get; set; }
 
+        public int? OverallRank { get; set; }
+
+        public int EventsPlayed { get; set; }
+
+        public decimal? WinRate { get; set; }
+
+        public int WinsLastTen { get; set; }
+
+        public int LossesLastTen { get; set; }
+
+        public int? GainLossLastTen { get; set; }
+
+        public int? LargestGain { get; set; }
+
+        public int? LargestLoss { get; set; }
+
         public List<MmrChange> MmrChanges { get; set; }
 
         [Display(Name = "Forum Link")]
@@ -37,7 +61,7 @@ namespace Lounge.Web.Models.ViewModels
 
         public class MmrChange
         {
-            public MmrChange(int? changeId, int newMmr, int mmrDelta, MmrChangeReason reason, DateTime time, int? score = null, IReadOnlyList<int>? partnerScores = null)
+            public MmrChange(int? changeId, int newMmr, int mmrDelta, MmrChangeReason reason, DateTime time, int? score = null, IReadOnlyList<int>? partnerScores = null, int? rank = null)
             {
                 ChangeId = changeId;
                 NewMmr = newMmr;
@@ -46,6 +70,7 @@ namespace Lounge.Web.Models.ViewModels
                 Time = time;
                 Score = score;
                 PartnerScores = partnerScores;
+                Rank = rank;
             }
 
             public int? ChangeId { get; set; }
@@ -62,6 +87,7 @@ namespace Lounge.Web.Models.ViewModels
             public DateTime Time { get; set; }
             public int? Score { get; set; }
             public IReadOnlyList<int>? PartnerScores { get; set; }
+            public int? Rank { get; set; }
         }
 
         public enum MmrChangeReason

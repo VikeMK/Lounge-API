@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Lounge.Web.Models
+﻿namespace Lounge.Web.Models
 {
     public class PlayerStat
     {
