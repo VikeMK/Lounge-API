@@ -48,7 +48,7 @@ namespace Lounge.Web.Controllers
                 .ToListAsync();
 
             var playerCount = await _context.Players.CountAsync();
-            var maxPageNum = (int)Math.Ceiling(playerCount / (decimal)PageSize);
+            var maxPageNum = Math.Max((int)Math.Ceiling(playerCount / (decimal)PageSize), 1);
             page = Math.Clamp(page, 1, maxPageNum);
 
             var playerViewModels = new List<LeaderboardViewModel.Player>();

@@ -9,25 +9,59 @@
 <hr />
 
 <div>
-    <dl>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Mmr)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Mmr)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.MaxMmr)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.MaxMmr)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ForumLink)
-        </dt>
-        <dd class="col-sm-10">
-            <a href="@Model.ForumLink">Link</a>
-        </dd>
+    <dl class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.OverallRank)</dt>
+            <dd>@Html.DisplayFor(model => model.OverallRank)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.Mmr)</dt>
+            <dd>@Html.DisplayFor(model => model.Mmr)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.MaxMmr)</dt>
+            <dd>@Html.DisplayFor(model => model.MaxMmr)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.WinRate)</dt>
+            <dd>@Html.DisplayFor(model => model.WinRate)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.WinLossLastTen)</dt>
+            <dd>@Html.DisplayFor(model => model.WinLossLastTen)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.GainLossLastTen)</dt>
+            <dd>@Html.DisplayFor(model => model.GainLossLastTen)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.EventsPlayed)</dt>
+            <dd>@Html.DisplayFor(model => model.EventsPlayed)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.LargestGain)</dt>
+            <dd>@Html.DisplayFor(model => model.LargestGain)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.LargestLoss)</dt>
+            <dd>@Html.DisplayFor(model => model.LargestLoss)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.AverageScore)</dt>
+            <dd>@Html.DisplayFor(model => model.AverageScore)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.AverageLastTen)</dt>
+            <dd>@Html.DisplayFor(model => model.AverageLastTen)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.PartnerAverage)</dt>
+            <dd>@Html.DisplayFor(model => model.PartnerAverage)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.ForumLink)</dt>
+            <dd><a href="@Model.ForumLink">Link</a></dd>
+        </div>
     </dl>
     <br />
     @if (Model.MmrChanges.Count > 0)

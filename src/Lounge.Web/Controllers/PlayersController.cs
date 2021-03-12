@@ -24,7 +24,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Player>> GetPlayer(string name, int? mkcId)
+        public async Task<ActionResult<Player>> GetPlayer(string? name, int? mkcId)
         {
             Player player;
             if (name is not null)
@@ -103,7 +103,15 @@ namespace Lounge.Web.Controllers
                 return NotFound();
 
             if (player.Mmr is not null)
-                return BadRequest("Player already has been placed.");
+            {
+                var eventsPlayed = await _context.Players
+                    .Where(p => p.Id == player.Id)
+                    .Select(t => t.TableScores.Count())
+                    .FirstOrDefaultAsync();
+
+                if (eventsPlayed > 0)
+                    return BadRequest("Player already has been placed and has played a match.");
+            }
 
             player.PlacedOn = DateTime.UtcNow;
             player.InitialMmr = mmr;

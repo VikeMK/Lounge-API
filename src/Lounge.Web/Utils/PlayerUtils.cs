@@ -53,6 +53,9 @@ namespace Lounge.Web.Utils
                     time: player.PlacedOn!.Value));
             }
 
+            var allPartnerScores = new List<int>();
+            var allScores = new List<int>();
+
             foreach (var tableScore in player.TableScores)
             {
                 if (tableScore.Table.VerifiedOn is null)
@@ -70,6 +73,11 @@ namespace Lounge.Web.Utils
                 Array.Sort(teamTotals);
                 var rank = numTeams - Array.LastIndexOf(teamTotals, playerTeamTotal);
 
+                var partnerScores = tableScore.Table.Scores
+                    .Where(s => s.Team == tableScore.Team && s.PlayerId != player.Id)
+                    .Select(s => s.Score)
+                    .ToList();
+
                 mmrChanges.Add(new PlayerDetailsViewModel.MmrChange(
                     changeId: tableScore.TableId,
                     newMmr: newMmr,
@@ -77,11 +85,8 @@ namespace Lounge.Web.Utils
                     reason: PlayerDetailsViewModel.MmrChangeReason.Table,
                     time: tableScore.Table.VerifiedOn!.Value,
                     score: tableScore.Score,
-                    partnerScores: tableScore.Table.Scores
-                        .Where(s => s.Team == tableScore.Team && s.PlayerId != player.Id)
-                        .Select(s => s.Score)
-                        .ToList(),
-                    rank: rank)) ;
+                    partnerScores: partnerScores,
+                    rank: rank));
 
                 if (tableScore.Table.DeletedOn is not null)
                 {
@@ -91,6 +96,11 @@ namespace Lounge.Web.Utils
                         mmrDelta: -delta,
                         reason: PlayerDetailsViewModel.MmrChangeReason.TableDelete,
                         time: tableScore.Table.DeletedOn!.Value));
+                }
+                else
+                {
+                    allPartnerScores.AddRange(partnerScores);
+                    allScores.Add(tableScore.Score);
                 }
             }
 
@@ -173,7 +183,10 @@ namespace Lounge.Web.Utils
                 lossesLastTen: playerStat.LastTenLosses,
                 gainLossLastTen: playerStat.LastTenGainLoss,
                 largestGain: playerStat.LargestGain < 0 ? null : playerStat.LargestGain,
-                largestLoss: playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss);
+                largestLoss: playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss,
+                averageScore: allScores.Count == 0 ? null : allScores.Average(),
+                averageLastTen: allScores.Count == 0 ? null : allScores.TakeLast(10).Average(),
+                partnerAverage: allPartnerScores.Count == 0 ? null : allPartnerScores.Average());
 
             return vm;
         }

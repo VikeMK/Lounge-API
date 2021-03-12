@@ -6,7 +6,7 @@ namespace Lounge.Web.Models.ViewModels
 {
     public class PlayerDetailsViewModel
     {
-        public PlayerDetailsViewModel(int playerId, string name, int mkcId, int? mmr, int? maxMmr, int overallRank, List<MmrChange> mmrChanges, int eventsPlayed, decimal? winRate, int winsLastTen, int lossesLastTen, int? gainLossLastTen, int? largestGain, int? largestLoss)
+        public PlayerDetailsViewModel(int playerId, string name, int mkcId, int? mmr, int? maxMmr, int overallRank, List<MmrChange> mmrChanges, int eventsPlayed, decimal? winRate, int winsLastTen, int lossesLastTen, int? gainLossLastTen, int? largestGain, int? largestLoss, double? averageScore, double? averageLastTen, double? partnerAverage)
         {
             PlayerId = playerId;
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -22,6 +22,9 @@ namespace Lounge.Web.Models.ViewModels
             GainLossLastTen = gainLossLastTen;
             LargestGain = largestGain;
             LargestLoss = largestLoss;
+            AverageScore = averageScore;
+            AverageLastTen = averageLastTen;
+            PartnerAverage = partnerAverage;
         }
 
         public int PlayerId { get; set; }
@@ -35,24 +38,50 @@ namespace Lounge.Web.Models.ViewModels
         public int? Mmr { get; set; }
 
         [Display(Name = "Peak MMR")]
-        [DisplayFormat(NullDisplayText = "Placement")]
+        [DisplayFormat(NullDisplayText = "N/A")]
         public int? MaxMmr { get; set; }
 
+        [Display(Name = "Rank")]
+        [DisplayFormat(NullDisplayText = "-")]
         public int? OverallRank { get; set; }
 
+        [Display(Name = "Events Played")]
         public int EventsPlayed { get; set; }
 
+        [Display(Name = "Win Rate")]
+        [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:P1}")]
         public decimal? WinRate { get; set; }
 
         public int WinsLastTen { get; set; }
 
         public int LossesLastTen { get; set; }
 
+        [Display(Name = "Win - Loss (Last 10)")]
+        public string WinLossLastTen => $"{WinsLastTen} - {LossesLastTen}";
+
+        [Display(Name = "Gain/Loss (Last 10)")]
+        [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:+#;-#;0}")]
         public int? GainLossLastTen { get; set; }
 
+        [Display(Name = "Largest Gain")]
+        [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:+#;-#;0}")]
         public int? LargestGain { get; set; }
 
+        [Display(Name = "Largest Loss")]
+        [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:+#;-#;0}")]
         public int? LargestLoss { get; set; }
+
+        [Display(Name = "Average Score")]
+        [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+        public double? AverageScore { get; set; }
+
+        [Display(Name = "Average Score (Last 10)")]
+        [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+        public double? AverageLastTen { get; set; }
+
+        [Display(Name = "Partner Average Score")]
+        [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+        public double? PartnerAverage { get; set; }
 
         public List<MmrChange> MmrChanges { get; set; }
 
