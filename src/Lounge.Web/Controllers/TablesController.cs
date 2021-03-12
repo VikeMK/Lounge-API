@@ -28,9 +28,8 @@ namespace Lounge.Web.Controllers
         public async Task<ActionResult<TableDetailsViewModel>> GetTable(int tableId)
         {
             var table = await _context.Tables
-                .Include(t => t.Scores)
-                .ThenInclude(s => s.Player)
                 .AsNoTracking()
+                .SelectPropertiesForTableDetails()
                 .SingleOrDefaultAsync(t => t.Id == tableId);
 
             if (table is null)
@@ -43,9 +42,8 @@ namespace Lounge.Web.Controllers
         public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to)
         {
             var tables = await _context.Tables
-                .Include(t => t.Scores)
-                .ThenInclude(s => s.Player)
                 .AsNoTracking()
+                .SelectPropertiesForTableDetails()
                 .Where(t => t.CreatedOn >= from && (to == null || t.CreatedOn <= to))
                 .ToListAsync();
 
@@ -56,9 +54,8 @@ namespace Lounge.Web.Controllers
         public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables()
         {
             var tables = await _context.Tables
-                .Include(t => t.Scores)
-                .ThenInclude(s => s.Player)
                 .AsNoTracking()
+                .SelectPropertiesForTableDetails()
                 .Where(t => t.VerifiedOn == null)
                 .ToListAsync();
 

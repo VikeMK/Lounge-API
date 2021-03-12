@@ -104,8 +104,7 @@ namespace Lounge.Web.Controllers
         {
             var table = await _context.Tables
                 .AsNoTracking()
-                .Include(t => t.Scores)
-                .ThenInclude(s => s.Player)
+                .SelectPropertiesForTableDetails()
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (table is null)

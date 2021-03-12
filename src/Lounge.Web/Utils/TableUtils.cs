@@ -154,6 +154,29 @@ namespace Lounge.Web.Utils
             return placements;
         }
 
+        public static IQueryable<Table> SelectPropertiesForTableDetails(this IQueryable<Table> tables) =>
+            tables.Select(t => new Table
+            {
+                Id = t.Id,
+                CreatedOn = t.CreatedOn,
+                DeletedOn = t.DeletedOn,
+                NumTeams = t.NumTeams,
+                Tier = t.Tier,
+                TableMessageId = t.TableMessageId,
+                UpdateMessageId = t.UpdateMessageId,
+                VerifiedOn = t.VerifiedOn,
+                Scores = t.Scores.Select(s => new TableScore
+                {
+                    Score = s.Score,
+                    Multiplier = s.Multiplier,
+                    NewMmr = s.NewMmr,
+                    PrevMmr = s.PrevMmr,
+                    PlayerId = s.PlayerId,
+                    Team = s.Team,
+                    Player = new Player { Name = s.Player.Name },
+                }).ToList(),
+            });
+
         public static TableDetailsViewModel GetTableDetails(Table table)
         {
             var teams = new List<TableDetailsViewModel.Team>();
