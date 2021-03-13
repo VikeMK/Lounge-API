@@ -24,6 +24,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<Player>> GetPlayer(string? name, int? mkcId)
         {
             Player player;
@@ -47,6 +48,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet("details")]
+        [AllowAnonymous]
         public async Task<ActionResult<PlayerDetailsViewModel>> Details(string name)
         {
             var player = await _context.Players
@@ -60,6 +62,18 @@ namespace Lounge.Web.Controllers
             var playerStat = await _context.PlayerStats.FirstOrDefaultAsync(p => p.Id == player.Id);
 
             return PlayerUtils.GetPlayerDetails(player, playerStat);
+        }
+
+        [HttpGet("list")]
+        [AllowAnonymous]
+        public async Task<PlayerListViewModel> Players(int? minMmr, int? maxMmr)
+        {
+            var players = await _context.Players
+                .Where(p => (minMmr == null || (p.Mmr != null && p.Mmr >= minMmr)) && (maxMmr == null || (p.Mmr != null && p.Mmr <= maxMmr)))
+                .Select(p => new PlayerListViewModel.Player(p.Name, p.MKCId, p.Mmr))
+                .ToListAsync();
+
+            return new PlayerListViewModel { Players = players };
         }
 
         [HttpPost("create")]
@@ -170,17 +184,6 @@ namespace Lounge.Web.Controllers
             }
 
             return NoContent();
-        }
-
-        [HttpGet("list")]
-        public async Task<PlayerListViewModel> Players(int? minMmr, int? maxMmr)
-        {
-            var players = await _context.Players
-                .Where(p => (minMmr == null || (p.Mmr != null && p.Mmr >= minMmr)) && (maxMmr == null || (p.Mmr != null && p.Mmr <= maxMmr)))
-                .Select(p => new PlayerListViewModel.Player(p.Name, p.MKCId, p.Mmr))
-                .ToListAsync();
-
-            return new PlayerListViewModel { Players = players };
         }
 
         private Task<Player> GetPlayerByNameAsync(string name) =>

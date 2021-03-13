@@ -25,6 +25,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<TableDetailsViewModel>> GetTable(int tableId)
         {
             var table = await _context.Tables
@@ -39,6 +40,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet("list")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to)
         {
             var tables = await _context.Tables
@@ -51,6 +53,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet("unverified")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables()
         {
             var tables = await _context.Tables

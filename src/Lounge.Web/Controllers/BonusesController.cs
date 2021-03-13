@@ -23,6 +23,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<Bonus>> GetBonus(int id)
         {
             var bonus = await _context.Bonuses.FindAsync(id);
@@ -33,6 +34,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet("list")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Bonus>>> GetBonuses(string name)
         {
             var player = await GetPlayerByNameAsync(name);

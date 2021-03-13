@@ -24,6 +24,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<PenaltyViewModel>> GetPenalty(int id)
         {
             var penalty = await _context.Penalties.Include(p => p.Player).FirstOrDefaultAsync(p => p.Id == id);
@@ -34,6 +35,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet("list")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<PenaltyViewModel>>> GetPenalties(string name, bool? isStrike = null, DateTime? from = null, bool includeDeleted = false)
         {
             var player = await GetPlayerByNameAsync(name);
