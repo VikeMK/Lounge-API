@@ -13,6 +13,7 @@ namespace Lounge.Web.Models.ViewModels
 
         public string Tier { get; set; }
         public List<PlayerScore> Scores { get; set; }
+        public string? AuthorId { get; set; }
 
         public class PlayerScore
         {

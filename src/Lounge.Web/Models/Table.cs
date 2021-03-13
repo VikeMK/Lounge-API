@@ -15,6 +15,7 @@ namespace Lounge.Web.Models
         public string Tier { get; set; } = default!;
         public string? TableMessageId { get; set; }
         public string? UpdateMessageId { get; set; }
+        public string? AuthorId { get; set; }
 
         public ICollection<TableScore> Scores { get; set; } = default!;
     }

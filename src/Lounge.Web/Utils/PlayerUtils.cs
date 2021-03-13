@@ -167,7 +167,7 @@ namespace Lounge.Web.Utils
             // sort descending
             mmrChanges.Reverse();
 
-            decimal? winRate = playerStat.EventsPlayed == 0 ? null : playerStat.Wins / playerStat.EventsPlayed;
+            decimal? winRate = playerStat.EventsPlayed == 0 ? null : (decimal)playerStat.Wins / playerStat.EventsPlayed;
 
             var vm = new PlayerDetailsViewModel(
                 playerId: player.Id,

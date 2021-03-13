@@ -56,7 +56,7 @@ namespace Lounge.Web.Controllers
             var tables = await _context.Tables
                 .AsNoTracking()
                 .SelectPropertiesForTableDetails()
-                .Where(t => t.VerifiedOn == null)
+                .Where(t => t.VerifiedOn == null && t.DeletedOn == null)
                 .ToListAsync();
 
             return tables.Select(TableUtils.GetTableDetails).ToList();
@@ -124,6 +124,7 @@ namespace Lounge.Web.Controllers
                 Tier = vm.Tier,
                 Scores = tableScores,
                 TableImageData = dataUrl,
+                AuthorId = vm.AuthorId
             };
 
             await _context.Tables.AddAsync(table);
@@ -162,6 +163,72 @@ namespace Lounge.Web.Controllers
                 if (!foundPlayer)
                     return BadRequest($"Player '{name}' is not in table");
             }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("setScores")]
+        public async Task<IActionResult> SetScores(int tableId, [FromBody] Dictionary<string, int> scores)
+        {
+            var table = await _context.Tables
+                .Include(t => t.Scores)
+                .ThenInclude(t => t.Player)
+                .FirstOrDefaultAsync(t => t.Id == tableId);
+
+            if (table is null)
+                return NotFound();
+
+
+            int[]? teamTotals = null;
+            if (table.VerifiedOn is not null)
+            {
+                teamTotals = table.Scores.GroupBy(s => s.Team).OrderBy(g => g.Key).Select(g => g.Sum(s => s.Score)).ToArray();
+            }
+
+            foreach ((string name, int score) in scores)
+            {
+                bool foundPlayer = false;
+                foreach (var tableScore in table.Scores)
+                {
+                    if (PlayerUtils.NormalizeName(name) == tableScore.Player.NormalizedName)
+                    {
+                        foundPlayer = true;
+                        tableScore.Score = score;
+                        break;
+                    }
+                }
+
+                if (!foundPlayer)
+                    return BadRequest($"Player '{name}' is not in table");
+            }
+
+            if (teamTotals is not null)
+            {
+                var newTeamTotals = table.Scores.GroupBy(s => s.Team).OrderBy(g => g.Key).Select(g => g.Sum(s => s.Score)).ToArray();
+
+                if (!teamTotals.SequenceEqual(newTeamTotals))
+                {
+                    return BadRequest("Table has already been verified and these scores would change the MMR differences. Please delete and recreate the table instead.");
+                }
+            }
+
+            int numTeams = table.NumTeams;
+            var newScores = new (string Player, int Score)[numTeams][];
+            for (int i = 0; i < numTeams; i++)
+            {
+                newScores[i] = table.Scores
+                    .Where(score => score.Team == i)
+                    .Select(score => (score.Player.Name, score.Score))
+                    .ToArray();
+            }
+
+            string tableUrl = TableUtils.BuildUrl(table.Tier, newScores);
+            string dataUrl = await TableUtils.GetImageAsBase64UrlAsync(tableUrl);
+
+            table.Url = tableUrl;
+            table.TableImageData = dataUrl;
 
             await _context.SaveChangesAsync();
 
@@ -243,7 +310,7 @@ namespace Lounge.Web.Controllers
                 }
                 else
                 {
-                    var playerTotalMatches = await _context.TableScores.CountAsync(s => s.PlayerId == score.PlayerId && s.Table.VerifiedOn != null);
+                    var playerTotalMatches = await _context.TableScores.CountAsync(s => s.PlayerId == score.PlayerId && s.Table.VerifiedOn != null && s.Table.DeletedOn == null);
                     if (playerTotalMatches >= 4)
                     {
                         score.Player.MaxMmr = newMmr;

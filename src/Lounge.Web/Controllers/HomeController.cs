@@ -37,11 +37,29 @@ namespace Lounge.Web.Controllers
                 return BadRequest("Page must be a number 1 or greater");
             }
 
-            var normalizedFilter = filter == null ? null : PlayerUtils.NormalizeName(filter);
+            int? playerId = null;
+            string? normalizedFilter = null;
+            if (filter != null)
+            {
+                if (filter.StartsWith("mkc="))
+                {
+                    if (int.TryParse(filter![4..], out int mkcId))
+                    {
+                        playerId = await _context.Players.Where(p => p.MKCId == mkcId).Select(p => p.Id).FirstOrDefaultAsync();
+                    }
 
+                    // if no player exists with that MKC ID then we should show nothing so set player ID to -1
+                    playerId ??= -1;
+                }
+                else
+                {
+                    normalizedFilter = PlayerUtils.NormalizeName(filter);
+                }
+            }
+            
             var playerEntities = await _context.PlayerStats
                 .AsNoTracking()
-                .Where(s => filter == null || s.NormalizedName.Contains(normalizedFilter))
+                .Where(s => (normalizedFilter == null || s.NormalizedName.Contains(normalizedFilter)) && (playerId == null || s.Id == playerId))
                 .OrderBy(p => p.Rank)
                 .Skip(PageSize * (page - 1))
                 .Take(PageSize)
@@ -54,7 +72,7 @@ namespace Lounge.Web.Controllers
             var playerViewModels = new List<LeaderboardViewModel.Player>();
             foreach (var p in playerEntities)
             {
-                decimal? winRate = p.EventsPlayed == 0 ? null : p.Wins / p.EventsPlayed;
+                decimal? winRate = p.EventsPlayed == 0 ? null : (decimal)p.Wins / p.EventsPlayed;
 
                 playerViewModels.Add(new LeaderboardViewModel.Player
                 {

@@ -6,7 +6,7 @@ namespace Lounge.Web.Models.ViewModels
 {
     public class TableDetailsViewModel
     {
-        public TableDetailsViewModel(int id, DateTime createdOn, DateTime? verifiedOn, DateTime? deletedOn, int numTeams, string url, string tier, List<Team> teams, string? tableMessageId, string? updateMessageId)
+        public TableDetailsViewModel(int id, DateTime createdOn, DateTime? verifiedOn, DateTime? deletedOn, int numTeams, string url, string tier, List<Team> teams, string? tableMessageId, string? updateMessageId, string? authorId)
         {
             Id = id;
             CreatedOn = createdOn;
@@ -18,6 +18,7 @@ namespace Lounge.Web.Models.ViewModels
             Teams = teams ?? throw new ArgumentNullException(nameof(teams));
             TableMessageId = tableMessageId;
             UpdateMessageId = updateMessageId;
+            AuthorId = authorId;
         }
 
         public int Id { get; set; }
@@ -54,6 +55,8 @@ namespace Lounge.Web.Models.ViewModels
         public string? TableMessageId { get; set; }
 
         public string? UpdateMessageId { get; set; }
+
+        public string? AuthorId { get; set; }
 
         public class Team
         {

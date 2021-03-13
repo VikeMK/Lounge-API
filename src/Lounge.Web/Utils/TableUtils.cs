@@ -165,6 +165,7 @@ namespace Lounge.Web.Utils
                 TableMessageId = t.TableMessageId,
                 UpdateMessageId = t.UpdateMessageId,
                 VerifiedOn = t.VerifiedOn,
+                AuthorId = t.AuthorId,
                 Scores = t.Scores.Select(s => new TableScore
                 {
                     Score = s.Score,
@@ -224,7 +225,8 @@ namespace Lounge.Web.Utils
                 tier: table.Tier,
                 teams: teams,
                 tableMessageId: table.TableMessageId,
-                updateMessageId: table.UpdateMessageId);
+                updateMessageId: table.UpdateMessageId,
+                authorId: table.AuthorId);
         }
 
         public static double GetSquadQueueMultiplier(Table table)

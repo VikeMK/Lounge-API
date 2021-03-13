@@ -29,7 +29,10 @@ OUTER APPLY (
 		MIN(s.NewMmr - s.PrevMmr) AS LargestLoss,
 		MAX(s.NewMmr - s.PrevMmr) AS LargestGain
 	FROM TableScores s
+    JOIN Tables t
+		ON t.Id = s.TableId
 	WHERE s.PlayerId = p.Id
+    AND t.DeletedOn IS NULL
 	AND s.NewMmr IS NOT NULL) AllTime
 OUTER APPLY (
 	SELECT
@@ -42,7 +45,7 @@ OUTER APPLY (
 		FROM TableScores s
 		JOIN Tables t 
 			ON t.Id = s.TableId
-		WHERE s.PlayerId = p.Id AND s.NewMmr IS NOT NULL
+		WHERE s.PlayerId = p.Id AND s.NewMmr IS NOT NULL AND t.DeletedOn IS NULL
 		ORDER BY t.VerifiedOn DESC) d) LastTen");
         }
 

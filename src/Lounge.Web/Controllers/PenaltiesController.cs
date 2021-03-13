@@ -34,7 +34,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpGet("list")]
-        public async Task<ActionResult<List<PenaltyViewModel>>> GetPenalties(string name, bool? isStrike = null, DateTime? from = null)
+        public async Task<ActionResult<List<PenaltyViewModel>>> GetPenalties(string name, bool? isStrike = null, DateTime? from = null, bool includeDeleted = false)
         {
             var player = await GetPlayerByNameAsync(name);
             if (player is null)
@@ -43,6 +43,9 @@ namespace Lounge.Web.Controllers
             var penalties = new List<PenaltyViewModel>();
             foreach (var penalty in player.Penalties)
             {
+                if (!includeDeleted && penalty.DeletedOn is not null)
+                    continue;
+
                 if (isStrike is not null && penalty.IsStrike != isStrike)
                     continue;
 
