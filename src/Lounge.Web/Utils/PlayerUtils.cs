@@ -2,6 +2,7 @@
 using Lounge.Web.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Lounge.Web.Utils
@@ -164,6 +165,42 @@ namespace Lounge.Web.Utils
                 mmr = change.NewMmr;
             }
 
+            if (mmrChanges.Count > 0)
+            {
+                var changesToRemove = new HashSet<int>();
+                var prev = mmrChanges[0];
+                for (int i = 1; i < mmrChanges.Count; i++)
+                {
+                    var cur = mmrChanges[i];
+                    if (prev.ChangeId == cur.ChangeId)
+                    {
+                        switch ((prev.Reason, cur.Reason))
+                        {
+                            case (PlayerDetailsViewModel.MmrChangeReason.Table, PlayerDetailsViewModel.MmrChangeReason.TableDelete):
+                            case (PlayerDetailsViewModel.MmrChangeReason.Penalty, PlayerDetailsViewModel.MmrChangeReason.PenaltyDelete):
+                            case (PlayerDetailsViewModel.MmrChangeReason.Strike, PlayerDetailsViewModel.MmrChangeReason.StrikeDelete):
+                            case (PlayerDetailsViewModel.MmrChangeReason.Bonus, PlayerDetailsViewModel.MmrChangeReason.BonusDelete):
+                                changesToRemove.Add(i - 1);
+                                changesToRemove.Add(i);
+                                break;
+                        }
+                    }
+
+                    prev = cur;
+                }
+
+                if (changesToRemove.Count > 0)
+                {
+                    var newChanges = new List<PlayerDetailsViewModel.MmrChange>();
+                    for (int i = 0; i < mmrChanges.Count; i++)
+                    {
+                        if (!changesToRemove.Contains(i))
+                            newChanges.Add(mmrChanges[i]);
+                    }
+                    mmrChanges = newChanges;
+                }
+            }
+            
             // sort descending
             mmrChanges.Reverse();
 
