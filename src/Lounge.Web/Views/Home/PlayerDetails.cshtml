@@ -15,13 +15,13 @@
             <dt>@Html.DisplayNameFor(model => model.OverallRank)</dt>
             <dd>@Html.DisplayFor(model => model.OverallRank)</dd>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 rank-@Model.Rank">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Html.DisplayNameFor(model => model.Mmr)</dt>
-            <dd>@Html.DisplayFor(model => model.Mmr)</dd>
+            <dd class="rank-@Model.Rank">@Html.DisplayFor(model => model.Mmr)</dd>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 rank-@RankUtils.GetRank(Model.MaxMmr)">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Html.DisplayNameFor(model => model.MaxMmr)</dt>
-            <dd>@Html.DisplayFor(model => model.MaxMmr)</dd>
+            <dd class="rank-@RankUtils.GetRank(Model.MaxMmr)">@Html.DisplayFor(model => model.MaxMmr)</dd>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Html.DisplayNameFor(model => model.WinRate)</dt>
