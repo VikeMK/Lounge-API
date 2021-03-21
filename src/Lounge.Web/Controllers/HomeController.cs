@@ -24,11 +24,13 @@ namespace Lounge.Web.Controllers
             _context = context;
         }
 
+        [ResponseCache(Duration = 180)]
         public IActionResult Index()
         {
             return RedirectToAction(nameof(Leaderboard));
         }
 
+        [ResponseCache(Duration = 180)]
         [Route("Leaderboard")]
         public async Task<IActionResult> Leaderboard(int page = 1, string? filter = null)
         {
@@ -103,6 +105,7 @@ namespace Lounge.Web.Controllers
             });
         }
 
+        [ResponseCache(Duration = 180)]
         [Route("PlayerDetails/{id}")]
         public async Task<IActionResult> PlayerDetails(int id)
         {
@@ -119,6 +122,7 @@ namespace Lounge.Web.Controllers
             return View(PlayerUtils.GetPlayerDetails(player, playerStat));
         }
 
+        [ResponseCache(Duration = 180)]
         [Route("TableDetails/{id}")]
         public async Task<IActionResult> TableDetails(int id)
         {
@@ -133,7 +137,8 @@ namespace Lounge.Web.Controllers
             return View(TableUtils.GetTableDetails(table));
         }
 
-
+        // since table images are expensive, lets let them be cached for 30 minutes
+        [ResponseCache(Duration = 30 * 60)]
         [Route("TableImage/{id}.png")]
         public async Task<IActionResult> TableImage(int id)
         {
