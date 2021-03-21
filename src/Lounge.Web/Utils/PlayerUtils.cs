@@ -200,30 +200,32 @@ namespace Lounge.Web.Utils
                     mmrChanges = newChanges;
                 }
             }
-            
+
             // sort descending
             mmrChanges.Reverse();
 
             decimal? winRate = playerStat.EventsPlayed == 0 ? null : (decimal)playerStat.Wins / playerStat.EventsPlayed;
 
-            var vm = new PlayerDetailsViewModel(
-                playerId: player.Id,
-                name: player.Name,
-                mkcId: player.MKCId,
-                mmr: player.Mmr,
-                maxMmr: player.MaxMmr,
-                overallRank: playerStat.Rank,
-                mmrChanges: mmrChanges,
-                eventsPlayed: playerStat.EventsPlayed,
-                winRate: winRate,
-                winsLastTen: playerStat.LastTenWins,
-                lossesLastTen: playerStat.LastTenLosses,
-                gainLossLastTen: playerStat.LastTenGainLoss,
-                largestGain: playerStat.LargestGain < 0 ? null : playerStat.LargestGain,
-                largestLoss: playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss,
-                averageScore: allScores.Count == 0 ? null : allScores.Average(),
-                averageLastTen: allScores.Count == 0 ? null : allScores.TakeLast(10).Average(),
-                partnerAverage: allPartnerScores.Count == 0 ? null : allPartnerScores.Average());
+            var vm = new PlayerDetailsViewModel
+            {
+                PlayerId = player.Id,
+                Name = player.Name,
+                MkcId = player.MKCId,
+                Mmr = player.Mmr,
+                MaxMmr = player.MaxMmr,
+                OverallRank = playerStat.Rank,
+                MmrChanges = mmrChanges,
+                EventsPlayed = playerStat.EventsPlayed,
+                WinRate = winRate,
+                WinsLastTen = playerStat.LastTenWins,
+                LossesLastTen = playerStat.LastTenLosses,
+                GainLossLastTen = playerStat.LastTenGainLoss,
+                LargestGain = playerStat.LargestGain < 0 ? null : playerStat.LargestGain,
+                LargestLoss = playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss,
+                AverageScore = allScores.Count == 0 ? null : allScores.Average(),
+                AverageLastTen = allScores.Count == 0 ? null : allScores.TakeLast(10).Average(),
+                PartnerAverage = allPartnerScores.Count == 0 ? null : allPartnerScores.Average()
+            };
 
             return vm;
         }
