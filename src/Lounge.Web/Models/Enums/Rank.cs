@@ -1,4 +1,6 @@
-﻿namespace Lounge.Web.Models.Enums
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Lounge.Web.Models.Enums
 {
     public enum Rank
     {
@@ -10,7 +12,11 @@
         Gold,
         Silver,
         Bronze,
+
+        [Display(Name = "Iron 2")]
         Iron2,
+
+        [Display(Name = "Iron 1")]
         Iron1,
         Placement
     }

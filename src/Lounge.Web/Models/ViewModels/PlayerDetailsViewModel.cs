@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lounge.Web.Models.Enums;
+using Lounge.Web.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -6,84 +8,66 @@ namespace Lounge.Web.Models.ViewModels
 {
     public class PlayerDetailsViewModel
     {
-        public PlayerDetailsViewModel(int playerId, string name, int mkcId, int? mmr, int? maxMmr, int overallRank, List<MmrChange> mmrChanges, int eventsPlayed, decimal? winRate, int winsLastTen, int lossesLastTen, int? gainLossLastTen, int? largestGain, int? largestLoss, double? averageScore, double? averageLastTen, double? partnerAverage)
-        {
-            PlayerId = playerId;
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            MkcId = mkcId;
-            Mmr = mmr;
-            MaxMmr = maxMmr;
-            MmrChanges = mmrChanges ?? throw new ArgumentNullException(nameof(mmrChanges));
-            OverallRank = overallRank;
-            EventsPlayed = eventsPlayed;
-            WinRate = winRate;
-            WinsLastTen = winsLastTen;
-            LossesLastTen = lossesLastTen;
-            GainLossLastTen = gainLossLastTen;
-            LargestGain = largestGain;
-            LargestLoss = largestLoss;
-            AverageScore = averageScore;
-            AverageLastTen = averageLastTen;
-            PartnerAverage = partnerAverage;
-        }
+        public int PlayerId { get; init; }
 
-        public int PlayerId { get; set; }
+        public string Name { get; init; }
 
-        public string Name { get; set; }
-
-        public int MkcId { get; set; }
+        public int MkcId { get; init; }
 
         [Display(Name = "MMR")]
         [DisplayFormat(NullDisplayText = "Placement")]
-        public int? Mmr { get; set; }
+        public int? Mmr { get; init; }
 
         [Display(Name = "Peak MMR")]
         [DisplayFormat(NullDisplayText = "N/A")]
-        public int? MaxMmr { get; set; }
+        public int? MaxMmr { get; init; }
 
         [Display(Name = "Rank")]
         [DisplayFormat(NullDisplayText = "-")]
-        public int? OverallRank { get; set; }
+        public int? OverallRank { get; init; }
 
         [Display(Name = "Events Played")]
-        public int EventsPlayed { get; set; }
+        public int EventsPlayed { get; init; }
 
         [Display(Name = "Win Rate")]
         [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:P1}")]
-        public decimal? WinRate { get; set; }
+        public decimal? WinRate { get; init; }
 
-        public int WinsLastTen { get; set; }
+        public int WinsLastTen { get; init; }
 
-        public int LossesLastTen { get; set; }
+        public int LossesLastTen { get; init; }
 
         [Display(Name = "Win - Loss (Last 10)")]
         public string WinLossLastTen => $"{WinsLastTen} - {LossesLastTen}";
 
         [Display(Name = "Gain/Loss (Last 10)")]
         [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:+#;-#;0}")]
-        public int? GainLossLastTen { get; set; }
+        public int? GainLossLastTen { get; init; }
 
         [Display(Name = "Largest Gain")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:+#;-#;0}")]
-        public int? LargestGain { get; set; }
+        public int? LargestGain { get; init; }
 
         [Display(Name = "Largest Loss")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:+#;-#;0}")]
-        public int? LargestLoss { get; set; }
+        public int? LargestLoss { get; init; }
 
         [Display(Name = "Average Score")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
-        public double? AverageScore { get; set; }
+        public double? AverageScore { get; init; }
 
         [Display(Name = "Average Score (Last 10)")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
-        public double? AverageLastTen { get; set; }
+        public double? AverageLastTen { get; init; }
 
         [Display(Name = "Partner Average Score")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
-        public double? PartnerAverage { get; set; }
+        public double? PartnerAverage { get; init; }
 
-        public List<MmrChange> MmrChanges { get; set; }
+        public List<MmrChange> MmrChanges { get; init; }
+
+        [Display(Name = "Rank")]
+        public Rank Rank => RankUtils.GetRank(Mmr);
 
         [Display(Name = "Forum Link")]
         public string ForumLink => $"https://www.mariokartcentral.com/forums/index.php?members/{MkcId}/";

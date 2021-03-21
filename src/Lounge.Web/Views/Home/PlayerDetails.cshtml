@@ -1,11 +1,12 @@
 ﻿@using Lounge.Web.Models.ViewModels
+@using Lounge.Web.Utils
 @model PlayerDetailsViewModel
 
 @{
     ViewData["Title"] = Model.Name;
 }
 
-<h1>@Model.Name</h1>
+<h1>@Model.Name - @Html.DisplayFor(model => model.Rank)</h1>
 <hr />
 
 <div>
@@ -14,11 +15,11 @@
             <dt>@Html.DisplayNameFor(model => model.OverallRank)</dt>
             <dd>@Html.DisplayFor(model => model.OverallRank)</dd>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 rank-@Model.Rank">
             <dt>@Html.DisplayNameFor(model => model.Mmr)</dt>
             <dd>@Html.DisplayFor(model => model.Mmr)</dd>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 rank-@RankUtils.GetRank(Model.MaxMmr)">
             <dt>@Html.DisplayNameFor(model => model.MaxMmr)</dt>
             <dd>@Html.DisplayFor(model => model.MaxMmr)</dd>
         </div>
@@ -104,7 +105,7 @@
             <td>
                 @Html.DisplayFor(modelItem => change.MmrDelta)
             </td>
-            <td>
+            <td class="rank-@RankUtils.GetRank(change.NewMmr)">
                 @Html.DisplayFor(modelItem => change.NewMmr)
             </td>
         </tr>
