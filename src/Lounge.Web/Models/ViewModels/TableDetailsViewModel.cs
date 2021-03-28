@@ -87,7 +87,7 @@ namespace Lounge.Web.Models.ViewModels
             public double Multiplier { get; set; }
 
             [Display(Name = "Multiplier")]
-            public string? MultiplierString => Multiplier == 1 ? null : $"{Multiplier:.2f}x";
+            public string? MultiplierString => Multiplier == 1 ? null : $"{Multiplier:F2}x";
 
             [Display(Name = "Previous MMR")]
             public int? PrevMmr { get; set; }
