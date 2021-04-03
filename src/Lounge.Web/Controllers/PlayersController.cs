@@ -118,9 +118,10 @@ namespace Lounge.Web.Controllers
 
             if (player.Mmr is not null)
             {
+                // only look at events that have been verified and aren't deleted
                 var eventsPlayed = await _context.Players
                     .Where(p => p.Id == player.Id)
-                    .Select(t => t.TableScores.Count())
+                    .Select(t => t.TableScores.Count(s => s.Table.VerifiedOn != null && s.Table.DeletedOn == null))
                     .FirstOrDefaultAsync();
 
                 if (eventsPlayed > 0)
