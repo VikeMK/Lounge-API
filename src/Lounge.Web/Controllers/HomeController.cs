@@ -76,7 +76,7 @@ namespace Lounge.Web.Controllers
                 if (filter != null)
                 {
                     var normalized = PlayerUtils.NormalizeName(filter);
-                    leaderboard = leaderboard.Where(s => s.Stat.NormalizedName.Contains(filter)).ToList();
+                    leaderboard = leaderboard.Where(s => s.Stat.NormalizedName.Contains(normalized)).ToList();
                 }
 
                 playerEntities = leaderboard
