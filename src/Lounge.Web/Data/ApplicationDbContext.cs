@@ -16,7 +16,6 @@ namespace Lounge.Web.Data
         public DbSet<TableScore> TableScores => Set<TableScore>();
         public DbSet<Penalty> Penalties => Set<Penalty>();
         public DbSet<Bonus> Bonuses => Set<Bonus>();
-        public DbSet<PlayerStat> PlayerStats => Set<PlayerStat>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,10 +43,6 @@ namespace Lounge.Web.Data
 
             modelBuilder.Entity<Bonus>()
                 .HasIndex(p => p.AwardedOn);
-
-            modelBuilder.Entity<PlayerStat>()
-                .HasNoKey()
-                .ToView("View_PlayerStats");
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {

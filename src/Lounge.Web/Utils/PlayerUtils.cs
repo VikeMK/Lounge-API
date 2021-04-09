@@ -1,5 +1,6 @@
 ﻿using Lounge.Web.Models;
 using Lounge.Web.Models.ViewModels;
+using Lounge.Web.Stats;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -41,8 +42,9 @@ namespace Lounge.Web.Utils
                 }).ToList(),
             });
 
-        public static PlayerDetailsViewModel GetPlayerDetails(Player player, PlayerStat playerStat)
+        public static PlayerDetailsViewModel GetPlayerDetails(Player player, RankedPlayerStat rankedPlayerStat)
         {
+            (int overallRank, PlayerStat playerStat) = rankedPlayerStat;
             var mmrChanges = new List<PlayerDetailsViewModel.MmrChange>();
             if (player.InitialMmr is not null)
             {
@@ -213,7 +215,7 @@ namespace Lounge.Web.Utils
                 MkcId = player.MKCId,
                 Mmr = player.Mmr,
                 MaxMmr = player.MaxMmr,
-                OverallRank = playerStat.Rank,
+                OverallRank = overallRank,
                 MmrChanges = mmrChanges,
                 EventsPlayed = playerStat.EventsPlayed,
                 WinRate = winRate,

@@ -1,6 +1,6 @@
 ﻿using Lounge.Web.Data;
-using Lounge.Web.Models;
 using Lounge.Web.Models.ViewModels;
+using Lounge.Web.Stats;
 using Lounge.Web.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +17,19 @@ namespace Lounge.Web.Controllers
     public class HomeController : Controller
     {
         private const int PageSize = 100;
-        private readonly ApplicationDbContext _context;
 
-        public HomeController(ApplicationDbContext context)
+        private readonly ApplicationDbContext _context;
+        private readonly IPlayerStatCache _playerStatCache;
+        private readonly IPlayerStatService _playerStatService;
+
+        public HomeController(
+            ApplicationDbContext context,
+            IPlayerStatCache playerStatCache,
+            IPlayerStatService playerStatService)
         {
             _context = context;
+            _playerStatCache = playerStatCache;
+            _playerStatService = playerStatService;
         }
 
         [ResponseCache(Duration = 180)]
@@ -40,58 +48,70 @@ namespace Lounge.Web.Controllers
             }
 
             int? playerId = null;
-            string? normalizedFilter = null;
-            if (filter != null)
+            if (filter != null && filter.StartsWith("mkc="))
             {
-                if (filter.StartsWith("mkc="))
+                if (int.TryParse(filter[4..], out int mkcId))
                 {
-                    if (int.TryParse(filter![4..], out int mkcId))
-                    {
-                        playerId = await _context.Players.Where(p => p.MKCId == mkcId).Select(p => p.Id).FirstOrDefaultAsync();
-                    }
+                    playerId = await _context.Players
+                        .Where(p => p.MKCId == mkcId)
+                        .Select(p => p.Id)
+                        .FirstOrDefaultAsync();
+                }
 
-                    // if no player exists with that MKC ID then we should show nothing so set player ID to -1
-                    playerId ??= -1;
-                }
-                else
-                {
-                    normalizedFilter = PlayerUtils.NormalizeName(filter);
-                }
+                // if no player exists with that MKC ID then we should show nothing so set player ID to -1
+                playerId ??= -1;
             }
-            
-            var playerEntities = await _context.PlayerStats
-                .AsNoTracking()
-                .Where(s => (normalizedFilter == null || s.NormalizedName.Contains(normalizedFilter)) && (playerId == null || s.Id == playerId))
-                .OrderBy(p => p.Rank)
-                .Skip(PageSize * (page - 1))
-                .Take(PageSize)
-                .ToListAsync();
 
-            var playerCount = await _context.Players.CountAsync();
-            var maxPageNum = Math.Max((int)Math.Ceiling(playerCount / (decimal)PageSize), 1);
+            IReadOnlyList<RankedPlayerStat> playerEntities;
+            int totalPlayerCount;
+            if (playerId is int id)
+            {
+                RankedPlayerStat? playerStat = await GetPlayerStatsAsync(id);
+                playerEntities = playerStat == null ? Array.Empty<RankedPlayerStat>() : new[] { playerStat };
+                totalPlayerCount = playerEntities.Count;
+            }
+            else
+            {
+                var leaderboard = _playerStatCache.GetAllStats();
+                if (filter != null)
+                {
+                    var normalized = PlayerUtils.NormalizeName(filter);
+                    leaderboard = leaderboard.Where(s => s.Stat.NormalizedName.Contains(filter)).ToList();
+                }
+
+                playerEntities = leaderboard
+                    .Skip((page - 1) * PageSize)
+                    .Take(PageSize)
+                    .ToList();
+                totalPlayerCount = leaderboard.Count;
+            }
+
+            // clever trick to get number of pages https://stackoverflow.com/a/503201
+            var maxPageNum = (totalPlayerCount - 1) / PageSize + 1;
             page = Math.Clamp(page, 1, maxPageNum);
 
             var playerViewModels = new List<LeaderboardViewModel.Player>();
-            foreach (var p in playerEntities)
+            foreach (var rankedPlayerStat in playerEntities)
             {
-                decimal? winRate = p.EventsPlayed == 0 ? null : (decimal)p.Wins / p.EventsPlayed;
+                var playerStat = rankedPlayerStat.Stat;
+                decimal? winRate = playerStat.EventsPlayed == 0 ? null : (decimal)playerStat.Wins / playerStat.EventsPlayed;
 
                 playerViewModels.Add(new LeaderboardViewModel.Player
                 {
-                    Id = p.Id,
-                    OverallRank = p.EventsPlayed == 0 ? null : p.Rank,
-                    Name = p.Name,
-                    Mmr = p.Mmr,
-                    MaxMmr = p.MaxMmr,
-                    EventsPlayed = p.EventsPlayed,
+                    Id = playerStat.Id,
+                    OverallRank = playerStat.EventsPlayed == 0 ? null : rankedPlayerStat.Rank,
+                    Name = playerStat.Name,
+                    Mmr = playerStat.Mmr,
+                    MaxMmr = playerStat.MaxMmr,
+                    EventsPlayed = playerStat.EventsPlayed,
                     WinRate = winRate,
-                    WinsLastTen = p.LastTenWins,
-                    LossesLastTen = p.LastTenLosses,
-                    GainLossLastTen = p.LastTenGainLoss,
-                    LargestGain = p.LargestGain < 0 ? null : p.LargestGain,
-                    LargestLoss = p.LargestLoss > 0 ? null : p.LargestLoss,
-                    MmrRank = RankUtils.GetRank(p.Mmr),
-                    MaxMmrRank = RankUtils.GetRank(p.MaxMmr)
+                    WinsLastTen = playerStat.LastTenWins,
+                    LossesLastTen = playerStat.LastTenLosses,
+                    GainLossLastTen = playerStat.LastTenGainLoss,
+                    LargestGain = playerStat.LargestGain < 0 ? null : playerStat.LargestGain,
+                    LargestLoss = playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss,
+                    MmrRank = RankUtils.GetRank(playerStat.Mmr),
+                    MaxMmrRank = RankUtils.GetRank(playerStat.MaxMmr)
                 });
             }
 
@@ -117,7 +137,9 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            var playerStat = await _context.PlayerStats.FirstOrDefaultAsync(p => p.Id == id);
+            var playerStat = await GetPlayerStatsAsync(id);
+            if (playerStat is null)
+                return NotFound();
 
             return View(PlayerUtils.GetPlayerDetails(player, playerStat));
         }
@@ -159,5 +181,24 @@ namespace Lounge.Web.Controllers
 
         [Route("/error")]
         public IActionResult Error() => Problem();
+
+        private async Task<RankedPlayerStat?> GetPlayerStatsAsync(int id)
+        {
+            RankedPlayerStat? playerStat = null;
+            if (id != -1)
+            {
+                if (!_playerStatCache.TryGetPlayerStatsById(id, out playerStat))
+                {
+                    var stat = await _playerStatService.GetPlayerStatsByIdAsync(id);
+                    if (stat is not null)
+                    {
+                        _playerStatCache.UpdatePlayerStats(stat);
+                        _playerStatCache.TryGetPlayerStatsById(id, out playerStat);
+                    }
+                }
+            }
+
+            return playerStat;
+        }
     }
 }

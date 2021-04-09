@@ -1,5 +1,6 @@
 using Lounge.Web.Authentication;
 using Lounge.Web.Data;
+using Lounge.Web.Stats;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,6 +59,11 @@ namespace Lounge.Web
 
                 c.CustomSchemaIds(s => s.FullName);
             });
+
+            services.AddSingleton<IPlayerStatCache, PlayerStatsCache>();
+            services.AddTransient<IPlayerStatService, PlayerStatService>();
+
+            services.AddHostedService<PlayerStatCacheWarmingBackgroundService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

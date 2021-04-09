@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Utils;
 using System.Linq;
+using Lounge.Web.Stats;
 
 namespace Lounge.Web.Controllers
 {
@@ -17,10 +18,14 @@ namespace Lounge.Web.Controllers
     public class PlayersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IPlayerStatCache _playerStatCache;
+        private readonly IPlayerStatService _playerStatService;
 
-        public PlayersController(ApplicationDbContext context)
+        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, IPlayerStatService playerStatService)
         {
             _context = context;
+            _playerStatCache = playerStatCache;
+            _playerStatService = playerStatService;
         }
 
         [HttpGet]
@@ -59,7 +64,9 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            var playerStat = await _context.PlayerStats.FirstOrDefaultAsync(p => p.Id == player.Id);
+            var playerStat = await GetPlayerStatsAsync(player.Id);
+            if (playerStat is null)
+                return NotFound();
 
             return PlayerUtils.GetPlayerDetails(player, playerStat);
         }
@@ -192,5 +199,24 @@ namespace Lounge.Web.Controllers
 
         private Task<Player> GetPlayerByMKCIdAsync(int mkcId) =>
             _context.Players.SingleOrDefaultAsync(p => p.MKCId == mkcId);
+
+        private async Task<RankedPlayerStat?> GetPlayerStatsAsync(int id)
+        {
+            RankedPlayerStat? playerStat = null;
+            if (id != -1)
+            {
+                if (!_playerStatCache.TryGetPlayerStatsById(id, out playerStat))
+                {
+                    var stat = await _playerStatService.GetPlayerStatsByIdAsync(id);
+                    if (stat is not null)
+                    {
+                        _playerStatCache.UpdatePlayerStats(stat);
+                        _playerStatCache.TryGetPlayerStatsById(id, out playerStat);
+                    }
+                }
+            }
+
+            return playerStat;
+        }
     }
 }
