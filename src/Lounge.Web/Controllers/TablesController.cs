@@ -325,7 +325,14 @@ namespace Lounge.Web.Controllers
             if (!preview)
             {
                 table.VerifiedOn = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw new Exception("Table update failed because a player's MMR changed during the update. Please try again.");
+                }
             }
 
             var vm = TableUtils.GetTableDetails(table);
