@@ -16,6 +16,7 @@ namespace Lounge.Web.Data
         public DbSet<TableScore> TableScores => Set<TableScore>();
         public DbSet<Penalty> Penalties => Set<Penalty>();
         public DbSet<Bonus> Bonuses => Set<Bonus>();
+        public DbSet<Placement> Placements => Set<Placement>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +27,7 @@ namespace Lounge.Web.Data
             modelBuilder.Entity<TableScore>().ToTable("TableScores");
             modelBuilder.Entity<Penalty>().ToTable("Penalties");
             modelBuilder.Entity<Bonus>().ToTable("Bonuses");
+            modelBuilder.Entity<Placement>().ToTable("Placements");
 
             modelBuilder.Entity<Player>()
                 .HasIndex(p => p.MKCId)
@@ -42,6 +44,9 @@ namespace Lounge.Web.Data
                 .HasIndex(p => p.AwardedOn);
 
             modelBuilder.Entity<Bonus>()
+                .HasIndex(p => p.AwardedOn);
+
+            modelBuilder.Entity<Placement>()
                 .HasIndex(p => p.AwardedOn);
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

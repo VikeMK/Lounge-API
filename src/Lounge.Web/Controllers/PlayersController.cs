@@ -9,6 +9,7 @@ using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Utils;
 using System.Linq;
 using Lounge.Web.Stats;
+using System.Collections.Generic;
 
 namespace Lounge.Web.Controllers
 {
@@ -87,11 +88,15 @@ namespace Lounge.Web.Controllers
         public async Task<ActionResult<Player>> Create(string name, int mkcId, int? mmr)
         {
             Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId };
-            if (mmr is not null)
+            if (mmr is int mmrValue)
             {
-                player.PlacedOn = DateTime.UtcNow;
-                player.InitialMmr = mmr;
-                player.Mmr = mmr;
+                var utcNow = DateTime.UtcNow;
+                player.PlacedOn = utcNow;
+                player.InitialMmr = mmrValue;
+                player.Mmr = mmrValue;
+
+                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = utcNow };
+                player.Placements = new List<Placement> { placement };
             }
 
             _context.Players.Add(player);
@@ -111,6 +116,14 @@ namespace Lounge.Web.Controllers
                     return BadRequest("User with that MKC ID already exists");
 
                 throw;
+            }
+
+            if (player.Placements is not null)
+            {
+                foreach (var placement in player.Placements)
+                {
+                    placement.Player = default!;
+                }
             }
 
             return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, player);
@@ -135,13 +148,21 @@ namespace Lounge.Web.Controllers
                     return BadRequest("Player already has been placed and has played a match.");
             }
 
-            player.PlacedOn = DateTime.UtcNow;
+            var prevMmr = player.Mmr;
+
+            var utcNow = DateTime.UtcNow;
+            player.PlacedOn = utcNow;
             player.InitialMmr = mmr;
             player.Mmr = mmr;
 
+            Placement placement = new() { Mmr = mmr, PrevMmr = prevMmr, AwardedOn = utcNow, PlayerId = player.Id };
+            _context.Placements.Add(placement);
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, player);
+            player.Placements = default!;
+
+            return player;
         }
 
         [HttpPost("update/name")]
