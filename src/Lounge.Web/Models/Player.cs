@@ -11,8 +11,6 @@ namespace Lounge.Web.Models
         public string NormalizedName { get; set; } = default!;
         public int MKCId { get; set; }
 
-        public int? InitialMmr { get; set; }
-        public DateTime? PlacedOn { get; set; }
         public int? Mmr { get; set; }
         public int? MaxMmr { get; set; }
 

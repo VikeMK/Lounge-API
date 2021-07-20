@@ -16,12 +16,10 @@ namespace Lounge.Web.Utils
             players.Select(p => new Player
             {
                 Id = p.Id,
-                InitialMmr = p.InitialMmr,
                 MaxMmr = p.MaxMmr,
                 MKCId = p.MKCId,
                 Mmr = p.Mmr,
                 Name = p.Name,
-                PlacedOn = p.PlacedOn,
                 NormalizedName = p.NormalizedName,
                 Bonuses = p.Bonuses.Select(b => new Bonus { Id = b.Id, AwardedOn = b.AwardedOn, DeletedOn = b.DeletedOn, NewMmr = b.NewMmr, PrevMmr = b.PrevMmr }).ToList(),
                 Penalties = p.Penalties.Select(pen => new Penalty { Id = pen.Id, AwardedOn = pen.AwardedOn, DeletedOn = pen.DeletedOn, NewMmr = pen.NewMmr, PrevMmr = pen.PrevMmr }).ToList(),
@@ -59,15 +57,6 @@ namespace Lounge.Web.Utils
                         reason: PlayerDetailsViewModel.MmrChangeReason.Placement,
                         time: placement.AwardedOn));
                 }
-            }
-            else if (player.InitialMmr is not null)
-            {
-                mmrChanges.Add(new PlayerDetailsViewModel.MmrChange(
-                    changeId: null,
-                    newMmr: player.InitialMmr.Value,
-                    mmrDelta: 0,
-                    reason: PlayerDetailsViewModel.MmrChangeReason.Placement,
-                    time: player.PlacedOn!.Value));
             }
 
             var allPartnerScores = new List<int>();

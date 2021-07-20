@@ -90,12 +90,8 @@ namespace Lounge.Web.Controllers
             Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId };
             if (mmr is int mmrValue)
             {
-                var utcNow = DateTime.UtcNow;
-                player.PlacedOn = utcNow;
-                player.InitialMmr = mmrValue;
                 player.Mmr = mmrValue;
-
-                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = utcNow };
+                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow };
                 player.Placements = new List<Placement> { placement };
             }
 
@@ -136,27 +132,10 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            if (player.Mmr is not null)
-            {
-                // only look at events that have been verified and aren't deleted
-                var eventsPlayed = await _context.Players
-                    .Where(p => p.Id == player.Id)
-                    .Select(t => t.TableScores.Count(s => s.Table.VerifiedOn != null && s.Table.DeletedOn == null))
-                    .FirstOrDefaultAsync();
-
-                if (eventsPlayed > 0)
-                    return BadRequest("Player already has been placed and has played a match.");
-            }
-
-            var prevMmr = player.Mmr;
-
-            var utcNow = DateTime.UtcNow;
-            player.PlacedOn = utcNow;
-            player.InitialMmr = mmr;
-            player.Mmr = mmr;
-
-            Placement placement = new() { Mmr = mmr, PrevMmr = prevMmr, AwardedOn = utcNow, PlayerId = player.Id };
+            Placement placement = new() { Mmr = mmr, PrevMmr = player.Mmr, AwardedOn = DateTime.UtcNow, PlayerId = player.Id };
             _context.Placements.Add(placement);
+
+            player.Mmr = mmr;
 
             await _context.SaveChangesAsync();
 
