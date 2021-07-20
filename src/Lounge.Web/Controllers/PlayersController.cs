@@ -126,11 +126,23 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("placement")]
-        public async Task<ActionResult<Player>> Placement(string name, int mmr)
+        public async Task<ActionResult<Player>> Placement(string name, int mmr, bool force=false)
         {
             var player = await GetPlayerByNameAsync(name);
             if (player is null)
                 return NotFound();
+
+            if (player.Mmr is not null && !force)
+            {
+                // only look at events that have been verified and aren't deleted
+                var eventsPlayed = await _context.Players
+                    .Where(p => p.Id == player.Id)
+                    .Select(t => t.TableScores.Count(s => s.Table.VerifiedOn != null && s.Table.DeletedOn == null))
+                    .FirstOrDefaultAsync();
+
+                if (eventsPlayed > 0)
+                    return BadRequest("Player already has been placed and has played a match.");
+            }
 
             Placement placement = new() { Mmr = mmr, PrevMmr = player.Mmr, AwardedOn = DateTime.UtcNow, PlayerId = player.Id };
             _context.Placements.Add(placement);
@@ -141,7 +153,7 @@ namespace Lounge.Web.Controllers
 
             player.Placements = default!;
 
-            return player;
+            return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, player);
         }
 
         [HttpPost("update/name")]
