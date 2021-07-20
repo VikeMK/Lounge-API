@@ -25,6 +25,7 @@ namespace Lounge.Web.Utils
                 NormalizedName = p.NormalizedName,
                 Bonuses = p.Bonuses.Select(b => new Bonus { Id = b.Id, AwardedOn = b.AwardedOn, DeletedOn = b.DeletedOn, NewMmr = b.NewMmr, PrevMmr = b.PrevMmr }).ToList(),
                 Penalties = p.Penalties.Select(pen => new Penalty { Id = pen.Id, AwardedOn = pen.AwardedOn, DeletedOn = pen.DeletedOn, NewMmr = pen.NewMmr, PrevMmr = pen.PrevMmr }).ToList(),
+                Placements = p.Placements.Select(pl => new Placement { Id = pl.Id, AwardedOn = pl.AwardedOn, Mmr = pl.Mmr, PrevMmr = pl.PrevMmr }).ToList(),
                 TableScores = p.TableScores.Select(t => new TableScore
                 {
                     TableId = t.TableId,
@@ -46,7 +47,20 @@ namespace Lounge.Web.Utils
         {
             (int overallRank, PlayerStat playerStat) = rankedPlayerStat;
             var mmrChanges = new List<PlayerDetailsViewModel.MmrChange>();
-            if (player.InitialMmr is not null)
+
+            if (player.Placements.Count > 0)
+            {
+                foreach (var placement in player.Placements)
+                {
+                    mmrChanges.Add(new PlayerDetailsViewModel.MmrChange(
+                        changeId: null,
+                        newMmr: placement.Mmr,
+                        mmrDelta: placement.PrevMmr is int prevMmr ? placement.Mmr - prevMmr : 0,
+                        reason: PlayerDetailsViewModel.MmrChangeReason.Placement,
+                        time: placement.AwardedOn));
+                }
+            }
+            else if (player.InitialMmr is not null)
             {
                 mmrChanges.Add(new PlayerDetailsViewModel.MmrChange(
                     changeId: null,
