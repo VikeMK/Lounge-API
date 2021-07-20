@@ -30,6 +30,7 @@ namespace Lounge.Web.Controllers
         public async Task<IActionResult> FixAllMmr(bool preview=true)
         {
             var players = await _context.Players.ToDictionaryAsync(p => p.Id);
+            var placements = await _context.Placements.ToDictionaryAsync(p => p.Id);
             var penalties = await _context.Penalties.ToDictionaryAsync(p => p.Id);
             var bonuses = await _context.Bonuses.ToDictionaryAsync(b => b.Id);
             var tables = await _context.Tables.AsNoTracking().Select(t => new { t.Id, t.VerifiedOn, t.DeletedOn, t.NumTeams, t.Tier }).ToDictionaryAsync(t => t.Id);
@@ -42,7 +43,7 @@ namespace Lounge.Web.Controllers
             var playerMaxMmrs = new Dictionary<int, int?>();
             foreach (var player in players.Values)
             {
-                if (player.InitialMmr != null)
+                if (player.Mmr != null)
                 {
                     matchesPlayed[player.Id] = 0;
                 }
@@ -50,12 +51,9 @@ namespace Lounge.Web.Controllers
 
             var events = new List<(DateTimeOffset Time, PlayerDetailsViewModel.MmrChangeReason Reason, int EntityId)>();
 
-            foreach (var player in players.Values)
+            foreach (var placement in placements.Values)
             {
-                if (player.PlacedOn != null)
-                {
-                    events.Add((player.PlacedOn.Value, PlayerDetailsViewModel.MmrChangeReason.Placement, player.Id));
-                }
+                events.Add((placement.AwardedOn, PlayerDetailsViewModel.MmrChangeReason.Placement, placement.Id));
             }
 
             foreach (var penalty in penalties.Values)
@@ -100,7 +98,8 @@ namespace Lounge.Web.Controllers
                 {
                     case PlayerDetailsViewModel.MmrChangeReason.Placement:
                         {
-                            playerMmrs[entityId] = players[entityId].InitialMmr!.Value;
+                            var placement = placements[entityId];
+                            playerMmrs[placement.PlayerId] = placement.Mmr;
                         }
                         break;
                     case PlayerDetailsViewModel.MmrChangeReason.Table:
