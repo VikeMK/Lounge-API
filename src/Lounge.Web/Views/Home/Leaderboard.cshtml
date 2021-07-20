@@ -54,7 +54,7 @@
         {
             <tr>
                 <th scope="row" class="rank-@player.MmrRank">
-                    <b>@Html.DisplayFor(modelItem => player.OverallRank)</b>
+                    @Html.DisplayFor(modelItem => player.OverallRank)
                 </th>
                 <td class="rank-@player.MmrRank">
                     <a asp-action="PlayerDetails" asp-route-id="@player.Id" style="color:inherit"><b>@Html.DisplayFor(modelItem => player.Name)</b></a>
