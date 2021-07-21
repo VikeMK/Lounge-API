@@ -57,7 +57,7 @@
                     @Html.DisplayFor(modelItem => player.OverallRank)
                 </th>
                 <td class="rank-@player.MmrRank">
-                    <a asp-action="PlayerDetails" asp-route-id="@player.Id" style="color:inherit"><b>@Html.DisplayFor(modelItem => player.Name)</b></a>
+                    <a asp-action="PlayerDetails" asp-route-id="@player.Id" style="color:inherit">@Html.DisplayFor(modelItem => player.Name)</a>
                 </td>
                 <td class="rank-@player.MmrRank">
                     @Html.DisplayFor(modelItem => player.Mmr)
