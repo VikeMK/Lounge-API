@@ -9,6 +9,7 @@ using Lounge.Web.Utils;
 using Lounge.Web.Data;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using Lounge.Web.Storage;
 
 namespace Lounge.Web.Controllers
 {
@@ -18,10 +19,12 @@ namespace Lounge.Web.Controllers
     public class TablesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ITableImageService _tableImageService;
 
-        public TablesController(ApplicationDbContext context)
+        public TablesController(ApplicationDbContext context, ITableImageService tableImageService)
         {
             _context = context;
+            _tableImageService = tableImageService;
         }
 
         [HttpGet]
@@ -117,7 +120,7 @@ namespace Lounge.Web.Controllers
             }
 
             string tableUrl = TableUtils.BuildUrl(vm.Tier, scores);
-            string dataUrl = await TableUtils.GetImageAsBase64UrlAsync(tableUrl);
+            var tableImage = await TableUtils.GetImageDataAsync(tableUrl);
 
             var table = new Table
             {
@@ -126,10 +129,10 @@ namespace Lounge.Web.Controllers
                 Url = tableUrl,
                 Tier = vm.Tier,
                 Scores = tableScores,
-                TableImageData = dataUrl,
                 AuthorId = vm.AuthorId
             };
 
+            await _tableImageService.UploadTableImageAsync(table.Id, tableImage);
             await _context.Tables.AddAsync(table);
             await _context.SaveChangesAsync();
 
@@ -228,11 +231,11 @@ namespace Lounge.Web.Controllers
             }
 
             string tableUrl = TableUtils.BuildUrl(table.Tier, newScores);
-            string dataUrl = await TableUtils.GetImageAsBase64UrlAsync(tableUrl);
+            var tableImage = await TableUtils.GetImageDataAsync(tableUrl);
 
             table.Url = tableUrl;
-            table.TableImageData = dataUrl;
 
+            await _tableImageService.UploadTableImageAsync(tableId, tableImage);
             await _context.SaveChangesAsync();
 
             return Ok();

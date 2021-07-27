@@ -9,6 +9,7 @@ using System;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Utils;
 using Microsoft.Extensions.Logging;
+using Lounge.Web.Storage;
 
 namespace Lounge.Web.Controllers
 {
@@ -19,11 +20,41 @@ namespace Lounge.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AdminController> _logger;
+        private readonly ITableImageService _tableImageService;
 
-        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger)
+        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ITableImageService tableImageService)
         {
             _context = context;
             _logger = logger;
+            _tableImageService = tableImageService;
+        }
+
+        [HttpPost("saveTablesToBlob")]
+        public async Task<IActionResult> SaveTablesToBlob(int? tableIdStart = null, int? tableIdEnd = null)
+        {
+            int idStart = tableIdStart ?? 0;
+            int idEnd = tableIdEnd ?? await _context.Tables.MaxAsync(t => t.Id);
+
+            for (int i = idStart; i < idEnd; i += 25)
+            {
+                var start = i;
+                var end = Math.Min(idEnd, i + 24);
+                var tables = await _context.Tables.AsNoTracking()
+                    .Where(t => (t.Id >= start) && (t.Id <= end) && t.TableImageData != null)
+                    .Select(t => new { t.Id, t.TableImageData })
+                    .ToListAsync();
+
+                foreach (var table in tables)
+                {
+                    if (table.TableImageData != null)
+                    {
+                        var bytes = Convert.FromBase64String(table.TableImageData);
+                        await _tableImageService.UploadTableImageAsync(table.Id, bytes);
+                    }
+                }
+            }
+
+            return Ok();
         }
 
         [HttpPost("fixMmr")]
