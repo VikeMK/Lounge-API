@@ -132,9 +132,10 @@ namespace Lounge.Web.Controllers
                 AuthorId = vm.AuthorId
             };
 
-            await _tableImageService.UploadTableImageAsync(table.Id, tableImage);
             await _context.Tables.AddAsync(table);
             await _context.SaveChangesAsync();
+
+            await _tableImageService.UploadTableImageAsync(table.Id, tableImage);
 
             return CreatedAtAction(nameof(GetTable), new { tableId = table.Id }, TableUtils.GetTableDetails(table));
         }

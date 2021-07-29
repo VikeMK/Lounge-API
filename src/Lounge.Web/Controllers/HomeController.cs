@@ -191,7 +191,12 @@ namespace Lounge.Web.Controllers
 
             var stream = await _tableImageService.DownloadTableImageAsync(id);
             if (stream is null)
-                return NotFound();
+            {
+                var url = table.Url;
+                var tableImage = await TableUtils.GetImageDataAsync(url);
+                await _tableImageService.UploadTableImageAsync(id, tableImage);
+                return File(tableImage, "image/png");
+            }
 
             return File(stream, "image/png");
         }
