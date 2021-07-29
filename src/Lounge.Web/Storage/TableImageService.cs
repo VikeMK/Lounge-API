@@ -20,11 +20,8 @@ namespace Lounge.Web.Storage
         public async Task UploadTableImageAsync(int tableId, byte[] image)
         {
             BlobClient blobClient = await GetBlobClientAsync(tableId);
-            if (await blobClient.ExistsAsync())
-                return;
-
             using var ms = new MemoryStream(image);
-            await blobClient.UploadAsync(ms);
+            await blobClient.UploadAsync(ms, overwrite: true);
         }
 
         public async Task<Stream?> DownloadTableImageAsync(int tableId)
