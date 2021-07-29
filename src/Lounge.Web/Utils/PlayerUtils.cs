@@ -229,9 +229,9 @@ namespace Lounge.Web.Utils
                 LossesLastTen = playerStat.LastTenLosses,
                 GainLossLastTen = playerStat.LastTenGainLoss,
                 LargestGain = largestGain,
-                LargestGainTableId = largestGain == null ? null : playerStat.LargestGainTableId,
+                LargestGainTableId = largestGain == null ? null : mmrChanges.FirstOrDefault(c => c.MmrDelta == largestGain)?.ChangeId,
                 LargestLoss = largestLoss,
-                LargestLossTableId = largestLoss == null ? null : playerStat.LargestLossTableId,
+                LargestLossTableId = largestLoss == null ? null : mmrChanges.FirstOrDefault(c => c.MmrDelta == largestLoss)?.ChangeId,
                 AverageScore = allScores.Count == 0 ? null : allScores.Average(),
                 AverageLastTen = allScores.Count == 0 ? null : allScores.TakeLast(10).Average(),
                 PartnerAverage = allPartnerScores.Count == 0 ? null : allPartnerScores.Average()
