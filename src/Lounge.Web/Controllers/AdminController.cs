@@ -29,34 +29,6 @@ namespace Lounge.Web.Controllers
             _tableImageService = tableImageService;
         }
 
-        [HttpPost("saveTablesToBlob")]
-        public async Task<IActionResult> SaveTablesToBlob(int? tableIdStart = null, int? tableIdEnd = null)
-        {
-            int idStart = tableIdStart ?? 0;
-            int idEnd = tableIdEnd ?? await _context.Tables.MaxAsync(t => t.Id);
-
-            for (int i = idStart; i < idEnd; i += 25)
-            {
-                var start = i;
-                var end = Math.Min(idEnd, i + 24);
-                var tables = await _context.Tables.AsNoTracking()
-                    .Where(t => (t.Id >= start) && (t.Id <= end) && t.TableImageData != null)
-                    .Select(t => new { t.Id, t.TableImageData })
-                    .ToListAsync();
-
-                foreach (var table in tables)
-                {
-                    if (table.TableImageData != null)
-                    {
-                        var bytes = Convert.FromBase64String(table.TableImageData);
-                        await _tableImageService.UploadTableImageAsync(table.Id, bytes);
-                    }
-                }
-            }
-
-            return Ok();
-        }
-
         [HttpPost("fixMmr")]
         public async Task<IActionResult> FixAllMmr(bool preview=true)
         {
