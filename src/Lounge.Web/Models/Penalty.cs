@@ -5,6 +5,7 @@ namespace Lounge.Web.Models
     public class Penalty
     {
         public int Id { get; set; }
+        public int Season { get; set; } = 4;
         public DateTime AwardedOn { get; set; }
         public bool IsStrike { get; set; }
         public int PrevMmr { get; set; }

@@ -1,14 +1,18 @@
 ﻿using Lounge.Web.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 
 namespace Lounge.Web.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        private readonly int _defaultSeason;
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
             : base(options)
         {
+            _defaultSeason = int.Parse(configuration["Season"]);
         }
 
         public DbSet<Player> Players => Set<Player>();
@@ -41,17 +45,33 @@ namespace Lounge.Web.Data
                 .HasIndex(p => p.NormalizedName)
                 .IsUnique();
 
+            modelBuilder.Entity<Table>()
+                .Property(t => t.Season)
+                .HasDefaultValue(_defaultSeason);
+
             modelBuilder.Entity<TableScore>()
                 .HasKey(t => new { t.TableId, t.PlayerId });
 
             modelBuilder.Entity<Penalty>()
                 .HasIndex(p => p.AwardedOn);
 
+            modelBuilder.Entity<Penalty>()
+                .Property(p => p.Season)
+                .HasDefaultValue(_defaultSeason);
+
             modelBuilder.Entity<Bonus>()
                 .HasIndex(p => p.AwardedOn);
 
+            modelBuilder.Entity<Bonus>()
+                .Property(b => b.Season)
+                .HasDefaultValue(_defaultSeason);
+
             modelBuilder.Entity<Placement>()
                 .HasIndex(p => p.AwardedOn);
+
+            modelBuilder.Entity<Placement>()
+                .Property(p => p.Season)
+                .HasDefaultValue(_defaultSeason);
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
