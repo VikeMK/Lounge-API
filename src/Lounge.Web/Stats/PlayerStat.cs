@@ -19,7 +19,9 @@
         public int EventsPlayed { get; init; }
         public int Wins { get; init; }
         public int? LargestGain { get; init; }
+        public int? LargestGainTableId { get; init; }
         public int? LargestLoss { get; init; }
+        public int? LargestLossTableId { get; init; }
         public int? LastTenGainLoss { get; init; }
         public int LastTenWins { get; init; }
         public int LastTenLosses { get; init; }
