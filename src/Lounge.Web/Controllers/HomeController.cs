@@ -48,18 +48,33 @@ namespace Lounge.Web.Controllers
             }
 
             int? playerId = null;
-            if (filter != null && filter.StartsWith("mkc="))
+            if (filter != null)
             {
-                if (int.TryParse(filter[4..], out int mkcId))
+                if (filter.StartsWith("mkc="))
                 {
-                    playerId = await _context.Players
-                        .Where(p => p.MKCId == mkcId)
-                        .Select(p => p.Id)
-                        .FirstOrDefaultAsync();
-                }
+                    if (int.TryParse(filter[4..], out int mkcId))
+                    {
+                        playerId = await _context.Players
+                            .Where(p => p.MKCId == mkcId)
+                            .Select(p => (int?) p.Id)
+                            .FirstOrDefaultAsync();
+                    }
 
-                // if no player exists with that MKC ID then we should show nothing so set player ID to -1
-                playerId ??= -1;
+                    // if no player exists with that MKC ID then we should show nothing so set player ID to -1
+                    playerId ??= -1;
+                }
+                else if (filter.StartsWith("discord="))
+                {
+                    var discordId = filter["discord=".Length..];
+
+                    playerId = await _context.Players
+                        .Where(p => p.DiscordId == discordId)
+                        .Select(p => (int?) p.Id)
+                        .FirstOrDefaultAsync();
+
+                    // if no player exists with that Discord ID then we should show nothing so set player ID to -1
+                    playerId ??= -1;
+                }
             }
 
             IReadOnlyList<RankedPlayerStat> playerEntities;

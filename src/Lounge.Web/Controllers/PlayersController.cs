@@ -31,7 +31,7 @@ namespace Lounge.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<Player>> GetPlayer(string? name, int? mkcId)
+        public async Task<ActionResult<Player>> GetPlayer(string? name, int? mkcId, string? discordId)
         {
             Player player;
             if (name is not null)
@@ -42,9 +42,13 @@ namespace Lounge.Web.Controllers
             {
                 player = await GetPlayerByMKCIdAsync(mkcId.Value);
             }
+            else if (discordId is not null)
+            {
+                player = await GetPlayerByDiscordIdAsync(discordId);
+            }
             else
             {
-                return BadRequest("Must provide name or MKC ID");
+                return BadRequest("Must provide name, MKC ID, or discord ID");
             }
 
             if (player is null)
@@ -229,6 +233,9 @@ namespace Lounge.Web.Controllers
 
         private Task<Player> GetPlayerByMKCIdAsync(int mkcId) =>
             _context.Players.SingleOrDefaultAsync(p => p.MKCId == mkcId);
+
+        private Task<Player> GetPlayerByDiscordIdAsync(string discordId) =>
+            _context.Players.SingleOrDefaultAsync(p => p.DiscordId == discordId);
 
         private async Task<RankedPlayerStat?> GetPlayerStatsAsync(int id)
         {
