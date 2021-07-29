@@ -10,6 +10,7 @@ namespace Lounge.Web.Models
         public string Name { get; set; } = default!;
         public string NormalizedName { get; set; } = default!;
         public int MKCId { get; set; }
+        public string? DiscordId { get; set; }
 
         public int? Mmr { get; set; }
         public int? MaxMmr { get; set; }

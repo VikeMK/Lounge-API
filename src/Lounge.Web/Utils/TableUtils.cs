@@ -174,7 +174,7 @@ namespace Lounge.Web.Utils
                     PrevMmr = s.PrevMmr,
                     PlayerId = s.PlayerId,
                     Team = s.Team,
-                    Player = new Player { Name = s.Player.Name },
+                    Player = new Player { Name = s.Player.Name, DiscordId = s.Player.DiscordId },
                 }).ToList(),
             });
 
@@ -202,7 +202,8 @@ namespace Lounge.Web.Utils
                         score.PrevMmr,
                         score.NewMmr,
                         score.PlayerId,
-                        score.Player.Name));
+                        score.Player.Name,
+                        score.Player.DiscordId));
                 }
 
                 int actualRank = totalScore == prevTotalScore ? prevRank : rank;

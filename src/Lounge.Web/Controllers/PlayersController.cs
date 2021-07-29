@@ -85,9 +85,9 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<Player>> Create(string name, int mkcId, int? mmr)
+        public async Task<ActionResult<Player>> Create(string name, int mkcId, int? mmr, string? discordId = null)
         {
-            Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId };
+            Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId, DiscordId = discordId };
             if (mmr is int mmrValue)
             {
                 player.Mmr = mmrValue;
@@ -110,6 +110,10 @@ namespace Lounge.Web.Controllers
                 var mkcIdMatchExists = await _context.Players.AnyAsync(p => p.MKCId == player.MKCId);
                 if (mkcIdMatchExists)
                     return BadRequest("User with that MKC ID already exists");
+
+                var discordIdMatchExists = await _context.Players.AnyAsync(p => p.DiscordId == player.DiscordId);
+                if (discordIdMatchExists)
+                    return BadRequest("User with that Discord ID already exists");
 
                 throw;
             }
@@ -202,6 +206,20 @@ namespace Lounge.Web.Controllers
 
                 throw;
             }
+
+            return NoContent();
+        }
+
+        [HttpPost("update/discordId")]
+        public async Task<IActionResult> ChangeDiscordId(string name, string newDiscordId)
+        {
+            var player = await GetPlayerByNameAsync(name);
+            if (player is null)
+                return NotFound();
+
+            player.DiscordId = newDiscordId;
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
