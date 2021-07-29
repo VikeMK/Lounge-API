@@ -1,12 +1,14 @@
 ﻿using Lounge.Web.Data;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Stats;
+using Lounge.Web.Storage;
 using Lounge.Web.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,15 +23,18 @@ namespace Lounge.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPlayerStatCache _playerStatCache;
         private readonly IPlayerStatService _playerStatService;
+        private readonly ITableImageService _tableImageService;
 
         public HomeController(
             ApplicationDbContext context,
             IPlayerStatCache playerStatCache,
-            IPlayerStatService playerStatService)
+            IPlayerStatService playerStatService,
+            ITableImageService tableImageService)
         {
             _context = context;
             _playerStatCache = playerStatCache;
             _playerStatService = playerStatService;
+            _tableImageService = tableImageService;
         }
 
         [ResponseCache(Duration = 180)]
@@ -184,14 +189,11 @@ namespace Lounge.Web.Controllers
             if (table is null)
                 return NotFound();
 
-            if (table.TableImageData is null)
-            {
-                table.TableImageData = await TableUtils.GetImageAsBase64UrlAsync(table.Url);
-                _ = await _context.SaveChangesAsync();
-            }
+            var stream = await _tableImageService.DownloadTableImageAsync(id);
+            if (stream is null)
+                return NotFound();
 
-            var bytes = Convert.FromBase64String(table.TableImageData);
-            return File(bytes, "image/png");
+            return File(stream, "image/png");
         }
 
         [Route("/error")]

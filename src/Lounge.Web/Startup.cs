@@ -1,6 +1,7 @@
 using Lounge.Web.Authentication;
 using Lounge.Web.Data;
 using Lounge.Web.Stats;
+using Lounge.Web.Storage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -62,6 +63,7 @@ namespace Lounge.Web
 
             services.AddSingleton<IPlayerStatCache, PlayerStatsCache>();
             services.AddTransient<IPlayerStatService, PlayerStatService>();
+            services.AddSingleton<ITableImageService, TableImageService>();
 
             services.AddHostedService<PlayerStatCacheWarmingBackgroundService>();
         }

@@ -48,11 +48,10 @@ namespace Lounge.Web.Utils
             return $"https://gb.hlorenzi.com/table.png?data={data}&loungeapi=true";
         }
 
-        public async static Task<string> GetImageAsBase64UrlAsync(string url)
+        public async static Task<byte[]> GetImageDataAsync(string url)
         {
             using var client = new HttpClient();
-            var bytes = await client.GetByteArrayAsync(url);
-            return Convert.ToBase64String(bytes);
+            return await client.GetByteArrayAsync(url);
         }
 
         public static Dictionary<string, int> GetMMRDeltas((string Player, int Score, int CurrentMmr, double Multiplier)[][] scores)
