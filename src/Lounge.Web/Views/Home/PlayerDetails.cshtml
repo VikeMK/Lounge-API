@@ -41,11 +41,29 @@
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Html.DisplayNameFor(model => model.LargestGain)</dt>
-            <dd>@Html.DisplayFor(model => model.LargestGain)</dd>
+            <dd>
+                @if(Model.LargestGainTableId != null)
+                {
+                    <a asp-action="TableDetails" asp-route-id="@Model.LargestGainTableId">@Html.DisplayFor(model => model.LargestGain)</a>
+                }
+                else
+                {
+                    @Html.DisplayFor(model => model.LargestGain)
+                }
+            </dd>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Html.DisplayNameFor(model => model.LargestLoss)</dt>
-            <dd>@Html.DisplayFor(model => model.LargestLoss)</dd>
+            <dd>
+                @if(Model.LargestLossTableId != null)
+                {
+                    <a asp-action="TableDetails" asp-route-id="@Model.LargestLossTableId">@Html.DisplayFor(model => model.LargestLoss)</a>
+                }
+                else
+                {
+                    @Html.DisplayFor(model => model.LargestLoss)
+                }
+            </dd>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Html.DisplayNameFor(model => model.AverageScore)</dt>

@@ -73,7 +73,7 @@ namespace Lounge.Web.Models.ViewModels
 
         public class TableScore
         {
-            public TableScore(int score, double multiplier, int? prevMmr, int? newMmr, int playerId, string playerName)
+            public TableScore(int score, double multiplier, int? prevMmr, int? newMmr, int playerId, string playerName, string? playerDiscordId)
             {
                 Score = score;
                 Multiplier = multiplier;
@@ -81,6 +81,7 @@ namespace Lounge.Web.Models.ViewModels
                 NewMmr = newMmr;
                 PlayerId = playerId;
                 PlayerName = playerName ?? throw new ArgumentNullException(nameof(playerName));
+                PlayerDiscordId = playerDiscordId;
             }
 
             public int Score { get; set; }
@@ -103,6 +104,8 @@ namespace Lounge.Web.Models.ViewModels
 
             [Display(Name = "Player")]
             public string PlayerName { get; set; }
+
+            public string? PlayerDiscordId { get; set; }
         }
     }
 }
