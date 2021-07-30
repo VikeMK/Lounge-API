@@ -1,12 +1,14 @@
 ﻿using Lounge.Web.Data;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Stats;
+using Lounge.Web.Storage;
 using Lounge.Web.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,15 +23,18 @@ namespace Lounge.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPlayerStatCache _playerStatCache;
         private readonly IPlayerStatService _playerStatService;
+        private readonly ITableImageService _tableImageService;
 
         public HomeController(
             ApplicationDbContext context,
             IPlayerStatCache playerStatCache,
-            IPlayerStatService playerStatService)
+            IPlayerStatService playerStatService,
+            ITableImageService tableImageService)
         {
             _context = context;
             _playerStatCache = playerStatCache;
             _playerStatService = playerStatService;
+            _tableImageService = tableImageService;
         }
 
         [ResponseCache(Duration = 180)]
@@ -48,18 +53,33 @@ namespace Lounge.Web.Controllers
             }
 
             int? playerId = null;
-            if (filter != null && filter.StartsWith("mkc="))
+            if (filter != null)
             {
-                if (int.TryParse(filter[4..], out int mkcId))
+                if (filter.StartsWith("mkc="))
                 {
-                    playerId = await _context.Players
-                        .Where(p => p.MKCId == mkcId)
-                        .Select(p => p.Id)
-                        .FirstOrDefaultAsync();
-                }
+                    if (int.TryParse(filter[4..], out int mkcId))
+                    {
+                        playerId = await _context.Players
+                            .Where(p => p.MKCId == mkcId)
+                            .Select(p => (int?) p.Id)
+                            .FirstOrDefaultAsync();
+                    }
 
-                // if no player exists with that MKC ID then we should show nothing so set player ID to -1
-                playerId ??= -1;
+                    // if no player exists with that MKC ID then we should show nothing so set player ID to -1
+                    playerId ??= -1;
+                }
+                else if (filter.StartsWith("discord="))
+                {
+                    var discordId = filter["discord=".Length..];
+
+                    playerId = await _context.Players
+                        .Where(p => p.DiscordId == discordId)
+                        .Select(p => (int?) p.Id)
+                        .FirstOrDefaultAsync();
+
+                    // if no player exists with that Discord ID then we should show nothing so set player ID to -1
+                    playerId ??= -1;
+                }
             }
 
             IReadOnlyList<RankedPlayerStat> playerEntities;
@@ -169,14 +189,16 @@ namespace Lounge.Web.Controllers
             if (table is null)
                 return NotFound();
 
-            if (table.TableImageData is null)
+            var stream = await _tableImageService.DownloadTableImageAsync(id);
+            if (stream is null)
             {
-                table.TableImageData = await TableUtils.GetImageAsBase64UrlAsync(table.Url);
-                _ = await _context.SaveChangesAsync();
+                var url = table.Url;
+                var tableImage = await TableUtils.GetImageDataAsync(url);
+                await _tableImageService.UploadTableImageAsync(id, tableImage);
+                return File(tableImage, "image/png");
             }
 
-            var bytes = Convert.FromBase64String(table.TableImageData);
-            return File(bytes, "image/png");
+            return File(stream, "image/png");
         }
 
         [Route("/error")]

@@ -9,6 +9,7 @@ using System;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Utils;
 using Microsoft.Extensions.Logging;
+using Lounge.Web.Storage;
 
 namespace Lounge.Web.Controllers
 {
@@ -19,11 +20,13 @@ namespace Lounge.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AdminController> _logger;
+        private readonly ITableImageService _tableImageService;
 
-        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger)
+        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ITableImageService tableImageService)
         {
             _context = context;
             _logger = logger;
+            _tableImageService = tableImageService;
         }
 
         [HttpPost("fixMmr")]

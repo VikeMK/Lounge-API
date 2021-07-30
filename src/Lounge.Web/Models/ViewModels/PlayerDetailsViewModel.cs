@@ -48,9 +48,13 @@ namespace Lounge.Web.Models.ViewModels
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:+#;-#;0}")]
         public int? LargestGain { get; init; }
 
+        public int? LargestGainTableId { get; init; }
+
         [Display(Name = "Largest Loss")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:+#;-#;0}")]
         public int? LargestLoss { get; init; }
+
+        public int? LargestLossTableId { get; init; }
 
         [Display(Name = "Average Score")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]

@@ -211,6 +211,9 @@ namespace Lounge.Web.Utils
 
             decimal? winRate = playerStat.EventsPlayed == 0 ? null : (decimal)playerStat.Wins / playerStat.EventsPlayed;
 
+            var largestGain = playerStat.LargestGain < 0 ? null : playerStat.LargestGain;
+            var largestLoss = playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss;
+
             var vm = new PlayerDetailsViewModel
             {
                 PlayerId = player.Id,
@@ -225,8 +228,10 @@ namespace Lounge.Web.Utils
                 WinsLastTen = playerStat.LastTenWins,
                 LossesLastTen = playerStat.LastTenLosses,
                 GainLossLastTen = playerStat.LastTenGainLoss,
-                LargestGain = playerStat.LargestGain < 0 ? null : playerStat.LargestGain,
-                LargestLoss = playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss,
+                LargestGain = largestGain,
+                LargestGainTableId = largestGain == null ? null : mmrChanges.FirstOrDefault(c => c.MmrDelta == largestGain)?.ChangeId,
+                LargestLoss = largestLoss,
+                LargestLossTableId = largestLoss == null ? null : mmrChanges.FirstOrDefault(c => c.MmrDelta == largestLoss)?.ChangeId,
                 AverageScore = allScores.Count == 0 ? null : allScores.Average(),
                 AverageLastTen = allScores.Count == 0 ? null : allScores.TakeLast(10).Average(),
                 PartnerAverage = allPartnerScores.Count == 0 ? null : allPartnerScores.Average()
