@@ -41,11 +41,6 @@ namespace Lounge.Web.Migrations
                     b.Property<int>("PrevMmr")
                         .HasColumnType("int");
 
-                    b.Property<int>("Season")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(4);
-
                     b.HasKey("Id");
 
                     b.HasIndex("AwardedOn");
@@ -80,11 +75,6 @@ namespace Lounge.Web.Migrations
                     b.Property<int>("PrevMmr")
                         .HasColumnType("int");
 
-                    b.Property<int>("Season")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(4);
-
                     b.HasKey("Id");
 
                     b.HasIndex("AwardedOn");
@@ -112,11 +102,6 @@ namespace Lounge.Web.Migrations
 
                     b.Property<int?>("PrevMmr")
                         .HasColumnType("int");
-
-                    b.Property<int>("Season")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(4);
 
                     b.HasKey("Id");
 
@@ -193,11 +178,6 @@ namespace Lounge.Web.Migrations
 
                     b.Property<int>("NumTeams")
                         .HasColumnType("int");
-
-                    b.Property<int>("Season")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(4);
 
                     b.Property<string>("TableImageData")
                         .IsRequired()
