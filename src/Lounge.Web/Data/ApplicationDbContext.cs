@@ -1,14 +1,19 @@
 ﻿using Lounge.Web.Models;
+using Lounge.Web.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 
 namespace Lounge.Web.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        private readonly IOptions<LoungeSettings> loungeSettingsOptions;
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IOptions<LoungeSettings> loungeSettingsOptions)
             : base(options)
         {
+            this.loungeSettingsOptions = loungeSettingsOptions;
         }
 
         public DbSet<Player> Players => Set<Player>();
@@ -21,6 +26,8 @@ namespace Lounge.Web.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            var defaultSeason = loungeSettingsOptions.Value.Season;
 
             modelBuilder.Entity<Player>().ToTable("Players");
             modelBuilder.Entity<Table>().ToTable("Tables");
@@ -41,17 +48,33 @@ namespace Lounge.Web.Data
                 .HasIndex(p => p.NormalizedName)
                 .IsUnique();
 
+            modelBuilder.Entity<Table>()
+                .Property(t => t.Season)
+                .HasDefaultValue(defaultSeason);
+
             modelBuilder.Entity<TableScore>()
                 .HasKey(t => new { t.TableId, t.PlayerId });
 
             modelBuilder.Entity<Penalty>()
                 .HasIndex(p => p.AwardedOn);
 
+            modelBuilder.Entity<Penalty>()
+                .Property(p => p.Season)
+                .HasDefaultValue(defaultSeason);
+
             modelBuilder.Entity<Bonus>()
                 .HasIndex(p => p.AwardedOn);
 
+            modelBuilder.Entity<Bonus>()
+                .Property(b => b.Season)
+                .HasDefaultValue(defaultSeason);
+
             modelBuilder.Entity<Placement>()
                 .HasIndex(p => p.AwardedOn);
+
+            modelBuilder.Entity<Placement>()
+                .Property(p => p.Season)
+                .HasDefaultValue(defaultSeason);
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {

@@ -7,6 +7,8 @@ using Lounge.Web.Data;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Lounge.Web.Utils;
+using Lounge.Web.Settings;
+using Microsoft.Extensions.Options;
 
 namespace Lounge.Web.Controllers
 {
@@ -16,10 +18,12 @@ namespace Lounge.Web.Controllers
     public class BonusesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IOptionsMonitor<LoungeSettings> options;
 
-        public BonusesController(ApplicationDbContext context)
+        public BonusesController(ApplicationDbContext context, IOptionsMonitor<LoungeSettings> options)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            this.options = options;
         }
 
         [HttpGet]
@@ -73,6 +77,7 @@ namespace Lounge.Web.Controllers
                 AwardedOn = DateTime.UtcNow,
                 PrevMmr = prevMmr,
                 NewMmr = newMmr,
+                Season = options.CurrentValue.Season,
             };
 
             player.Mmr = newMmr;

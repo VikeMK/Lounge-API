@@ -10,6 +10,8 @@ using Lounge.Web.Utils;
 using System.Linq;
 using Lounge.Web.Stats;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
+using Lounge.Web.Settings;
 
 namespace Lounge.Web.Controllers
 {
@@ -21,12 +23,14 @@ namespace Lounge.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPlayerStatCache _playerStatCache;
         private readonly IPlayerStatService _playerStatService;
+        private readonly IOptionsMonitor<LoungeSettings> options;
 
-        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, IPlayerStatService playerStatService)
+        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, IPlayerStatService playerStatService, IOptionsMonitor<LoungeSettings> options)
         {
             _context = context;
             _playerStatCache = playerStatCache;
             _playerStatService = playerStatService;
+            this.options = options;
         }
 
         [HttpGet]
@@ -95,7 +99,7 @@ namespace Lounge.Web.Controllers
             if (mmr is int mmrValue)
             {
                 player.Mmr = mmrValue;
-                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow };
+                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, Season = options.CurrentValue.Season };
                 player.Placements = new List<Placement> { placement };
             }
 
@@ -152,7 +156,7 @@ namespace Lounge.Web.Controllers
                     return BadRequest("Player already has been placed and has played a match.");
             }
 
-            Placement placement = new() { Mmr = mmr, PrevMmr = player.Mmr, AwardedOn = DateTime.UtcNow, PlayerId = player.Id };
+            Placement placement = new() { Mmr = mmr, PrevMmr = player.Mmr, AwardedOn = DateTime.UtcNow, PlayerId = player.Id, Season = options.CurrentValue.Season };
             _context.Placements.Add(placement);
 
             player.Mmr = mmr;
