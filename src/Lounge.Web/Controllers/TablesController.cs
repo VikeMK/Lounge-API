@@ -10,6 +10,8 @@ using Lounge.Web.Data;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Lounge.Web.Storage;
+using Microsoft.Extensions.Options;
+using Lounge.Web.Settings;
 
 namespace Lounge.Web.Controllers
 {
@@ -20,11 +22,13 @@ namespace Lounge.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ITableImageService _tableImageService;
+        private readonly IOptionsMonitor<LoungeSettings> options;
 
-        public TablesController(ApplicationDbContext context, ITableImageService tableImageService)
+        public TablesController(ApplicationDbContext context, ITableImageService tableImageService, IOptionsMonitor<LoungeSettings> options)
         {
             _context = context;
             _tableImageService = tableImageService;
+            this.options = options;
         }
 
         [HttpGet]
@@ -129,7 +133,8 @@ namespace Lounge.Web.Controllers
                 Url = tableUrl,
                 Tier = vm.Tier,
                 Scores = tableScores,
-                AuthorId = vm.AuthorId
+                AuthorId = vm.AuthorId,
+                Season = options.CurrentValue.Season,
             };
 
             await _context.Tables.AddAsync(table);

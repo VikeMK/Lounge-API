@@ -1,5 +1,6 @@
 using Lounge.Web.Authentication;
 using Lounge.Web.Data;
+using Lounge.Web.Settings;
 using Lounge.Web.Stats;
 using Lounge.Web.Storage;
 using Microsoft.AspNetCore.Authentication;
@@ -66,6 +67,8 @@ namespace Lounge.Web
             services.AddSingleton<ITableImageService, TableImageService>();
 
             services.AddHostedService<PlayerStatCacheWarmingBackgroundService>();
+
+            services.Configure<LoungeSettings>(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

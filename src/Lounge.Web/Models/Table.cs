@@ -6,7 +6,7 @@ namespace Lounge.Web.Models
     public class Table
     {
         public int Id { get; set; }
-        public int Season { get; set; } = 4;
+        public int Season { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? VerifiedOn { get; set; }
         public DateTime? DeletedOn { get; set; }

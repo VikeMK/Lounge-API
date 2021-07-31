@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Lounge.Web.Utils;
 using Lounge.Web.Models.ViewModels;
+using Microsoft.Extensions.Options;
+using Lounge.Web.Settings;
 
 namespace Lounge.Web.Controllers
 {
@@ -17,10 +19,12 @@ namespace Lounge.Web.Controllers
     public class PenaltiesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IOptionsMonitor<LoungeSettings> options;
 
-        public PenaltiesController(ApplicationDbContext context)
+        public PenaltiesController(ApplicationDbContext context, IOptionsMonitor<LoungeSettings> options)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            this.options = options;
         }
 
         [HttpGet]
@@ -83,6 +87,7 @@ namespace Lounge.Web.Controllers
                 IsStrike = isStrike,
                 PrevMmr = prevMmr,
                 NewMmr = newMmr,
+                Season = options.CurrentValue.Season,
             };
 
             player.Mmr = newMmr;

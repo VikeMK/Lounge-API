@@ -1,7 +1,8 @@
 ﻿using Lounge.Web.Data;
+using Lounge.Web.Settings;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace Lounge
         {
             using var context = new ApplicationDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>(),
-                serviceProvider.GetRequiredService<IConfiguration>());
+                serviceProvider.GetRequiredService<IOptions<LoungeSettings>>());
 
             // put any data to seed here
 
