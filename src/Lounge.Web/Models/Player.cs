@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Lounge.Web.Models
@@ -12,9 +11,7 @@ namespace Lounge.Web.Models
         public int MKCId { get; set; }
         public string? DiscordId { get; set; }
 
-        public int? Mmr { get; set; }
-        public int? MaxMmr { get; set; }
-
+        public ICollection<PlayerSeasonData> SeasonData { get; set; } = default!;
         public ICollection<TableScore> TableScores { get; set; } = default!;
         public ICollection<Penalty> Penalties { get; set; } = default!;
         public ICollection<Bonus> Bonuses { get; set; } = default!;

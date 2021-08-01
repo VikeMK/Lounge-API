@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Lounge.Web.Models
 {
@@ -18,5 +19,8 @@ namespace Lounge.Web.Models
         public string? AuthorId { get; set; }
 
         public ICollection<TableScore> Scores { get; set; } = default!;
+
+        [Timestamp]
+        public byte[] Timestamp { get; set; } = default!;
     }
 }

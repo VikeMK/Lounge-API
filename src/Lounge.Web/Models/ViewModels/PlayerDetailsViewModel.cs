@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lounge.Web.Models.ViewModels
 {
+
     public class PlayerDetailsViewModel
     {
         public int PlayerId { get; init; }
@@ -13,6 +14,8 @@ namespace Lounge.Web.Models.ViewModels
         public string Name { get; init; }
 
         public int MkcId { get; init; }
+
+        public int Season { get; init; }
 
         [Display(Name = "MMR")]
         [DisplayFormat(NullDisplayText = "Placement")]

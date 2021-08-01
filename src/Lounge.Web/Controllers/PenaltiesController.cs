@@ -10,6 +10,8 @@ using Lounge.Web.Utils;
 using Lounge.Web.Models.ViewModels;
 using Microsoft.Extensions.Options;
 using Lounge.Web.Settings;
+using System.Linq;
+using Lounge.Web.Controllers.ValidationAttributes;
 
 namespace Lounge.Web.Controllers
 {
@@ -19,66 +21,87 @@ namespace Lounge.Web.Controllers
     public class PenaltiesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IOptionsMonitor<LoungeSettings> options;
+        private readonly LoungeSettings _settings;
 
-        public PenaltiesController(ApplicationDbContext context, IOptionsMonitor<LoungeSettings> options)
+        public PenaltiesController(ApplicationDbContext context, IOptionsSnapshot<LoungeSettings> options)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            this.options = options;
+            _settings = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<PenaltyViewModel>> GetPenalty(int id)
         {
-            var penalty = await _context.Penalties.Include(p => p.Player).FirstOrDefaultAsync(p => p.Id == id);
-            if (penalty is null)
+            var penaltyData = await _context.Penalties
+                .AsNoTracking()
+                .Where(p => p.Id == id)
+                .Select(p => new { Penalty = p, PlayerName = p.Player.Name })
+                .FirstOrDefaultAsync();
+
+            if (penaltyData is null)
                 return NotFound();
 
-            return PenaltyUtils.GetPenaltyDetails(penalty);
+            return PenaltyUtils.GetPenaltyDetails(penaltyData.Penalty, penaltyData.PlayerName);
         }
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<PenaltyViewModel>>> GetPenalties(string name, bool? isStrike = null, DateTime? from = null, bool includeDeleted = false)
+        public async Task<ActionResult<List<PenaltyViewModel>>> GetPenalties(
+            string name,
+            bool? isStrike = null,
+            DateTime? from = null,
+            bool includeDeleted = false,
+            [ValidSeason] int? season = null)
         {
-            var player = await GetPlayerByNameAsync(name);
+            season ??= _settings.Season;
+
+            var player = await _context.Players
+                .AsNoTracking()
+                .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
+                .Select(p => new
+                {
+                    Name = p.Name,
+                    Penalties = p.Penalties
+                        .Where(pen => pen.Season == season)
+                        .Where(pen => includeDeleted || pen.DeletedOn == null)
+                        .Where(pen => isStrike == null || pen.IsStrike == isStrike)
+                        .Where(pen => from == null || pen.AwardedOn >= from)
+                })
+                .SingleOrDefaultAsync();
+
             if (player is null)
                 return NotFound();
 
-            var penalties = new List<PenaltyViewModel>();
-            foreach (var penalty in player.Penalties)
-            {
-                if (!includeDeleted && penalty.DeletedOn is not null)
-                    continue;
-
-                if (isStrike is not null && penalty.IsStrike != isStrike)
-                    continue;
-
-                if (from is not null && penalty.AwardedOn < from)
-                    continue;
-
-                penalties.Add(PenaltyUtils.GetPenaltyDetails(penalty));
-            }
-
-            return penalties;
+            return player.Penalties.Select(p => PenaltyUtils.GetPenaltyDetails(p, player.Name)).ToList();
         }
 
         [HttpPost("create")]
         public async Task<ActionResult<PenaltyViewModel>> Penalise(string name, int amount, bool isStrike)
         {
-            var player = await GetPlayerByNameAsync(name);
-            if (player is null)
-                return NotFound();
-
-            if (player.Mmr is null)
-                return BadRequest("Player has not been placed yet, so penalty can't be given");
-
-            int prevMmr = player.Mmr.Value;
-
             if (amount < 0)
                 return BadRequest("Penalty amount must be a non-negative integer");
 
+            var season = _settings.Season;
+            var player = await _context.Players
+                .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    CurrentSeasonData = p.SeasonData.FirstOrDefault(s => s.Season == season),
+                })
+                .SingleOrDefaultAsync();
+
+            if (player is null)
+                return NotFound();
+
+            var seasonData = player.CurrentSeasonData;
+
+            if (seasonData is null)
+                return BadRequest("Player has not been placed yet, so penalty can't be given");
+
+            int prevMmr = seasonData.Mmr;
             var newMmr = Math.Max(0, prevMmr - amount);
 
             Penalty penalty = new()
@@ -87,47 +110,52 @@ namespace Lounge.Web.Controllers
                 IsStrike = isStrike,
                 PrevMmr = prevMmr,
                 NewMmr = newMmr,
-                Season = options.CurrentValue.Season,
+                Season = season,
+                PlayerId = player.Id,
             };
 
-            player.Mmr = newMmr;
-            
+            seasonData.Mmr = newMmr;
+
             // no need to update max mmr, since a penalty will only ever decrease their MMR
 
-            player.Penalties.Add(penalty);
+            _context.Penalties.Add(penalty);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPenalty), new { id = penalty.Id }, PenaltyUtils.GetPenaltyDetails(penalty));
+            return CreatedAtAction(nameof(GetPenalty), new { id = penalty.Id }, PenaltyUtils.GetPenaltyDetails(penalty, player.Name));
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var penalty = await _context.Penalties.Include(p => p.Player).FirstOrDefaultAsync(p => p.Id == id);
-            if (penalty is null)
+            var penaltyData = await _context.Penalties
+                .Where(p => p.Id == id)
+                .Select(p => new { Penalty = p, SeasonData = p.Player.SeasonData.Single(s => s.Season == p.Season) })
+                .FirstOrDefaultAsync();
+
+            if (penaltyData is null)
                 return NotFound();
+
+            var penalty = penaltyData.Penalty;
+            var seasonData = penaltyData.SeasonData;
 
             if (penalty.DeletedOn is not null)
                 return BadRequest("Penalty has already been deleted");
 
             penalty.DeletedOn = DateTime.UtcNow;
 
-            var curMMR = penalty.Player.Mmr!.Value;
+            var curMMR = seasonData.Mmr;
             var diff = penalty.NewMmr - penalty.PrevMmr;
             var newMmr = Math.Max(0, curMMR - diff);
 
-            penalty.Player.Mmr = newMmr;
-            if (penalty.Player.MaxMmr is int maxMMR)
+            seasonData.Mmr = newMmr;
+            if (seasonData.MaxMmr is int maxMMR)
             {
-                penalty.Player.MaxMmr = Math.Max(maxMMR, newMmr);
+                seasonData.MaxMmr = Math.Max(maxMMR, newMmr);
             }
 
             await _context.SaveChangesAsync();
 
             return Ok();
         }
-
-        private Task<Player> GetPlayerByNameAsync(string name) =>
-            _context.Players.Include(p => p.Penalties).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
     }
 }

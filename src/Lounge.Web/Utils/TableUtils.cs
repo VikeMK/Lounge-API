@@ -165,6 +165,7 @@ namespace Lounge.Web.Utils
                 UpdateMessageId = t.UpdateMessageId,
                 VerifiedOn = t.VerifiedOn,
                 AuthorId = t.AuthorId,
+                Season = t.Season,
                 Scores = t.Scores.Select(s => new TableScore
                 {
                     Score = s.Score,
@@ -217,6 +218,7 @@ namespace Lounge.Web.Utils
 
             return new TableDetailsViewModel(
                 id: table.Id,
+                season: table.Season, 
                 createdOn: table.CreatedOn,
                 verifiedOn: table.VerifiedOn,
                 deletedOn: table.DeletedOn,

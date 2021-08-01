@@ -3,7 +3,6 @@ using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Stats;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Lounge.Web.Utils
@@ -12,36 +11,49 @@ namespace Lounge.Web.Utils
     {
         public static string NormalizeName(string name) => string.Join("", name.Split(' ', StringSplitOptions.RemoveEmptyEntries)).ToUpperInvariant();
 
-        public static IQueryable<Player> SelectPropertiesForPlayerDetails(this IQueryable<Player> players) =>
+        public static IQueryable<Player> SelectPropertiesForPlayerDetails(this IQueryable<Player> players, int season) =>
             players.Select(p => new Player
             {
                 Id = p.Id,
-                MaxMmr = p.MaxMmr,
                 MKCId = p.MKCId,
-                Mmr = p.Mmr,
                 Name = p.Name,
                 NormalizedName = p.NormalizedName,
-                Bonuses = p.Bonuses.Select(b => new Bonus { Id = b.Id, AwardedOn = b.AwardedOn, DeletedOn = b.DeletedOn, NewMmr = b.NewMmr, PrevMmr = b.PrevMmr }).ToList(),
-                Penalties = p.Penalties.Select(pen => new Penalty { Id = pen.Id, AwardedOn = pen.AwardedOn, DeletedOn = pen.DeletedOn, NewMmr = pen.NewMmr, PrevMmr = pen.PrevMmr }).ToList(),
-                Placements = p.Placements.Select(pl => new Placement { Id = pl.Id, AwardedOn = pl.AwardedOn, Mmr = pl.Mmr, PrevMmr = pl.PrevMmr }).ToList(),
-                TableScores = p.TableScores.Select(t => new TableScore
-                {
-                    TableId = t.TableId,
-                    NewMmr = t.NewMmr,
-                    Score = t.Score,
-                    PrevMmr = t.PrevMmr,
-                    Team = t.Team,
-                    Table = new Table
+                SeasonData = p.SeasonData
+                    .Where(s => s.Season == season)
+                    .ToList(),
+                Bonuses = p.Bonuses
+                    .Where(b => b.Season == season)
+                    .Select(b => new Bonus { Id = b.Id, AwardedOn = b.AwardedOn, DeletedOn = b.DeletedOn, NewMmr = b.NewMmr, PrevMmr = b.PrevMmr })
+                    .ToList(),
+                Penalties = p.Penalties
+                    .Where(pen => pen.Season == season)
+                    .Select(pen => new Penalty { Id = pen.Id, AwardedOn = pen.AwardedOn, DeletedOn = pen.DeletedOn, NewMmr = pen.NewMmr, PrevMmr = pen.PrevMmr })
+                    .ToList(),
+                Placements = p.Placements
+                    .Where(pl => pl.Season == season)
+                    .Select(pl => new Placement { Id = pl.Id, AwardedOn = pl.AwardedOn, Mmr = pl.Mmr, PrevMmr = pl.PrevMmr })
+                    .ToList(),
+                TableScores = p.TableScores
+                    .Where(t => t.Table.Season == season)
+                    .Select(t => new TableScore
                     {
-                        VerifiedOn = t.Table.VerifiedOn,
-                        DeletedOn = t.Table.DeletedOn,
-                        NumTeams = t.Table.NumTeams,
-                        Scores = t.Table.Scores.Select(s => new TableScore { Score = s.Score, Team = s.Team, PlayerId = s.PlayerId }).ToList()
-                    }
-                }).ToList(),
+                        TableId = t.TableId,
+                        NewMmr = t.NewMmr,
+                        Score = t.Score,
+                        PrevMmr = t.PrevMmr,
+                        Team = t.Team,
+                        Table = new Table
+                        {
+                            VerifiedOn = t.Table.VerifiedOn,
+                            DeletedOn = t.Table.DeletedOn,
+                            NumTeams = t.Table.NumTeams,
+                            Scores = t.Table.Scores.Select(s => new TableScore { Score = s.Score, Team = s.Team, PlayerId = s.PlayerId }).ToList()
+                        }
+                    })
+                    .ToList(),
             });
 
-        public static PlayerDetailsViewModel GetPlayerDetails(Player player, RankedPlayerStat rankedPlayerStat)
+        public static PlayerDetailsViewModel GetPlayerDetails(Player player, RankedPlayerStat rankedPlayerStat, int season)
         {
             (int overallRank, PlayerStat playerStat) = rankedPlayerStat;
             var mmrChanges = new List<PlayerDetailsViewModel.MmrChange>();
@@ -214,13 +226,16 @@ namespace Lounge.Web.Utils
             var largestGain = playerStat.LargestGain < 0 ? null : playerStat.LargestGain;
             var largestLoss = playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss;
 
+            var seasonData = player.SeasonData.FirstOrDefault();
+
             var vm = new PlayerDetailsViewModel
             {
                 PlayerId = player.Id,
                 Name = player.Name,
                 MkcId = player.MKCId,
-                Mmr = player.Mmr,
-                MaxMmr = player.MaxMmr,
+                Season = season,
+                Mmr = seasonData?.Mmr,
+                MaxMmr = seasonData?.MaxMmr,
                 OverallRank = overallRank,
                 MmrChanges = mmrChanges,
                 EventsPlayed = playerStat.EventsPlayed,
@@ -238,6 +253,19 @@ namespace Lounge.Web.Utils
             };
 
             return vm;
+        }
+
+        public static PlayerViewModel GetPlayerViewModel(Player player, PlayerSeasonData? seasonData)
+        {
+            return new PlayerViewModel
+            {
+                Id = player.Id,
+                DiscordId = player.DiscordId,
+                MKCId = player.MKCId,
+                Name = player.Name,
+                Mmr = seasonData?.Mmr,
+                MaxMmr = seasonData?.MaxMmr,
+            };
         }
     }
 }

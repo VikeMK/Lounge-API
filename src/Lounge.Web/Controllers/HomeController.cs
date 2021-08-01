@@ -1,11 +1,14 @@
-﻿using Lounge.Web.Data;
+﻿using Lounge.Web.Controllers.ValidationAttributes;
+using Lounge.Web.Data;
 using Lounge.Web.Models.ViewModels;
+using Lounge.Web.Settings;
 using Lounge.Web.Stats;
 using Lounge.Web.Storage;
 using Lounge.Web.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,17 +27,20 @@ namespace Lounge.Web.Controllers
         private readonly IPlayerStatCache _playerStatCache;
         private readonly IPlayerStatService _playerStatService;
         private readonly ITableImageService _tableImageService;
+        private readonly IOptionsMonitor<LoungeSettings> options;
 
         public HomeController(
             ApplicationDbContext context,
             IPlayerStatCache playerStatCache,
             IPlayerStatService playerStatService,
-            ITableImageService tableImageService)
+            ITableImageService tableImageService,
+            IOptionsMonitor<LoungeSettings> options)
         {
             _context = context;
             _playerStatCache = playerStatCache;
             _playerStatService = playerStatService;
             _tableImageService = tableImageService;
+            this.options = options;
         }
 
         [ResponseCache(Duration = 180)]
@@ -45,12 +51,15 @@ namespace Lounge.Web.Controllers
 
         [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "*" })]
         [Route("Leaderboard")]
-        public async Task<IActionResult> Leaderboard(int page = 1, string? filter = null)
+        public async Task<IActionResult> Leaderboard(int page = 1, string? filter = null, [ValidSeason] int? season = null)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             if (page <= 0)
-            {
                 return BadRequest("Page must be a number 1 or greater");
-            }
+
+            season ??= options.CurrentValue.Season;
 
             int? playerId = null;
             if (filter != null)
@@ -86,13 +95,13 @@ namespace Lounge.Web.Controllers
             int totalPlayerCount;
             if (playerId is int id)
             {
-                RankedPlayerStat? playerStat = await GetPlayerStatsAsync(id);
+                RankedPlayerStat? playerStat = await GetPlayerStatsAsync(id, season.Value);
                 playerEntities = playerStat == null ? Array.Empty<RankedPlayerStat>() : new[] { playerStat };
                 totalPlayerCount = playerEntities.Count;
             }
             else
             {
-                var leaderboard = _playerStatCache.GetAllStats();
+                var leaderboard = _playerStatCache.GetAllStats(season.Value);
                 if (filter != null)
                 {
                     var normalized = PlayerUtils.NormalizeName(filter);
@@ -138,6 +147,7 @@ namespace Lounge.Web.Controllers
             return View(new LeaderboardViewModel
             {
                 Players = playerViewModels,
+                Season = season.Value,
                 Page = page,
                 HasNextPage = page < maxPageNum,
                 HasPrevPage = page > 1,
@@ -147,21 +157,26 @@ namespace Lounge.Web.Controllers
 
         [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "*" })]
         [Route("PlayerDetails/{id}")]
-        public async Task<IActionResult> PlayerDetails(int id)
+        public async Task<IActionResult> PlayerDetails(int id, [ValidSeason] int? season=null)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            season ??= options.CurrentValue.Season;
+
             var player = await _context.Players
                 .AsNoTracking()
-                .SelectPropertiesForPlayerDetails()
+                .SelectPropertiesForPlayerDetails(season.Value)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (player is null)
                 return NotFound();
 
-            var playerStat = await GetPlayerStatsAsync(id);
+            var playerStat = await GetPlayerStatsAsync(id, season.Value);
             if (playerStat is null)
                 return NotFound();
 
-            return View(PlayerUtils.GetPlayerDetails(player, playerStat));
+            return View(PlayerUtils.GetPlayerDetails(player, playerStat, season.Value));
         }
 
         [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "*" })]
@@ -204,18 +219,18 @@ namespace Lounge.Web.Controllers
         [Route("/error")]
         public IActionResult Error() => Problem();
 
-        private async Task<RankedPlayerStat?> GetPlayerStatsAsync(int id)
+        private async Task<RankedPlayerStat?> GetPlayerStatsAsync(int id, int season)
         {
             RankedPlayerStat? playerStat = null;
             if (id != -1)
             {
-                if (!_playerStatCache.TryGetPlayerStatsById(id, out playerStat))
+                if (!_playerStatCache.TryGetPlayerStatsById(id, season, out playerStat))
                 {
-                    var stat = await _playerStatService.GetPlayerStatsByIdAsync(id);
+                    var stat = await _playerStatService.GetPlayerStatsByIdAsync(id, season);
                     if (stat is not null)
                     {
-                        _playerStatCache.UpdatePlayerStats(stat);
-                        _playerStatCache.TryGetPlayerStatsById(id, out playerStat);
+                        _playerStatCache.UpdatePlayerStats(stat, season);
+                        _playerStatCache.TryGetPlayerStatsById(id, season, out playerStat);
                     }
                 }
             }
