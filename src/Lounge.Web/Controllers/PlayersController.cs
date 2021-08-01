@@ -107,9 +107,10 @@ namespace Lounge.Web.Controllers
             var season = _settings.Season;
 
             Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId, DiscordId = discordId };
+            PlayerSeasonData? seasonData = null;
             if (mmr is int mmrValue)
             {
-                PlayerSeasonData seasonData = new() { Mmr = mmrValue, Season = season };
+                seasonData = new() { Mmr = mmrValue, Season = season };
                 player.SeasonData = new List<PlayerSeasonData> { seasonData };
                 Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, Season = season };
                 player.Placements = new List<Placement> { placement };
@@ -138,8 +139,7 @@ namespace Lounge.Web.Controllers
                 throw;
             }
 
-            var vm = PlayerUtils.GetPlayerViewModel(player, player.SeasonData.FirstOrDefault(s => s.Season == season));
-
+            var vm = PlayerUtils.GetPlayerViewModel(player, seasonData);
             return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, vm);
         }
 
