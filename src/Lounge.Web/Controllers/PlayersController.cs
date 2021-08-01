@@ -12,6 +12,7 @@ using Lounge.Web.Stats;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using Lounge.Web.Settings;
+using Lounge.Web.Controllers.ValidationAttributes;
 
 namespace Lounge.Web.Controllers
 {
@@ -23,20 +24,22 @@ namespace Lounge.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPlayerStatCache _playerStatCache;
         private readonly IPlayerStatService _playerStatService;
-        private readonly IOptionsMonitor<LoungeSettings> options;
+        private readonly LoungeSettings _settings;
 
-        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, IPlayerStatService playerStatService, IOptionsMonitor<LoungeSettings> options)
+        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, IPlayerStatService playerStatService, IOptionsSnapshot<LoungeSettings> options)
         {
             _context = context;
             _playerStatCache = playerStatCache;
             _playerStatService = playerStatService;
-            this.options = options;
+            _settings = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<Player>> GetPlayer(string? name, int? mkcId, string? discordId)
+        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? mkcId, string? discordId, [ValidSeason]int? season = null)
         {
+            season ??= _settings.Season;
+
             Player player;
             if (name is not null)
             {
@@ -58,48 +61,57 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            return player;
+            var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == season);
+
+            return PlayerUtils.GetPlayerViewModel(player, seasonData);
         }
 
         [HttpGet("details")]
         [AllowAnonymous]
-        public async Task<ActionResult<PlayerDetailsViewModel>> Details(string name)
+        public async Task<ActionResult<PlayerDetailsViewModel>> Details(string name, [ValidSeason] int? season = null)
         {
+            season ??= _settings.Season;
+
             var player = await _context.Players
                 .AsNoTracking()
-                .SelectPropertiesForPlayerDetails()
+                .SelectPropertiesForPlayerDetails(season.Value)
                 .FirstOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
 
             if (player is null)
                 return NotFound();
 
-            var playerStat = await GetPlayerStatsAsync(player.Id);
+            var playerStat = await GetPlayerStatsAsync(player.Id, season.Value);
             if (playerStat is null)
                 return NotFound();
 
-            return PlayerUtils.GetPlayerDetails(player, playerStat);
+            return PlayerUtils.GetPlayerDetails(player, playerStat, season.Value);
         }
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<PlayerListViewModel> Players(int? minMmr, int? maxMmr)
+        public async Task<ActionResult<PlayerListViewModel>> Players(int? minMmr, int? maxMmr, [ValidSeason] int? season=null)
         {
-            var players = await _context.Players
-                .Where(p => (minMmr == null || (p.Mmr != null && p.Mmr >= minMmr)) && (maxMmr == null || (p.Mmr != null && p.Mmr <= maxMmr)))
-                .Select(p => new PlayerListViewModel.Player(p.Name, p.MKCId, p.Mmr))
+            season ??= _settings.Season;
+
+            var players = await _context.PlayerSeasonData
+                .Where(p => p.Season == season && (minMmr == null || p.Mmr >= minMmr) && (maxMmr == null || p.Mmr <= maxMmr))
+                .Select(p => new PlayerListViewModel.Player(p.Player.Name, p.Player.MKCId, p.Mmr))
                 .ToListAsync();
 
             return new PlayerListViewModel { Players = players };
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<Player>> Create(string name, int mkcId, int? mmr, string? discordId = null)
+        public async Task<ActionResult<PlayerViewModel>> Create(string name, int mkcId, int? mmr, string? discordId = null)
         {
+            var season = _settings.Season;
+
             Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId, DiscordId = discordId };
             if (mmr is int mmrValue)
             {
-                player.Mmr = mmrValue;
-                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, Season = options.CurrentValue.Season };
+                PlayerSeasonData seasonData = new() { Mmr = mmrValue, Season = season };
+                player.SeasonData = new List<PlayerSeasonData> { seasonData };
+                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, Season = season };
                 player.Placements = new List<Placement> { placement };
             }
 
@@ -126,46 +138,49 @@ namespace Lounge.Web.Controllers
                 throw;
             }
 
-            if (player.Placements is not null)
-            {
-                foreach (var placement in player.Placements)
-                {
-                    placement.Player = default!;
-                }
-            }
+            var vm = PlayerUtils.GetPlayerViewModel(player, player.SeasonData.FirstOrDefault(s => s.Season == season));
 
-            return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, player);
+            return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, vm);
         }
 
         [HttpPost("placement")]
-        public async Task<ActionResult<Player>> Placement(string name, int mmr, bool force=false)
+        public async Task<ActionResult<PlayerViewModel>> Placement(string name, int mmr, bool force=false)
         {
             var player = await GetPlayerByNameAsync(name);
             if (player is null)
                 return NotFound();
 
-            if (player.Mmr is not null && !force)
+            var season = _settings.Season;
+            var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == season);
+
+            if (seasonData is not null && !force)
             {
                 // only look at events that have been verified and aren't deleted
-                var eventsPlayed = await _context.Players
-                    .Where(p => p.Id == player.Id)
-                    .Select(t => t.TableScores.Count(s => s.Table.VerifiedOn != null && s.Table.DeletedOn == null))
-                    .FirstOrDefaultAsync();
+                var eventsPlayed = await _context.TableScores
+                    .CountAsync(s => s.PlayerId == player.Id && s.Table.VerifiedOn != null && s.Table.DeletedOn == null && s.Table.Season == season);
 
                 if (eventsPlayed > 0)
                     return BadRequest("Player already has been placed and has played a match.");
             }
 
-            Placement placement = new() { Mmr = mmr, PrevMmr = player.Mmr, AwardedOn = DateTime.UtcNow, PlayerId = player.Id, Season = options.CurrentValue.Season };
+            Placement placement = new() { Mmr = mmr, PrevMmr = seasonData?.Mmr, AwardedOn = DateTime.UtcNow, PlayerId = player.Id, Season = season };
             _context.Placements.Add(placement);
 
-            player.Mmr = mmr;
+            if (seasonData is null)
+            {
+                PlayerSeasonData newSeasonData = new() { Mmr = mmr, Season = season, PlayerId = player.Id };
+                _context.PlayerSeasonData.Add(newSeasonData);
+            }
+            else
+            {
+                seasonData.Mmr = mmr;
+            }
 
             await _context.SaveChangesAsync();
 
-            player.Placements = default!;
+            var vm = PlayerUtils.GetPlayerViewModel(player, seasonData);
 
-            return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, player);
+            return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, vm);
         }
 
         [HttpPost("update/name")]
@@ -233,26 +248,26 @@ namespace Lounge.Web.Controllers
         }
 
         private Task<Player> GetPlayerByNameAsync(string name) =>
-            _context.Players.SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
+            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
 
         private Task<Player> GetPlayerByMKCIdAsync(int mkcId) =>
-            _context.Players.SingleOrDefaultAsync(p => p.MKCId == mkcId);
+            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.MKCId == mkcId);
 
         private Task<Player> GetPlayerByDiscordIdAsync(string discordId) =>
-            _context.Players.SingleOrDefaultAsync(p => p.DiscordId == discordId);
+            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.DiscordId == discordId);
 
-        private async Task<RankedPlayerStat?> GetPlayerStatsAsync(int id)
+        private async Task<RankedPlayerStat?> GetPlayerStatsAsync(int id, int season)
         {
             RankedPlayerStat? playerStat = null;
             if (id != -1)
             {
-                if (!_playerStatCache.TryGetPlayerStatsById(id, out playerStat))
+                if (!_playerStatCache.TryGetPlayerStatsById(id, season, out playerStat))
                 {
-                    var stat = await _playerStatService.GetPlayerStatsByIdAsync(id);
+                    var stat = await _playerStatService.GetPlayerStatsByIdAsync(id, season);
                     if (stat is not null)
                     {
-                        _playerStatCache.UpdatePlayerStats(stat);
-                        _playerStatCache.TryGetPlayerStatsById(id, out playerStat);
+                        _playerStatCache.UpdatePlayerStats(stat, season);
+                        _playerStatCache.TryGetPlayerStatsById(id, season, out playerStat);
                     }
                 }
             }

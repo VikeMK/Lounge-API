@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using Lounge.Web.Utils;
 using Lounge.Web.Settings;
 using Microsoft.Extensions.Options;
+using System.Linq;
+using Lounge.Web.Models.ViewModels;
+using Lounge.Web.Controllers.ValidationAttributes;
 
 namespace Lounge.Web.Controllers
 {
@@ -18,58 +21,73 @@ namespace Lounge.Web.Controllers
     public class BonusesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IOptionsMonitor<LoungeSettings> options;
+        private readonly LoungeSettings _settings;
 
-        public BonusesController(ApplicationDbContext context, IOptionsMonitor<LoungeSettings> options)
+        public BonusesController(ApplicationDbContext context, IOptionsSnapshot<LoungeSettings> options)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            this.options = options;
+            _settings = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<Bonus>> GetBonus(int id)
+        public async Task<ActionResult<BonusViewModel>> GetBonus(int id)
         {
-            var bonus = await _context.Bonuses.FindAsync(id);
-            if (bonus is null)
+            var bonusData = await _context.Bonuses
+                .AsNoTracking()
+                .Where(b => b.Id == id)
+                .Select(b => new { Bonus = b, PlayerName = b.Player.Name })
+                .FirstOrDefaultAsync();
+
+            if (bonusData is null)
                 return NotFound();
 
-            return bonus;
+            return BonusUtils.GetBonusDetails(bonusData.Bonus, bonusData.PlayerName);
         }
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<Bonus>>> GetBonuses(string name)
+        public async Task<ActionResult<List<BonusViewModel>>> GetBonuses(string name, [ValidSeason] int? season = null)
         {
-            var player = await GetPlayerByNameAsync(name);
+            season ??= _settings.Season;
+
+            var player = await _context.Players
+                .AsNoTracking()
+                .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
+                .Select(p => new { Name = p.Name, Bonuses = p.Bonuses.Where(b => b.Season == season) })
+                .SingleOrDefaultAsync();
+
             if (player is null)
                 return NotFound();
 
-            var bonuses = new List<Bonus>();
-            foreach (var bonus in player.Bonuses)
-            {
-                bonus.Player = null!;
-                bonuses.Add(bonus);
-            }
-
-            return bonuses;
+            return player.Bonuses.Select(b => BonusUtils.GetBonusDetails(b, b.Player.Name)).ToList();
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<Bonus>> AwardBonus(string name, int amount)
+        public async Task<ActionResult<BonusViewModel>> AwardBonus(string name, int amount)
         {
-            var player = await GetPlayerByNameAsync(name);
-            if (player is null)
-                return NotFound();
-
-            if (player.Mmr is null)
-                return BadRequest("Player has not been placed yet, so bonus can't be given");
-
-            int prevMmr = player.Mmr.Value;
-
             if (amount < 0)
                 return BadRequest("Bonus amount must be a non-negative integer");
 
+            var season = _settings.Season;
+            var player = await _context.Players
+                .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    CurrentSeasonData = p.SeasonData.FirstOrDefault(s => s.Season == season),
+                })
+                .SingleOrDefaultAsync();
+
+            if (player is null)
+                return NotFound();
+
+            var seasonData = player.CurrentSeasonData;
+            if (seasonData is null)
+                return BadRequest("Player has not been placed yet, so bonus can't be given");
+
+            int prevMmr = seasonData.Mmr;
             var newMmr = prevMmr + amount;
 
             Bonus bonus = new()
@@ -77,40 +95,47 @@ namespace Lounge.Web.Controllers
                 AwardedOn = DateTime.UtcNow,
                 PrevMmr = prevMmr,
                 NewMmr = newMmr,
-                Season = options.CurrentValue.Season,
+                Season = season,
+                PlayerId = player.Id
             };
 
-            player.Mmr = newMmr;
-            if (player.MaxMmr is int maxMMR)
+            seasonData.Mmr = newMmr;
+            if (seasonData.MaxMmr is int maxMMR)
             {
-                player.MaxMmr = Math.Max(maxMMR, newMmr);
+                seasonData.MaxMmr = Math.Max(maxMMR, newMmr);
             }
 
-            player.Bonuses.Add(bonus);
+            _context.Bonuses.Add(bonus);
+
             await _context.SaveChangesAsync();
 
-            bonus.Player = null!;
-
-            return CreatedAtAction(nameof(GetBonus), new { id = bonus.Id }, bonus);
+            return CreatedAtAction(nameof(GetBonus), new { id = bonus.Id }, BonusUtils.GetBonusDetails(bonus, player.Name));
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var bonus = await _context.Bonuses.Include(p => p.Player).FirstOrDefaultAsync(p => p.Id == id);
-            if (bonus is null)
+            var bonusData = await _context.Bonuses
+                .Where(b => b.Id == id)
+                .Select(b => new { Bonus = b, SeasonData = b.Player.SeasonData.Single(s => s.Season == b.Season) })
+                .FirstOrDefaultAsync();
+
+            if (bonusData is null)
                 return NotFound();
+
+            var bonus = bonusData.Bonus;
+            var seasonData = bonusData.SeasonData;
 
             if (bonus.DeletedOn is not null)
                 return BadRequest("Bonus has already been deleted");
 
             bonus.DeletedOn = DateTime.UtcNow;
 
-            var curMMR = bonus.Player.Mmr!.Value;
+            var curMMR = seasonData.Mmr;
             var diff = bonus.NewMmr - bonus.PrevMmr;
             var newMmr = Math.Max(0, curMMR - diff);
 
-            bonus.Player.Mmr = newMmr;
+            seasonData.Mmr = newMmr;
 
             // no need to update max mmr since deleting a bonus will only cause their MMR to decrease
 
@@ -118,8 +143,5 @@ namespace Lounge.Web.Controllers
 
             return Ok();
         }
-
-        private Task<Player> GetPlayerByNameAsync(string name) =>
-            _context.Players.Include(p => p.Bonuses).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
     }
 }

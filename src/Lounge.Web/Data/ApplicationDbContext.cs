@@ -17,6 +17,7 @@ namespace Lounge.Web.Data
         }
 
         public DbSet<Player> Players => Set<Player>();
+        public DbSet<PlayerSeasonData> PlayerSeasonData => Set<PlayerSeasonData>();
         public DbSet<Table> Tables => Set<Table>();
         public DbSet<TableScore> TableScores => Set<TableScore>();
         public DbSet<Penalty> Penalties => Set<Penalty>();
@@ -30,6 +31,7 @@ namespace Lounge.Web.Data
             var defaultSeason = loungeSettingsOptions.Value.Season;
 
             modelBuilder.Entity<Player>().ToTable("Players");
+            modelBuilder.Entity<PlayerSeasonData>().ToTable("PlayerSeasonData");
             modelBuilder.Entity<Table>().ToTable("Tables");
             modelBuilder.Entity<TableScore>().ToTable("TableScores");
             modelBuilder.Entity<Penalty>().ToTable("Penalties");
@@ -47,6 +49,16 @@ namespace Lounge.Web.Data
             modelBuilder.Entity<Player>()
                 .HasIndex(p => p.NormalizedName)
                 .IsUnique();
+
+            modelBuilder.Entity<PlayerSeasonData>()
+                .Property(psd => psd.Season)
+                .HasDefaultValue(defaultSeason);
+
+            modelBuilder.Entity<PlayerSeasonData>()
+                .HasKey(psd => new { psd.PlayerId, psd.Season });
+
+            modelBuilder.Entity<PlayerSeasonData>()
+                .HasIndex(psd => new { psd.Season, psd.Mmr });
 
             modelBuilder.Entity<Table>()
                 .Property(t => t.Season)

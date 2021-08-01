@@ -1,7 +1,6 @@
 ﻿using Lounge.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Lounge.Web.Stats
@@ -15,19 +14,19 @@ namespace Lounge.Web.Stats
             _context = context;
         }
 
-        public async Task<IReadOnlyList<PlayerStat>> GetAllStatsAsync()
+        public async Task<IReadOnlyList<PlayerStat>> GetAllStatsAsync(int season)
         {
             return await _context.Players
                 .AsNoTracking()
-                .SelectPlayerStats()
+                .SelectPlayerStats(season)
                 .ToListAsync();
         }
 
-        public async Task<PlayerStat?> GetPlayerStatsByIdAsync(int id)
+        public async Task<PlayerStat?> GetPlayerStatsByIdAsync(int id, int season)
         {
             return await _context.Players
                 .AsNoTracking()
-                .SelectPlayerStats()
+                .SelectPlayerStats(season)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
     }

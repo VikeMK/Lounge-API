@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Lounge.Web.Storage;
 using Microsoft.Extensions.Options;
 using Lounge.Web.Settings;
+using Lounge.Web.Controllers.ValidationAttributes;
 
 namespace Lounge.Web.Controllers
 {
@@ -22,13 +23,13 @@ namespace Lounge.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ITableImageService _tableImageService;
-        private readonly IOptionsMonitor<LoungeSettings> options;
+        private readonly LoungeSettings _settings;
 
-        public TablesController(ApplicationDbContext context, ITableImageService tableImageService, IOptionsMonitor<LoungeSettings> options)
+        public TablesController(ApplicationDbContext context, ITableImageService tableImageService, IOptionsSnapshot<LoungeSettings> options)
         {
             _context = context;
             _tableImageService = tableImageService;
-            this.options = options;
+            _settings = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         [HttpGet]
@@ -48,12 +49,14 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to)
+        public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to, [ValidSeason] int? season = null)
         {
+            season ??= _settings.Season;
+
             var tables = await _context.Tables
                 .AsNoTracking()
+                .Where(t => t.CreatedOn >= from && (to == null || t.CreatedOn <= to) && t.Season == season)
                 .SelectPropertiesForTableDetails()
-                .Where(t => t.CreatedOn >= from && (to == null || t.CreatedOn <= to))
                 .ToListAsync();
 
             return tables.Select(TableUtils.GetTableDetails).ToList();
@@ -61,12 +64,14 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("unverified")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables()
+        public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables([ValidSeason] int? season = null)
         {
+            season ??= _settings.Season;
+
             var tables = await _context.Tables
                 .AsNoTracking()
                 .SelectPropertiesForTableDetails()
-                .Where(t => t.VerifiedOn == null && t.DeletedOn == null)
+                .Where(t => t.VerifiedOn == null && t.DeletedOn == null && t.Season == season)
                 .ToListAsync();
 
             return tables.Select(TableUtils.GetTableDetails).ToList();
@@ -134,7 +139,7 @@ namespace Lounge.Web.Controllers
                 Tier = vm.Tier,
                 Scores = tableScores,
                 AuthorId = vm.AuthorId,
-                Season = options.CurrentValue.Season,
+                Season = _settings.Season,
             };
 
             await _context.Tables.AddAsync(table);
@@ -191,7 +196,6 @@ namespace Lounge.Web.Controllers
 
             if (table is null)
                 return NotFound();
-
 
             int[]? teamTotals = null;
             if (table.VerifiedOn is not null)
@@ -282,7 +286,7 @@ namespace Lounge.Web.Controllers
         {
             var table = await _context.Tables
                 .Include(t => t.Scores)
-                .ThenInclude(t => t.Player)
+                .ThenInclude(t => t.Player.SeasonData)
                 .FirstOrDefaultAsync(t => t.Id == tableId);
 
             if (table is null)
@@ -296,7 +300,16 @@ namespace Lounge.Web.Controllers
 
             int numTeams = table.NumTeams;
 
-            var unplacedPlayers = table.Scores.Where(s => s.Player.Mmr == null).Select(s => s.Player.Name).ToArray();
+            var season = table.Season;
+            var seasonDataLookup = table.Scores.ToDictionary(
+                s => s.PlayerId,
+                s => s.Player.SeasonData.FirstOrDefault(s => s.Season == season));
+
+            var unplacedPlayers = table.Scores
+                .Where(s => seasonDataLookup[s.PlayerId] == null)
+                .Select(s => s.Player.Name)
+                .ToArray();
+
             if (unplacedPlayers.Any())
                 return BadRequest($"The following players have not been placed yet: {string.Join(", ", unplacedPlayers)}");
 
@@ -304,28 +317,36 @@ namespace Lounge.Web.Controllers
 
             var scores = new (string Player, int Score, int CurrentMmr, double Multiplier)[numTeams][];
             for (int i = 0; i < numTeams; i++)
-                scores[i] = table.Scores.Where(score => score.Team == i).Select(s => (s.Player.Name, s.Score, s.Player.Mmr!.Value, sqMultiplier * s.Multiplier)).ToArray();
+            {
+                scores[i] = table.Scores
+                    .Where(score => score.Team == i)
+                    .Select(s => (s.Player.Name, s.Score, seasonDataLookup[s.PlayerId]!.Mmr, sqMultiplier * s.Multiplier))
+                    .ToArray();
+            }
 
             var mmrDeltas = TableUtils.GetMMRDeltas(scores);
             foreach (var score in table.Scores)
             {
                 var delta = mmrDeltas[score.Player.Name];
-                int prevMmr = score.Player.Mmr!.Value;
+                var seasonData = seasonDataLookup[score.PlayerId]!;
+                int prevMmr = seasonData.Mmr;
                 int newMmr = prevMmr + delta;
                 score.PrevMmr = prevMmr;
                 score.NewMmr = newMmr;
 
-                score.Player.Mmr = newMmr;
-                if (score.Player.MaxMmr is int maxMmr)
+                seasonData.Mmr = newMmr;
+                if (seasonData.MaxMmr is int maxMmr)
                 {
-                    score.Player.MaxMmr = Math.Max(maxMmr, newMmr);
+                    seasonData.MaxMmr = Math.Max(maxMmr, newMmr);
                 }
                 else
                 {
-                    var playerTotalMatches = await _context.TableScores.CountAsync(s => s.PlayerId == score.PlayerId && s.Table.VerifiedOn != null && s.Table.DeletedOn == null);
+                    var playerTotalMatches = await _context.TableScores
+                        .CountAsync(s => s.PlayerId == score.PlayerId && s.Table.VerifiedOn != null && s.Table.DeletedOn == null && s.Table.Season == season);
+
                     if (playerTotalMatches >= 4)
                     {
-                        score.Player.MaxMmr = newMmr;
+                        seasonData.MaxMmr = newMmr;
                     }
                 }
 
@@ -353,7 +374,7 @@ namespace Lounge.Web.Controllers
         {
             var table = await _context.Tables
                 .Include(t => t.Scores)
-                .ThenInclude(t => t.Player)
+                .ThenInclude(t => t.Player.SeasonData)
                 .FirstOrDefaultAsync(t => t.Id == tableId);
 
             if (table is null)
@@ -362,19 +383,25 @@ namespace Lounge.Web.Controllers
             if (table.DeletedOn is not null)
                 return BadRequest("Table has already been deleted");
 
+            var season = table.Season;
+            var seasonDataLookup = table.Scores.ToDictionary(
+                s => s.PlayerId,
+                s => s.Player.SeasonData.FirstOrDefault(s => s.Season == season));
+
             table.DeletedOn = DateTime.UtcNow;
 
             if (table.VerifiedOn is not null)
             {
                 foreach (var score in table.Scores)
                 {
-                    var curMMR = score.Player.Mmr!.Value;
+                    var seasonData = seasonDataLookup[score.PlayerId]!;
+                    var curMMR = seasonData.Mmr;
                     var diff = score.NewMmr!.Value - score.PrevMmr!.Value;
                     var newMMR = Math.Max(0, curMMR - diff);
-                    score.Player.Mmr = newMMR;
-                    if (score.Player.MaxMmr is int maxMmr)
+                    seasonData.Mmr = newMMR;
+                    if (seasonData.MaxMmr is int maxMmr)
                     {
-                        score.Player.MaxMmr = Math.Max(maxMmr, newMMR);
+                        seasonData.MaxMmr = Math.Max(maxMmr, newMMR);
                     }
                 }
             }

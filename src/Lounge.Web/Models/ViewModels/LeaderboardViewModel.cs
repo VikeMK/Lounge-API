@@ -1,13 +1,14 @@
 ﻿using Lounge.Web.Models.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 
 namespace Lounge.Web.Models.ViewModels
 {
     public class LeaderboardViewModel
     {
         public List<Player> Players { get; init; }
+
+        public int Season { get; init; }
 
         public int Page { get; init; }
 

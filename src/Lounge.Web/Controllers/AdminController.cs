@@ -9,7 +9,9 @@ using System;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Utils;
 using Microsoft.Extensions.Logging;
-using Lounge.Web.Storage;
+using Microsoft.Extensions.Options;
+using Lounge.Web.Settings;
+using Lounge.Web.Controllers.ValidationAttributes;
 
 namespace Lounge.Web.Controllers
 {
@@ -20,36 +22,36 @@ namespace Lounge.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AdminController> _logger;
-        private readonly ITableImageService _tableImageService;
+        private readonly IOptionsMonitor<LoungeSettings> options;
 
-        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ITableImageService tableImageService)
+        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, IOptionsMonitor<LoungeSettings> options)
         {
             _context = context;
             _logger = logger;
-            _tableImageService = tableImageService;
+            this.options = options;
         }
 
         [HttpPost("fixMmr")]
-        public async Task<IActionResult> FixAllMmr(bool preview=true)
+        public async Task<IActionResult> FixAllMmr(bool preview=true, [ValidSeason]int? season=null)
         {
+            season ??= options.CurrentValue.Season;
+
             var players = await _context.Players.ToDictionaryAsync(p => p.Id);
-            var placements = await _context.Placements.ToDictionaryAsync(p => p.Id);
-            var penalties = await _context.Penalties.ToDictionaryAsync(p => p.Id);
-            var bonuses = await _context.Bonuses.ToDictionaryAsync(b => b.Id);
-            var tables = await _context.Tables.AsNoTracking().Select(t => new { t.Id, t.VerifiedOn, t.DeletedOn, t.NumTeams, t.Tier }).ToDictionaryAsync(t => t.Id);
-            var tableScores = await _context.TableScores.ToListAsync();
+            var seasonData = await _context.PlayerSeasonData.Where(s => s.Season == season).ToDictionaryAsync(p => p.PlayerId);
+            var placements = await _context.Placements.Where(s => s.Season == season).ToDictionaryAsync(p => p.Id);
+            var penalties = await _context.Penalties.Where(s => s.Season == season).ToDictionaryAsync(p => p.Id);
+            var bonuses = await _context.Bonuses.Where(s => s.Season == season).ToDictionaryAsync(b => b.Id);
+            var tables = await _context.Tables.AsNoTrackingWithIdentityResolution().Where(s => s.Season == season).Select(t => new { t.Id, t.VerifiedOn, t.DeletedOn, t.NumTeams, t.Tier }).ToDictionaryAsync(t => t.Id);
+            var tableScores = await _context.TableScores.Where(s => s.Table.Season == season).ToListAsync();
 
             var tableScoreMap = tableScores.GroupBy(t => t.TableId).ToDictionary(t => t.Key, t => t.ToList());
 
             var matchesPlayed = new Dictionary<int, int>();
             var playerMmrs = new Dictionary<int, int>();
             var playerMaxMmrs = new Dictionary<int, int?>();
-            foreach (var player in players.Values)
+            foreach (var data in seasonData)
             {
-                if (player.Mmr != null)
-                {
-                    matchesPlayed[player.Id] = 0;
-                }
+                matchesPlayed[data.Key] = 0;
             }
 
             var events = new List<(DateTimeOffset Time, PlayerDetailsViewModel.MmrChangeReason Reason, int EntityId)>();
@@ -84,7 +86,13 @@ namespace Lounge.Web.Controllers
                     events.Add((table.VerifiedOn.Value, PlayerDetailsViewModel.MmrChangeReason.Table, table.Id));
                     if (table.DeletedOn != null)
                     {
-                        events.Add((table.DeletedOn.Value, PlayerDetailsViewModel.MmrChangeReason.TableDelete, table.Id));
+                        var deletedOn = table.DeletedOn.Value;
+                        if (deletedOn < table.VerifiedOn.Value)
+                        {
+                            deletedOn = table.VerifiedOn.Value + TimeSpan.FromMilliseconds(5);
+                        }
+
+                        events.Add((deletedOn, PlayerDetailsViewModel.MmrChangeReason.TableDelete, table.Id));
                     }
                 }
             }
@@ -219,29 +227,33 @@ namespace Lounge.Web.Controllers
 
             var mmrChanges = new Dictionary<string, object>();
 
-            foreach (var player in players.Values)
+            foreach (var data in seasonData.Values)
             {
-                if (!playerMmrs.ContainsKey(player.Id))
+                if (!playerMmrs.ContainsKey(data.PlayerId))
                     continue;
 
-                var expectedMmr = playerMmrs[player.Id];
-                var expectedMaxMmr = playerMaxMmrs.GetValueOrDefault(player.Id, null);
+                var playerId = data.PlayerId;
+                var playerName = players[playerId].Name;
+                var expectedMmr = playerMmrs[playerId];
+                var expectedMaxMmr = playerMaxMmrs.GetValueOrDefault(playerId, null);
 
-                if (player.Mmr != expectedMmr)
+                if (data.Mmr != expectedMmr)
                 {
-                    if (RankUtils.GetRank(player.Mmr) != RankUtils.GetRank(expectedMmr))
-                        _logger.LogInformation($"{player.Name} ({player.Id}): {RankUtils.GetRank(player.Mmr)} -> {RankUtils.GetRank(expectedMmr)}");
+                    if (RankUtils.GetRank(data.Mmr) != RankUtils.GetRank(expectedMmr))
+                        _logger.LogInformation($"{playerName} ({playerId}): {RankUtils.GetRank(data.Mmr)} -> {RankUtils.GetRank(expectedMmr)}");
 
-                    newMmrs[player.Id] = expectedMmr;
-                    mmrChanges[player.Name] = new { PrevMmr = player.Mmr, NewMmr = expectedMmr };
+                    newMmrs[playerId] = expectedMmr;
+                    mmrChanges[playerName] = new { PrevMmr = data.Mmr, NewMmr = expectedMmr };
                 }
 
-                if (player.MaxMmr != expectedMaxMmr)
+                if (data.MaxMmr != expectedMaxMmr)
                 {
-                    newMaxMmrs[player.Id] = expectedMaxMmr;
+                    if (RankUtils.GetRank(data.MaxMmr) != RankUtils.GetRank(expectedMaxMmr))
+                        _logger.LogInformation($"{playerName} ({playerId}): MAX {RankUtils.GetRank(data.MaxMmr)} -> {RankUtils.GetRank(expectedMaxMmr)}");
+
+                    newMaxMmrs[playerId] = expectedMaxMmr;
                 }
             }
-
 
             if (!preview)
             {
@@ -265,12 +277,12 @@ namespace Lounge.Web.Controllers
 
                 foreach ((int id, int mmr) in newMmrs)
                 {
-                    players[id].Mmr = mmr;
+                    seasonData[id].Mmr = mmr;
                 }
 
                 foreach ((int id, int? maxMmr) in newMaxMmrs)
                 {
-                    players[id].MaxMmr = maxMmr;
+                    seasonData[id].MaxMmr = maxMmr;
                 }
 
                 await _context.SaveChangesAsync();
