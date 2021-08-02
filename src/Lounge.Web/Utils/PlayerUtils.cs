@@ -47,7 +47,8 @@ namespace Lounge.Web.Utils
                             VerifiedOn = t.Table.VerifiedOn,
                             DeletedOn = t.Table.DeletedOn,
                             NumTeams = t.Table.NumTeams,
-                            Scores = t.Table.Scores.Select(s => new TableScore { Score = s.Score, Team = s.Team, PlayerId = s.PlayerId }).ToList()
+                            Scores = t.Table.Scores.Select(s => new TableScore { Score = s.Score, Team = s.Team, PlayerId = s.PlayerId }).ToList(),
+                            Tier = t.Table.Tier,
                         }
                     })
                     .ToList(),
@@ -104,7 +105,9 @@ namespace Lounge.Web.Utils
                     time: tableScore.Table.VerifiedOn!.Value,
                     score: tableScore.Score,
                     partnerScores: partnerScores,
-                    rank: rank));
+                    rank: rank,
+                    tier: tableScore.Table.Tier,
+                    numTeams: tableScore.Table.NumTeams));
 
                 if (tableScore.Table.DeletedOn is not null)
                 {
@@ -113,7 +116,8 @@ namespace Lounge.Web.Utils
                         newMmr: -1,
                         mmrDelta: -delta,
                         reason: PlayerDetailsViewModel.MmrChangeReason.TableDelete,
-                        time: tableScore.Table.DeletedOn!.Value));
+                        time: tableScore.Table.DeletedOn!.Value,
+                        tier: tableScore.Table.Tier));
                 }
                 else
                 {

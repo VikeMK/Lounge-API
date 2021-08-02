@@ -235,5 +235,23 @@ namespace Lounge.Web.Utils
         {
             return string.Equals(table.Tier, "SQ", StringComparison.OrdinalIgnoreCase) ? 0.75 : 1;
         }
+
+        public static string TierDisplayName(string? tierName) =>
+            tierName?.ToUpperInvariant() switch
+            {
+                "SQ" => "Squad Queue",
+                string tier => $"Tier {tier}",
+                null => "Table",
+            };
+
+        public static string? FormatDisplay(int numTeams) => numTeams switch
+        {
+            2 => "6v6",
+            3 => "4v4",
+            4 => "3v3",
+            6 => "2v2",
+            12 => "FFA",
+            int n => null,
+        };
     }
 }

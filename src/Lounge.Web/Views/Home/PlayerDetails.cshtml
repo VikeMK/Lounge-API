@@ -106,9 +106,13 @@
         {
         <tr>
             <td>
-                @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table or PlayerDetailsViewModel.MmrChangeReason.TableDelete)
+                @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table)
                 {
-                    <a asp-action="TableDetails" asp-route-id="@change.ChangeId">@Html.DisplayFor(modelItem => change.Reason)</a>
+                    <a asp-action="TableDetails" asp-route-id="@change.ChangeId">@TableUtils.TierDisplayName(change.Tier) @TableUtils.FormatDisplay(change.NumTeams!.Value) (ID: @change.ChangeId)</a>
+                }
+                else if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete)
+                {
+                    <a asp-action="TableDetails" asp-route-id="@change.ChangeId">@Html.DisplayFor(modelItem => change.Reason) (ID: @change.ChangeId)</a>
                 }
                 else
                 {

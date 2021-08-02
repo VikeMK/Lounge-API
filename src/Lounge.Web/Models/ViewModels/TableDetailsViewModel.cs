@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lounge.Web.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -22,6 +23,7 @@ namespace Lounge.Web.Models.ViewModels
             AuthorId = authorId;
         }
 
+        [Display(Name = "Table ID")]
         public int Id { get; set; }
 
         [Display(Name = "Season")]
@@ -39,15 +41,7 @@ namespace Lounge.Web.Models.ViewModels
 
         public int NumTeams { get; set; }
 
-        public string Format => NumTeams switch
-        {
-            2 => "6v6",
-            3 => "4v4",
-            4 => "3v3",
-            6 => "2v2",
-            12 => "FFA",
-            int n => $"Invalid Format: {n} teams",
-        };
+        public string Format => TableUtils.FormatDisplay(NumTeams) ?? $"Invalid Format: {NumTeams} teams";
 
         [Display(Name = "Table Image")]
         public string Url { get; set; }
