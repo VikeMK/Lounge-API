@@ -95,7 +95,12 @@ namespace Lounge.Web.Controllers
 
             var players = await _context.PlayerSeasonData
                 .Where(p => p.Season == season && (minMmr == null || p.Mmr >= minMmr) && (maxMmr == null || p.Mmr <= maxMmr))
-                .Select(p => new PlayerListViewModel.Player(p.Player.Name, p.Player.MKCId, p.Mmr))
+                .Select(p => new PlayerListViewModel.Player(
+                    p.Player.Name,
+                    p.Player.MKCId,
+                    p.Mmr,
+                    p.Player.DiscordId,
+                    p.Player.TableScores.Count(t => t.Table.Season == season && t.Table.VerifiedOn != null && t.Table.DeletedOn == null)))
                 .ToListAsync();
 
             return new PlayerListViewModel { Players = players };
