@@ -6,6 +6,25 @@
     ViewData["Title"] = Model.Name;
 }
 
+<div class="navbar navbar-expand-sm navbar-dark bg-dark rounded py-0" style="margin-bottom: 14px;">
+    <div class="container-fluid">
+        <span class="navbar-brand">Seasons</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#seasonSelector">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
+            <ul class="navbar-nav">
+                @foreach (var season in Model.ValidSeasons)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-action="PlayerDetails" asp-route-id="@Model.PlayerId"  asp-route-season="@season">Season @season</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
 <h1>@Model.Name - @Html.DisplayFor(model => model.Rank)</h1>
 <hr />
 
@@ -85,53 +104,47 @@
     <br />
     @if (Model.MmrChanges.Count > 0)
     {
-    <table class="table table-striped table-dark">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.MmrChanges[0].Reason)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MmrChanges[0].Time)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MmrChanges[0].MmrDelta)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MmrChanges[0].NewMmr)
-                </th>
-            </tr>
-        </thead>
-        @foreach (var change in Model.MmrChanges)
-        {
-        <tr>
-            <td>
-                @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table)
+        <div class="table-responsive">
+            <table class="table table-striped table-dark">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.MmrChanges[0].Reason)</th>
+                        <th>@Html.DisplayNameFor(model => model.MmrChanges[0].Time)</th>
+                        <th>@Html.DisplayNameFor(model => model.MmrChanges[0].MmrDelta)</th>
+                        <th>@Html.DisplayNameFor(model => model.MmrChanges[0].NewMmr)</th>
+                    </tr>
+                </thead>
+                @foreach (var change in Model.MmrChanges)
                 {
-                    <a asp-action="TableDetails" asp-route-id="@change.ChangeId">@TableUtils.TierDisplayName(change.Tier) @TableUtils.FormatDisplay(change.NumTeams!.Value) (ID: @change.ChangeId)</a>
+                    <tr>
+                        <td>
+                            @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table)
+                            {
+                                <a asp-action="TableDetails" asp-route-id="@change.ChangeId">@TableUtils.TierDisplayName(change.Tier) @TableUtils.FormatDisplay(change.NumTeams!.Value) (ID: @change.ChangeId)</a>
+                            }
+                            else if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete)
+                            {
+                                <a asp-action="TableDetails" asp-route-id="@change.ChangeId">@Html.DisplayFor(modelItem => change.Reason) (ID: @change.ChangeId)</a>
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => change.Reason)
+                            }
+                        </td>
+                        <td>
+                            <span class="utc-to-local" data-time="@change.Time.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
+                                @Html.DisplayFor(modelItem => change.Time)
+                            </span>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => change.MmrDelta)
+                        </td>
+                        <td class="rank-@RankUtils.GetRank(change.NewMmr)">
+                            @Html.DisplayFor(modelItem => change.NewMmr)
+                        </td>
+                    </tr>
                 }
-                else if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete)
-                {
-                    <a asp-action="TableDetails" asp-route-id="@change.ChangeId">@Html.DisplayFor(modelItem => change.Reason) (ID: @change.ChangeId)</a>
-                }
-                else
-                {
-                    @Html.DisplayFor(modelItem => change.Reason)
-                }
-            </td>
-            <td>
-                <span class="utc-to-local" data-time="@change.Time.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
-                    @Html.DisplayFor(modelItem => change.Time)
-                </span>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => change.MmrDelta)
-            </td>
-            <td class="rank-@RankUtils.GetRank(change.NewMmr)">
-                @Html.DisplayFor(modelItem => change.NewMmr)
-            </td>
-        </tr>
-        }
-    </table>
+            </table>
+        </div>
     }
 </div>

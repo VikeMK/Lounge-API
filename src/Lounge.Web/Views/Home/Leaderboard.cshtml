@@ -4,6 +4,24 @@
     ViewData["Title"] = "Leaderboard";
 }
 
+<div class="navbar navbar-expand-sm navbar-dark bg-dark rounded py-0" style="margin-bottom: 14px;">
+    <div class="container-fluid">
+        <span class="navbar-brand">Seasons</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#seasonSelector">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
+            <ul class="navbar-nav">
+                @foreach (var season in Model.ValidSeasons)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-action="Leaderboard" asp-route-season="@season">Season @season</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
 <div class="text-center">
     <form asp-action="Leaderboard" method="get">
         <div class="input-group mb-3">
@@ -13,79 +31,79 @@
             </div>
         </div>
     </form>
-    <table class="table table-striped table-dark table-sm">
-        <thead>
-            <tr>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Players[0].OverallRank)
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Players[0].Name)
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Players[0].Mmr)
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Players[0].MaxMmr)
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Players[0].WinRate)
-                </th>
-                <th scope="col">
-                    W - L<br/>(Last 10)
-                    @*@Html.DisplayNameFor(model => model.Players[0].WinLossLastTen)*@
-                </th>
-                <th scope="col">
-                    Gain/Loss<br/>(Last 10)
-                    @*@Html.DisplayNameFor(model => model.Players[0].GainLossLastTen)*@
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Players[0].EventsPlayed)
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Players[0].LargestGain)
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Players[0].LargestLoss)
-                </th>
-            </tr>
-        </thead>
-        @foreach (var player in Model.Players)
-        {
-            <tr>
-                <th scope="row" class="rank-@player.MmrRank">
-                    @Html.DisplayFor(modelItem => player.OverallRank)
-                </th>
-                <td class="rank-@player.MmrRank">
-                    <a asp-action="PlayerDetails" asp-route-id="@player.Id" style="color:inherit">@Html.DisplayFor(modelItem => player.Name)</a>
-                </td>
-                <td class="rank-@player.MmrRank">
-                    @Html.DisplayFor(modelItem => player.Mmr)
-                </td>
-                <td class="rank-@player.MaxMmrRank">
-                    @Html.DisplayFor(modelItem => player.MaxMmr)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => player.WinRate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => player.WinLossLastTen)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => player.GainLossLastTen)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => player.EventsPlayed)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => player.LargestGain)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => player.LargestLoss)
-                </td>
-            </tr>
-        }
-    </table>
+    <div class="table-responsive">
+        <table class="table table-striped table-dark table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Players[0].OverallRank)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Players[0].Name)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Players[0].Mmr)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Players[0].MaxMmr)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Players[0].WinRate)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Players[0].WinLossLastTen)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Players[0].GainLossLastTen)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Players[0].EventsPlayed)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Players[0].LargestGain)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Players[0].LargestLoss)
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var player in Model.Players)
+            {
+                <tr>
+                    <th scope="row" class="rank-@player.MmrRank">
+                        @Html.DisplayFor(modelItem => player.OverallRank)
+                    </th>
+                    <td class="rank-@player.MmrRank">
+                        <a asp-action="PlayerDetails" asp-route-id="@player.Id" asp-route-season="@Model.Season" style="color:inherit; white-space: nowrap">@Html.DisplayFor(modelItem => player.Name)</a>
+                    </td>
+                    <td class="rank-@player.MmrRank">
+                        @Html.DisplayFor(modelItem => player.Mmr)
+                    </td>
+                    <td class="rank-@player.MaxMmrRank">
+                        @Html.DisplayFor(modelItem => player.MaxMmr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => player.WinRate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => player.WinLossLastTen)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => player.GainLossLastTen)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => player.EventsPlayed)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => player.LargestGain)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => player.LargestLoss)
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
 
     @{
         var prevDisabled = !Model.HasPrevPage ? "disabled" : "";
@@ -93,8 +111,8 @@
     }
     <nav>
         <ul class="pagination pagination-dark">
-            <li class="page-item @prevDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-page="@(Model.Page - 1)" asp-route-filter="@Model.Filter">Previous</a></li>
-            <li class="page-item @nextDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-page="@(Model.Page + 1)" asp-route-filter="@Model.Filter">Next</a></li>
+            <li class="page-item @prevDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-page="@(Model.Page - 1)" asp-route-filter="@Model.Filter" asp-route-season="@Model.Season">Previous</a></li>
+            <li class="page-item @nextDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-page="@(Model.Page + 1)" asp-route-filter="@Model.Filter" asp-route-season="@Model.Season">Next</a></li>
         </ul>
     </nav>
 </div>

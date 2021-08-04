@@ -151,7 +151,8 @@ namespace Lounge.Web.Controllers
                 Page = page,
                 HasNextPage = page < maxPageNum,
                 HasPrevPage = page > 1,
-                Filter = filter
+                Filter = filter,
+                ValidSeasons = options.CurrentValue.ValidSeasons,
             });
         }
 
@@ -176,7 +177,9 @@ namespace Lounge.Web.Controllers
             if (playerStat is null)
                 return NotFound();
 
-            return View(PlayerUtils.GetPlayerDetails(player, playerStat, season.Value));
+            var vm = PlayerUtils.GetPlayerDetails(player, playerStat, season.Value);
+            vm.ValidSeasons = options.CurrentValue.ValidSeasons;
+            return View(vm);
         }
 
         [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "*" })]

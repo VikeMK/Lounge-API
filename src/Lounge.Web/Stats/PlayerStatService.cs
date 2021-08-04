@@ -1,6 +1,7 @@
 ﻿using Lounge.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lounge.Web.Stats
@@ -26,8 +27,9 @@ namespace Lounge.Web.Stats
         {
             return await _context.Players
                 .AsNoTracking()
+                .Where(p => p.Id == id)
                 .SelectPlayerStats(season)
-                .FirstOrDefaultAsync(s => s.Id == id);
+                .FirstOrDefaultAsync();
         }
     }
 }

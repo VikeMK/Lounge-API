@@ -70,48 +70,21 @@ body {
   line-height: 60px; /* Vertically center the text there */
 }
 
-.rank-Grandmaster {
-    color: #a3022c;
-}
+.rank-Grandmaster { color: #a3022c; }
+.rank-Master { color: #9370db; }
+.rank-Diamond { color: #b9f2ff; }
+.rank-Sapphire { color: #286cd3; }
+.rank-Platinum { color: #3fabb8; }
+.rank-Gold { color: #f1c232; }
+.rank-Silver { color: #cccccc; }
+.rank-Bronze { color: #b45f06; }
+.rank-Iron2 { color: #817876; }
+.rank-Iron1 { color: #817876; }
+.rank-Placement { /*color: #817876*/ }
 
-.rank-Master {
-    color: #9370db;
-}
-
-.rank-Diamond {
-    color: #b9f2ff;
-}
-
-.rank-Sapphire {
-    color: #286cd3;
-}
-
-.rank-Platinum {
-    color: #3fabb8;
-}
-
-.rank-Gold {
-    color: #f1c232;
-}
-
-.rank-Silver {
-    color: #cccccc;
-}
-
-.rank-Bronze {
-    color: #b45f06;
-}
-
-.rank-Iron2 {
-    color: #817876;
-}
-
-.rank-Iron1 {
-    color: #817876;
-}
-
-.rank-Placement {
-    /*color: #817876*/
+/* Ensure that cell values inside tables are not word wrapped */
+.table-dark td {
+    white-space: nowrap
 }
 
 .table-dark {

@@ -3,6 +3,7 @@ using Lounge.Web.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Lounge.Web.Models.ViewModels
 {
@@ -79,6 +80,9 @@ namespace Lounge.Web.Models.ViewModels
         [Display(Name = "Forum Link")]
         public string ForumLink => $"https://www.mariokartcentral.com/forums/index.php?members/{MkcId}/";
 
+        [JsonIgnore]
+        public IReadOnlyList<int> ValidSeasons { get; set; }
+
         public class MmrChange
         {
             public MmrChange(int? changeId, int newMmr, int mmrDelta, MmrChangeReason reason, DateTime time, int? score = null, IReadOnlyList<int>? partnerScores = null, int? rank = null, string? tier = null, int? numTeams = null)
@@ -100,10 +104,11 @@ namespace Lounge.Web.Models.ViewModels
             [Display(Name = "MMR")]
             public int NewMmr { get; set; }
 
-            [Display(Name = "MMR Delta")]
+            [Display(Name = "MMR\u00a0Delta")]
             [DisplayFormat(DataFormatString = "{0:+#;-#;0}")]
             public int MmrDelta { get; set; }
 
+            [Display(Name = "Event")]
             public MmrChangeReason Reason { get; set; }
 
             public DateTime Time { get; set; }

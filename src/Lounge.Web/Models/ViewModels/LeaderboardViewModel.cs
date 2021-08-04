@@ -18,6 +18,8 @@ namespace Lounge.Web.Models.ViewModels
 
         public string? Filter { get; init; }
 
+        public IReadOnlyList<int> ValidSeasons { get; init; }
+
         public class Player
         {
             public int Id { get; init; }
@@ -44,10 +46,10 @@ namespace Lounge.Web.Models.ViewModels
 
             public int LossesLastTen { get; init; }
 
-            [Display(Name = "Win - Loss (Last 10)")]
+            [Display(Name = "W\u00a0-\u00a0L (Last\u00a010)")]
             public string WinLossLastTen => $"{WinsLastTen} - {LossesLastTen}";
 
-            [Display(Name = "Gain/Loss (Last 10)")]
+            [Display(Name = "Gain/Loss (Last\u00a010)")]
             [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:+#;-#;0}")]
             public int? GainLossLastTen { get; init; }
 
