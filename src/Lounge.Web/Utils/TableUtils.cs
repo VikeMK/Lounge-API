@@ -1,10 +1,10 @@
 ﻿using Lounge.Web.Models;
 using Lounge.Web.Models.ViewModels;
+using Lounge.Web.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -178,11 +178,11 @@ namespace Lounge.Web.Utils
                 }).ToList(),
             });
 
-        public static TableDetailsViewModel GetTableDetails(Table table)
+        public static TableDetailsViewModel GetTableDetails(Table table, ILoungeSettingsService loungeSettingService)
         {
             var teams = new List<TableDetailsViewModel.Team>();
 
-            var sqMultiplier = GetSquadQueueMultiplier(table);
+            var formatMultiplier = GetFormatMultiplier(table, loungeSettingService.SquadQueueMultipliers[table.Season]);
 
             int rank = 1;
             int prevTotalScore = 0;
@@ -198,7 +198,7 @@ namespace Lounge.Web.Utils
                 {
                     scores.Add(new TableDetailsViewModel.TableScore(
                         score.Score,
-                        sqMultiplier * score.Multiplier,
+                        formatMultiplier * score.Multiplier,
                         score.PrevMmr,
                         score.NewMmr,
                         score.PlayerId,
@@ -231,9 +231,9 @@ namespace Lounge.Web.Utils
                 authorId: table.AuthorId);
         }
 
-        public static double GetSquadQueueMultiplier(Table table)
+        public static double GetFormatMultiplier(Table table, double sqMultiplier)
         {
-            return string.Equals(table.Tier, "SQ", StringComparison.OrdinalIgnoreCase) ? 0.75 : 1;
+            return string.Equals(table.Tier, "SQ", StringComparison.OrdinalIgnoreCase) ? sqMultiplier : 1;
         }
 
         public static string TierDisplayName(string? tierName) =>

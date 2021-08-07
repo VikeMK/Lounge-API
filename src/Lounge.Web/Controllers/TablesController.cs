@@ -44,7 +44,7 @@ namespace Lounge.Web.Controllers
             if (table is null)
                 return NotFound();
 
-            return TableUtils.GetTableDetails(table);
+            return TableUtils.GetTableDetails(table, _loungeSettingsService);
         }
 
         [HttpGet("list")]
@@ -59,7 +59,7 @@ namespace Lounge.Web.Controllers
                 .SelectPropertiesForTableDetails()
                 .ToListAsync();
 
-            return tables.Select(TableUtils.GetTableDetails).ToList();
+            return tables.Select(t => TableUtils.GetTableDetails(t, _loungeSettingsService)).ToList();
         }
 
         [HttpGet("unverified")]
@@ -74,7 +74,7 @@ namespace Lounge.Web.Controllers
                 .Where(t => t.VerifiedOn == null && t.DeletedOn == null && t.Season == season)
                 .ToListAsync();
 
-            return tables.Select(TableUtils.GetTableDetails).ToList();
+            return tables.Select(t => TableUtils.GetTableDetails(t, _loungeSettingsService)).ToList();
         }
 
         [HttpPost("create")]
@@ -147,7 +147,7 @@ namespace Lounge.Web.Controllers
 
             await _tableImageService.UploadTableImageAsync(table.Id, tableImage);
 
-            return CreatedAtAction(nameof(GetTable), new { tableId = table.Id }, TableUtils.GetTableDetails(table));
+            return CreatedAtAction(nameof(GetTable), new { tableId = table.Id }, TableUtils.GetTableDetails(table, _loungeSettingsService));
         }
 
         [HttpPost("setMultipliers")]
@@ -313,14 +313,14 @@ namespace Lounge.Web.Controllers
             if (unplacedPlayers.Any())
                 return BadRequest($"The following players have not been placed yet: {string.Join(", ", unplacedPlayers)}");
 
-            double sqMultiplier = TableUtils.GetSquadQueueMultiplier(table);
+            double formatMultiplier = TableUtils.GetFormatMultiplier(table, _loungeSettingsService.SquadQueueMultipliers[season]);
 
             var scores = new (string Player, int Score, int CurrentMmr, double Multiplier)[numTeams][];
             for (int i = 0; i < numTeams; i++)
             {
                 scores[i] = table.Scores
                     .Where(score => score.Team == i)
-                    .Select(s => (s.Player.Name, s.Score, seasonDataLookup[s.PlayerId]!.Mmr, sqMultiplier * s.Multiplier))
+                    .Select(s => (s.Player.Name, s.Score, seasonDataLookup[s.PlayerId]!.Mmr, formatMultiplier * s.Multiplier))
                     .ToArray();
             }
 
@@ -365,7 +365,7 @@ namespace Lounge.Web.Controllers
                 }
             }
 
-            var vm = TableUtils.GetTableDetails(table);
+            var vm = TableUtils.GetTableDetails(table, _loungeSettingsService);
             return Ok(vm);
         }
 

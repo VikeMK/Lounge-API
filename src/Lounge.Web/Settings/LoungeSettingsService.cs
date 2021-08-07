@@ -21,8 +21,9 @@ namespace Lounge.Web.Settings
 
         public IReadOnlyList<int> ValidSeasons => _settings.Value.ValidSeasons;
 
-        public IReadOnlyDictionary<int, TimeSpan> LeaderboardRefreshDelays =>
-            _settings.Value.LeaderboardRefreshDelays;
+        public IReadOnlyDictionary<int, TimeSpan> LeaderboardRefreshDelays => _settings.Value.LeaderboardRefreshDelays;
+
+        public IReadOnlyDictionary<int, double> SquadQueueMultipliers => _settings.Value.SquadQueueMultipliers;
 
         public Rank? GetRank(int? mmr, int season)
         {
@@ -50,12 +51,14 @@ namespace Lounge.Web.Settings
             int CurrentSeason,
             IReadOnlyList<int> ValidSeasons,
             IReadOnlyDictionary<int, TimeSpan> LeaderboardRefreshDelays,
+            IReadOnlyDictionary<int, double> SquadQueueMultipliers,
             IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>> MmrRanks)
         {
             public static  ParsedLoungeSettings Create(LoungeSettings loungeSettings)
             {
                 var validSeasons = new List<int>();
                 var refreshDelays = new Dictionary<int, TimeSpan>();
+                var sqMultipliers = new Dictionary<int, double>();
                 var mmrRanks = new Dictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>();
 
                 foreach ((var seasonStr, var settings) in loungeSettings.Seasons)
@@ -64,6 +67,7 @@ namespace Lounge.Web.Settings
                     {
                         validSeasons.Add(season);
                         refreshDelays[season] = settings.LeaderboardRefreshDelay;
+                        sqMultipliers[season] = settings.SquadQueueMultiplier;
 
                         var seasonRanks = new List<(int Mmr, Rank Rank)>();
 
@@ -87,7 +91,7 @@ namespace Lounge.Web.Settings
                     }
                 }
 
-                return new(loungeSettings.CurrentSeason, validSeasons, refreshDelays, mmrRanks);
+                return new(loungeSettings.CurrentSeason, validSeasons, refreshDelays, sqMultipliers, mmrRanks);
             }
         }
     }

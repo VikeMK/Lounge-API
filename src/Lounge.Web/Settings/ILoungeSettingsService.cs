@@ -9,6 +9,7 @@ namespace Lounge.Web.Settings
         int CurrentSeason { get; }
         IReadOnlyDictionary<int, TimeSpan> LeaderboardRefreshDelays { get; }
         IReadOnlyList<int> ValidSeasons { get; }
+        IReadOnlyDictionary<int, double> SquadQueueMultipliers { get; }
 
         Rank? GetRank(int? mmr, int season);
     }

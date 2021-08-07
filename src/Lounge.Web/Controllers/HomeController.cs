@@ -193,7 +193,7 @@ namespace Lounge.Web.Controllers
             if (table is null)
                 return NotFound();
 
-            return View(TableUtils.GetTableDetails(table));
+            return View(TableUtils.GetTableDetails(table, _loungeSettingsService));
         }
 
         // since table images are expensive, lets let them be cached for 30 minutes
