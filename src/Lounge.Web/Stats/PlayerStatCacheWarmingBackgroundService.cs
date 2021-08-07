@@ -15,35 +15,29 @@ namespace Lounge.Web.Stats
         private readonly IServiceProvider _services;
         private readonly IPlayerStatCache _cache;
         private readonly ILogger<PlayerStatCacheWarmingBackgroundService> _logger;
-        private readonly IOptionsMonitor<LoungeSettings> options;
+        private readonly ILoungeSettingsService _loungeSettingsService;
         private readonly Dictionary<int, DateTime> _lastRefreshTimes = new();
 
         public PlayerStatCacheWarmingBackgroundService(
             IServiceProvider services,
             IPlayerStatCache cache,
             ILogger<PlayerStatCacheWarmingBackgroundService> logger,
-            IOptionsMonitor<LoungeSettings> options)
+            ILoungeSettingsService loungeSettingsService)
         {
             _services = services;
             _cache = cache;
             _logger = logger;
-            this.options = options;
+            _loungeSettingsService = loungeSettingsService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var refreshDelays = options.CurrentValue.LeaderboardRefreshDelaysBySeason;
+                var refreshDelays = _loungeSettingsService.LeaderboardRefreshDelays;
                 
-                foreach ((string seasonStr, string delayStr) in refreshDelays)
+                foreach ((int season, TimeSpan delay) in refreshDelays)
                 {
-                    if (!int.TryParse(seasonStr, out var season))
-                        continue;
-
-                    if (!TimeSpan.TryParse(delayStr, out var delay))
-                        continue;
-
                     if (!_lastRefreshTimes.TryGetValue(season, out var lastRefresh) || (lastRefresh + delay) < DateTime.UtcNow)
                     {
                         try

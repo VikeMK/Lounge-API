@@ -23,13 +23,13 @@ namespace Lounge.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ITableImageService _tableImageService;
-        private readonly LoungeSettings _settings;
+        private readonly ILoungeSettingsService _loungeSettingsService;
 
-        public TablesController(ApplicationDbContext context, ITableImageService tableImageService, IOptionsSnapshot<LoungeSettings> options)
+        public TablesController(ApplicationDbContext context, ITableImageService tableImageService, ILoungeSettingsService loungeSettingsService)
         {
             _context = context;
             _tableImageService = tableImageService;
-            _settings = options?.Value ?? throw new ArgumentNullException(nameof(options));
+            _loungeSettingsService = loungeSettingsService;
         }
 
         [HttpGet]
@@ -51,7 +51,7 @@ namespace Lounge.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to, [ValidSeason] int? season = null)
         {
-            season ??= _settings.Season;
+            season ??= _loungeSettingsService.CurrentSeason;
 
             var tables = await _context.Tables
                 .AsNoTracking()
@@ -66,7 +66,7 @@ namespace Lounge.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables([ValidSeason] int? season = null)
         {
-            season ??= _settings.Season;
+            season ??= _loungeSettingsService.CurrentSeason;
 
             var tables = await _context.Tables
                 .AsNoTracking()
@@ -139,7 +139,7 @@ namespace Lounge.Web.Controllers
                 Tier = vm.Tier,
                 Scores = tableScores,
                 AuthorId = vm.AuthorId,
-                Season = _settings.Season,
+                Season = _loungeSettingsService.CurrentSeason,
             };
 
             await _context.Tables.AddAsync(table);

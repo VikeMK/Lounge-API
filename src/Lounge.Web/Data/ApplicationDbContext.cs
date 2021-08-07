@@ -8,12 +8,12 @@ namespace Lounge.Web.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        private readonly IOptions<LoungeSettings> loungeSettingsOptions;
+        private readonly ILoungeSettingsService loungeSettingsService;
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IOptions<LoungeSettings> loungeSettingsOptions)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILoungeSettingsService loungeSettingsOptions)
             : base(options)
         {
-            this.loungeSettingsOptions = loungeSettingsOptions;
+            this.loungeSettingsService = loungeSettingsOptions;
         }
 
         public DbSet<Player> Players => Set<Player>();
@@ -28,7 +28,7 @@ namespace Lounge.Web.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            var defaultSeason = loungeSettingsOptions.Value.Season;
+            var defaultSeason = loungeSettingsService.CurrentSeason;
 
             modelBuilder.Entity<Player>().ToTable("Players");
             modelBuilder.Entity<PlayerSeasonData>().ToTable("PlayerSeasonData");

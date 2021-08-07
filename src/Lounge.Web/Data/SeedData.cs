@@ -14,7 +14,7 @@ namespace Lounge
         {
             using var context = new ApplicationDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>(),
-                serviceProvider.GetRequiredService<IOptions<LoungeSettings>>());
+                serviceProvider.GetRequiredService<ILoungeSettingsService>());
 
             // put any data to seed here
 

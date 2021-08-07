@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,20 +26,20 @@ namespace Lounge.Web.Controllers
         private readonly IPlayerStatCache _playerStatCache;
         private readonly IPlayerStatService _playerStatService;
         private readonly ITableImageService _tableImageService;
-        private readonly IOptionsMonitor<LoungeSettings> options;
+        private readonly ILoungeSettingsService _loungeSettingsService;
 
         public HomeController(
             ApplicationDbContext context,
             IPlayerStatCache playerStatCache,
             IPlayerStatService playerStatService,
             ITableImageService tableImageService,
-            IOptionsMonitor<LoungeSettings> options)
+            ILoungeSettingsService loungeSettingsService)
         {
             _context = context;
             _playerStatCache = playerStatCache;
             _playerStatService = playerStatService;
             _tableImageService = tableImageService;
-            this.options = options;
+            _loungeSettingsService = loungeSettingsService;
         }
 
         [ResponseCache(Duration = 180)]
@@ -59,7 +58,7 @@ namespace Lounge.Web.Controllers
             if (page <= 0)
                 return BadRequest("Page must be a number 1 or greater");
 
-            season ??= options.CurrentValue.Season;
+            season ??= _loungeSettingsService.CurrentSeason;
 
             int? playerId = null;
             if (filter != null)
@@ -139,8 +138,8 @@ namespace Lounge.Web.Controllers
                     GainLossLastTen = playerStat.LastTenGainLoss,
                     LargestGain = playerStat.LargestGain < 0 ? null : playerStat.LargestGain,
                     LargestLoss = playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss,
-                    MmrRank = RankUtils.GetRank(playerStat.Mmr),
-                    MaxMmrRank = RankUtils.GetRank(playerStat.MaxMmr)
+                    MmrRank = _loungeSettingsService.GetRank(playerStat.Mmr, season.Value),
+                    MaxMmrRank = _loungeSettingsService.GetRank(playerStat.MaxMmr, season.Value)
                 });
             }
 
@@ -152,7 +151,7 @@ namespace Lounge.Web.Controllers
                 HasNextPage = page < maxPageNum,
                 HasPrevPage = page > 1,
                 Filter = filter,
-                ValidSeasons = options.CurrentValue.ValidSeasons,
+                ValidSeasons = _loungeSettingsService.ValidSeasons,
             });
         }
 
@@ -163,7 +162,7 @@ namespace Lounge.Web.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            season ??= options.CurrentValue.Season;
+            season ??= _loungeSettingsService.CurrentSeason;
 
             var player = await _context.Players
                 .AsNoTracking()
@@ -177,8 +176,8 @@ namespace Lounge.Web.Controllers
             if (playerStat is null)
                 return NotFound();
 
-            var vm = PlayerUtils.GetPlayerDetails(player, playerStat, season.Value);
-            vm.ValidSeasons = options.CurrentValue.ValidSeasons;
+            var vm = PlayerUtils.GetPlayerDetails(player, playerStat, season.Value, _loungeSettingsService);
+            vm.ValidSeasons = _loungeSettingsService.ValidSeasons;
             return View(vm);
         }
 

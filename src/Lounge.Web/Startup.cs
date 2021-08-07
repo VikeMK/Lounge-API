@@ -65,6 +65,7 @@ namespace Lounge.Web
             services.AddSingleton<IPlayerStatCache, PlayerStatsCache>();
             services.AddTransient<IPlayerStatService, PlayerStatService>();
             services.AddSingleton<ITableImageService, TableImageService>();
+            services.AddSingleton<ILoungeSettingsService, LoungeSettingsService>();
 
             services.AddHostedService<PlayerStatCacheWarmingBackgroundService>();
 

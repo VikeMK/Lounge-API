@@ -1,5 +1,7 @@
 ﻿@using Lounge.Web.Models.ViewModels
+@using Lounge.Web.Settings
 @using Lounge.Web.Utils
+@inject ILoungeSettingsService LoungeSettingsService
 @model PlayerDetailsViewModel
 
 @{
@@ -36,11 +38,11 @@
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Html.DisplayNameFor(model => model.Mmr)</dt>
-            <dd class="rank-@Model.Rank">@Html.DisplayFor(model => model.Mmr)</dd>
+            <dd class="rank-@Model.RankData.Division">@Html.DisplayFor(model => model.Mmr)</dd>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Html.DisplayNameFor(model => model.MaxMmr)</dt>
-            <dd class="rank-@RankUtils.GetRank(Model.MaxMmr)">@Html.DisplayFor(model => model.MaxMmr)</dd>
+            <dd class="rank-@LoungeSettingsService.GetRank(Model.MaxMmr, Model.Season)!.Division">@Html.DisplayFor(model => model.MaxMmr)</dd>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Html.DisplayNameFor(model => model.WinRate)</dt>
@@ -139,7 +141,7 @@
                         <td>
                             @Html.DisplayFor(modelItem => change.MmrDelta)
                         </td>
-                        <td class="rank-@RankUtils.GetRank(change.NewMmr)">
+                        <td class="rank-@LoungeSettingsService.GetRank(change.NewMmr, Model.Season)!.Division">
                             @Html.DisplayFor(modelItem => change.NewMmr)
                         </td>
                     </tr>

@@ -70,16 +70,16 @@
             @foreach (var player in Model.Players)
             {
                 <tr>
-                    <th scope="row" class="rank-@player.MmrRank">
+                    <th scope="row" class="rank-@player.MmrRank!.Division">
                         @Html.DisplayFor(modelItem => player.OverallRank)
                     </th>
-                    <td class="rank-@player.MmrRank">
+                    <td class="rank-@player.MmrRank.Division">
                         <a asp-action="PlayerDetails" asp-route-id="@player.Id" asp-route-season="@Model.Season" style="color:inherit; white-space: nowrap">@Html.DisplayFor(modelItem => player.Name)</a>
                     </td>
-                    <td class="rank-@player.MmrRank">
+                    <td class="rank-@player.MmrRank.Division">
                         @Html.DisplayFor(modelItem => player.Mmr)
                     </td>
-                    <td class="rank-@player.MaxMmrRank">
+                    <td class="rank-@player.MaxMmrRank!.Division">
                         @Html.DisplayFor(modelItem => player.MaxMmr)
                     </td>
                     <td>

@@ -24,21 +24,21 @@ namespace Lounge.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPlayerStatCache _playerStatCache;
         private readonly IPlayerStatService _playerStatService;
-        private readonly LoungeSettings _settings;
+        private readonly ILoungeSettingsService _loungeSettingsService;
 
-        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, IPlayerStatService playerStatService, IOptionsSnapshot<LoungeSettings> options)
+        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, IPlayerStatService playerStatService, ILoungeSettingsService loungeSettingsService)
         {
             _context = context;
             _playerStatCache = playerStatCache;
             _playerStatService = playerStatService;
-            _settings = options?.Value ?? throw new ArgumentNullException(nameof(options));
+            _loungeSettingsService = loungeSettingsService;
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? mkcId, string? discordId, [ValidSeason]int? season = null)
         {
-            season ??= _settings.Season;
+            season ??= _loungeSettingsService.CurrentSeason;
 
             Player player;
             if (name is not null)
@@ -70,7 +70,7 @@ namespace Lounge.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<PlayerDetailsViewModel>> Details(string name, [ValidSeason] int? season = null)
         {
-            season ??= _settings.Season;
+            season ??= _loungeSettingsService.CurrentSeason;
 
             var player = await _context.Players
                 .AsNoTracking()
@@ -84,14 +84,14 @@ namespace Lounge.Web.Controllers
             if (playerStat is null)
                 return NotFound();
 
-            return PlayerUtils.GetPlayerDetails(player, playerStat, season.Value);
+            return PlayerUtils.GetPlayerDetails(player, playerStat, season.Value, _loungeSettingsService);
         }
 
         [HttpGet("list")]
         [AllowAnonymous]
         public async Task<ActionResult<PlayerListViewModel>> Players(int? minMmr, int? maxMmr, [ValidSeason] int? season=null)
         {
-            season ??= _settings.Season;
+            season ??= _loungeSettingsService.CurrentSeason;
 
             var players = await _context.PlayerSeasonData
                 .Where(p => p.Season == season && (minMmr == null || p.Mmr >= minMmr) && (maxMmr == null || p.Mmr <= maxMmr))
@@ -109,7 +109,7 @@ namespace Lounge.Web.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<PlayerViewModel>> Create(string name, int mkcId, int? mmr, string? discordId = null)
         {
-            var season = _settings.Season;
+            var season = _loungeSettingsService.CurrentSeason;
 
             Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId, DiscordId = discordId };
             PlayerSeasonData? seasonData = null;
@@ -155,7 +155,7 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            var season = _settings.Season;
+            var season = _loungeSettingsService.CurrentSeason;
             var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == season);
 
             if (seasonData is not null && !force)

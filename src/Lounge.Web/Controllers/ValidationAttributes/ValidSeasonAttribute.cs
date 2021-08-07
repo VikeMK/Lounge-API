@@ -15,10 +15,10 @@ namespace Lounge.Web.Controllers.ValidationAttributes
                 return ValidationResult.Success;
             }
 
-            var options = (IOptionsMonitor<LoungeSettings>)validationContext.GetService(typeof(IOptionsMonitor<LoungeSettings>))!;
+            var settingsService = (ILoungeSettingsService)validationContext.GetService(typeof(ILoungeSettingsService))!;
 
             var season = (int)value;
-            var validSeasons = options.CurrentValue.ValidSeasons;
+            var validSeasons = settingsService.ValidSeasons;
             foreach (var validSeason in validSeasons)
             {
                 if (season == validSeason)

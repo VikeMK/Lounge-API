@@ -9,7 +9,6 @@ using System;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Utils;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Lounge.Web.Settings;
 using Lounge.Web.Controllers.ValidationAttributes;
 
@@ -22,19 +21,19 @@ namespace Lounge.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AdminController> _logger;
-        private readonly IOptionsMonitor<LoungeSettings> options;
+        private readonly ILoungeSettingsService _loungeSettingsService;
 
-        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, IOptionsMonitor<LoungeSettings> options)
+        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ILoungeSettingsService loungeSettingsService)
         {
             _context = context;
             _logger = logger;
-            this.options = options;
+            _loungeSettingsService = loungeSettingsService;
         }
 
         [HttpPost("fixMmr")]
         public async Task<IActionResult> FixAllMmr(bool preview=true, [ValidSeason]int? season=null)
         {
-            season ??= options.CurrentValue.Season;
+            season ??= _loungeSettingsService.CurrentSeason;
 
             var players = await _context.Players.ToDictionaryAsync(p => p.Id);
             var seasonData = await _context.PlayerSeasonData.Where(s => s.Season == season).ToDictionaryAsync(p => p.PlayerId);
@@ -239,8 +238,8 @@ namespace Lounge.Web.Controllers
 
                 if (data.Mmr != expectedMmr)
                 {
-                    if (RankUtils.GetRank(data.Mmr) != RankUtils.GetRank(expectedMmr))
-                        _logger.LogInformation($"{playerName} ({playerId}): {RankUtils.GetRank(data.Mmr)} -> {RankUtils.GetRank(expectedMmr)}");
+                    if (_loungeSettingsService.GetRank(data.Mmr, season.Value) != _loungeSettingsService.GetRank(expectedMmr, season.Value))
+                        _logger.LogInformation($"{playerName} ({playerId}): {_loungeSettingsService.GetRank(data.Mmr, season.Value)} -> {_loungeSettingsService.GetRank(expectedMmr, season.Value)}");
 
                     newMmrs[playerId] = expectedMmr;
                     mmrChanges[playerName] = new { PrevMmr = data.Mmr, NewMmr = expectedMmr };
@@ -248,8 +247,8 @@ namespace Lounge.Web.Controllers
 
                 if (data.MaxMmr != expectedMaxMmr)
                 {
-                    if (RankUtils.GetRank(data.MaxMmr) != RankUtils.GetRank(expectedMaxMmr))
-                        _logger.LogInformation($"{playerName} ({playerId}): MAX {RankUtils.GetRank(data.MaxMmr)} -> {RankUtils.GetRank(expectedMaxMmr)}");
+                    if (_loungeSettingsService.GetRank(data.MaxMmr, season.Value) != _loungeSettingsService.GetRank(expectedMaxMmr, season.Value))
+                        _logger.LogInformation($"{playerName} ({playerId}): MAX {_loungeSettingsService.GetRank(data.MaxMmr, season.Value)} -> {_loungeSettingsService.GetRank(expectedMaxMmr, season.Value)}");
 
                     newMaxMmrs[playerId] = expectedMaxMmr;
                 }

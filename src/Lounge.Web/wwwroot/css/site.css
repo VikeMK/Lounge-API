@@ -78,8 +78,7 @@ body {
 .rank-Gold { color: #f1c232; }
 .rank-Silver { color: #cccccc; }
 .rank-Bronze { color: #b45f06; }
-.rank-Iron2 { color: #817876; }
-.rank-Iron1 { color: #817876; }
+.rank-Iron { color: #817876; }
 .rank-Placement { /*color: #817876*/ }
 
 /* Ensure that cell values inside tables are not word wrapped */

@@ -21,12 +21,12 @@ namespace Lounge.Web.Controllers
     public class PenaltiesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly LoungeSettings _settings;
+        private readonly ILoungeSettingsService _loungeSettingsService;
 
-        public PenaltiesController(ApplicationDbContext context, IOptionsSnapshot<LoungeSettings> options)
+        public PenaltiesController(ApplicationDbContext context, ILoungeSettingsService loungeSettingsService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _settings = options?.Value ?? throw new ArgumentNullException(nameof(options));
+            _loungeSettingsService = loungeSettingsService;
         }
 
         [HttpGet]
@@ -54,7 +54,7 @@ namespace Lounge.Web.Controllers
             bool includeDeleted = false,
             [ValidSeason] int? season = null)
         {
-            season ??= _settings.Season;
+            season ??= _loungeSettingsService.CurrentSeason;
 
             var player = await _context.Players
                 .AsNoTracking()
@@ -82,7 +82,7 @@ namespace Lounge.Web.Controllers
             if (amount < 0)
                 return BadRequest("Penalty amount must be a non-negative integer");
 
-            var season = _settings.Season;
+            var season = _loungeSettingsService.CurrentSeason;
             var player = await _context.Players
                 .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
                 .Select(p => new

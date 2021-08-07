@@ -74,8 +74,10 @@ namespace Lounge.Web.Models.ViewModels
 
         public List<MmrChange> MmrChanges { get; init; }
 
-        [Display(Name = "Rank")]
-        public Rank Rank => RankUtils.GetRank(Mmr);
+        [JsonIgnore]
+        public Rank RankData { get; init; }
+
+        public string Rank => RankData.Name;
 
         [Display(Name = "Forum Link")]
         public string ForumLink => $"https://www.mariokartcentral.com/forums/index.php?members/{MkcId}/";
