@@ -1,4 +1,6 @@
-﻿using Lounge.Web.Models.Enums;
+﻿using Lounge.Web.Controllers;
+using Lounge.Web.Models.Enums;
+using Lounge.Web.Stats;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,6 +21,8 @@ namespace Lounge.Web.Models.ViewModels
         public string? Filter { get; init; }
 
         public IReadOnlyList<int> ValidSeasons { get; init; }
+
+        public LeaderboardSortOrder SortColumn { get; init; }
 
         public class Player
         {

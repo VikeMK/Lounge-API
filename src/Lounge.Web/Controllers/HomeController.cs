@@ -50,7 +50,7 @@ namespace Lounge.Web.Controllers
 
         [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "*" })]
         [Route("Leaderboard")]
-        public async Task<IActionResult> Leaderboard(int page = 1, string? filter = null, [ValidSeason] int? season = null)
+        public async Task<IActionResult> Leaderboard(int page = 1, string? filter = null, [ValidSeason] int? season = null, LeaderboardSortOrder sortBy = LeaderboardSortOrder.Mmr)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -100,7 +100,7 @@ namespace Lounge.Web.Controllers
             }
             else
             {
-                var leaderboard = _playerStatCache.GetAllStats(season.Value);
+                var leaderboard = _playerStatCache.GetAllStats(season.Value, sortBy);
                 if (filter != null)
                 {
                     var normalized = PlayerUtils.NormalizeName(filter);
@@ -152,6 +152,7 @@ namespace Lounge.Web.Controllers
                 HasPrevPage = page > 1,
                 Filter = filter,
                 ValidSeasons = _loungeSettingsService.ValidSeasons,
+                SortColumn = sortBy,
             });
         }
 

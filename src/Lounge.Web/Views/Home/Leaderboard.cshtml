@@ -1,4 +1,5 @@
-﻿@model Lounge.Web.Models.ViewModels.LeaderboardViewModel
+﻿@using Lounge.Web.Stats
+@model Lounge.Web.Models.ViewModels.LeaderboardViewModel
 
 @{
     ViewData["Title"] = "Leaderboard";
@@ -15,7 +16,7 @@
                 @foreach (var season in Model.ValidSeasons)
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-action="Leaderboard" asp-route-season="@season">Season @season</a>
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-action="Leaderboard" asp-route-season="@season" asp-route-sortBy="@Model.SortColumn" asp-route-filter="@Model.Filter">Season @season</a>
                     </li>
                 }
             </ul>
@@ -23,14 +24,33 @@
     </div>
 </div>
 <div class="text-center">
-    <form asp-action="Leaderboard" method="get">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control bg-dark text-light" placeholder="Player's name" name="filter" value="@Model.Filter" style="z-index: 3">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="submit">Search</button>
+    <div class="mb-3">
+        <form asp-action="Leaderboard"method="get">
+            <div class="input-group">
+                <input type="hidden" name="season" value="@Model.Season">
+                <input type="hidden" name="sortBy" value="@Model.SortColumn">
+                <input type="text" class="form-control bg-dark text-light" placeholder="Player's name" name="filter" value="@Model.Filter" style="z-index: 3">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+                <div class="dropdown ml-2">
+                  <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+                    Sort Order
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.Name" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].Name)</a>
+                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.Mmr" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].Mmr)</a>
+                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.MaxMmr" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].MaxMmr)</a>
+                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.WinRate" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].WinRate)</a>
+                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.EventsPlayed" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].EventsPlayed)</a>
+                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.LargestGain" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].LargestGain)</a>
+                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.LargestLoss" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].LargestLoss)</a>
+                  </div>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
+        
+    </div>
     <div class="table-responsive">
         <table class="table table-striped table-dark table-sm">
             <thead>
@@ -111,8 +131,8 @@
     }
     <nav>
         <ul class="pagination pagination-dark">
-            <li class="page-item @prevDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-page="@(Model.Page - 1)" asp-route-filter="@Model.Filter" asp-route-season="@Model.Season">Previous</a></li>
-            <li class="page-item @nextDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-page="@(Model.Page + 1)" asp-route-filter="@Model.Filter" asp-route-season="@Model.Season">Next</a></li>
+            <li class="page-item @prevDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@Model.SortColumn" asp-route-filter="@Model.Filter" asp-route-page="@(Model.Page - 1)">Previous</a></li>
+            <li class="page-item @nextDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@Model.SortColumn" asp-route-filter="@Model.Filter" asp-route-page="@(Model.Page + 1)">Next</a></li>
         </ul>
     </nav>
 </div>

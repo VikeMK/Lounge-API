@@ -13,10 +13,13 @@ namespace Lounge.Web.Stats
         private ConcurrentDictionary<int, Dictionary<int, PlayerStat>> _rawStats = new();
 
         // ranked stats
-        private Dictionary<int, IReadOnlyList<RankedPlayerStat>> _sortedStats = new();
+        private Dictionary<int, IReadOnlyDictionary<LeaderboardSortOrder, IReadOnlyList<RankedPlayerStat>>> _sortedStats = new();
         private Dictionary<int, IReadOnlyDictionary<int, RankedPlayerStat>> _statsDict = new();
 
-        public IReadOnlyList<RankedPlayerStat> GetAllStats(int season) => _sortedStats.GetValueOrDefault(season) ?? Array.Empty<RankedPlayerStat>();
+        public IReadOnlyList<RankedPlayerStat> GetAllStats(int season, LeaderboardSortOrder sortOrder = LeaderboardSortOrder.Mmr) => 
+            _sortedStats.TryGetValue(season, out var statsLookup)
+                ? (statsLookup.GetValueOrDefault(sortOrder) ?? statsLookup.GetValueOrDefault(LeaderboardSortOrder.Mmr) ?? Array.Empty<RankedPlayerStat>())
+                : Array.Empty<RankedPlayerStat>();
 
         public bool TryGetPlayerStatsById(int id, int season, [NotNullWhen(true)] out RankedPlayerStat? playerStat)
         {
@@ -66,7 +69,16 @@ namespace Lounge.Web.Stats
             }
 
             _statsDict[season] = statsDict;
-            _sortedStats[season] = sortedStats;
+            _sortedStats[season] = new Dictionary<LeaderboardSortOrder, IReadOnlyList<RankedPlayerStat>>
+            {
+                [LeaderboardSortOrder.Mmr] = sortedStats,
+                [LeaderboardSortOrder.MaxMmr] = sortedStats.OrderByDescending(s => s.Stat.MaxMmr).ThenBy(s => s.Rank).ToList(),
+                [LeaderboardSortOrder.EventsPlayed] = sortedStats.OrderByDescending(s => s.Stat.EventsPlayed).ThenBy(s => s.Rank).ToList(),
+                [LeaderboardSortOrder.Name] = sortedStats.OrderBy(s => s.Stat.Name).ToList(),
+                [LeaderboardSortOrder.LargestGain] = sortedStats.OrderByDescending(s => s.Stat.LargestGain ?? int.MinValue).ThenBy(s => s.Rank).ToList(),
+                [LeaderboardSortOrder.LargestLoss] = sortedStats.OrderBy(s => s.Stat.LargestLoss ?? int.MaxValue).ThenBy(s => s.Rank).ToList(),
+                [LeaderboardSortOrder.WinRate] = sortedStats.OrderByDescending(s => s.Stat.EventsPlayed == 0 ? int.MinValue : ((decimal)s.Stat.Wins / s.Stat.EventsPlayed)).ThenByDescending(s => s.Stat.EventsPlayed).ThenBy(s => s.Rank).ToList()
+            };
         }
     }
 }
