@@ -16,7 +16,7 @@ namespace Lounge.Web.Utils
         private static readonly int[] scalingFactors = new[] { 9500, 5500, 5100, 4800, -1, 4650 };
         private static readonly double[] offsets = new[] { 2746.116, 1589.856, 1474.230, 1387.511, -1, 1344.151 };
 
-        public static string BuildUrl(string tier, (string Player, int Score)[][] scores)
+        public static string BuildUrl(string tier, (string Player, string? CountryCode, int Score)[][] scores)
         {
             int numTeams = scores.Length;
             int playersPerTeam = scores[0].Length;
@@ -39,8 +39,8 @@ namespace Lounge.Web.Utils
 
                 for (int j = 0; j < playersPerTeam; j++)
                 {
-                    (string player, int score) = scores[i][j];
-                    tableData.Append($"{player} {score}\n");
+                    (string player, string? countryCode, int score) = scores[i][j];
+                    tableData.Append($"{player} [{countryCode ?? string.Empty}] {score}\n");
                 }
             }
 
@@ -174,7 +174,7 @@ namespace Lounge.Web.Utils
                     PrevMmr = s.PrevMmr,
                     PlayerId = s.PlayerId,
                     Team = s.Team,
-                    Player = new Player { Name = s.Player.Name, DiscordId = s.Player.DiscordId },
+                    Player = new Player { Name = s.Player.Name, DiscordId = s.Player.DiscordId, CountryCode = s.Player.CountryCode },
                 }).ToList(),
             });
 
@@ -203,7 +203,8 @@ namespace Lounge.Web.Utils
                         score.NewMmr,
                         score.PlayerId,
                         score.Player.Name,
-                        score.Player.DiscordId));
+                        score.Player.DiscordId,
+                        score.Player.CountryCode));
                 }
 
                 int actualRank = totalScore == prevTotalScore ? prevRank : rank;

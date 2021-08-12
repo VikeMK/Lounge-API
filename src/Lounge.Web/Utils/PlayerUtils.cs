@@ -19,6 +19,7 @@ namespace Lounge.Web.Utils
                 MKCId = p.MKCId,
                 Name = p.Name,
                 NormalizedName = p.NormalizedName,
+                CountryCode = p.CountryCode,
                 SeasonData = p.SeasonData
                     .Where(s => s.Season == season)
                     .ToList(),
@@ -238,6 +239,8 @@ namespace Lounge.Web.Utils
                 PlayerId = player.Id,
                 Name = player.Name,
                 MkcId = player.MKCId,
+                CountryCode = player.CountryCode,
+                CountryName = player.CountryCode == null ? null : loungeSettingsService.CountryNames.GetValueOrDefault(player.CountryCode, null!),
                 Season = season,
                 Mmr = seasonData?.Mmr,
                 MaxMmr = seasonData?.MaxMmr,

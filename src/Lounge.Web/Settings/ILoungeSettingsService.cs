@@ -10,7 +10,8 @@ namespace Lounge.Web.Settings
         IReadOnlyDictionary<int, TimeSpan> LeaderboardRefreshDelays { get; }
         IReadOnlyList<int> ValidSeasons { get; }
         IReadOnlyDictionary<int, double> SquadQueueMultipliers { get; }
-
+        IReadOnlyDictionary<string, string> CountryNames { get; }
+        
         Rank? GetRank(int? mmr, int season);
     }
 }

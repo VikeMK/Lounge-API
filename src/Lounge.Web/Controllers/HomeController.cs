@@ -8,7 +8,6 @@ using Lounge.Web.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +49,12 @@ namespace Lounge.Web.Controllers
 
         [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "*" })]
         [Route("Leaderboard")]
-        public async Task<IActionResult> Leaderboard(int page = 1, string? filter = null, [ValidSeason] int? season = null, LeaderboardSortOrder sortBy = LeaderboardSortOrder.Mmr)
+        public async Task<IActionResult> Leaderboard(
+            int page = 1,
+            string? filter = null,
+            [ValidSeason] int? season = null,
+            LeaderboardSortOrder sortBy = LeaderboardSortOrder.Mmr,
+            string? country = null)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -59,6 +63,10 @@ namespace Lounge.Web.Controllers
                 return BadRequest("Page must be a number 1 or greater");
 
             season ??= _loungeSettingsService.CurrentSeason;
+
+            var validCountryCodes = _playerStatCache.GetAllCountryCodes(season.Value);
+            if (country != null && !validCountryCodes.Contains(country))
+                country = null;
 
             int? playerId = null;
             if (filter != null)
@@ -100,12 +108,21 @@ namespace Lounge.Web.Controllers
             }
             else
             {
-                var leaderboard = _playerStatCache.GetAllStats(season.Value, sortBy);
+                var leaderBoardEnumerable = _playerStatCache.GetAllStats(season.Value, sortBy).AsEnumerable();
+
                 if (filter != null)
                 {
                     var normalized = PlayerUtils.NormalizeName(filter);
-                    leaderboard = leaderboard.Where(s => s.Stat.NormalizedName.Contains(normalized)).ToList();
+                    leaderBoardEnumerable = leaderBoardEnumerable.Where(s => s.Stat.NormalizedName.Contains(normalized));
                 }
+
+                if (country != null)
+                {
+                    var normalized = country.ToUpper();
+                    leaderBoardEnumerable = leaderBoardEnumerable.Where(s => s.Stat.CountryCode == normalized);
+                }
+
+                var leaderboard = leaderBoardEnumerable.ToList();
 
                 playerEntities = leaderboard
                     .Skip((page - 1) * PageSize)
@@ -139,7 +156,8 @@ namespace Lounge.Web.Controllers
                     LargestGain = playerStat.LargestGain < 0 ? null : playerStat.LargestGain,
                     LargestLoss = playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss,
                     MmrRank = _loungeSettingsService.GetRank(playerStat.Mmr, season.Value),
-                    MaxMmrRank = _loungeSettingsService.GetRank(playerStat.MaxMmr, season.Value)
+                    MaxMmrRank = _loungeSettingsService.GetRank(playerStat.MaxMmr, season.Value),
+                    CountryCode = playerStat.CountryCode
                 });
             }
 
@@ -153,6 +171,8 @@ namespace Lounge.Web.Controllers
                 Filter = filter,
                 ValidSeasons = _loungeSettingsService.ValidSeasons,
                 SortColumn = sortBy,
+                CountryCodeFilter = country,
+                ValidCountryCodes = validCountryCodes
             });
         }
 

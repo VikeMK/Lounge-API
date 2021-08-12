@@ -26,7 +26,7 @@ namespace Lounge.Web.Stats
                 {
                     using var scope = _services.CreateScope();
                     var registryDataUpdater = scope.ServiceProvider.GetRequiredService<IMkcRegistryDataUpdater>();
-                    //await registryDataUpdater.UpdateRegistryDataAsync();
+                    await registryDataUpdater.UpdateRegistryDataAsync();
                 }
                 catch (Exception ex)
                 {

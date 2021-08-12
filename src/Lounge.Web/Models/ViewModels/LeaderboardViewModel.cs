@@ -1,6 +1,5 @@
-﻿using Lounge.Web.Controllers;
-using Lounge.Web.Models.Enums;
-using Lounge.Web.Stats;
+﻿using Lounge.Web.Stats;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -23,6 +22,10 @@ namespace Lounge.Web.Models.ViewModels
         public IReadOnlyList<int> ValidSeasons { get; init; }
 
         public LeaderboardSortOrder SortColumn { get; init; }
+
+        public string? CountryCodeFilter { get; init; }
+
+        public IReadOnlySet<string> ValidCountryCodes { get; init; }
 
         public class Player
         {
@@ -71,6 +74,8 @@ namespace Lounge.Web.Models.ViewModels
             public Rank? MmrRank { get; init; }
 
             public Rank? MaxMmrRank { get; init; }
+
+            public string? CountryCode { get; init; }
         }
     }
 }

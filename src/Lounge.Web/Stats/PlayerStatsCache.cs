@@ -14,12 +14,18 @@ namespace Lounge.Web.Stats
 
         // ranked stats
         private Dictionary<int, IReadOnlyDictionary<LeaderboardSortOrder, IReadOnlyList<RankedPlayerStat>>> _sortedStats = new();
+        private Dictionary<int, IReadOnlySet<string>> _countryCodes = new();
         private Dictionary<int, IReadOnlyDictionary<int, RankedPlayerStat>> _statsDict = new();
 
         public IReadOnlyList<RankedPlayerStat> GetAllStats(int season, LeaderboardSortOrder sortOrder = LeaderboardSortOrder.Mmr) => 
             _sortedStats.TryGetValue(season, out var statsLookup)
                 ? (statsLookup.GetValueOrDefault(sortOrder) ?? statsLookup.GetValueOrDefault(LeaderboardSortOrder.Mmr) ?? Array.Empty<RankedPlayerStat>())
                 : Array.Empty<RankedPlayerStat>();
+
+        public IReadOnlySet<string> GetAllCountryCodes(int season)
+        {
+            return _countryCodes.GetValueOrDefault(season) ?? ImmutableHashSet.Create<string>();
+        }
 
         public bool TryGetPlayerStatsById(int id, int season, [NotNullWhen(true)] out RankedPlayerStat? playerStat)
         {
@@ -45,6 +51,7 @@ namespace Lounge.Web.Stats
             var seasonRawStats = _rawStats[season];
             var statsDict = new Dictionary<int, RankedPlayerStat>(seasonRawStats.Count);
             var sortedStats = new List<RankedPlayerStat>(seasonRawStats.Count);
+            var countryCodes = new HashSet<string>();
 
             var sortedUnrankedStats = seasonRawStats.Values
                 .OrderByDescending(s => s.EventsPlayed > 0)
@@ -62,6 +69,8 @@ namespace Lounge.Web.Stats
 
                 statsDict[stat.Id] = rankedStat;
                 sortedStats.Add(rankedStat);
+                if (stat.CountryCode != null)
+                    countryCodes.Add(stat.CountryCode);
 
                 prev = actualRank;
                 prevMmr = mmr;
@@ -69,6 +78,7 @@ namespace Lounge.Web.Stats
             }
 
             _statsDict[season] = statsDict;
+            _countryCodes[season] = countryCodes;
             _sortedStats[season] = new Dictionary<LeaderboardSortOrder, IReadOnlyList<RankedPlayerStat>>
             {
                 [LeaderboardSortOrder.Mmr] = sortedStats,

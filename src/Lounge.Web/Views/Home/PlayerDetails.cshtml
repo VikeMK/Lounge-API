@@ -102,6 +102,10 @@
             <dt>@Html.DisplayNameFor(model => model.ForumLink)</dt>
             <dd><a href="@Model.ForumLink">Link</a></dd>
         </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Html.DisplayNameFor(model => model.CountryName)</dt>
+            <dd>@Html.DisplayFor(model => model.CountryName)</dd>
+        </div>
     </dl>
     <br />
     @if (Model.MmrChanges.Count > 0)
@@ -149,4 +153,4 @@
             </table>
         </div>
     }
-</div>
+</>

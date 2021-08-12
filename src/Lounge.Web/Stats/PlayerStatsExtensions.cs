@@ -19,6 +19,7 @@ namespace Lounge.Web.Stats
                 })
                 .Select(p => new PlayerStat(p.Player.Id, p.Player.Name, p.Player.NormalizedName)
                 {
+                    CountryCode = p.Player.CountryCode,
                     Mmr = p.SeasonData.Mmr,
                     MaxMmr = p.SeasonData.MaxMmr,
                     EventsPlayed = p.AllTime.Count(),

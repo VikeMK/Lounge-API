@@ -97,6 +97,7 @@ namespace Lounge.Web.Controllers
             }
 
             var playerIdLookup = players.ToDictionary(p => p.Name, p => p.Id);
+            var playerCountryCodeLookup = players.ToDictionary(p => p.Name, p => p.CountryCode);
 
             int numTeams = vm.Scores.Max(s => s.Team) + 1;
             if (numTeams is not (2 or 3 or 4 or 6 or 12))
@@ -116,12 +117,12 @@ namespace Lounge.Web.Controllers
                 });
             }
 
-            var scores = new (string Player, int Score)[numTeams][];
+            var scores = new (string Player, string? CountryCode, int Score)[numTeams][];
             for (int i = 0; i < numTeams; i++)
             {
                 scores[i] = vm.Scores
                     .Where(score => score.Team == i)
-                    .Select(score => (score.PlayerName, score.Score))
+                    .Select(score => (score.PlayerName, playerCountryCodeLookup[score.PlayerName] , score.Score))
                     .ToArray();
 
                 if (scores[i].Length != playersPerTeam)
@@ -231,12 +232,12 @@ namespace Lounge.Web.Controllers
             }
 
             int numTeams = table.NumTeams;
-            var newScores = new (string Player, int Score)[numTeams][];
+            var newScores = new (string Player, string? CountryCode, int Score)[numTeams][];
             for (int i = 0; i < numTeams; i++)
             {
                 newScores[i] = table.Scores
                     .Where(score => score.Team == i)
-                    .Select(score => (score.Player.Name, score.Score))
+                    .Select(score => (score.Player.Name, score.Player.CountryCode, score.Score))
                     .ToArray();
             }
 

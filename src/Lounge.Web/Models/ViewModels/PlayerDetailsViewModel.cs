@@ -16,6 +16,11 @@ namespace Lounge.Web.Models.ViewModels
 
         public int MkcId { get; init; }
 
+        public string? CountryCode { get; init; }
+
+        [Display(Name = "Country")]
+        public string? CountryName { get; init; }
+
         public int Season { get; init; }
 
         [Display(Name = "MMR")]

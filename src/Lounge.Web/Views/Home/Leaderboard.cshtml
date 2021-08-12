@@ -1,4 +1,6 @@
-﻿@using Lounge.Web.Stats
+﻿@using Lounge.Web.Settings
+@using Lounge.Web.Stats
+@inject ILoungeSettingsService LoungeSettingsService
 @model Lounge.Web.Models.ViewModels.LeaderboardViewModel
 
 @{
@@ -25,27 +27,45 @@
 </div>
 <div class="text-center">
     <div class="mb-3">
-        <form asp-action="Leaderboard"method="get">
-            <div class="input-group">
-                <input type="hidden" name="season" value="@Model.Season">
-                <input type="hidden" name="sortBy" value="@Model.SortColumn">
-                <input type="text" class="form-control bg-dark text-light" placeholder="Player's name" name="filter" value="@Model.Filter" style="z-index: 3">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+        <form asp-action="Leaderboard" method="get">
+            <input type="hidden" name="season" value="@Model.Season">
+            <input type="hidden" name="sortBy" value="@Model.SortColumn">
+            <div class="form-row">
+                <div class="col-md-5">
+                    <input type="text" class="form-control bg-dark text-light" placeholder="Player's name" name="filter" value="@Model.Filter" style="z-index: 3">
                 </div>
-                <div class="dropdown ml-2">
-                  <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
-                    Sort Order
-                  </button>
-                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.Name" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].Name)</a>
-                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.Mmr" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].Mmr)</a>
-                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.MaxMmr" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].MaxMmr)</a>
-                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.WinRate" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].WinRate)</a>
-                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.EventsPlayed" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].EventsPlayed)</a>
-                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.LargestGain" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].LargestGain)</a>
-                    <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.LargestLoss" asp-route-filter="@Model.Filter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].LargestLoss)</a>
-                  </div>
+                <div class="col-md-3">
+                    <select class="form-control bg-dark text-light" name="country">
+                        @{
+                            var selectedAttribute = Model.CountryCodeFilter == null ? "selected" : string.Empty;
+                        }
+                        <!option value="" @selectedAttribute>All Countries</!option>
+
+                        @foreach (var country in Model.ValidCountryCodes.OrderBy(c => LoungeSettingsService.CountryNames[c]))
+                        {
+                            selectedAttribute = Model.CountryCodeFilter == country ? "selected" : string.Empty;
+                            <!option value="@country" @selectedAttribute>@LoungeSettingsService.CountryNames[country]</!option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-dark btn-block" type="submit">Search</button>
+                </div>
+                <div class="col-md-2">
+                    <div class="dropdown">
+                        <button class="btn btn-dark dropdown-toggle btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+                        Sort Order
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.Name" asp-route-filter="@Model.Filter" asp-route-country="@Model.CountryCodeFilter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].Name)</a>
+                        <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.Mmr" asp-route-filter="@Model.Filter" asp-route-country="@Model.CountryCodeFilter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].Mmr)</a>
+                        <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.MaxMmr" asp-route-filter="@Model.Filter" asp-route-country="@Model.CountryCodeFilter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].MaxMmr)</a>
+                        <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.WinRate" asp-route-filter="@Model.Filter" asp-route-country="@Model.CountryCodeFilter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].WinRate)</a>
+                        <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.EventsPlayed" asp-route-filter="@Model.Filter" asp-route-country="@Model.CountryCodeFilter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].EventsPlayed)</a>
+                        <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.LargestGain" asp-route-filter="@Model.Filter" asp-route-country="@Model.CountryCodeFilter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].LargestGain)</a>
+                        <a asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@LeaderboardSortOrder.LargestLoss" asp-route-filter="@Model.Filter" asp-route-country="@Model.CountryCodeFilter" class="dropdown-item">@Html.DisplayNameFor(m => m.Players[0].LargestLoss)</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
@@ -58,6 +78,7 @@
                     <th scope="col">
                         @Html.DisplayNameFor(model => model.Players[0].OverallRank)
                     </th>
+                    <th scope="col" style="width: 32px"></th>
                     <th scope="col">
                         @Html.DisplayNameFor(model => model.Players[0].Name)
                     </th>
@@ -93,6 +114,12 @@
                     <th scope="row" class="rank-@player.MmrRank!.Division">
                         @Html.DisplayFor(modelItem => player.OverallRank)
                     </th>
+                    <td scope="row">
+                        @if(player.CountryCode != null)
+                        {
+                            <img src="~/img/flags/@(player.CountryCode).png" style="width: 30px"/>
+                        }
+                    </td>
                     <td class="rank-@player.MmrRank.Division">
                         <a asp-action="PlayerDetails" asp-route-id="@player.Id" asp-route-season="@Model.Season" style="color:inherit; white-space: nowrap">@Html.DisplayFor(modelItem => player.Name)</a>
                     </td>
@@ -131,8 +158,8 @@
     }
     <nav>
         <ul class="pagination pagination-dark">
-            <li class="page-item @prevDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@Model.SortColumn" asp-route-filter="@Model.Filter" asp-route-page="@(Model.Page - 1)">Previous</a></li>
-            <li class="page-item @nextDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@Model.SortColumn" asp-route-filter="@Model.Filter" asp-route-page="@(Model.Page + 1)">Next</a></li>
+            <li class="page-item @prevDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@Model.SortColumn" asp-route-filter="@Model.Filter" asp-route-country="@Model.CountryCodeFilter" asp-route-page="@(Model.Page - 1)">Previous</a></li>
+            <li class="page-item @nextDisabled"><a class="page-link" asp-action="Leaderboard" asp-route-season="@Model.Season" asp-route-sortBy="@Model.SortColumn" asp-route-filter="@Model.Filter" asp-route-country="@Model.CountryCodeFilter" asp-route-page="@(Model.Page + 1)">Next</a></li>
         </ul>
     </nav>
 </div>
