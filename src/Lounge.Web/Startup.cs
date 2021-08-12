@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text.Json.Serialization;
 
 namespace Lounge.Web
@@ -66,10 +67,15 @@ namespace Lounge.Web
             services.AddTransient<IPlayerStatService, PlayerStatService>();
             services.AddSingleton<ITableImageService, TableImageService>();
             services.AddSingleton<ILoungeSettingsService, LoungeSettingsService>();
+            services.AddSingleton<IMkcRegistryApi, MkcRegistryApi>();
+            services.AddTransient<IMkcRegistryDataUpdater, MkcRegistryDataUpdater>();
 
             services.AddHostedService<PlayerStatCacheWarmingBackgroundService>();
+            services.AddHostedService<MkcRegistrySyncBackgroundService>();
 
             services.Configure<LoungeSettings>(Configuration);
+
+            services.AddHttpClient("NoRedirects").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler() { AllowAutoRedirect = false });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -21,6 +21,8 @@ namespace Lounge.Web.Settings
 
         public IReadOnlyList<int> ValidSeasons => _settings.Value.ValidSeasons;
 
+        public IReadOnlyDictionary<string, string> CountryNames => _settings.Value.CountryNames;
+
         public IReadOnlyDictionary<int, TimeSpan> LeaderboardRefreshDelays => _settings.Value.LeaderboardRefreshDelays;
 
         public IReadOnlyDictionary<int, double> SquadQueueMultipliers => _settings.Value.SquadQueueMultipliers;
@@ -52,7 +54,8 @@ namespace Lounge.Web.Settings
             IReadOnlyList<int> ValidSeasons,
             IReadOnlyDictionary<int, TimeSpan> LeaderboardRefreshDelays,
             IReadOnlyDictionary<int, double> SquadQueueMultipliers,
-            IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>> MmrRanks)
+            IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>> MmrRanks,
+            IReadOnlyDictionary<string, string> CountryNames)
         {
             public static  ParsedLoungeSettings Create(LoungeSettings loungeSettings)
             {
@@ -91,7 +94,7 @@ namespace Lounge.Web.Settings
                     }
                 }
 
-                return new(loungeSettings.CurrentSeason, validSeasons, refreshDelays, sqMultipliers, mmrRanks);
+                return new(loungeSettings.CurrentSeason, validSeasons, refreshDelays, sqMultipliers, mmrRanks, loungeSettings.CountryNames);
             }
         }
     }

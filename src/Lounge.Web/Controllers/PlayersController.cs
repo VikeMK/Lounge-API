@@ -25,13 +25,15 @@ namespace Lounge.Web.Controllers
         private readonly IPlayerStatCache _playerStatCache;
         private readonly IPlayerStatService _playerStatService;
         private readonly ILoungeSettingsService _loungeSettingsService;
+        private readonly IMkcRegistryApi _mkcRegistryApi;
 
-        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, IPlayerStatService playerStatService, ILoungeSettingsService loungeSettingsService)
+        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, IPlayerStatService playerStatService, ILoungeSettingsService loungeSettingsService, IMkcRegistryApi mkcRegistryApi)
         {
             _context = context;
             _playerStatCache = playerStatCache;
             _playerStatService = playerStatService;
             _loungeSettingsService = loungeSettingsService;
+            _mkcRegistryApi = mkcRegistryApi;
         }
 
         [HttpGet]
@@ -111,7 +113,9 @@ namespace Lounge.Web.Controllers
         {
             var season = _loungeSettingsService.CurrentSeason;
 
-            Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId, DiscordId = discordId };
+            var registryId = await _mkcRegistryApi.GetRegistryIdAsync(mkcId);
+
+            Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId, DiscordId = discordId, RegistryId = registryId };
             PlayerSeasonData? seasonData = null;
             if (mmr is int mmrValue)
             {
@@ -221,7 +225,11 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
+            var registryId = await _mkcRegistryApi.GetRegistryIdAsync(newMkcId);
+
             player.MKCId = newMkcId;
+            player.RegistryId = registryId;
+
             try
             {
                 await _context.SaveChangesAsync();

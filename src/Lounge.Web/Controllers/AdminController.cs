@@ -11,6 +11,7 @@ using Lounge.Web.Utils;
 using Microsoft.Extensions.Logging;
 using Lounge.Web.Settings;
 using Lounge.Web.Controllers.ValidationAttributes;
+using Lounge.Web.Stats;
 
 namespace Lounge.Web.Controllers
 {
@@ -22,12 +23,28 @@ namespace Lounge.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AdminController> _logger;
         private readonly ILoungeSettingsService _loungeSettingsService;
+        private readonly IMkcRegistryDataUpdater _mkcRegistryDataUpdater;
 
-        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ILoungeSettingsService loungeSettingsService)
+        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ILoungeSettingsService loungeSettingsService, IMkcRegistryDataUpdater mkcRegistryDataUpdater)
         {
             _context = context;
             _logger = logger;
             _loungeSettingsService = loungeSettingsService;
+            _mkcRegistryDataUpdater = mkcRegistryDataUpdater;
+        }
+
+        [HttpPost("updateRegistryIds")]
+        public async Task<IActionResult> UpdateRegistryIds()
+        {
+            await _mkcRegistryDataUpdater.UpdateRegistryIdsAsync();
+            return Ok();
+        }
+
+        [HttpPost("updateRegistryData")]
+        public async Task<IActionResult> UpdateRegistryData()
+        {
+            await _mkcRegistryDataUpdater.UpdateRegistryDataAsync();
+            return Ok();
         }
 
         [HttpPost("fixMmr")]
