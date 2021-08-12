@@ -108,15 +108,7 @@
                     <td scope="row">
                         @if(score.PlayerCountryCode != null)
                         {
-                            
-
-#line default
-#line hidden
-#nullable disable
-            __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
-#nullable restore
-#line 111 "d:/src/Lounge-API/src/Lounge.Web/Views/Home/TableDetails.cshtml"
-                                              __o = score.PlayerCountryCode).png" style="width: 30px"/>
+                            <img src="~/img/flags/@(score.PlayerCountryCode).png" style="width: 30px"/>
                         }
                     </td>
                     <td>
