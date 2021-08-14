@@ -24,6 +24,8 @@ namespace Lounge.Web.Models.ViewModels
 
         public string? SwitchFc { get; init; }
 
+        public bool IsHidden { get; init; }
+
         public int Season { get; init; }
 
         [Display(Name = "MMR")]

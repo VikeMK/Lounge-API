@@ -262,6 +262,34 @@ namespace Lounge.Web.Controllers
             return NoContent();
         }
 
+        [HttpPost("hide")]
+        public async Task<IActionResult> Hide(string name)
+        {
+            var player = await GetPlayerByNameAsync(name);
+            if (player is null)
+                return NotFound();
+
+            player.IsHidden = true;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost("unhide")]
+        public async Task<IActionResult> Unhide(string name)
+        {
+            var player = await GetPlayerByNameAsync(name);
+            if (player is null)
+                return NotFound();
+
+            player.IsHidden = false;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private Task<Player> GetPlayerByNameAsync(string name) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
 

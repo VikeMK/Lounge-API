@@ -66,8 +66,11 @@ namespace Lounge.Web.Stats
                 int? mmr = stat.Mmr;
                 int actualRank = mmr == prevMmr ? prev : rank;
                 var rankedStat = new RankedPlayerStat(actualRank, stat);
-
                 statsDict[stat.Id] = rankedStat;
+
+                if (stat.IsHidden)
+                    continue;
+
                 sortedStats.Add(rankedStat);
                 if (stat.CountryCode != null)
                     countryCodes.Add(stat.CountryCode);

@@ -15,6 +15,7 @@
         public string Name { get; }
         public string NormalizedName { get; }
         public string? CountryCode { get; init; }
+        public bool IsHidden { get; init; }
         public int? Mmr { get; init; }
         public int? MaxMmr { get; init; }
         public int EventsPlayed { get; init; }

@@ -13,6 +13,7 @@ namespace Lounge.Web.Models
         public int? RegistryId { get; set; }
         public string? CountryCode { get; set; }
         public string? SwitchFc { get; set; }
+        public bool IsHidden { get; set; }
 
         public ICollection<PlayerSeasonData> SeasonData { get; set; } = default!;
         public ICollection<TableScore> TableScores { get; set; } = default!;

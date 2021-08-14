@@ -21,6 +21,7 @@ namespace Lounge.Web.Utils
                 NormalizedName = p.NormalizedName,
                 CountryCode = p.CountryCode,
                 SwitchFc = p.SwitchFc,
+                IsHidden = p.IsHidden,
                 SeasonData = p.SeasonData
                     .Where(s => s.Season == season)
                     .ToList(),
@@ -243,10 +244,11 @@ namespace Lounge.Web.Utils
                 CountryCode = player.CountryCode,
                 CountryName = player.CountryCode == null ? null : loungeSettingsService.CountryNames.GetValueOrDefault(player.CountryCode, null!),
                 SwitchFc = player.SwitchFc,
+                IsHidden = player.IsHidden,
                 Season = season,
                 Mmr = seasonData?.Mmr,
                 MaxMmr = seasonData?.MaxMmr,
-                OverallRank = overallRank,
+                OverallRank = player.IsHidden ? null : overallRank,
                 MmrChanges = mmrChanges,
                 RankData = loungeSettingsService.GetRank(seasonData?.Mmr, season)!,
                 EventsPlayed = playerStat.EventsPlayed,
@@ -276,6 +278,7 @@ namespace Lounge.Web.Utils
                 Name = player.Name,
                 CountryCode = player.CountryCode,
                 SwitchFc = player.SwitchFc,
+                IsHidden = player.IsHidden,
                 Mmr = seasonData?.Mmr,
                 MaxMmr = seasonData?.MaxMmr,
             };

@@ -144,7 +144,7 @@ namespace Lounge.Web.Controllers
                 playerViewModels.Add(new LeaderboardViewModel.Player
                 {
                     Id = playerStat.Id,
-                    OverallRank = playerStat.EventsPlayed == 0 ? null : rankedPlayerStat.Rank,
+                    OverallRank = playerStat.EventsPlayed == 0 || playerStat.IsHidden ? null : rankedPlayerStat.Rank,
                     Name = playerStat.Name,
                     Mmr = playerStat.Mmr,
                     MaxMmr = playerStat.MaxMmr,

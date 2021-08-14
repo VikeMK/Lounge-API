@@ -27,7 +27,7 @@
     </div>
 </div>
 
-<h1>@Model.Name - @Html.DisplayFor(model => model.Rank)</h1>
+<h1>@Model.Name - @Html.DisplayFor(model => model.Rank) @(Model.IsHidden ? "(Hidden)" : string.Empty)</h1>
 <hr />
 
 <div>
