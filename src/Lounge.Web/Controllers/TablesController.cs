@@ -325,6 +325,7 @@ namespace Lounge.Web.Controllers
                     .ToArray();
             }
 
+            var playersWithNewPeakMmr = new HashSet<int>();
             var mmrDeltas = TableUtils.GetMMRDeltas(scores);
             foreach (var score in table.Scores)
             {
@@ -338,7 +339,11 @@ namespace Lounge.Web.Controllers
                 seasonData.Mmr = newMmr;
                 if (seasonData.MaxMmr is int maxMmr)
                 {
-                    seasonData.MaxMmr = Math.Max(maxMmr, newMmr);
+                    if (newMmr > maxMmr)
+                    {
+                        seasonData.MaxMmr = newMmr;
+                        playersWithNewPeakMmr.Add(score.PlayerId);
+                    }
                 }
                 else
                 {
@@ -348,9 +353,9 @@ namespace Lounge.Web.Controllers
                     if (playerTotalMatches >= 4)
                     {
                         seasonData.MaxMmr = newMmr;
+                        playersWithNewPeakMmr.Add(score.PlayerId);
                     }
                 }
-
             }
 
             if (!preview)
@@ -367,6 +372,15 @@ namespace Lounge.Web.Controllers
             }
 
             var vm = TableUtils.GetTableDetails(table, _loungeSettingsService);
+
+            foreach (var team in vm.Teams)
+            {
+                foreach (var score in team.Scores)
+                {
+                    score.IsNewPeakMmr = playersWithNewPeakMmr.Contains(score.PlayerId);
+                }
+            }
+
             return Ok(vm);
         }
 

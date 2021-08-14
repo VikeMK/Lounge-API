@@ -1,6 +1,8 @@
 ﻿using Lounge.Web.Data;
 using Lounge.Web.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,19 +21,28 @@ namespace Lounge.Web.Stats
 
         public async Task UpdateRegistryIdsAsync()
         {
+            async Task UpdateRegistryIdForPlayerAsync(Player player)
+            {
+                var registryId = await _api.GetRegistryIdAsync(player.MKCId);
+                if (registryId != null)
+                    player.RegistryId = registryId;
+            }
+
             var players = await _context.Players
                 .Where(p => p.RegistryId == null)
                 .ToListAsync();
 
-            foreach (var player in players)
+            const int batchSize = 10;
+            for (int i = 0; i < players.Count; i += batchSize)
             {
-                var registryId = await _api.GetRegistryIdAsync(player.MKCId);
-                if (registryId != null)
+                var tasks = new List<Task>();
+                for (int j = i; j < Math.Min(i + batchSize, players.Count); j++)
                 {
-                    player.RegistryId = registryId;
+                    tasks.Add(UpdateRegistryIdForPlayerAsync(players[j]));
                 }
 
-                await Task.Delay(50);
+                await Task.WhenAll(tasks);
+                await Task.Delay(500);
             }
 
             await _context.SaveChangesAsync();
@@ -51,9 +62,16 @@ namespace Lounge.Web.Stats
                 if (registryDataLookup.TryGetValue(player.RegistryId!.Value, out var registryPlayerData))
                 {
                     var countryCode = registryPlayerData.CountryCode;
+
                     // ZZ and XX are invalid country codes that should be treated as null
-                    player.CountryCode = countryCode is not ("ZZ" or "XX") ? countryCode : null;
-                    player.SwitchFc = registryPlayerData.SwitchFc;
+                    if (countryCode is "ZZ" or "XX")
+                        countryCode = null;
+
+                    if (player.CountryCode != countryCode)
+                        player.CountryCode = countryCode;
+
+                    if (player.SwitchFc != registryPlayerData.SwitchFc)
+                        player.SwitchFc = registryPlayerData.SwitchFc;
                 }
             }
 

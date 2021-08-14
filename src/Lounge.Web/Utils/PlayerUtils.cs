@@ -20,6 +20,7 @@ namespace Lounge.Web.Utils
                 Name = p.Name,
                 NormalizedName = p.NormalizedName,
                 CountryCode = p.CountryCode,
+                SwitchFc = p.SwitchFc,
                 SeasonData = p.SeasonData
                     .Where(s => s.Season == season)
                     .ToList(),
@@ -241,6 +242,7 @@ namespace Lounge.Web.Utils
                 MkcId = player.MKCId,
                 CountryCode = player.CountryCode,
                 CountryName = player.CountryCode == null ? null : loungeSettingsService.CountryNames.GetValueOrDefault(player.CountryCode, null!),
+                SwitchFc = player.SwitchFc,
                 Season = season,
                 Mmr = seasonData?.Mmr,
                 MaxMmr = seasonData?.MaxMmr,
@@ -272,6 +274,8 @@ namespace Lounge.Web.Utils
                 DiscordId = player.DiscordId,
                 MKCId = player.MKCId,
                 Name = player.Name,
+                CountryCode = player.CountryCode,
+                SwitchFc = player.SwitchFc,
                 Mmr = seasonData?.Mmr,
                 MaxMmr = seasonData?.MaxMmr,
             };

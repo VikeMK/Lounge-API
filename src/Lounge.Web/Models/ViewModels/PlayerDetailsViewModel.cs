@@ -19,7 +19,10 @@ namespace Lounge.Web.Models.ViewModels
         public string? CountryCode { get; init; }
 
         [Display(Name = "Country")]
+        [DisplayFormat(NullDisplayText = "Unknown")]
         public string? CountryName { get; init; }
+
+        public string? SwitchFc { get; init; }
 
         public int Season { get; init; }
 

@@ -107,6 +107,8 @@ namespace Lounge.Web.Models.ViewModels
             public string? PlayerDiscordId { get; set; }
 
             public string? PlayerCountryCode { get; set; }
+
+            public bool? IsNewPeakMmr { get; set; }
         }
     }
 }

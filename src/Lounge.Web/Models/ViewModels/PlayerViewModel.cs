@@ -6,6 +6,8 @@
         public string Name { get; set; } = default!;
         public int MKCId { get; set; }
         public string? DiscordId { get; set; }
+        public string? CountryCode { get; set; }
+        public string? SwitchFc { get; set; }
 
         public int? Mmr { get; set; }
         public int? MaxMmr { get; set; }

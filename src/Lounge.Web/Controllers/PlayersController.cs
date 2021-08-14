@@ -229,6 +229,8 @@ namespace Lounge.Web.Controllers
 
             player.MKCId = newMkcId;
             player.RegistryId = registryId;
+            player.CountryCode = null;
+            player.SwitchFc = null;
 
             try
             {
