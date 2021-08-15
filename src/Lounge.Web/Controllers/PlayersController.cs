@@ -10,7 +10,6 @@ using Lounge.Web.Utils;
 using System.Linq;
 using Lounge.Web.Stats;
 using System.Collections.Generic;
-using Microsoft.Extensions.Options;
 using Lounge.Web.Settings;
 using Lounge.Web.Controllers.ValidationAttributes;
 
@@ -116,6 +115,13 @@ namespace Lounge.Web.Controllers
             var registryId = await _mkcRegistryApi.GetRegistryIdAsync(mkcId);
 
             Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId, DiscordId = discordId, RegistryId = registryId };
+            if (registryId != null)
+            {
+                var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(registryId.Value);
+                player.CountryCode = registryData.CountryCode;
+                player.SwitchFc = registryData.SwitchFc;
+            }
+
             PlayerSeasonData? seasonData = null;
             if (mmr is int mmrValue)
             {
@@ -229,8 +235,18 @@ namespace Lounge.Web.Controllers
 
             player.MKCId = newMkcId;
             player.RegistryId = registryId;
-            player.CountryCode = null;
-            player.SwitchFc = null;
+
+            if (registryId != null)
+            {
+                var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(registryId.Value);
+                player.CountryCode = registryData.CountryCode;
+                player.SwitchFc = registryData.SwitchFc;
+            }
+            else
+            {
+                player.CountryCode = null;
+                player.SwitchFc = null;
+            }
 
             try
             {
@@ -284,6 +300,34 @@ namespace Lounge.Web.Controllers
                 return NotFound();
 
             player.IsHidden = false;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost("refreshRegistryData")]
+        public async Task<IActionResult> RefreshRegistryData(string name)
+        {
+            var player = await GetPlayerByNameAsync(name);
+            if (player is null)
+                return NotFound();
+
+            var mkcId = player.MKCId;
+
+            var registryId = await _mkcRegistryApi.GetRegistryIdAsync(mkcId);
+            player.RegistryId = registryId;
+            if (registryId != null)
+            {
+                var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(registryId.Value);
+                player.CountryCode = registryData.CountryCode;
+                player.SwitchFc = registryData.SwitchFc;
+            }
+            else
+            {
+                player.CountryCode = null;
+                player.SwitchFc = null;
+            }
 
             await _context.SaveChangesAsync();
 

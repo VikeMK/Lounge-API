@@ -19,6 +19,23 @@ namespace Lounge.Web.Stats
             _logger = logger;
         }
 
+        public async Task<DetailedRegistryData> GetPlayerRegistryDataAsync(int registryId)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var url = $"https://www.mariokartcentral.com/mkc/api/registry/players/{registryId}";
+            var resp = await client.GetAsync(url);
+            if (resp.StatusCode == HttpStatusCode.OK)
+            {
+                var contentStream = await resp.Content.ReadAsStreamAsync();
+                var registryData = await JsonSerializer.DeserializeAsync<DetailedRegistryData>(contentStream);
+                if (registryData == null)
+                    throw new Exception("Got null when deserializing player registry data");
+                return registryData;
+            }
+
+            throw new Exception("Failed to get player registry data");
+        }
+
         public async Task<int?> GetRegistryIdAsync(int mkcId)
         {
             try
