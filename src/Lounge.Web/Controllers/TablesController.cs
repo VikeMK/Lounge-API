@@ -78,8 +78,10 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, bool squadQueue = false)
+        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, bool squadQueue = false, [ValidSeason] int? season = null)
         {
+            season ??= _loungeSettingsService.CurrentSeason;
+
             if (vm.Scores.Count != 12)
                 return BadRequest("Must supply 12 scores");
 
@@ -140,7 +142,7 @@ namespace Lounge.Web.Controllers
                 Tier = vm.Tier,
                 Scores = tableScores,
                 AuthorId = vm.AuthorId,
-                Season = _loungeSettingsService.CurrentSeason,
+                Season = season.Value,
             };
 
             await _context.Tables.AddAsync(table);

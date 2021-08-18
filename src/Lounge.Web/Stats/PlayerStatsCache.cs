@@ -90,7 +90,9 @@ namespace Lounge.Web.Stats
                 [LeaderboardSortOrder.Name] = sortedStats.OrderBy(s => s.Stat.Name).ToList(),
                 [LeaderboardSortOrder.LargestGain] = sortedStats.OrderByDescending(s => s.Stat.LargestGain ?? int.MinValue).ThenBy(s => s.Rank).ToList(),
                 [LeaderboardSortOrder.LargestLoss] = sortedStats.OrderBy(s => s.Stat.LargestLoss ?? int.MaxValue).ThenBy(s => s.Rank).ToList(),
-                [LeaderboardSortOrder.WinRate] = sortedStats.OrderByDescending(s => s.Stat.EventsPlayed == 0 ? int.MinValue : ((decimal)s.Stat.Wins / s.Stat.EventsPlayed)).ThenByDescending(s => s.Stat.EventsPlayed).ThenBy(s => s.Rank).ToList()
+                [LeaderboardSortOrder.WinRate] = sortedStats.OrderByDescending(s => s.Stat.EventsPlayed == 0 ? int.MinValue : ((decimal)s.Stat.Wins / s.Stat.EventsPlayed)).ThenByDescending(s => s.Stat.EventsPlayed).ThenBy(s => s.Rank).ToList(),
+                [LeaderboardSortOrder.WinLossLast10] = sortedStats.OrderByDescending(s => s.Stat.EventsPlayed == 0 ? int.MinValue : s.Stat.LastTenWins).ThenBy(s => s.Stat.LastTenLosses).ThenBy(s => s.Rank).ToList(),
+                [LeaderboardSortOrder.GainLast10] = sortedStats.OrderByDescending(s => (s.Stat.EventsPlayed == 0 || s.Stat.LastTenGainLoss == null) ? int.MinValue : s.Stat.LastTenGainLoss).ThenBy(s => s.Rank).ToList()
             };
         }
     }
