@@ -22,15 +22,13 @@ namespace Lounge.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IPlayerStatCache _playerStatCache;
-        private readonly IPlayerStatService _playerStatService;
         private readonly ILoungeSettingsService _loungeSettingsService;
         private readonly IMkcRegistryApi _mkcRegistryApi;
 
-        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, IPlayerStatService playerStatService, ILoungeSettingsService loungeSettingsService, IMkcRegistryApi mkcRegistryApi)
+        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, ILoungeSettingsService loungeSettingsService, IMkcRegistryApi mkcRegistryApi)
         {
             _context = context;
             _playerStatCache = playerStatCache;
-            _playerStatService = playerStatService;
             _loungeSettingsService = loungeSettingsService;
             _mkcRegistryApi = mkcRegistryApi;
         }
@@ -105,6 +103,90 @@ namespace Lounge.Web.Controllers
                 .ToListAsync();
 
             return new PlayerListViewModel { Players = players };
+        }
+
+        [HttpGet("leaderboard")]
+        [AllowAnonymous]
+        public ActionResult<LeaderboardViewModel> Leaderboard(
+            int season,
+            LeaderboardSortOrder sortBy = LeaderboardSortOrder.Mmr,
+            int skip = 0,
+            int pageSize = 50,
+            string? search = null,
+            string? country = null,
+            int? minMmr = null,
+            int? maxMmr = null,
+            int? minEventsPlayed = null,
+            int? maxEventsPlayed = null)
+        {
+            if (pageSize < 0)
+                return BadRequest("pageSize must be non-negative");
+
+            if (pageSize > 100)
+                pageSize = 100;
+
+            if (pageSize == 0)
+                pageSize = 50;
+
+            var playerStatsEnumerable = _playerStatCache.GetAllStats(season, sortBy).AsEnumerable();
+            if (search != null)
+            {
+                var normalized = PlayerUtils.NormalizeName(search);
+                playerStatsEnumerable = playerStatsEnumerable.Where(p => PlayerUtils.NormalizeName(p.Name).Contains(normalized));
+            }
+
+            if (country != null)
+            {
+                var normalized = country.ToUpperInvariant();
+                playerStatsEnumerable = playerStatsEnumerable.Where(p => p.CountryCode == normalized);
+            }
+
+            if (minMmr != null)
+                playerStatsEnumerable = playerStatsEnumerable.Where(p => p.Mmr != null && p.Mmr >= minMmr);
+
+            if (maxMmr != null)
+                playerStatsEnumerable = playerStatsEnumerable.Where(p => p.Mmr != null && p.Mmr <= maxMmr);
+
+            if (minEventsPlayed != null)
+                playerStatsEnumerable = playerStatsEnumerable.Where(p => p.EventsPlayed >= minEventsPlayed);
+
+            if (maxEventsPlayed != null)
+                playerStatsEnumerable = playerStatsEnumerable.Where(p => p.EventsPlayed <= maxEventsPlayed);
+
+            int playerCount = 0;
+            var data = new List<LeaderboardViewModel.Player>(pageSize);
+            foreach (var player in playerStatsEnumerable)
+            {
+                if (playerCount >= skip && playerCount < skip + pageSize)
+                {
+                    data.Add(new LeaderboardViewModel.Player
+                    {
+                        Id = player.Id,
+                        OverallRank = !player.HasEvents || player.IsHidden ? null : player.OverallRank,
+                        Name = player.Name,
+                        Mmr = player.Mmr,
+                        MaxMmr = player.MaxMmr,
+                        EventsPlayed = player.EventsPlayed,
+                        WinRate = player.WinRate,
+                        WinsLastTen = player.LastTenWins,
+                        LossesLastTen = player.LastTenLosses,
+                        GainLossLastTen = player.HasEvents ? player.LastTenGainLoss : null,
+                        LargestGain = player.LargestGain?.Amount,
+                        LargestLoss = player.LargestLoss?.Amount,
+                        MmrRank = _loungeSettingsService.GetRank(player.Mmr, season),
+                        MaxMmrRank = _loungeSettingsService.GetRank(player.MaxMmr, season),
+                        CountryCode = player.CountryCode
+                    });
+                }
+
+                playerCount++;
+            }
+
+            return new LeaderboardViewModel
+            {
+                TotalPlayers = playerCount,
+                Data = data
+            };
         }
 
         [HttpPost("create")]
@@ -343,20 +425,12 @@ namespace Lounge.Web.Controllers
         private Task<Player> GetPlayerByDiscordIdAsync(string discordId) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.DiscordId == discordId);
 
-        private async Task<RankedPlayerStat?> GetPlayerStatsAsync(int id, int season)
+        private async Task<PlayerEventHistory?> GetPlayerStatsAsync(int id, int season)
         {
-            RankedPlayerStat? playerStat = null;
+            PlayerEventHistory? playerStat = null;
             if (id != -1)
             {
-                if (!_playerStatCache.TryGetPlayerStatsById(id, season, out playerStat))
-                {
-                    var stat = await _playerStatService.GetPlayerStatsByIdAsync(id, season);
-                    if (stat is not null)
-                    {
-                        _playerStatCache.UpdatePlayerStats(stat, season);
-                        _playerStatCache.TryGetPlayerStatsById(id, season, out playerStat);
-                    }
-                }
+                _playerStatCache.TryGetPlayerStatsById(id, season, out playerStat);
             }
 
             return playerStat;

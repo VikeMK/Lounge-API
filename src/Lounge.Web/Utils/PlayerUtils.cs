@@ -58,9 +58,8 @@ namespace Lounge.Web.Utils
                     .ToList(),
             });
 
-        public static PlayerDetailsViewModel GetPlayerDetails(Player player, RankedPlayerStat rankedPlayerStat, int season, ILoungeSettingsService loungeSettingsService)
+        public static PlayerDetailsViewModel GetPlayerDetails(Player player, PlayerEventHistory playerData, int season, ILoungeSettingsService loungeSettingsService)
         {
-            (int overallRank, PlayerStat playerStat) = rankedPlayerStat;
             var mmrChanges = new List<PlayerDetailsViewModel.MmrChange>();
 
             if (player.Placements.Count > 0)
@@ -75,9 +74,6 @@ namespace Lounge.Web.Utils
                         time: placement.AwardedOn));
                 }
             }
-
-            var allPartnerScores = new List<int>();
-            var allScores = new List<int>();
 
             foreach (var tableScore in player.TableScores)
             {
@@ -122,11 +118,6 @@ namespace Lounge.Web.Utils
                         reason: PlayerDetailsViewModel.MmrChangeReason.TableDelete,
                         time: tableScore.Table.DeletedOn!.Value,
                         tier: tableScore.Table.Tier));
-                }
-                else
-                {
-                    allPartnerScores.AddRange(partnerScores);
-                    allScores.Add(tableScore.Score);
                 }
             }
 
@@ -229,11 +220,6 @@ namespace Lounge.Web.Utils
             // sort descending
             mmrChanges.Reverse();
 
-            decimal? winRate = playerStat.EventsPlayed == 0 ? null : (decimal)playerStat.Wins / playerStat.EventsPlayed;
-
-            var largestGain = playerStat.LargestGain < 0 ? null : playerStat.LargestGain;
-            var largestLoss = playerStat.LargestLoss > 0 ? null : playerStat.LargestLoss;
-
             var seasonData = player.SeasonData.FirstOrDefault();
 
             var vm = new PlayerDetailsViewModel
@@ -248,21 +234,21 @@ namespace Lounge.Web.Utils
                 Season = season,
                 Mmr = seasonData?.Mmr,
                 MaxMmr = seasonData?.MaxMmr,
-                OverallRank = player.IsHidden ? null : overallRank,
+                OverallRank = player.IsHidden ? null : playerData.OverallRank,
                 MmrChanges = mmrChanges,
                 RankData = loungeSettingsService.GetRank(seasonData?.Mmr, season)!,
-                EventsPlayed = playerStat.EventsPlayed,
-                WinRate = winRate,
-                WinsLastTen = playerStat.LastTenWins,
-                LossesLastTen = playerStat.LastTenLosses,
-                GainLossLastTen = playerStat.LastTenGainLoss,
-                LargestGain = largestGain,
-                LargestGainTableId = largestGain == null ? null : mmrChanges.FirstOrDefault(c => c.MmrDelta == largestGain)?.ChangeId,
-                LargestLoss = largestLoss,
-                LargestLossTableId = largestLoss == null ? null : mmrChanges.FirstOrDefault(c => c.MmrDelta == largestLoss)?.ChangeId,
-                AverageScore = allScores.Count == 0 ? null : allScores.Average(),
-                AverageLastTen = allScores.Count == 0 ? null : allScores.TakeLast(10).Average(),
-                PartnerAverage = allPartnerScores.Count == 0 ? null : allPartnerScores.Average()
+                EventsPlayed = playerData.EventsPlayed,
+                WinRate = playerData.WinRate,
+                WinsLastTen = playerData.LastTenWins,
+                LossesLastTen = playerData.LastTenLosses,
+                GainLossLastTen = playerData.LastTenGainLoss,
+                LargestGain = playerData.LargestGain?.Amount,
+                LargestGainTableId = playerData.LargestGain?.EventId,
+                LargestLoss = playerData.LargestLoss?.Amount,
+                LargestLossTableId = playerData.LargestLoss?.EventId,
+                AverageScore = playerData.Events.Average(e => (int?)e.Score),
+                AverageLastTen = playerData.Events.Take(10).Average(e => (int?)e.Score),
+                PartnerAverage = playerData.Events.SelectMany(p => p.PartnerScores).Cast<int?>().Average()
             };
 
             return vm;

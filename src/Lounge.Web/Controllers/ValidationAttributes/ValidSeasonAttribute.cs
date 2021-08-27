@@ -1,5 +1,4 @@
 ﻿using Lounge.Web.Settings;
-using Microsoft.Extensions.Options;
 using System;
 using System.ComponentModel.DataAnnotations;
 

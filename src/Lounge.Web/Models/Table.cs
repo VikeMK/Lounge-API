@@ -12,7 +12,7 @@ namespace Lounge.Web.Models
         public DateTime? VerifiedOn { get; set; }
         public DateTime? DeletedOn { get; set; }
         public int NumTeams { get; set; }
-        public string Url { get; set; } = default!;
+        //public string Url { get; set; } = default!;
         public string Tier { get; set; } = default!;
         public string? TableMessageId { get; set; }
         public string? UpdateMessageId { get; set; }

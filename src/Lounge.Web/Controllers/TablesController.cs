@@ -138,7 +138,6 @@ namespace Lounge.Web.Controllers
             {
                 CreatedOn = DateTime.UtcNow,
                 NumTeams = numTeams,
-                Url = tableUrl,
                 Tier = vm.Tier,
                 Scores = tableScores,
                 AuthorId = vm.AuthorId,
@@ -245,8 +244,6 @@ namespace Lounge.Web.Controllers
 
             string tableUrl = TableUtils.BuildUrl(table.Tier, newScores);
             var tableImage = await TableUtils.GetImageDataAsync(tableUrl);
-
-            table.Url = tableUrl;
 
             await _tableImageService.UploadTableImageAsync(tableId, tableImage);
             await _context.SaveChangesAsync();

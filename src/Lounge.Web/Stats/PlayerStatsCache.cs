@@ -1,5 +1,7 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using Lounge.Web.Data.ChangeTracking;
+using Lounge.Web.Models;
+using Lounge.Web.Settings;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -7,93 +9,169 @@ using System.Linq;
 
 namespace Lounge.Web.Stats
 {
-    public class PlayerStatsCache : IPlayerStatCache
+    public class PlayerStatsCache : IPlayerStatCache, IDbCacheUpdateSubscriber
     {
-        // raw unranked stats
-        private ConcurrentDictionary<int, Dictionary<int, PlayerStat>> _rawStats = new();
+        record SeasonStatsData(
+            IReadOnlySet<string> CountryCodes,
+            IReadOnlyDictionary<int, PlayerEventHistory> Players,
+            Dictionary<LeaderboardSortOrder, IReadOnlyList<PlayerEventHistory>> PlayerSortOrders);
 
-        // ranked stats
-        private Dictionary<int, IReadOnlyDictionary<LeaderboardSortOrder, IReadOnlyList<RankedPlayerStat>>> _sortedStats = new();
-        private Dictionary<int, IReadOnlySet<string>> _countryCodes = new();
-        private Dictionary<int, IReadOnlyDictionary<int, RankedPlayerStat>> _statsDict = new();
+        private readonly ILoungeSettingsService _loungeSettingsService;
 
-        public IReadOnlyList<RankedPlayerStat> GetAllStats(int season, LeaderboardSortOrder sortOrder = LeaderboardSortOrder.Mmr) => 
-            _sortedStats.TryGetValue(season, out var statsLookup)
-                ? (statsLookup.GetValueOrDefault(sortOrder) ?? statsLookup.GetValueOrDefault(LeaderboardSortOrder.Mmr) ?? Array.Empty<RankedPlayerStat>())
-                : Array.Empty<RankedPlayerStat>();
+        private IReadOnlyDictionary<int, SeasonStatsData> _seasonStats = new Dictionary<int, SeasonStatsData>();
+
+        public PlayerStatsCache(ILoungeSettingsService loungeSettingsService)
+        {
+            _loungeSettingsService = loungeSettingsService;
+        }
+
+        public IReadOnlyList<PlayerEventHistory> GetAllStats(int season, LeaderboardSortOrder sortOrder = LeaderboardSortOrder.Mmr)
+        {
+            if (!_seasonStats.TryGetValue(season, out var seasonStats))
+                return Array.Empty<PlayerEventHistory>();
+
+            if (seasonStats.PlayerSortOrders.TryGetValue(sortOrder, out var sortedStats))
+                return sortedStats;
+
+            sortedStats = this.GetSortedPlayerData(seasonStats.Players.Values, sortOrder);
+            seasonStats.PlayerSortOrders[sortOrder] = sortedStats;
+            return sortedStats;
+        }
 
         public IReadOnlySet<string> GetAllCountryCodes(int season)
         {
-            return _countryCodes.GetValueOrDefault(season) ?? ImmutableHashSet.Create<string>();
+            return _seasonStats.TryGetValue(season, out var seasonData) ? seasonData.CountryCodes : ImmutableHashSet<string>.Empty;
         }
 
-        public bool TryGetPlayerStatsById(int id, int season, [NotNullWhen(true)] out RankedPlayerStat? playerStat)
+        public bool TryGetPlayerStatsById(int id, int season, [NotNullWhen(true)] out PlayerEventHistory? playerStat)
         {
             playerStat = null;
-            return _statsDict.TryGetValue(season, out var seasonStatsDict) && seasonStatsDict.TryGetValue(id, out playerStat);
+            return _seasonStats.TryGetValue(season, out var seasonStats) && seasonStats.Players.TryGetValue(id, out playerStat);
         }
 
-        public void UpdateAllPlayerStats(IReadOnlyList<PlayerStat> playerStats, int season)
+        public void OnChange(IDbCache dbCache)
         {
-            _rawStats[season] = playerStats.ToDictionary(s => s.Id);
-            UpdateRanks(season);
-        }
-
-        public void UpdatePlayerStats(PlayerStat playerStat, int season)
-        {
-            var rawSeasonStats = _rawStats.GetOrAdd(season, _ => new());
-            rawSeasonStats[playerStat.Id] = playerStat;
-            UpdateRanks(season);
-        }
-
-        private void UpdateRanks(int season)
-        {
-            var seasonRawStats = _rawStats[season];
-            var statsDict = new Dictionary<int, RankedPlayerStat>(seasonRawStats.Count);
-            var sortedStats = new List<RankedPlayerStat>(seasonRawStats.Count);
-            var countryCodes = new HashSet<string>();
-
-            var sortedUnrankedStats = seasonRawStats.Values
-                .OrderByDescending(s => s.EventsPlayed > 0)
-                .ThenByDescending(s => s.Mmr)
-                .ThenBy(s => s.Name);
-
-            int prev = -1;
-            int? prevMmr = -1;
-            int rank = 1;
-            foreach (var stat in sortedUnrankedStats)
+            var newSeasonStats = new Dictionary<int, SeasonStatsData>();
+            var seasons = _loungeSettingsService.ValidSeasons;
+            foreach (var season in seasons)
             {
-                int? mmr = stat.Mmr;
-                int actualRank = mmr == prevMmr ? prev : rank;
-                var rankedStat = new RankedPlayerStat(actualRank, stat);
-                statsDict[stat.Id] = rankedStat;
+                var seasonData = dbCache.PlayerSeasonData.GetValueOrDefault(season);
 
-                if (stat.IsHidden)
-                    continue;
+                var sqMultiplier = _loungeSettingsService.SquadQueueMultipliers[season];
+                var playerLookup = new Dictionary<int, PlayerEventHistory>();
+                var playerEventsLookup = new Dictionary<int, List<PlayerEventData>>();
+                var countryCodes = new HashSet<string>();
+                foreach (var player in dbCache.Players.Values)
+                {
+                    var psd = seasonData?.GetValueOrDefault(player.Id);
+                    var eventsList = new List<PlayerEventData>();
+                    playerEventsLookup[player.Id] = eventsList;
+                    playerLookup[player.Id] = new(player.Id, player.Name, player.MKCId, player.DiscordId, player.RegistryId, player.CountryCode, player.SwitchFc, player.IsHidden, psd?.Mmr, psd?.MaxMmr, eventsList);
+                    if (player.CountryCode != null)
+                        countryCodes.Add(player.CountryCode);
+                }
 
-                sortedStats.Add(rankedStat);
-                if (stat.CountryCode != null)
-                    countryCodes.Add(stat.CountryCode);
+                var tablesLookup = new Dictionary<int, EventData>();
+                foreach (var table in dbCache.Tables.Values.Where(v => v.Season == season && v.VerifiedOn != null && v.DeletedOn == null))
+                {
+                    var eventData = new EventData(table.Id, table.NumTeams, table.Tier, table.VerifiedOn!.Value);
+                    tablesLookup[table.Id] = eventData;
 
-                prev = actualRank;
-                prevMmr = mmr;
-                rank++;
+                    var formatMultiplier = string.Equals(table.Tier, "SQ", StringComparison.OrdinalIgnoreCase) ? sqMultiplier : 1;
+
+                    var tableScores = dbCache.TableScores.GetValueOrDefault(table.Id)?.Values?.ToList();
+                    if (tableScores is null)
+                        continue;
+
+                    foreach (var tableScore in tableScores)
+                    {
+                        var multiplier = tableScore.Multiplier * formatMultiplier;
+                        var mmrDelta = tableScore.NewMmr!.Value - tableScore.PrevMmr!.Value;
+                        var partnerScores = tableScores.Where(s => s.Team == tableScore.Team && s.PlayerId != tableScore.PlayerId).Select(s => s.Score).ToList();
+                        var playerEventData = new PlayerEventData(tableScore.TableId, tableScore.Score, tableScore.Multiplier, mmrDelta, partnerScores, eventData);
+                        playerEventsLookup[tableScore.PlayerId].Add(playerEventData);
+                    }
+                }
+
+                // sort all the event lists and update all the player lookups
+                foreach (var playerId in playerLookup.Keys)
+                {
+                    var sortedEventsList = playerEventsLookup[playerId].OrderByDescending(e => tablesLookup[e.TableId].VerifiedOn).ToList();
+                    playerLookup[playerId] = playerLookup[playerId] with { Events = sortedEventsList };
+                }
+
+                var playersSortedByMmr = playerLookup.Values
+                    .OrderByDescending(s => s.HasEvents)
+                    .ThenByDescending(s => s.Mmr)
+                    .ThenBy(s => s.Name);
+
+                int prev = -1;
+                int? prevMmr = -1;
+                int rank = 1;
+                foreach (var playerData in playersSortedByMmr)
+                {
+                    int? mmr = playerData.Mmr;
+                    int actualRank = mmr == prevMmr ? prev : rank;
+                    playerLookup[playerData.Id] = playerData with { OverallRank = actualRank };
+
+                    if (playerData.IsHidden)
+                        continue;
+
+                    prev = actualRank;
+                    prevMmr = mmr;
+                    rank++;
+                }
+
+                newSeasonStats[season] = new SeasonStatsData(countryCodes, playerLookup, new Dictionary<LeaderboardSortOrder, IReadOnlyList<PlayerEventHistory>>());
             }
 
-            _statsDict[season] = statsDict;
-            _countryCodes[season] = countryCodes;
-            _sortedStats[season] = new Dictionary<LeaderboardSortOrder, IReadOnlyList<RankedPlayerStat>>
+            _seasonStats = newSeasonStats;
+        }
+
+        private IReadOnlyList<PlayerEventHistory> GetSortedPlayerData(IEnumerable<PlayerEventHistory> playerData, LeaderboardSortOrder sortOrder)
+        {
+            // filter out hidden players
+            playerData = playerData.Where(p => !p.IsHidden);
+
+            playerData = sortOrder switch
             {
-                [LeaderboardSortOrder.Mmr] = sortedStats,
-                [LeaderboardSortOrder.MaxMmr] = sortedStats.OrderByDescending(s => s.Stat.MaxMmr).ThenBy(s => s.Rank).ToList(),
-                [LeaderboardSortOrder.EventsPlayed] = sortedStats.OrderByDescending(s => s.Stat.EventsPlayed).ThenBy(s => s.Rank).ToList(),
-                [LeaderboardSortOrder.Name] = sortedStats.OrderBy(s => s.Stat.Name).ToList(),
-                [LeaderboardSortOrder.LargestGain] = sortedStats.OrderByDescending(s => s.Stat.LargestGain ?? int.MinValue).ThenBy(s => s.Rank).ToList(),
-                [LeaderboardSortOrder.LargestLoss] = sortedStats.OrderBy(s => s.Stat.LargestLoss ?? int.MaxValue).ThenBy(s => s.Rank).ToList(),
-                [LeaderboardSortOrder.WinRate] = sortedStats.OrderByDescending(s => s.Stat.EventsPlayed == 0 ? int.MinValue : ((decimal)s.Stat.Wins / s.Stat.EventsPlayed)).ThenByDescending(s => s.Stat.EventsPlayed).ThenBy(s => s.Rank).ToList(),
-                [LeaderboardSortOrder.WinLossLast10] = sortedStats.OrderByDescending(s => s.Stat.EventsPlayed == 0 ? int.MinValue : s.Stat.LastTenWins).ThenBy(s => s.Stat.LastTenLosses).ThenBy(s => s.Rank).ToList(),
-                [LeaderboardSortOrder.GainLast10] = sortedStats.OrderByDescending(s => (s.Stat.EventsPlayed == 0 || s.Stat.LastTenGainLoss == null) ? int.MinValue : s.Stat.LastTenGainLoss).ThenBy(s => s.Rank).ToList()
+                LeaderboardSortOrder.Name => playerData.OrderBy(p => p.Name),
+                LeaderboardSortOrder.Mmr => playerData.OrderBy(p => p.OverallRank).ThenBy(p => p.Name),
+                LeaderboardSortOrder.MaxMmr => playerData.OrderByDescending(p => p.MaxMmr).ThenBy(p => p.OverallRank).ThenBy(s => s.Name),
+                LeaderboardSortOrder.WinRate => playerData
+                    .OrderByDescending(s => s.HasEvents)
+                    .ThenByDescending(s => s.WinRate)
+                    .ThenByDescending(s => s.EventsPlayed)
+                    .ThenBy(s => s.OverallRank)
+                    .ThenBy(s => s.Name),
+                LeaderboardSortOrder.WinLossLast10 => playerData
+                    .OrderByDescending(s => s.HasEvents)
+                    .ThenByDescending(s => s.LastTenWins)
+                    .ThenBy(s => s.LastTenLosses)
+                    .ThenBy(s => s.OverallRank)
+                    .ThenBy(s => s.Name),
+                LeaderboardSortOrder.GainLast10 => playerData
+                    .OrderByDescending(s => s.HasEvents)
+                    .ThenByDescending(s => s.LastTenGainLoss)
+                    .ThenBy(s => s.OverallRank)
+                    .ThenBy(s => s.Name),
+                LeaderboardSortOrder.EventsPlayed => playerData
+                    .OrderByDescending(s => s.EventsPlayed)
+                    .ThenBy(s => s.OverallRank)
+                    .ThenBy(s => s.Name),
+                LeaderboardSortOrder.LargestGain => playerData
+                    .OrderByDescending(s => s.HasEvents)
+                    .ThenByDescending(s => s.LargestGain)
+                    .ThenBy(s => s.OverallRank),
+                LeaderboardSortOrder.LargestLoss => playerData
+                    .OrderByDescending(s => s.HasEvents)
+                    .ThenBy(s => s.LargestLoss)
+                    .ThenBy(s => s.OverallRank)
+                    .ThenBy(s => s.Name),
+                _ => playerData.OrderBy(p => p.OverallRank).ThenBy(p => p.Name)
             };
+
+            return playerData.ToList();
         }
     }
 }

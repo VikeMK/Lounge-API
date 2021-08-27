@@ -1,5 +1,6 @@
 using Lounge.Web.Authentication;
 using Lounge.Web.Data;
+using Lounge.Web.Data.ChangeTracking;
 using Lounge.Web.Settings;
 using Lounge.Web.Stats;
 using Lounge.Web.Storage;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -63,15 +65,22 @@ namespace Lounge.Web
                 c.CustomSchemaIds(s => s.FullName);
             });
 
-            services.AddSingleton<IPlayerStatCache, PlayerStatsCache>();
-            services.AddTransient<IPlayerStatService, PlayerStatService>();
+            services.AddSingleton<PlayerStatsCache>();
+            services.AddSingleton<IPlayerStatCache>(s => s.GetRequiredService<PlayerStatsCache>());
+            services.AddSingleton<IDbCacheUpdateSubscriber>(s => s.GetRequiredService<PlayerStatsCache>());
+
             services.AddSingleton<ITableImageService, TableImageService>();
             services.AddSingleton<ILoungeSettingsService, LoungeSettingsService>();
             services.AddSingleton<IMkcRegistryApi, MkcRegistryApi>();
             services.AddTransient<IMkcRegistryDataUpdater, MkcRegistryDataUpdater>();
+            services.AddTransient<IChangeTracker, ChangeTracker>();
 
-            services.AddHostedService<PlayerStatCacheWarmingBackgroundService>();
+            services.AddSingleton<DbCache>();
+            services.AddSingleton<IChangeTrackingSubscriber>(s => s.GetRequiredService<DbCache>());
+            services.AddSingleton<IDbCache>(s => s.GetRequiredService<DbCache>());
+
             services.AddHostedService<MkcRegistrySyncBackgroundService>();
+            services.AddHostedService<DbChangeTrackingBackgroundService>();
 
             services.Configure<LoungeSettings>(Configuration);
 
@@ -95,7 +104,15 @@ namespace Lounge.Web
             app.UseSwagger();
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    const int durationInSeconds = 60 * 60 * 24;
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] =
+                        "public,max-age=" + durationInSeconds;
+                }
+            });
             app.UseRouting();
 
             app.UseAuthentication();

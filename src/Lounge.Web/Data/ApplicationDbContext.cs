@@ -1,7 +1,6 @@
 ﻿using Lounge.Web.Models;
 using Lounge.Web.Settings;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using System;
 
 namespace Lounge.Web.Data
@@ -50,6 +49,9 @@ namespace Lounge.Web.Data
                 .HasIndex(p => p.NormalizedName)
                 .IsUnique();
 
+            modelBuilder.Entity<PlayerChange>()
+                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
+
             modelBuilder.Entity<PlayerSeasonData>()
                 .Property(psd => psd.Season)
                 .HasDefaultValue(defaultSeason);
@@ -60,12 +62,21 @@ namespace Lounge.Web.Data
             modelBuilder.Entity<PlayerSeasonData>()
                 .HasIndex(psd => new { psd.Season, psd.Mmr });
 
+            modelBuilder.Entity<PlayerSeasonDataChange>()
+                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => new { x.PlayerId, x.Season });
+
             modelBuilder.Entity<Table>()
                 .Property(t => t.Season)
                 .HasDefaultValue(defaultSeason);
 
+            modelBuilder.Entity<TableChange>()
+                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
+
             modelBuilder.Entity<TableScore>()
                 .HasKey(t => new { t.TableId, t.PlayerId });
+
+            modelBuilder.Entity<TableScoreChange>()
+                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => new { x.TableId, x.PlayerId });
 
             modelBuilder.Entity<Penalty>()
                 .HasIndex(p => p.AwardedOn);
@@ -73,6 +84,9 @@ namespace Lounge.Web.Data
             modelBuilder.Entity<Penalty>()
                 .Property(p => p.Season)
                 .HasDefaultValue(defaultSeason);
+
+            modelBuilder.Entity<PenaltyChange>()
+                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
 
             modelBuilder.Entity<Bonus>()
                 .HasIndex(p => p.AwardedOn);
@@ -81,12 +95,22 @@ namespace Lounge.Web.Data
                 .Property(b => b.Season)
                 .HasDefaultValue(defaultSeason);
 
+            modelBuilder.Entity<BonusChange>()
+                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
+
             modelBuilder.Entity<Placement>()
                 .HasIndex(p => p.AwardedOn);
 
             modelBuilder.Entity<Placement>()
                 .Property(p => p.Season)
                 .HasDefaultValue(defaultSeason);
+
+            modelBuilder.Entity<PlacementChange>()
+                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
+
+            modelBuilder.Entity<ChangeTrackingCurrentVersion>()
+                .HasNoKey()
+                .ToView(null);
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
@@ -109,6 +133,17 @@ namespace Lounge.Web.Data
                           v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v);
                     }
                 }
+            }
+
+            foreach (var changeType in modelBuilder.Model.FindLeastDerivedEntityTypes(typeof(Change)))
+            {
+                var builder = modelBuilder.Entity(changeType.ClrType).HasNoKey().ToView(null);
+
+                builder.Property(nameof(Change.Version)).HasColumnName("SYS_CHANGE_VERSION");
+                builder.Property(nameof(Change.CreationVersion)).HasColumnName("SYS_CHANGE_CREATION_VERSION");
+                builder.Property(nameof(Change.Operation)).HasColumnName("SYS_CHANGE_OPERATION");
+                builder.Property(nameof(Change.Columns)).HasColumnName("SYS_CHANGE_COLUMNS");
+                builder.Property(nameof(Change.Context)).HasColumnName("SYS_CHANGE_CONTEXT");
             }
         }
     }

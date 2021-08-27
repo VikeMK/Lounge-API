@@ -113,3 +113,7 @@ body {
 .pagination-dark > .page-item.disabled > .page-link {
     color: var(--gray);
 }
+
+body::-webkit-scrollbar {
+    display: none;
+}

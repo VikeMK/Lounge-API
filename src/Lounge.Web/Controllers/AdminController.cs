@@ -134,7 +134,7 @@ namespace Lounge.Web.Controllers
                             var table = tables[entityId];
                             int numTeams = table.NumTeams;
 
-                            double sqMultiplier = string.Equals(table.Tier, "SQ", StringComparison.OrdinalIgnoreCase) ? 0.75 : 1;
+                            double sqMultiplier = string.Equals(table.Tier, "SQ", StringComparison.OrdinalIgnoreCase) ? _loungeSettingsService.SquadQueueMultipliers[season.Value] : 1;
 
                             var scores = new (string Player, int Score, int CurrentMmr, double Multiplier)[numTeams][];
                             for (int i = 0; i < numTeams; i++)
