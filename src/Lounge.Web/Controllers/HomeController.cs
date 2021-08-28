@@ -21,16 +21,19 @@ namespace Lounge.Web.Controllers
 
         private readonly ApplicationDbContext _context;
         private readonly IPlayerStatCache _playerStatCache;
+        private readonly IPlayerDetailsViewModelService _playerDetailsViewModelService;
         private readonly ITableImageService _tableImageService;
         private readonly ILoungeSettingsService _loungeSettingsService;
 
         public HomeController(
-            ApplicationDbContext context,
+            ApplicationDbContext context, 
+            IPlayerDetailsViewModelService playerDetailsViewModelService,
             IPlayerStatCache playerStatCache,
             ITableImageService tableImageService,
             ILoungeSettingsService loungeSettingsService)
         {
             _context = context;
+            _playerDetailsViewModelService = playerDetailsViewModelService;
             _playerStatCache = playerStatCache;
             _tableImageService = tableImageService;
             _loungeSettingsService = loungeSettingsService;
@@ -58,25 +61,17 @@ namespace Lounge.Web.Controllers
 
         [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "season" })]
         [Route("PlayerDetails/{id}")]
-        public async Task<IActionResult> PlayerDetails(int id, [ValidSeason] int? season=null)
+        public IActionResult PlayerDetails(int id, [ValidSeason] int? season=null)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             season ??= _loungeSettingsService.CurrentSeason;
 
-            var player = await _context.Players
-                .AsNoTracking()
-                .SelectPropertiesForPlayerDetails(season.Value)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (player is null)
+            var vm = _playerDetailsViewModelService.GetPlayerDetails(id, season.Value);
+            if (vm is null)
                 return NotFound();
 
-            if (!_playerStatCache.TryGetPlayerStatsById(id, season.Value, out var playerStat))
-                return NotFound();
-
-            var vm = PlayerUtils.GetPlayerDetails(player, playerStat, season.Value, _loungeSettingsService);
             vm.ValidSeasons = _loungeSettingsService.ValidSeasons;
             return View(vm);
         }

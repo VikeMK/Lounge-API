@@ -22,15 +22,17 @@ namespace Lounge.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IPlayerStatCache _playerStatCache;
+        private readonly IPlayerDetailsViewModelService _playerDetailsViewModelService;
         private readonly ILoungeSettingsService _loungeSettingsService;
         private readonly IMkcRegistryApi _mkcRegistryApi;
 
-        public PlayersController(ApplicationDbContext context, IPlayerStatCache playerStatCache, ILoungeSettingsService loungeSettingsService, IMkcRegistryApi mkcRegistryApi)
+        public PlayersController(ApplicationDbContext context, IPlayerDetailsViewModelService playerDetailsViewModelService, IPlayerStatCache playerStatCache, ILoungeSettingsService loungeSettingsService, IMkcRegistryApi mkcRegistryApi)
         {
             _context = context;
             _playerStatCache = playerStatCache;
             _loungeSettingsService = loungeSettingsService;
             _mkcRegistryApi = mkcRegistryApi;
+            _playerDetailsViewModelService = playerDetailsViewModelService;
         }
 
         [HttpGet]
@@ -71,19 +73,19 @@ namespace Lounge.Web.Controllers
         {
             season ??= _loungeSettingsService.CurrentSeason;
 
-            var player = await _context.Players
-                .AsNoTracking()
-                .SelectPropertiesForPlayerDetails(season.Value)
-                .FirstOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
+            var playerId = await _context.Players
+                .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
+                .Select(p => p.Id)
+                .SingleOrDefaultAsync();
 
-            if (player is null)
+            if (playerId == 0)
                 return NotFound();
 
-            var playerStat = await GetPlayerStatsAsync(player.Id, season.Value);
-            if (playerStat is null)
+            var vm = _playerDetailsViewModelService.GetPlayerDetails(playerId, season.Value);
+            if (vm is null)
                 return NotFound();
 
-            return PlayerUtils.GetPlayerDetails(player, playerStat, season.Value, _loungeSettingsService);
+            return vm;
         }
 
         [HttpGet("list")]
@@ -425,9 +427,9 @@ namespace Lounge.Web.Controllers
         private Task<Player> GetPlayerByDiscordIdAsync(string discordId) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.DiscordId == discordId);
 
-        private async Task<PlayerEventHistory?> GetPlayerStatsAsync(int id, int season)
+        private PlayerLeaderboardData? GetPlayerStats(int id, int season)
         {
-            PlayerEventHistory? playerStat = null;
+            PlayerLeaderboardData? playerStat = null;
             if (id != -1)
             {
                 _playerStatCache.TryGetPlayerStatsById(id, season, out playerStat);

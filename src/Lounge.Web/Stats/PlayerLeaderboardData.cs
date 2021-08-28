@@ -1,10 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Lounge.Web.Stats
 {
-    public record PlayerEventHistory(int Id, string Name, int MkcId, string? DiscordId, int? RegistryId, string? CountryCode, string? SwitchFc, bool IsHidden, int? Mmr, int? MaxMmr, IReadOnlyList<PlayerEventData> Events, int? OverallRank = null)
+    public record PlayerLeaderboardData(
+        int Id,
+        string Name,
+        int MkcId,
+        string? DiscordId,
+        int? RegistryId,
+        string? CountryCode,
+        string? SwitchFc,
+        bool IsHidden,
+        int? Mmr,
+        int? MaxMmr,
+        IReadOnlyList<PlayerEventData> Events,
+        int? OverallRank = null)
     {
         public bool HasEvents => Events.Any();
         public int EventsPlayed => Events.Count;

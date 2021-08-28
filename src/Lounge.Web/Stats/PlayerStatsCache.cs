@@ -13,8 +13,8 @@ namespace Lounge.Web.Stats
     {
         record SeasonStatsData(
             IReadOnlySet<string> CountryCodes,
-            IReadOnlyDictionary<int, PlayerEventHistory> Players,
-            Dictionary<LeaderboardSortOrder, IReadOnlyList<PlayerEventHistory>> PlayerSortOrders);
+            IReadOnlyDictionary<int, PlayerLeaderboardData> Players,
+            Dictionary<LeaderboardSortOrder, IReadOnlyList<PlayerLeaderboardData>> PlayerSortOrders);
 
         private readonly ILoungeSettingsService _loungeSettingsService;
 
@@ -25,10 +25,10 @@ namespace Lounge.Web.Stats
             _loungeSettingsService = loungeSettingsService;
         }
 
-        public IReadOnlyList<PlayerEventHistory> GetAllStats(int season, LeaderboardSortOrder sortOrder = LeaderboardSortOrder.Mmr)
+        public IReadOnlyList<PlayerLeaderboardData> GetAllStats(int season, LeaderboardSortOrder sortOrder = LeaderboardSortOrder.Mmr)
         {
             if (!_seasonStats.TryGetValue(season, out var seasonStats))
-                return Array.Empty<PlayerEventHistory>();
+                return Array.Empty<PlayerLeaderboardData>();
 
             if (seasonStats.PlayerSortOrders.TryGetValue(sortOrder, out var sortedStats))
                 return sortedStats;
@@ -43,7 +43,7 @@ namespace Lounge.Web.Stats
             return _seasonStats.TryGetValue(season, out var seasonData) ? seasonData.CountryCodes : ImmutableHashSet<string>.Empty;
         }
 
-        public bool TryGetPlayerStatsById(int id, int season, [NotNullWhen(true)] out PlayerEventHistory? playerStat)
+        public bool TryGetPlayerStatsById(int id, int season, [NotNullWhen(true)] out PlayerLeaderboardData? playerStat)
         {
             playerStat = null;
             return _seasonStats.TryGetValue(season, out var seasonStats) && seasonStats.Players.TryGetValue(id, out playerStat);
@@ -58,7 +58,7 @@ namespace Lounge.Web.Stats
                 var seasonData = dbCache.PlayerSeasonData.GetValueOrDefault(season);
 
                 var sqMultiplier = _loungeSettingsService.SquadQueueMultipliers[season];
-                var playerLookup = new Dictionary<int, PlayerEventHistory>();
+                var playerLookup = new Dictionary<int, PlayerLeaderboardData>();
                 var playerEventsLookup = new Dictionary<int, List<PlayerEventData>>();
                 var countryCodes = new HashSet<string>();
                 foreach (var player in dbCache.Players.Values)
@@ -122,13 +122,13 @@ namespace Lounge.Web.Stats
                     rank++;
                 }
 
-                newSeasonStats[season] = new SeasonStatsData(countryCodes, playerLookup, new Dictionary<LeaderboardSortOrder, IReadOnlyList<PlayerEventHistory>>());
+                newSeasonStats[season] = new SeasonStatsData(countryCodes, playerLookup, new Dictionary<LeaderboardSortOrder, IReadOnlyList<PlayerLeaderboardData>>());
             }
 
             _seasonStats = newSeasonStats;
         }
 
-        private IReadOnlyList<PlayerEventHistory> GetSortedPlayerData(IEnumerable<PlayerEventHistory> playerData, LeaderboardSortOrder sortOrder)
+        private IReadOnlyList<PlayerLeaderboardData> GetSortedPlayerData(IEnumerable<PlayerLeaderboardData> playerData, LeaderboardSortOrder sortOrder)
         {
             // filter out hidden players
             playerData = playerData.Where(p => !p.IsHidden);

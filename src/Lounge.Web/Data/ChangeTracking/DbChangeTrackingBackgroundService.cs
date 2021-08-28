@@ -72,7 +72,7 @@ namespace Lounge.Web.Data.ChangeTracking
                     _logger.LogError(ex, "Exception thrown when passing changes to subscribers");
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }
         }
     }

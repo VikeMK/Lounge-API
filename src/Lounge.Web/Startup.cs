@@ -69,6 +69,12 @@ namespace Lounge.Web
             services.AddSingleton<IPlayerStatCache>(s => s.GetRequiredService<PlayerStatsCache>());
             services.AddSingleton<IDbCacheUpdateSubscriber>(s => s.GetRequiredService<PlayerStatsCache>());
 
+            services.AddSingleton<PlayerDetailsCache>();
+            services.AddSingleton<IPlayerDetailsCache>(s => s.GetRequiredService<PlayerDetailsCache>());
+            services.AddSingleton<IDbCacheUpdateSubscriber>(s => s.GetRequiredService<PlayerDetailsCache>());
+
+            services.AddSingleton<IPlayerDetailsViewModelService, PlayerDetailsViewModelService>();
+
             services.AddSingleton<ITableImageService, TableImageService>();
             services.AddSingleton<ILoungeSettingsService, LoungeSettingsService>();
             services.AddSingleton<IMkcRegistryApi, MkcRegistryApi>();
