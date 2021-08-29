@@ -1,5 +1,7 @@
 ﻿using Lounge.Web.Data.ChangeTracking;
 using Lounge.Web.Settings;
+using Lounge.Web.Utils;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -9,13 +11,13 @@ namespace Lounge.Web.Stats
     public class PlayerDetailsCache : IPlayerDetailsCache, IDbCacheUpdateSubscriber
     {
         private readonly ILoungeSettingsService _loungeSettingsService;
+        private IReadOnlyDictionary<string, int> _playerIdByNameLookup = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         private IReadOnlyDictionary<int, IReadOnlyDictionary<int, PlayerDetails>> _playerDetailsLookupBySeason = new Dictionary<int, IReadOnlyDictionary<int, PlayerDetails>>();
 
         public PlayerDetailsCache(ILoungeSettingsService loungeSettingsService)
         {
             _loungeSettingsService = loungeSettingsService;
         }
-
 
         public bool TryGetPlayerDetailsById(int playerId, int season, [NotNullWhen(returnValue: true)] out PlayerDetails? playerDetails)
         {
@@ -26,6 +28,14 @@ namespace Lounge.Web.Stats
 
             playerDetails = null;
             return false;
+        }
+
+        public bool TryGetPlayerIdByName(string name, [NotNullWhen(returnValue: true)] out int? playerId)
+        {
+            var normalizedName = PlayerUtils.NormalizeName(name);
+            var hasValue = _playerIdByNameLookup.TryGetValue(normalizedName, out var id);
+            playerId = id;
+            return hasValue;
         }
 
         public void OnChange(IDbCache dbCache)
@@ -66,6 +76,8 @@ namespace Lounge.Web.Stats
                             bonusesByPlayer.GetValueOrDefault(p.Id) ?? new List<int>()));
             }
 
+            var playerNamesToId = dbCache.Players.Select(p => new KeyValuePair<string, int>(p.Value.NormalizedName, p.Key));
+            _playerIdByNameLookup = new Dictionary<string, int>(playerNamesToId, StringComparer.OrdinalIgnoreCase);
             _playerDetailsLookupBySeason = newPlayerDetailsLookup;
         }
     }

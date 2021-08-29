@@ -22,17 +22,19 @@ namespace Lounge.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IPlayerStatCache _playerStatCache;
+        private readonly IPlayerDetailsCache _playerDetailsCache;
         private readonly IPlayerDetailsViewModelService _playerDetailsViewModelService;
         private readonly ILoungeSettingsService _loungeSettingsService;
         private readonly IMkcRegistryApi _mkcRegistryApi;
 
-        public PlayersController(ApplicationDbContext context, IPlayerDetailsViewModelService playerDetailsViewModelService, IPlayerStatCache playerStatCache, ILoungeSettingsService loungeSettingsService, IMkcRegistryApi mkcRegistryApi)
+        public PlayersController(ApplicationDbContext context, IPlayerDetailsViewModelService playerDetailsViewModelService, IPlayerDetailsCache playerDetailsCache, IPlayerStatCache playerStatCache, ILoungeSettingsService loungeSettingsService, IMkcRegistryApi mkcRegistryApi)
         {
             _context = context;
             _playerStatCache = playerStatCache;
             _loungeSettingsService = loungeSettingsService;
             _mkcRegistryApi = mkcRegistryApi;
             _playerDetailsViewModelService = playerDetailsViewModelService;
+            _playerDetailsCache = playerDetailsCache;
         }
 
         [HttpGet]
@@ -69,19 +71,14 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("details")]
         [AllowAnonymous]
-        public async Task<ActionResult<PlayerDetailsViewModel>> Details(string name, [ValidSeason] int? season = null)
+        public ActionResult<PlayerDetailsViewModel> Details(string name, [ValidSeason] int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason;
 
-            var playerId = await _context.Players
-                .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
-                .Select(p => p.Id)
-                .SingleOrDefaultAsync();
-
-            if (playerId == 0)
+            if (!_playerDetailsCache.TryGetPlayerIdByName(name, out var playerId))
                 return NotFound();
 
-            var vm = _playerDetailsViewModelService.GetPlayerDetails(playerId, season.Value);
+            var vm = _playerDetailsViewModelService.GetPlayerDetails(playerId.Value, season.Value);
             if (vm is null)
                 return NotFound();
 
@@ -90,19 +87,20 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<ActionResult<PlayerListViewModel>> Players(int? minMmr, int? maxMmr, [ValidSeason] int? season=null)
+        public ActionResult<PlayerListViewModel> Players(int? minMmr, int? maxMmr, [ValidSeason] int? season=null)
         {
             season ??= _loungeSettingsService.CurrentSeason;
 
-            var players = await _context.PlayerSeasonData
-                .Where(p => p.Season == season && (minMmr == null || p.Mmr >= minMmr) && (maxMmr == null || p.Mmr <= maxMmr))
+            var players = _playerStatCache
+                .GetAllStats(season.Value)
+                .Where(p => (minMmr == null || p.Mmr >= minMmr) && (maxMmr == null || p.Mmr <= maxMmr))
                 .Select(p => new PlayerListViewModel.Player(
-                    p.Player.Name,
-                    p.Player.MKCId,
+                    p.Name,
+                    p.MkcId,
                     p.Mmr,
-                    p.Player.DiscordId,
-                    p.Player.TableScores.Count(t => t.Table.Season == season && t.Table.VerifiedOn != null && t.Table.DeletedOn == null)))
-                .ToListAsync();
+                    p.DiscordId,
+                    p.EventsPlayed))
+                .ToList();
 
             return new PlayerListViewModel { Players = players };
         }
