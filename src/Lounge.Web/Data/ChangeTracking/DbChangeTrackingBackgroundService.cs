@@ -28,21 +28,35 @@ namespace Lounge.Web.Data.ChangeTracking
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             long lastSynchronizationVersion = 0;
-            using (var scope = _services.CreateScope())
+            while (true)
             {
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var changeTracker = scope.ServiceProvider.GetRequiredService<IChangeTracker>();
-                lastSynchronizationVersion = await changeTracker.GetCurrentSynchronizationVersionAsync();
+                try
+                {
+                    using var scope = _services.CreateScope();
 
-                var bonuses = await context.Bonuses.AsNoTracking().ToListAsync();
-                var penalties = await context.Penalties.AsNoTracking().ToListAsync();
-                var placements = await context.Placements.AsNoTracking().ToListAsync();
-                var players = await context.Players.AsNoTracking().ToListAsync();
-                var playerSeasonData = await context.PlayerSeasonData.AsNoTracking().ToListAsync();
-                var tables = await context.Tables.AsNoTracking().ToListAsync();
-                var tableScores = await context.TableScores.AsNoTracking().ToListAsync();
+                    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    var changeTracker = scope.ServiceProvider.GetRequiredService<IChangeTracker>();
+                    var synchronizationVersion = await changeTracker.GetCurrentSynchronizationVersionAsync();
 
-                _dbCache.Initialize(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores);
+                    var bonuses = await context.Bonuses.AsNoTracking().ToListAsync();
+                    var penalties = await context.Penalties.AsNoTracking().ToListAsync();
+                    var placements = await context.Placements.AsNoTracking().ToListAsync();
+                    var players = await context.Players.AsNoTracking().ToListAsync();
+                    var playerSeasonData = await context.PlayerSeasonData.AsNoTracking().ToListAsync();
+                    var tables = await context.Tables.AsNoTracking().ToListAsync();
+                    var tableScores = await context.TableScores.AsNoTracking().ToListAsync();
+
+                    _dbCache.Initialize(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores);
+
+                    lastSynchronizationVersion = synchronizationVersion;
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Exception thrown when initializing DbCache");
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }
 
             while (!stoppingToken.IsCancellationRequested)

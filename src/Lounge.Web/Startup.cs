@@ -73,6 +73,10 @@ namespace Lounge.Web
             services.AddSingleton<IPlayerDetailsCache>(s => s.GetRequiredService<PlayerDetailsCache>());
             services.AddSingleton<IDbCacheUpdateSubscriber>(s => s.GetRequiredService<PlayerDetailsCache>());
 
+            services.AddSingleton<RecordsCache>();
+            services.AddSingleton<IRecordsCache>(s => s.GetRequiredService<RecordsCache>());
+            services.AddSingleton<IDbCacheUpdateSubscriber>(s => s.GetRequiredService<RecordsCache>());
+
             services.AddSingleton<IPlayerDetailsViewModelService, PlayerDetailsViewModelService>();
 
             services.AddSingleton<ITableImageService, TableImageService>();

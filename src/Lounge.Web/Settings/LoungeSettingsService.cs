@@ -27,6 +27,8 @@ namespace Lounge.Web.Settings
 
         public IReadOnlyDictionary<int, double> SquadQueueMultipliers => _settings.Value.SquadQueueMultipliers;
 
+        public IReadOnlyDictionary<int, IReadOnlyList<string>> RecordsTierOrders => _settings.Value.RecordsTierOrders;
+
         public Rank? GetRank(int? mmr, int season)
         {
             if (_settings.Value.MmrRanks.TryGetValue(season, out var mmrRanks))
@@ -55,7 +57,8 @@ namespace Lounge.Web.Settings
             IReadOnlyDictionary<int, TimeSpan> LeaderboardRefreshDelays,
             IReadOnlyDictionary<int, double> SquadQueueMultipliers,
             IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>> MmrRanks,
-            IReadOnlyDictionary<string, string> CountryNames)
+            IReadOnlyDictionary<string, string> CountryNames,
+            IReadOnlyDictionary<int, IReadOnlyList<string>> RecordsTierOrders)
         {
             public static  ParsedLoungeSettings Create(LoungeSettings loungeSettings)
             {
@@ -63,6 +66,7 @@ namespace Lounge.Web.Settings
                 var refreshDelays = new Dictionary<int, TimeSpan>();
                 var sqMultipliers = new Dictionary<int, double>();
                 var mmrRanks = new Dictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>();
+                var recordsTierOrders = new Dictionary<int, IReadOnlyList<string>>();
 
                 foreach ((var seasonStr, var settings) in loungeSettings.Seasons)
                 {
@@ -71,6 +75,7 @@ namespace Lounge.Web.Settings
                         validSeasons.Add(season);
                         refreshDelays[season] = settings.LeaderboardRefreshDelay;
                         sqMultipliers[season] = settings.SquadQueueMultiplier;
+                        recordsTierOrders[season] = settings.RecordsTierOrder;
 
                         var seasonRanks = new List<(int Mmr, Rank Rank)>();
 
@@ -94,7 +99,7 @@ namespace Lounge.Web.Settings
                     }
                 }
 
-                return new(loungeSettings.CurrentSeason, validSeasons, refreshDelays, sqMultipliers, mmrRanks, loungeSettings.CountryNames);
+                return new(loungeSettings.CurrentSeason, validSeasons, refreshDelays, sqMultipliers, mmrRanks, loungeSettings.CountryNames, recordsTierOrders);
             }
         }
     }

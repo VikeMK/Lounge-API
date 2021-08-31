@@ -8,5 +8,6 @@ namespace Lounge.Web.Settings
         public double SquadQueueMultiplier { get; set; }
         public TimeSpan LeaderboardRefreshDelay { get; set; }
         public IReadOnlyDictionary<string, int> Ranks { get; set; }
+        public IReadOnlyList<string> RecordsTierOrder { get; set; }
     }
 }

@@ -22,19 +22,22 @@ namespace Lounge.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPlayerStatCache _playerStatCache;
         private readonly IPlayerDetailsViewModelService _playerDetailsViewModelService;
+        private readonly IRecordsCache _recordsCache;
         private readonly ITableImageService _tableImageService;
         private readonly ILoungeSettingsService _loungeSettingsService;
 
         public HomeController(
-            ApplicationDbContext context, 
-            IPlayerDetailsViewModelService playerDetailsViewModelService,
+            ApplicationDbContext context,
             IPlayerStatCache playerStatCache,
+            IPlayerDetailsViewModelService playerDetailsViewModelService,
+            IRecordsCache recordsCache,
             ITableImageService tableImageService,
             ILoungeSettingsService loungeSettingsService)
         {
             _context = context;
-            _playerDetailsViewModelService = playerDetailsViewModelService;
             _playerStatCache = playerStatCache;
+            _playerDetailsViewModelService = playerDetailsViewModelService;
+            _recordsCache = recordsCache;
             _tableImageService = tableImageService;
             _loungeSettingsService = loungeSettingsService;
         }
@@ -45,7 +48,7 @@ namespace Lounge.Web.Controllers
             return RedirectToAction(nameof(Leaderboard));
         }
 
-        [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "season" })]
+        [ResponseCache(Duration = 30, VaryByQueryKeys = new string[] { "season" })]
         [Route("Leaderboard")]
         public ActionResult<LeaderboardPageViewModel> Leaderboard([ValidSeason] int? season = null)
         {
@@ -57,6 +60,20 @@ namespace Lounge.Web.Controllers
             var validCountries = _playerStatCache.GetAllCountryCodes(season.Value);
 
             return View(new LeaderboardPageViewModel(season.Value, validCountries));
+        }
+
+        [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "season" })]
+        [Route("Records")]
+        public ActionResult<RecordsViewModel> Records([ValidSeason] int? season = null)
+        {
+            // if the season is invalid, just redirect to the default records page
+            if (!ModelState.IsValid)
+                return RedirectToAction(nameof(Records));
+
+            season ??= _loungeSettingsService.CurrentSeason;
+            var records = _recordsCache.GetRecords(season.Value);
+
+            return View(new RecordsViewModel(season.Value, records));
         }
 
         [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "season" })]

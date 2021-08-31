@@ -11,7 +11,8 @@ namespace Lounge.Web.Settings
         IReadOnlyList<int> ValidSeasons { get; }
         IReadOnlyDictionary<int, double> SquadQueueMultipliers { get; }
         IReadOnlyDictionary<string, string> CountryNames { get; }
-        
+        IReadOnlyDictionary<int, IReadOnlyList<string>> RecordsTierOrders { get; }
+
         Rank? GetRank(int? mmr, int season);
     }
 }
