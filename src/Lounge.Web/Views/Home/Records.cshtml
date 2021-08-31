@@ -39,7 +39,7 @@
             @foreach (var tier in LoungeSettingsService.RecordsTierOrders[Model.Season])
             {
                 var tierRecords = Model.Records.Tiers.TryGetValue(tier, out var x) ? x : null;
-                var formatRecords = tierRecords?.TeamCounts.TryGetValue(teamCount, out var y) == true ? y : null;
+                var formatRecords = tierRecords == null ? null : tierRecords.TeamCounts.GetValueOrDefault(teamCount, null);
                 <div class="col-lg-3 col-md-4 col-6 table-responsive">
                     <h5>Tier @tier</h5>
                     <table class="table table-striped table-dark table-sm">
