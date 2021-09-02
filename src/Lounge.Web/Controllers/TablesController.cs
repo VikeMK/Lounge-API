@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Collections.Generic;
-using Lounge.Web.Models;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Utils;
 using Lounge.Web.Data;
@@ -13,6 +12,7 @@ using Lounge.Web.Storage;
 using Microsoft.Extensions.Options;
 using Lounge.Web.Settings;
 using Lounge.Web.Controllers.ValidationAttributes;
+using Lounge.Web.Data.Entities;
 
 namespace Lounge.Web.Controllers
 {

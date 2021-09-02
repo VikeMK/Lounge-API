@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using Lounge.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Lounge.Web.Data;
 using System.Collections.Generic;
@@ -12,6 +11,7 @@ using Microsoft.Extensions.Options;
 using System.Linq;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Controllers.ValidationAttributes;
+using Lounge.Web.Data.Entities;
 
 namespace Lounge.Web.Controllers
 {

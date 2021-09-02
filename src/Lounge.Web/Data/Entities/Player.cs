@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Lounge.Web.Models
+namespace Lounge.Web.Data.Entities
 {
     public class Player
     {

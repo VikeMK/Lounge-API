@@ -1,4 +1,4 @@
-﻿using Lounge.Web.Models;
+﻿using Lounge.Web.Data.Entities;
 using System.Collections.Generic;
 
 namespace Lounge.Web.Data.ChangeTracking

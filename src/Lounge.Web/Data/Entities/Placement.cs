@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lounge.Web.Models
+namespace Lounge.Web.Data.Entities
 {
     public class Placement
     {

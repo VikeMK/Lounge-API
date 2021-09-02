@@ -1,4 +1,5 @@
-﻿using Lounge.Web.Models;
+﻿using Lounge.Web.Data.Entities;
+using Lounge.Web.Data.Entities.ChangeTracking;
 using Lounge.Web.Settings;
 using Microsoft.EntityFrameworkCore;
 using System;

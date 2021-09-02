@@ -1,5 +1,5 @@
 ﻿using Lounge.Web.Data;
-using Lounge.Web.Models;
+using Lounge.Web.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
