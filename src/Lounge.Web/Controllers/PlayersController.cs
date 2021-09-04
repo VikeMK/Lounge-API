@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Lounge.Web.Settings;
 using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Data.Entities;
+using Lounge.Web.Data.ChangeTracking;
 
 namespace Lounge.Web.Controllers
 {
@@ -24,10 +25,11 @@ namespace Lounge.Web.Controllers
         private readonly IPlayerStatCache _playerStatCache;
         private readonly IPlayerDetailsCache _playerDetailsCache;
         private readonly IPlayerDetailsViewModelService _playerDetailsViewModelService;
+        private readonly IDbCache _dbCache;
         private readonly ILoungeSettingsService _loungeSettingsService;
         private readonly IMkcRegistryApi _mkcRegistryApi;
 
-        public PlayersController(ApplicationDbContext context, IPlayerDetailsViewModelService playerDetailsViewModelService, IPlayerDetailsCache playerDetailsCache, IPlayerStatCache playerStatCache, ILoungeSettingsService loungeSettingsService, IMkcRegistryApi mkcRegistryApi)
+        public PlayersController(ApplicationDbContext context, IPlayerDetailsViewModelService playerDetailsViewModelService, IPlayerDetailsCache playerDetailsCache, IPlayerStatCache playerStatCache, IDbCache dbCache, ILoungeSettingsService loungeSettingsService, IMkcRegistryApi mkcRegistryApi)
         {
             _context = context;
             _playerStatCache = playerStatCache;
@@ -35,6 +37,7 @@ namespace Lounge.Web.Controllers
             _mkcRegistryApi = mkcRegistryApi;
             _playerDetailsViewModelService = playerDetailsViewModelService;
             _playerDetailsCache = playerDetailsCache;
+            _dbCache = dbCache;
         }
 
         [HttpGet]
@@ -131,8 +134,40 @@ namespace Lounge.Web.Controllers
             var playerStatsEnumerable = _playerStatCache.GetAllStats(season, sortBy).AsEnumerable();
             if (search != null)
             {
-                var normalized = PlayerUtils.NormalizeName(search);
-                playerStatsEnumerable = playerStatsEnumerable.Where(p => PlayerUtils.NormalizeName(p.Name).Contains(normalized));
+                int? playerId = null;
+                if (search.StartsWith("mkc=", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (int.TryParse(search[4..], out var mkcId))
+                    {
+                        playerId = _dbCache.Players.Values.FirstOrDefault(p => p.MKCId == mkcId)?.Id;
+                    }
+
+                    playerId ??= -1;
+                }
+                else if (search.StartsWith("discord=", StringComparison.OrdinalIgnoreCase))
+                {
+                    var discordId = search[8..];
+                    playerId = _dbCache.Players.Values.FirstOrDefault(p => discordId.Equals(p.DiscordId, StringComparison.OrdinalIgnoreCase))?.Id ?? -1;
+                }
+                else if (search.StartsWith("switch=", StringComparison.OrdinalIgnoreCase))
+                {
+                    var switchFc = search[7..];
+                    playerId = _dbCache.Players.Values.FirstOrDefault(p => switchFc.Equals(p.SwitchFc, StringComparison.OrdinalIgnoreCase))?.Id ?? -1;
+                }
+
+                if (playerId == null)
+                {
+                    var normalized = PlayerUtils.NormalizeName(search);
+                    playerStatsEnumerable = playerStatsEnumerable.Where(p => PlayerUtils.NormalizeName(p.Name).Contains(normalized));
+                }
+                else if (_playerStatCache.TryGetPlayerStatsById(playerId.Value, season, out var playerStats))
+                {
+                    playerStatsEnumerable = new[] { playerStats };
+                }
+                else
+                {
+                    playerStatsEnumerable = Enumerable.Empty<PlayerLeaderboardData>();
+                }
             }
 
             if (country != null)

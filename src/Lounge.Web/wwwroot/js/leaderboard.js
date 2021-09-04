@@ -51,6 +51,7 @@ function refreshLeaderboard(resetPage = true) {
 function updateLeaderboard(leaderboardData, page, pageSize) {
     if (leaderboardData.data.length == 0) {
         document.getElementById("leaderboardTableBody").innerHTML = `<tr><td colspan="11">No players found matching the filter</td></tr>`;
+        document.getElementById("leaderboard").classList.remove("d-none");
         return;
     }
 
@@ -128,6 +129,8 @@ function updateLeaderboard(leaderboardData, page, pageSize) {
     pageNumberInputElement.value = page;
     pageNumberInputElement.max = numPages;
     maxPageNumberElement.innerHTML = numPages;
+
+    document.getElementById("leaderboard").classList.remove("d-none");
 }
 
 function onPageChanged() {
