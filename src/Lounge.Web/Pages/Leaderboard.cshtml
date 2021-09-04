@@ -1,12 +1,13 @@
-﻿@using Lounge.Web.Settings
+﻿@page
+@using Lounge.Web.Settings
 @using Lounge.Web.Stats
 @using System.Reflection
 @using System.ComponentModel.DataAnnotations
 @inject ILoungeSettingsService LoungeSettingsService
-@model Lounge.Web.Models.ViewModels.LeaderboardPageViewModel
-
+@model Lounge.Web.Pages.LeaderboardPageModel
 @{
-    ViewData["Title"] = $"Leaderboard - Season {Model.Season}";
+	ViewData["Title"] = $"Leaderboard - Season {Model.Season}";
+    Layout = "_Layout";
 }
 
 <div class="navbar navbar-expand-sm navbar-dark bg-dark rounded py-0" style="margin-bottom: 14px;">
@@ -20,7 +21,7 @@
                 @foreach (var season in LoungeSettingsService.ValidSeasons)
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-action="Leaderboard" asp-route-season="@season">Season @season</a>
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Leaderboard" asp-route-season="@season">Season @season</a>
                     </li>
                 }
             </ul>

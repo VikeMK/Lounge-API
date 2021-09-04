@@ -1,103 +1,104 @@
-﻿@model Lounge.Web.Models.ViewModels.TableDetailsViewModel
+﻿@page "{id:int}"
+@model Lounge.Web.Pages.TableDetailsPageModel
 
 @{
-    ViewData["Title"] = $"Table (ID: {Model.Id}) - Season {Model.Season}";
+    ViewData["Title"] = $"Table (ID: {Model.Data.Id}) - Season {Model.Data.Season}";
+    Layout = "_Layout";
 }
-
 <div>
     <dl>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
+            @Html.DisplayNameFor(model => model.Data.Id)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id)
+            @Html.DisplayFor(model => model.Data.Id)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedOn)
+            @Html.DisplayNameFor(model => model.Data.CreatedOn)
         </dt>
         <dd class="col-sm-10">
-            <span class="utc-to-local" data-time="@Model.CreatedOn.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
-                @Html.DisplayFor(model => model.CreatedOn)
+            <span class="utc-to-local" data-time="@Model.Data.CreatedOn.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
+                @Html.DisplayFor(model => model.Data.CreatedOn)
             </span>
         </dd>
 
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.VerifiedOn)
+            @Html.DisplayNameFor(model => model.Data.VerifiedOn)
         </dt>
         @{
-            var isVerified = Model.VerifiedOn != null;
+            var isVerified = Model.Data.VerifiedOn != null;
             var verifiedClass = isVerified ? "utc-to-local" : "";
         }
         <dd class="col-sm-10">
-            <span class="@verifiedClass" data-time="@Model.VerifiedOn?.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
-                @Html.DisplayFor(model => model.VerifiedOn)
+            <span class="@verifiedClass" data-time="@Model.Data.VerifiedOn?.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
+                @Html.DisplayFor(model => model.Data.VerifiedOn)
             </span>
         </dd>
-        @if (Model.DeletedOn is not null)
+        @if (Model.Data.DeletedOn is not null)
         {
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.DeletedOn)
+                @Html.DisplayNameFor(model => model.Data.DeletedOn)
             </dt>
             <dd class="col-sm-10">
-                <span class="utc-to-local" data-time="@Model.DeletedOn.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
-                    @Html.DisplayFor(model => model.DeletedOn)
+                <span class="utc-to-local" data-time="@Model.Data.DeletedOn.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
+                    @Html.DisplayFor(model => model.Data.DeletedOn)
                 </span>
             </dd>
         }
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Format)
+            @Html.DisplayNameFor(model => model.Data.Format)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Format)
+            @Html.DisplayFor(model => model.Data.Format)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Tier)
+            @Html.DisplayNameFor(model => model.Data.Tier)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Tier)
+            @Html.DisplayFor(model => model.Data.Tier)
         </dd>
     </dl>
     <hr />
-    <h2>@Html.DisplayNameFor(model => model.Url)</h2>
-    <img src="@Model.Url" class="img-fluid"/>
+    <h2>@Html.DisplayNameFor(model => model.Data.Url)</h2>
+    <img src="@Model.Data.Url" class="img-fluid"/>
     <hr />
     @{
-        var showMultiplier = Model.Teams.Any(t => t.Scores.Any(s => s.Multiplier != 1));
+        var showMultiplier = Model.Data.Teams.Any(t => t.Scores.Any(s => s.Multiplier != 1));
     }
     <table class="table table-striped table-dark">
         <thead>
             <tr>
                 <th scope="col">
-                    @Html.DisplayNameFor(model => model.Teams[0].Rank)
+                    @Html.DisplayNameFor(model => model.Data.Teams[0].Rank)
                 </th>
                 <th scope="col" style="width: 32px"></th>
                 <th scope="col">
-                    @Html.DisplayNameFor(model => model.Teams[0].Scores[0].PlayerName)
+                    @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].PlayerName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Teams[0].Scores[0].Score)
+                    @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].Score)
                 </th>
                 @if (showMultiplier)
                 {
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Teams[0].Scores[0].MultiplierString)
+                        @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].MultiplierString)
                     </th>
                 }
-                @if (Model.VerifiedOn is not null)
+                @if (Model.Data.VerifiedOn is not null)
                 {
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Teams[0].Scores[0].PrevMmr)
+                        @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].PrevMmr)
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Teams[0].Scores[0].Delta)
+                        @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].Delta)
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Teams[0].Scores[0].NewMmr)
+                        @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].NewMmr)
                     </th>
                 }
             </tr>
         </thead>
-        @foreach (var team in Model.Teams)
+        @foreach (var team in Model.Data.Teams)
         {
             @foreach (var score in team.Scores)
             {
@@ -112,7 +113,7 @@
                         }
                     </td>
                     <td>
-                        <a asp-action="PlayerDetails" asp-route-id="@score.PlayerId">@Html.DisplayFor(modelItem => score.PlayerName)</a>
+                        <a asp-page="PlayerDetails" asp-route-id="@score.PlayerId">@Html.DisplayFor(modelItem => score.PlayerName)</a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => score.Score)
@@ -123,7 +124,7 @@
                             @Html.DisplayFor(modelItem => score.MultiplierString)
                         </td>
                     }
-                    @if (Model.VerifiedOn is not null)
+                    @if (Model.Data.VerifiedOn is not null)
                     {
                         <td>
                             @Html.DisplayFor(modelItem => score.PrevMmr)

@@ -17,95 +17,13 @@ namespace Lounge.Web.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : Controller
     {
-        private const int PageSize = 100;
-
         private readonly ApplicationDbContext _context;
-        private readonly IPlayerStatCache _playerStatCache;
-        private readonly IPlayerDetailsViewModelService _playerDetailsViewModelService;
-        private readonly IRecordsCache _recordsCache;
         private readonly ITableImageService _tableImageService;
-        private readonly ILoungeSettingsService _loungeSettingsService;
 
-        public HomeController(
-            ApplicationDbContext context,
-            IPlayerStatCache playerStatCache,
-            IPlayerDetailsViewModelService playerDetailsViewModelService,
-            IRecordsCache recordsCache,
-            ITableImageService tableImageService,
-            ILoungeSettingsService loungeSettingsService)
+        public HomeController(ApplicationDbContext context, ITableImageService tableImageService)
         {
             _context = context;
-            _playerStatCache = playerStatCache;
-            _playerDetailsViewModelService = playerDetailsViewModelService;
-            _recordsCache = recordsCache;
             _tableImageService = tableImageService;
-            _loungeSettingsService = loungeSettingsService;
-        }
-
-        [ResponseCache(Duration = 180)]
-        public IActionResult Index()
-        {
-            return RedirectToAction(nameof(Leaderboard));
-        }
-
-        [ResponseCache(Duration = 30, VaryByQueryKeys = new string[] { "season" })]
-        [Route("Leaderboard")]
-        public ActionResult<LeaderboardPageViewModel> Leaderboard([ValidSeason] int? season = null)
-        {
-            // if the season is invalid, just redirect to the default leaderboard
-            if (!ModelState.IsValid)
-                return RedirectToAction(nameof(Leaderboard));
-
-            season ??= _loungeSettingsService.CurrentSeason;
-            var validCountries = _playerStatCache.GetAllCountryCodes(season.Value);
-
-            return View(new LeaderboardPageViewModel(season.Value, validCountries));
-        }
-
-        [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "season" })]
-        [Route("Records")]
-        public ActionResult<RecordsViewModel> Records([ValidSeason] int? season = null)
-        {
-            // if the season is invalid, just redirect to the default records page
-            if (!ModelState.IsValid)
-                return RedirectToAction(nameof(Records));
-
-            season ??= _loungeSettingsService.CurrentSeason;
-            var records = _recordsCache.GetRecords(season.Value);
-
-            return View(new RecordsViewModel(season.Value, records));
-        }
-
-        [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "season" })]
-        [Route("PlayerDetails/{id}")]
-        public IActionResult PlayerDetails(int id, [ValidSeason] int? season=null)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            season ??= _loungeSettingsService.CurrentSeason;
-
-            var vm = _playerDetailsViewModelService.GetPlayerDetails(id, season.Value);
-            if (vm is null)
-                return NotFound();
-
-            vm.ValidSeasons = _loungeSettingsService.ValidSeasons;
-            return View(vm);
-        }
-
-        [ResponseCache(Duration = 180)]
-        [Route("TableDetails/{id}")]
-        public async Task<IActionResult> TableDetails(int id)
-        {
-            var table = await _context.Tables
-                .AsNoTracking()
-                .SelectPropertiesForTableDetails()
-                .FirstOrDefaultAsync(t => t.Id == id);
-
-            if (table is null)
-                return NotFound();
-
-            return View(TableUtils.GetTableDetails(table, _loungeSettingsService));
         }
 
         // since table images are expensive, lets let them be cached for 30 minutes
@@ -118,33 +36,45 @@ namespace Lounge.Web.Controllers
             if (table is null)
                 return NotFound();
 
-            var stream = await _tableImageService.DownloadTableImageAsync(id);
-            if (stream is null)
+            try
             {
-                var tableScores = await _context.TableScores
-                    .Where(s => s.TableId == id)
-                    .Select(s => new { s.Team, s.Score, s.Player.Name, s.Player.CountryCode })
-                    .ToListAsync();
-
-                var scores = new (string Player, string? CountryCode, int Score)[table.NumTeams][];
-                for (int i = 0; i < table.NumTeams; i++)
+                var stream = await _tableImageService.DownloadTableImageAsync(id);
+                if (stream is not null)
                 {
-                    scores[i] = tableScores
-                        .Where(score => score.Team == i)
-                        .Select(score => (score.Name, score.CountryCode, score.Score))
-                        .ToArray();
+                    return File(stream, "image/png");
                 }
-
-                var url = TableUtils.BuildUrl(table.Tier, scores);
-                var tableImage = await TableUtils.GetImageDataAsync(url);
-                await _tableImageService.UploadTableImageAsync(id, tableImage);
-                return File(tableImage, "image/png");
+            }
+            catch
+            {
+                // swallow exception
             }
 
-            return File(stream, "image/png");
-        }
+            var tableScores = await _context.TableScores
+                .Where(s => s.TableId == id)
+                .Select(s => new { s.Team, s.Score, s.Player.Name, s.Player.CountryCode })
+                .ToListAsync();
 
-        [Route("/error")]
-        public IActionResult Error() => Problem();
+            var scores = new (string Player, string? CountryCode, int Score)[table.NumTeams][];
+            for (int i = 0; i < table.NumTeams; i++)
+            {
+                scores[i] = tableScores
+                    .Where(score => score.Team == i)
+                    .Select(score => (score.Name, score.CountryCode, score.Score))
+                    .ToArray();
+            }
+
+            var url = TableUtils.BuildUrl(table.Tier, scores);
+            var tableImage = await TableUtils.GetImageDataAsync(url);
+            try
+            {
+                await _tableImageService.UploadTableImageAsync(id, tableImage);
+            }
+            catch
+            {
+                // swallow exception
+            }
+
+            return File(tableImage, "image/png");
+        }
     }
 }

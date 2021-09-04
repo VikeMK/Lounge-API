@@ -1,13 +1,11 @@
-﻿@using Lounge.Web.Settings
-@using Lounge.Web.Stats
-@using System.Reflection
-@using System.ComponentModel.DataAnnotations
+﻿@page
+@using Lounge.Web.Settings
 @using Lounge.Web.Utils
 @inject ILoungeSettingsService LoungeSettingsService
-@model Lounge.Web.Models.ViewModels.RecordsViewModel
-
+@model Lounge.Web.Pages.RecordsPageModel
 @{
     ViewData["Title"] = $"Records - Season {Model.Season}";
+    Layout = "_Layout";
     var resultsToShow = 5;
 }
 
@@ -22,7 +20,7 @@
                 @foreach (var season in LoungeSettingsService.ValidSeasons)
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-action="Records" asp-route-season="@season">Season @season</a>
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Records" asp-route-season="@season">Season @season</a>
                     </li>
                 }
             </ul>
@@ -69,11 +67,11 @@
                                                 {
                                                     <br />
                                                 }
-                                                <a asp-action="PlayerDetails" asp-route-id="@player.Id" asp-route-season="@Model.Season">@player.Name</a>
+                                                <a asp-page="PlayerDetails" asp-route-id="@player.Id" asp-route-season="@Model.Season">@player.Name</a>
                                             }
                                         </td>
                                         <td class="align-middle px-1">
-                                            <a asp-action="TableDetails" asp-route-id="@record.TableId">@record.TotalScore</a>
+                                            <a asp-page="TableDetails" asp-route-id="@record.TableId">@record.TotalScore</a>
                                         </td>
                                     </tr>
                                 }

@@ -35,7 +35,7 @@ namespace Lounge.Web
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddResponseCaching();
-            services.AddControllersWithViews()
+            services.AddControllers()
                 .AddJsonOptions(o =>
                 {
                     o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
@@ -95,6 +95,8 @@ namespace Lounge.Web
             services.Configure<LoungeSettings>(Configuration);
 
             services.AddHttpClient("NoRedirects").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler() { AllowAutoRedirect = false });
+
+            services.AddRazorPages(options => { options.Conventions.AddPageRoute("/Leaderboard", ""); });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -132,9 +134,8 @@ namespace Lounge.Web
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
+                endpoints.MapControllers();
             });
         }
     }
