@@ -78,10 +78,8 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, bool squadQueue = false, [ValidSeason] int? season = null)
+        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, bool squadQueue = false)
         {
-            season ??= _loungeSettingsService.CurrentSeason;
-
             if (vm.Scores.Count != 12)
                 return BadRequest("Must supply 12 scores");
 
@@ -141,7 +139,7 @@ namespace Lounge.Web.Controllers
                 Tier = vm.Tier,
                 Scores = tableScores,
                 AuthorId = vm.AuthorId,
-                Season = season.Value,
+                Season = _loungeSettingsService.CurrentSeason,
             };
 
             await _context.Tables.AddAsync(table);
@@ -398,6 +396,9 @@ namespace Lounge.Web.Controllers
                 return BadRequest("Table has already been deleted");
 
             var season = table.Season;
+            if (season != _loungeSettingsService.CurrentSeason)
+                return BadRequest("Table is from a previous season and can't be deleted");
+
             var seasonDataLookup = table.Scores.ToDictionary(
                 s => s.PlayerId,
                 s => s.Player.SeasonData.FirstOrDefault(s => s.Season == season));

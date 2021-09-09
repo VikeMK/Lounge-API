@@ -141,6 +141,9 @@ namespace Lounge.Web.Controllers
             if (penalty.DeletedOn is not null)
                 return BadRequest("Penalty has already been deleted");
 
+            if (penalty.Season != _loungeSettingsService.CurrentSeason)
+                return BadRequest("Penalty is from a previous season and can't be deleted");
+
             penalty.DeletedOn = DateTime.UtcNow;
 
             var curMMR = seasonData.Mmr;

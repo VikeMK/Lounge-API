@@ -129,6 +129,9 @@ namespace Lounge.Web.Controllers
             if (bonus.DeletedOn is not null)
                 return BadRequest("Bonus has already been deleted");
 
+            if (bonus.Season != _loungeSettingsService.CurrentSeason)
+                return BadRequest("Bonus is from a previous season and can't be deleted");
+
             bonus.DeletedOn = DateTime.UtcNow;
 
             var curMMR = seasonData.Mmr;
