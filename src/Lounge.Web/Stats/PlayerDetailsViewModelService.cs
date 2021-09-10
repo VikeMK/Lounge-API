@@ -149,7 +149,7 @@ namespace Lounge.Web.Stats
             int mmr = 0;
             foreach (var change in mmrChanges)
             {
-                if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete or PlayerDetailsViewModel.MmrChangeReason.PenaltyDelete)
+                if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete or PlayerDetailsViewModel.MmrChangeReason.PenaltyDelete or PlayerDetailsViewModel.MmrChangeReason.StrikeDelete or PlayerDetailsViewModel.MmrChangeReason.BonusDelete)
                 {
                     change.NewMmr = Math.Max(0, mmr + change.MmrDelta);
                     change.MmrDelta = change.NewMmr - mmr;
