@@ -64,7 +64,8 @@ namespace Lounge.Web.Stats
                     var countryCode = registryPlayerData.CountryCode;
 
                     // ZZ and XX are invalid country codes that should be treated as null
-                    if (countryCode is "ZZ" or "XX")
+                    // AQ is Antarctica and is used by individuals who want their country to be hidden
+                    if (countryCode is "ZZ" or "XX" or "AQ")
                         countryCode = null;
 
                     if (player.CountryCode != countryCode)
