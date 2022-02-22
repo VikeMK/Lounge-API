@@ -42,12 +42,16 @@ namespace Lounge.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? mkcId, string? discordId, [ValidSeason]int? season = null)
+        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, [ValidSeason]int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason;
 
             Player player;
-            if (name is not null)
+            if (id is not null)
+            {
+                player = await GetPlayerByIdAsync(id.Value);
+            }
+            else if (name is not null)
             {
                 player = await GetPlayerByNameAsync(name);
             }
@@ -74,12 +78,19 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("details")]
         [AllowAnonymous]
-        public ActionResult<PlayerDetailsViewModel> Details(string name, [ValidSeason] int? season = null)
+        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, [ValidSeason] int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason;
 
-            if (!_playerDetailsCache.TryGetPlayerIdByName(name, out var playerId))
+            int? playerId;
+            if (id is int)
+            {
+                playerId = id.Value;
+            }
+            else if (name is null || !_playerDetailsCache.TryGetPlayerIdByName(name, out playerId))
+            {
                 return NotFound();
+            }
 
             var vm = _playerDetailsViewModelService.GetPlayerDetails(playerId.Value, season.Value);
             if (vm is null)
@@ -450,6 +461,9 @@ namespace Lounge.Web.Controllers
 
             return NoContent();
         }
+
+        private Task<Player> GetPlayerByIdAsync(int id) =>
+            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.Id == id);
 
         private Task<Player> GetPlayerByNameAsync(string name) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));

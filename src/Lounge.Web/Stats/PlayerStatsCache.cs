@@ -53,6 +53,7 @@ namespace Lounge.Web.Stats
         {
             var newSeasonStats = new Dictionary<int, SeasonStatsData>();
             var seasons = _loungeSettingsService.ValidSeasons;
+            var countryNames = _loungeSettingsService.CountryNames;
             foreach (var season in seasons)
             {
                 var seasonData = dbCache.PlayerSeasonData.GetValueOrDefault(season);
@@ -67,8 +68,8 @@ namespace Lounge.Web.Stats
                     var eventsList = new List<PlayerEventData>();
                     playerEventsLookup[player.Id] = eventsList;
                     playerLookup[player.Id] = new(player.Id, player.Name, player.MKCId, player.DiscordId, player.RegistryId, player.CountryCode, player.SwitchFc, player.IsHidden, psd?.Mmr, psd?.MaxMmr, eventsList);
-                    if (player.CountryCode != null)
-                        countryCodes.Add(player.CountryCode);
+                    if (player.CountryCode is string countryCode && countryNames.ContainsKey(countryCode))
+                        countryCodes.Add(countryCode);
                 }
 
                 var tablesLookup = new Dictionary<int, EventData>();

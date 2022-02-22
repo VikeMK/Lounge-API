@@ -67,10 +67,17 @@ namespace Lounge.Web.Stats
                 Array.Sort(teamTotals);
                 var rank = numTeams - Array.LastIndexOf(teamTotals, playerTeamTotal);
 
-                var partnerScores = tableScores.Values
-                    .Where(s => s.Team == tableScore.Team && s.PlayerId != player.Id)
-                    .Select(s => s.Score)
-                    .ToList();
+                List<int> partnerScores = new();
+                List<int> partnerIds = new();
+
+                foreach (var score in tableScores.Values)
+                {
+                    if (score.Team == tableScore.Team && score.PlayerId != playerId)
+                    {
+                        partnerScores.Add(score.Score);
+                        partnerIds.Add(score.PlayerId);
+                    }
+                }
 
                 mmrChanges.Add(new PlayerDetailsViewModel.MmrChange(
                     changeId: tableScore.TableId,
@@ -80,6 +87,7 @@ namespace Lounge.Web.Stats
                     time: table.VerifiedOn!.Value,
                     score: tableScore.Score,
                     partnerScores: partnerScores,
+                    partnerIds: partnerIds,
                     rank: rank,
                     tier: table.Tier,
                     numTeams: table.NumTeams));
