@@ -172,7 +172,9 @@ namespace Lounge.Web.Utils
                     Score = s.Score,
                     Multiplier = s.Multiplier,
                     NewMmr = s.NewMmr,
-                    PrevMmr = s.PrevMmr,
+                    PrevMmr = t.VerifiedOn == null && t.DeletedOn == null
+                        ? s.Player.SeasonData.Where(d => d.Season == t.Season).Select(d => (int?)d.Mmr).FirstOrDefault()
+                        : s.PrevMmr,
                     PlayerId = s.PlayerId,
                     Team = s.Team,
                     Player = new Player { Name = s.Player.Name, DiscordId = s.Player.DiscordId, CountryCode = s.Player.CountryCode },
