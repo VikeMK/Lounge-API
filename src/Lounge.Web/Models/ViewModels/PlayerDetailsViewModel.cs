@@ -133,7 +133,7 @@ namespace Lounge.Web.Models.ViewModels
             public int? NumTeams { get; set; }
         }
 
-        public record NameChange(string Name, DateTime ChangedOn);
+        public record NameChange(string Name, DateTime ChangedOn, int Season);
 
         public enum MmrChangeReason
         {

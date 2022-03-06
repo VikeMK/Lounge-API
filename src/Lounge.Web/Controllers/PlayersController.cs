@@ -241,6 +241,10 @@ namespace Lounge.Web.Controllers
             var season = _loungeSettingsService.CurrentSeason;
 
             var registryId = await _mkcRegistryApi.GetRegistryIdAsync(mkcId);
+            if (registryId is null)
+                return BadRequest("User is not registered");
+
+            var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(registryId.Value);
             var normalizedName = PlayerUtils.NormalizeName(name);
 
             Player player = new()
@@ -250,15 +254,10 @@ namespace Lounge.Web.Controllers
                 MKCId = mkcId,
                 DiscordId = discordId,
                 RegistryId = registryId,
+                CountryCode = registryData.CountryCode,
+                SwitchFc = registryData.SwitchFc,
                 NameHistory = new List<NameChange> { new NameChange { Name = name, NormalizedName = normalizedName, ChangedOn = DateTime.UtcNow } }
             };
-
-            if (registryId != null)
-            {
-                var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(registryId.Value);
-                player.CountryCode = registryData.CountryCode;
-                player.SwitchFc = registryData.SwitchFc;
-            }
 
             PlayerSeasonData? seasonData = null;
             if (mmr is int mmrValue)
