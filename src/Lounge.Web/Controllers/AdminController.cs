@@ -33,13 +33,6 @@ namespace Lounge.Web.Controllers
             _mkcRegistryDataUpdater = mkcRegistryDataUpdater;
         }
 
-        [HttpPost("updateRegistryIds")]
-        public async Task<IActionResult> UpdateRegistryIds()
-        {
-            await _mkcRegistryDataUpdater.UpdateRegistryIdsAsync();
-            return Ok();
-        }
-
         [HttpPost("updateRegistryData")]
         public async Task<IActionResult> UpdateRegistryData()
         {
