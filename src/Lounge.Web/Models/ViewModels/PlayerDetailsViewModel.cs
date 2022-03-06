@@ -5,7 +5,6 @@ using System.Text.Json.Serialization;
 
 namespace Lounge.Web.Models.ViewModels
 {
-
     public class PlayerDetailsViewModel
     {
         public int PlayerId { get; init; }
@@ -82,6 +81,8 @@ namespace Lounge.Web.Models.ViewModels
 
         public List<MmrChange> MmrChanges { get; init; }
 
+        public List<NameChange> NameHistory { get; init; }
+
         [JsonIgnore]
         public Rank RankData { get; init; }
 
@@ -92,6 +93,7 @@ namespace Lounge.Web.Models.ViewModels
 
         [JsonIgnore]
         public IReadOnlyList<int> ValidSeasons { get; set; }
+
 
         public class MmrChange
         {
@@ -130,6 +132,8 @@ namespace Lounge.Web.Models.ViewModels
             public string? Tier { get; set; }
             public int? NumTeams { get; set; }
         }
+
+        public record NameChange(string Name, DateTime ChangedOn, int Season);
 
         public enum MmrChangeReason
         {

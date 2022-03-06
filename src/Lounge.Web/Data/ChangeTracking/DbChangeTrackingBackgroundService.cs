@@ -45,8 +45,9 @@ namespace Lounge.Web.Data.ChangeTracking
                     var playerSeasonData = await context.PlayerSeasonData.AsNoTracking().ToListAsync();
                     var tables = await context.Tables.AsNoTracking().ToListAsync();
                     var tableScores = await context.TableScores.AsNoTracking().ToListAsync();
+                    var nameChanges = await context.NameChanges.AsNoTracking().ToListAsync();
 
-                    _dbCache.Initialize(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores);
+                    _dbCache.Initialize(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores, nameChanges);
 
                     lastSynchronizationVersion = synchronizationVersion;
                     break;
@@ -75,9 +76,10 @@ namespace Lounge.Web.Data.ChangeTracking
                     var playerSeasonData = await changeTracker.GetPlayerSeasonDataChangesAsync(lastSynchronizationVersion);
                     var tables = await changeTracker.GetTableChangesAsync(lastSynchronizationVersion);
                     var tableScores = await changeTracker.GetTableScoreChangesAsync(lastSynchronizationVersion);
+                    var nameChanges = await changeTracker.GetNameChangeChangesAsync(lastSynchronizationVersion);
 
                     if (bonuses.Any() || penalties.Any() || placements.Any() || players.Any() || playerSeasonData.Any() || tables.Any() || tableScores.Any())
-                        _dbCache.HandleChanges(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores);
+                        _dbCache.HandleChanges(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores, nameChanges);
 
                     lastSynchronizationVersion = synchronizationVersion;
                 }

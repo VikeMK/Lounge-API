@@ -205,6 +205,12 @@ namespace Lounge.Web.Stats
             // sort descending
             mmrChanges.Reverse();
 
+            var nameHistory = player.NameChangeIds
+                .Select(nameChangeId => _dbCache.NameChanges[nameChangeId])
+                .Select(nameChange => new PlayerDetailsViewModel.NameChange(nameChange.Name, nameChange.ChangedOn, nameChange.Season))
+                .OrderByDescending(nc => nc.ChangedOn)
+                .ToList();
+
             var vm = new PlayerDetailsViewModel
             {
                 PlayerId = player.Id,
@@ -219,6 +225,7 @@ namespace Lounge.Web.Stats
                 MaxMmr = playerData.MaxMmr,
                 OverallRank = playerData.IsHidden ? null : playerData.OverallRank,
                 MmrChanges = mmrChanges,
+                NameHistory = nameHistory,
                 RankData = _loungeSettingsService.GetRank(playerData.Mmr, season)!,
                 EventsPlayed = playerData.EventsPlayed,
                 WinRate = playerData.WinRate,

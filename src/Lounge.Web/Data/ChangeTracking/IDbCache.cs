@@ -12,5 +12,6 @@ namespace Lounge.Web.Data.ChangeTracking
         IReadOnlyDictionary<int, Dictionary<int, PlayerSeasonData>> PlayerSeasonData { get; }
         IReadOnlyDictionary<int, Table> Tables { get; }
         IReadOnlyDictionary<int, Dictionary<int, TableScore>> TableScores { get; }
+        IReadOnlyDictionary<int, NameChange> NameChanges { get; }
     }
 }

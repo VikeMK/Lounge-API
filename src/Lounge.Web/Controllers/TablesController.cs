@@ -9,7 +9,6 @@ using Lounge.Web.Data;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Lounge.Web.Storage;
-using Microsoft.Extensions.Options;
 using Lounge.Web.Settings;
 using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Data.Entities;

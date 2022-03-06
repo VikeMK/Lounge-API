@@ -1,10 +1,6 @@
 ﻿using Lounge.Web.Data.Entities;
 using Lounge.Web.Models.ViewModels;
-using Lounge.Web.Settings;
-using Lounge.Web.Stats;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Lounge.Web.Utils
 {

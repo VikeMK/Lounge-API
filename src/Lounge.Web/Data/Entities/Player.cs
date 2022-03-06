@@ -20,6 +20,7 @@ namespace Lounge.Web.Data.Entities
         public ICollection<Penalty> Penalties { get; set; } = default!;
         public ICollection<Bonus> Bonuses { get; set; } = default!;
         public ICollection<Placement> Placements { get; set; } = default!;
+        public ICollection<NameChange> NameHistory { get; set; } = default!;
 
         [Timestamp]
         public byte[] Timestamp { get; set; } = default!;
