@@ -3,7 +3,6 @@ using Lounge.Web.Data.Entities.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lounge.Web.Data.ChangeTracking
@@ -42,6 +41,9 @@ namespace Lounge.Web.Data.ChangeTracking
 
         public async Task<List<TableScoreChange>> GetTableScoreChangesAsync(long lastSynchronizationVersion) =>
             await GetTableChangesAsync<TableScoreChange, TableScore>("TableScores", lastSynchronizationVersion);
+
+        public async Task<List<NameChangeChange>> GetNameChangeChangesAsync(long lastSynchronizationVersion) =>
+            await GetTableChangesAsync<NameChangeChange, NameChange>("NameChanges", lastSynchronizationVersion);
 
         private async Task<List<TChange>> GetTableChangesAsync<TChange, TEntity>(string tableName, long lastSynchronizationVersion)
             where TChange : Change<TEntity>

@@ -23,6 +23,7 @@ namespace Lounge.Web.Data
         public DbSet<Penalty> Penalties => Set<Penalty>();
         public DbSet<Bonus> Bonuses => Set<Bonus>();
         public DbSet<Placement> Placements => Set<Placement>();
+        public DbSet<NameChange> NameChanges => Set<NameChange>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +38,7 @@ namespace Lounge.Web.Data
             modelBuilder.Entity<Penalty>().ToTable("Penalties");
             modelBuilder.Entity<Bonus>().ToTable("Bonuses");
             modelBuilder.Entity<Placement>().ToTable("Placements");
+            modelBuilder.Entity<NameChange>().ToTable("NameChanges");
 
             modelBuilder.Entity<Player>()
                 .HasIndex(p => p.MKCId)
@@ -107,6 +109,16 @@ namespace Lounge.Web.Data
                 .HasDefaultValue(defaultSeason);
 
             modelBuilder.Entity<PlacementChange>()
+                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
+
+            modelBuilder.Entity<NameChange>()
+                .HasIndex(nc => nc.ChangedOn);
+
+            modelBuilder.Entity<NameChange>()
+                .Property(nc => nc.Season)
+                .HasDefaultValue(defaultSeason);
+
+            modelBuilder.Entity<NameChangeChange>()
                 .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
 
             modelBuilder.Entity<ChangeTrackingCurrentVersion>()

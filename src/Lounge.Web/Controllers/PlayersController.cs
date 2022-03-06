@@ -241,8 +241,18 @@ namespace Lounge.Web.Controllers
             var season = _loungeSettingsService.CurrentSeason;
 
             var registryId = await _mkcRegistryApi.GetRegistryIdAsync(mkcId);
+            var normalizedName = PlayerUtils.NormalizeName(name);
 
-            Player player = new() { Name = name, NormalizedName = PlayerUtils.NormalizeName(name), MKCId = mkcId, DiscordId = discordId, RegistryId = registryId };
+            Player player = new()
+            {
+                Name = name,
+                NormalizedName = normalizedName,
+                MKCId = mkcId,
+                DiscordId = discordId,
+                RegistryId = registryId,
+                NameHistory = new List<NameChange> { new NameChange { Name = name, NormalizedName = normalizedName, ChangedOn = DateTime.UtcNow } }
+            };
+
             if (registryId != null)
             {
                 var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(registryId.Value);
@@ -335,6 +345,13 @@ namespace Lounge.Web.Controllers
 
             player.Name = newName;
             player.NormalizedName = PlayerUtils.NormalizeName(newName);
+            _context.NameChanges.Add(new NameChange
+            {
+                Name = newName,
+                NormalizedName = player.NormalizedName,
+                ChangedOn = DateTime.UtcNow,
+                PlayerId = player.Id,
+            });
 
             try
             {

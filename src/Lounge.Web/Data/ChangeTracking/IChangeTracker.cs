@@ -14,5 +14,6 @@ namespace Lounge.Web.Data.ChangeTracking
         Task<List<PlayerSeasonDataChange>> GetPlayerSeasonDataChangesAsync(long lastSynchronizationVersion);
         Task<List<TableChange>> GetTableChangesAsync(long lastSynchronizationVersion);
         Task<List<TableScoreChange>> GetTableScoreChangesAsync(long lastSynchronizationVersion);
+        Task<List<NameChangeChange>> GetNameChangeChangesAsync(long lastSynchronizationVersion);
     }
 }

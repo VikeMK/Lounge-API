@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Lounge.Web.Utils;
 using Lounge.Web.Models.ViewModels;
-using Microsoft.Extensions.Options;
 using Lounge.Web.Settings;
 using System.Linq;
 using Lounge.Web.Controllers.ValidationAttributes;

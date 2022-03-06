@@ -16,6 +16,7 @@ namespace Lounge.Web.Data.ChangeTracking
         private readonly Dictionary<int, Penalty> _penalties = new();
         private readonly Dictionary<int, Bonus> _bonuses = new();
         private readonly Dictionary<int, Placement> _placements = new();
+        private readonly Dictionary<int, NameChange> _nameChanges = new();
 
         public DbCache(IEnumerable<IDbCacheUpdateSubscriber> subscribers)
         {
@@ -29,8 +30,9 @@ namespace Lounge.Web.Data.ChangeTracking
         public IReadOnlyDictionary<int, Penalty> Penalties => _penalties;
         public IReadOnlyDictionary<int, Bonus> Bonuses => _bonuses;
         public IReadOnlyDictionary<int, Placement> Placements => _placements;
+        public IReadOnlyDictionary<int, NameChange> NameChanges => _nameChanges;
 
-        public void Initialize(List<Bonus> bonuses, List<Penalty> penalties, List<Placement> placements, List<Player> players, List<PlayerSeasonData> playerSeasonData, List<Table> tables, List<TableScore> tableScores)
+        public void Initialize(List<Bonus> bonuses, List<Penalty> penalties, List<Placement> placements, List<Player> players, List<PlayerSeasonData> playerSeasonData, List<Table> tables, List<TableScore> tableScores, List<NameChange> nameChanges)
         {
             foreach (var bonus in bonuses)
                 _bonuses[bonus.Id] = bonus;
@@ -69,11 +71,14 @@ namespace Lounge.Web.Data.ChangeTracking
                 seasonData[playerSeasonDataEntry.PlayerId] = playerSeasonDataEntry;
             }
 
+            foreach (var nameChange in nameChanges)
+                _nameChanges[nameChange.Id] = nameChange;
+
             foreach (var subscriber in _subscribers)
                 subscriber.OnChange(this);
         }
 
-        public void HandleChanges(List<BonusChange> bonuses, List<PenaltyChange> penalties, List<PlacementChange> placements, List<PlayerChange> players, List<PlayerSeasonDataChange> playerSeasonData, List<TableChange> tables, List<TableScoreChange> tableScores)
+        public void HandleChanges(List<BonusChange> bonuses, List<PenaltyChange> penalties, List<PlacementChange> placements, List<PlayerChange> players, List<PlayerSeasonDataChange> playerSeasonData, List<TableChange> tables, List<TableScoreChange> tableScores, List<NameChangeChange> nameChanges)
         {
             foreach (var bonus in bonuses)
                 _bonuses[bonus.Id] = bonus.Entity!;
@@ -109,6 +114,9 @@ namespace Lounge.Web.Data.ChangeTracking
 
                 seasonData[playerSeasonDataEntry.PlayerId] = playerSeasonDataEntry.Entity!;
             }
+
+            foreach (var nameChange in nameChanges)
+                _nameChanges[nameChange.Id] = nameChange.Entity!;
 
             foreach (var subscriber in _subscribers)
                 subscriber.OnChange(this);

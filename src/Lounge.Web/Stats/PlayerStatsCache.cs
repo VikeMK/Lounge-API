@@ -1,5 +1,4 @@
 ﻿using Lounge.Web.Data.ChangeTracking;
-using Lounge.Web.Models;
 using Lounge.Web.Settings;
 using System;
 using System.Collections.Generic;

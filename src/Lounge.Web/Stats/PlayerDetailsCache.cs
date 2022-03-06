@@ -42,6 +42,11 @@ namespace Lounge.Web.Stats
         {
             var newPlayerDetailsLookup = new Dictionary<int, IReadOnlyDictionary<int, PlayerDetails>>();
             var seasons = _loungeSettingsService.ValidSeasons;
+
+            var nameChangesByPlayer = dbCache.NameChanges.Values
+                .GroupBy(p => p.PlayerId)
+                .ToDictionary(p => p.Key, p => p.Select(x => x.Id).ToList());
+
             foreach (var season in seasons)
             {
                 var placementsByPlayer = dbCache.Placements.Values
@@ -73,7 +78,8 @@ namespace Lounge.Web.Stats
                             placementsByPlayer.GetValueOrDefault(p.Id) ?? new List<int>(),
                             tableScoresByPlayer.GetValueOrDefault(p.Id) ?? new List<int>(),
                             penaltiesByPlayer.GetValueOrDefault(p.Id) ?? new List<int>(),
-                            bonusesByPlayer.GetValueOrDefault(p.Id) ?? new List<int>()));
+                            bonusesByPlayer.GetValueOrDefault(p.Id) ?? new List<int>(),
+                            nameChangesByPlayer.GetValueOrDefault(p.Id) ?? new List<int>()));
             }
 
             var playerNamesToId = dbCache.Players.Select(p => new KeyValuePair<string, int>(p.Value.NormalizedName, p.Key));
