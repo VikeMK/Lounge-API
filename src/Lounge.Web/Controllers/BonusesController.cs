@@ -64,14 +64,16 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<BonusViewModel>> AwardBonus(string name, int amount)
+        public async Task<ActionResult<BonusViewModel>> AwardBonus(string? name, int? mkcId, int amount)
         {
             if (amount < 0)
                 return BadRequest("Bonus amount must be a non-negative integer");
 
             var season = _loungeSettingsService.CurrentSeason;
             var player = await _context.Players
-                .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
+                .Where(p => 
+                    (name == null || p.NormalizedName == PlayerUtils.NormalizeName(name)) && 
+                    (mkcId == null || p.MKCId == mkcId.Value))
                 .Select(p => new
                 {
                     p.Id,
