@@ -196,10 +196,10 @@ namespace Lounge.Web.Controllers
             if (table is null)
                 return NotFound();
 
-            int[]? teamTotals = null;
+            int[]? teamRanks = null;
             if (table.VerifiedOn is not null)
             {
-                teamTotals = table.Scores.GroupBy(s => s.Team).OrderBy(g => g.Key).Select(g => g.Sum(s => s.Score)).ToArray();
+                teamRanks = ScoresToRanks(table.Scores);
             }
 
             foreach ((string name, int score) in scores)
@@ -219,13 +219,13 @@ namespace Lounge.Web.Controllers
                     return BadRequest($"Player '{name}' is not in table");
             }
 
-            if (teamTotals is not null)
+            if (teamRanks is not null)
             {
-                var newTeamTotals = table.Scores.GroupBy(s => s.Team).OrderBy(g => g.Key).Select(g => g.Sum(s => s.Score)).ToArray();
+                var newTeamRanks = ScoresToRanks(table.Scores);
 
-                if (!teamTotals.SequenceEqual(newTeamTotals))
+                if (!teamRanks.SequenceEqual(newTeamRanks))
                 {
-                    return BadRequest("Table has already been verified and these scores would change the MMR differences. Please delete and recreate the table instead.");
+                    return BadRequest("Table has already been verified and these scores would change the ranking. Please delete and recreate the table instead.");
                 }
             }
 
@@ -246,6 +246,23 @@ namespace Lounge.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
+
+            static int[] ScoresToRanks(ICollection<TableScore> scores)
+            {
+                int rank = 0;
+                int prevRank = 0;
+                int prevScore = -1;
+                int[] teamOrder = new int[scores.Select(s => s.Team).Max() + 1];
+                foreach (var team in scores.GroupBy(s => s.Team).OrderByDescending(g => g.Sum(s => s.Score)))
+                {
+                    var score = team.Sum(s => s.Score);
+                    prevRank = teamOrder[team.Key] = score == prevScore ? prevRank : rank;
+                    prevScore = score;
+                    rank++;
+                }
+
+                return teamOrder;
+            }
         }
 
         [HttpPost("setTableMessageId")]

@@ -244,7 +244,7 @@ namespace Lounge.Web.Controllers
         {
             var nameChanges = await _context.Players
                 .Where(p => p.NameChangeRequestedOn != null)
-                .Select(p => new NameChangeListViewModel.Player(p.Id, p.Name, p.PendingName!, p.NameChangeRequestedOn!.Value, p.NameChangeRequestMessageId))
+                .Select(p => new NameChangeListViewModel.Player(p.Id, p.DiscordId, p.Name, p.PendingName!, p.NameChangeRequestedOn!.Value, p.NameChangeRequestMessageId))
                 .ToListAsync();
 
             return new NameChangeListViewModel { Players = nameChanges };
@@ -494,7 +494,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("requestNameChange")]
-        public async Task<ActionResult<NameChangeListViewModel.Player>> RequestNameChange(string name, string newName)
+        public async Task<ActionResult<NameChangeListViewModel.Player>> RequestNameChange(string? name, string newName)
         {
             var player = await GetPlayerByNameAsync(name);
             if (player is null)
@@ -515,7 +515,7 @@ namespace Lounge.Web.Controllers
             player.PendingName = newName;
             await _context.SaveChangesAsync();
 
-            return new NameChangeListViewModel.Player(player.Id, player.Name, newName, player.NameChangeRequestedOn.Value, null);
+            return new NameChangeListViewModel.Player(player.Id, player.DiscordId, player.Name, newName, player.NameChangeRequestedOn.Value, null);
         }
 
         [HttpPost("setNameChangeMessageId")]
@@ -576,7 +576,7 @@ namespace Lounge.Web.Controllers
             _context.NameChanges.Add(newNameChange);
             await _context.SaveChangesAsync();
 
-            return new NameChangeListViewModel.Player(player.Id, player.Name, newName, nameChangeRequestOn.Value, messageId);
+            return new NameChangeListViewModel.Player(player.Id, player.DiscordId, player.Name, newName, nameChangeRequestOn.Value, messageId);
         }
 
         [HttpPost("rejectNameChange")]
@@ -597,7 +597,7 @@ namespace Lounge.Web.Controllers
             player.NameChangeRequestMessageId = null;
             await _context.SaveChangesAsync();
 
-            return new NameChangeListViewModel.Player(player.Id, player.Name, newName!, nameChangeRequestedOn.Value, messageId);
+            return new NameChangeListViewModel.Player(player.Id, player.DiscordId, player.Name, newName!, nameChangeRequestedOn.Value, messageId);
         }
 
         private Task<Player> GetPlayerByIdAsync(int id) =>

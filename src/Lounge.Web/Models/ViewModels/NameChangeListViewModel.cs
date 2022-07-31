@@ -7,6 +7,6 @@ namespace Lounge.Web.Models.ViewModels
     {
         public List<Player> Players { get; init; }
 
-        public record Player(int Id, string Name, string NewName, DateTime RequestedOn, string? MessageId);
+        public record Player(int Id, string? DiscordId, string Name, string NewName, DateTime RequestedOn, string? MessageId);
     }
 }
