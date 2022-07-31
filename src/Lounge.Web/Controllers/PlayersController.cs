@@ -567,6 +567,7 @@ namespace Lounge.Web.Controllers
                 PlayerId = player.Id,
             };
 
+            var oldName = player.Name;
             var messageId = player.NameChangeRequestMessageId;
             player.Name = newName;
             player.NormalizedName = normalizedNewName;
@@ -576,7 +577,7 @@ namespace Lounge.Web.Controllers
             _context.NameChanges.Add(newNameChange);
             await _context.SaveChangesAsync();
 
-            return new NameChangeListViewModel.Player(player.Id, player.DiscordId, player.Name, newName, nameChangeRequestOn.Value, messageId);
+            return new NameChangeListViewModel.Player(player.Id, player.DiscordId, oldName, newName, nameChangeRequestOn.Value, messageId);
         }
 
         [HttpPost("rejectNameChange")]
