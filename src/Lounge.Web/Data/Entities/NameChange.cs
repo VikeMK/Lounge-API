@@ -9,7 +9,6 @@ namespace Lounge.Web.Data.Entities
         public string Name { get; set; } = default!;
         public string NormalizedName { get; set; } = default!;
 
-        public int Season { get; set; }
         public DateTime ChangedOn { get; set; }
 
         public int PlayerId { get; set; }
