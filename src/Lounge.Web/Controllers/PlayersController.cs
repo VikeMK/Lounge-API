@@ -42,7 +42,7 @@ namespace Lounge.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, [ValidSeason]int? season = null)
+        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, string? fc, [ValidSeason]int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason;
 
@@ -62,6 +62,10 @@ namespace Lounge.Web.Controllers
             else if (discordId is not null)
             {
                 player = await GetPlayerByDiscordIdAsync(discordId);
+            }
+            else if (fc is not null)
+            {
+                player = await GetPlayerByFriendCodeAsync(fc);
             }
             else
             {
@@ -607,6 +611,9 @@ namespace Lounge.Web.Controllers
 
         private Task<Player> GetPlayerByDiscordIdAsync(string discordId) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.DiscordId == discordId);
+
+        private Task<Player> GetPlayerByFriendCodeAsync(string fc) =>
+            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.SwitchFc == fc);
 
         private PlayerLeaderboardData? GetPlayerStats(int id, int season)
         {
