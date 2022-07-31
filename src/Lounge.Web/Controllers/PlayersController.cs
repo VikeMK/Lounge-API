@@ -240,7 +240,7 @@ namespace Lounge.Web.Controllers
         {
             var nameChanges = await _context.Players
                 .Where(p => p.NameChangeRequestedOn != null)
-                .Select(p => new NameChangeListViewModel.Player(p.Id, p.Name, p.PendingName!, p.NameChangeRequestedOn!.Value, p.NameChangeRequestMessageId!))
+                .Select(p => new NameChangeListViewModel.Player(p.Id, p.Name, p.PendingName!, p.NameChangeRequestedOn!.Value, p.NameChangeRequestMessageId))
                 .ToListAsync();
 
             return new NameChangeListViewModel { Players = nameChanges };
