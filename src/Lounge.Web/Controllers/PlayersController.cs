@@ -235,6 +235,17 @@ namespace Lounge.Web.Controllers
             };
         }
 
+        [HttpGet("listPendingNameChanges")]
+        public async Task<ActionResult<NameChangeListViewModel>> GetAllPendingNameChanges()
+        {
+            var nameChanges = await _context.Players
+                .Where(p => p.NameChangeRequestedOn != null)
+                .Select(p => new NameChangeListViewModel.Player(p.Id, p.Name, p.PendingName!, p.NameChangeRequestedOn!.Value, p.NameChangeRequestMessageId!))
+                .ToListAsync();
+
+            return new NameChangeListViewModel { Players = nameChanges };
+        }
+
         [HttpPost("create")]
         public async Task<ActionResult<PlayerViewModel>> Create(string name, int mkcId, int? mmr, string? discordId = null)
         {
@@ -478,11 +489,118 @@ namespace Lounge.Web.Controllers
             return NoContent();
         }
 
+        [HttpPost("requestNameChange")]
+        public async Task<ActionResult<NameChangeListViewModel.Player>> RequestNameChange(string name, string newName)
+        {
+            var player = await GetPlayerByNameAsync(name);
+            if (player is null)
+                return NotFound();
+
+            if (await GetPlayerByNameAsync(newName) is not null)
+                return BadRequest("Player with that name is already taken");
+
+            var timeNow = DateTime.UtcNow;
+            foreach (var nameChange in player.NameHistory)
+            {
+                var timeSinceNameChange = timeNow - nameChange.ChangedOn;
+                if (timeSinceNameChange < TimeSpan.FromDays(60))
+                    return BadRequest($"Player last changed their name less than 60 days ago.");
+            }
+
+            player.NameChangeRequestedOn = DateTime.UtcNow;
+            player.PendingName = newName;
+            await _context.SaveChangesAsync();
+
+            return new NameChangeListViewModel.Player(player.Id, player.Name, newName, player.NameChangeRequestedOn.Value, null);
+        }
+
+        [HttpPost("setNameChangeMessageId")]
+        public async Task<IActionResult> SetNameChangeMessageId(string name, string messageId)
+        {
+            var player = await GetPlayerByNameAsync(name);
+            if (player is null)
+                return NotFound();
+
+            if (player.NameChangeRequestedOn is null)
+                return BadRequest("Player has no pending name change");
+
+            player.NameChangeRequestMessageId = messageId;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost("acceptNameChange")]
+        public async Task<ActionResult<NameChangeListViewModel.Player>> AcceptNameChange(string name)
+        {
+            var player = await GetPlayerByNameAsync(name);
+            if (player is null)
+                return NotFound();
+
+            var nameChangeRequestOn = player.NameChangeRequestedOn;
+            if (nameChangeRequestOn is null)
+                return BadRequest("Player has no pending name change");
+
+            var newName = player.PendingName!;
+
+            if (await GetPlayerByNameAsync(newName) is not null)
+                return BadRequest("Player with that name is already taken");
+
+            var timeNow = DateTime.UtcNow;
+            foreach (var nameChange in player.NameHistory)
+            {
+                var timeSinceNameChange = timeNow - nameChange.ChangedOn;
+                if (timeSinceNameChange < TimeSpan.FromDays(60))
+                    return BadRequest($"Player last changed their name less than 60 days ago.");
+            }
+
+            var normalizedNewName = PlayerUtils.NormalizeName(newName);
+            var newNameChange = new NameChange
+            {
+                Name = newName,
+                NormalizedName = normalizedNewName,
+                ChangedOn = DateTime.UtcNow,
+                PlayerId = player.Id,
+            };
+
+            var messageId = player.NameChangeRequestMessageId;
+            player.Name = newName;
+            player.NormalizedName = normalizedNewName;
+            player.NameChangeRequestedOn = null;
+            player.PendingName = null;
+            player.NameChangeRequestMessageId = null;
+            _context.NameChanges.Add(newNameChange);
+            await _context.SaveChangesAsync();
+
+            return new NameChangeListViewModel.Player(player.Id, player.Name, newName, nameChangeRequestOn.Value, messageId);
+        }
+
+        [HttpPost("rejectNameChange")]
+        public async Task<ActionResult<NameChangeListViewModel.Player>> RejectNameChange(string name)
+        {
+            var player = await GetPlayerByNameAsync(name);
+            if (player is null)
+                return NotFound();
+
+            var nameChangeRequestedOn = player.NameChangeRequestedOn;
+            if (nameChangeRequestedOn is null)
+                return BadRequest("Player has no pending name change");
+
+            var newName = player.PendingName;
+            var messageId = player.NameChangeRequestMessageId;
+            player.NameChangeRequestedOn = null;
+            player.PendingName = null;
+            player.NameChangeRequestMessageId = null;
+            await _context.SaveChangesAsync();
+
+            return new NameChangeListViewModel.Player(player.Id, player.Name, newName!, nameChangeRequestedOn.Value, messageId);
+        }
+
         private Task<Player> GetPlayerByIdAsync(int id) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.Id == id);
 
         private Task<Player> GetPlayerByNameAsync(string name) =>
-            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
+            _context.Players.Include(p => p.SeasonData).Include(p => p.NameHistory).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
 
         private Task<Player> GetPlayerByMKCIdAsync(int mkcId) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.MKCId == mkcId);

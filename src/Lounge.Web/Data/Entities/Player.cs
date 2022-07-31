@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Lounge.Web.Data.Entities
@@ -14,6 +15,9 @@ namespace Lounge.Web.Data.Entities
         public string? CountryCode { get; set; }
         public string? SwitchFc { get; set; }
         public bool IsHidden { get; set; }
+        public DateTime? NameChangeRequestedOn { get; set; }
+        public string? PendingName { get; set; } = default!;
+        public string? NameChangeRequestMessageId { get; set; } = default!;
 
         public ICollection<PlayerSeasonData> SeasonData { get; set; } = default!;
         public ICollection<TableScore> TableScores { get; set; } = default!;

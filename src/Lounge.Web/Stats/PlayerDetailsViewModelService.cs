@@ -207,7 +207,7 @@ namespace Lounge.Web.Stats
 
             var nameHistory = player.NameChangeIds
                 .Select(nameChangeId => _dbCache.NameChanges[nameChangeId])
-                .Select(nameChange => new PlayerDetailsViewModel.NameChange(nameChange.Name, nameChange.ChangedOn, nameChange.Season))
+                .Select(nameChange => new PlayerDetailsViewModel.NameChange(nameChange.Name, nameChange.ChangedOn))
                 .OrderByDescending(nc => nc.ChangedOn)
                 .ToList();
 

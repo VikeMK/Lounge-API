@@ -52,6 +52,9 @@ namespace Lounge.Web.Data
                 .HasIndex(p => p.NormalizedName)
                 .IsUnique();
 
+            modelBuilder.Entity<Player>()
+                .HasIndex(p => p.NameChangeRequestedOn);
+
             modelBuilder.Entity<PlayerChange>()
                 .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
 
@@ -113,10 +116,6 @@ namespace Lounge.Web.Data
 
             modelBuilder.Entity<NameChange>()
                 .HasIndex(nc => nc.ChangedOn);
-
-            modelBuilder.Entity<NameChange>()
-                .Property(nc => nc.Season)
-                .HasDefaultValue(defaultSeason);
 
             modelBuilder.Entity<NameChangeChange>()
                 .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
