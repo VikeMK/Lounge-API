@@ -32,6 +32,11 @@
     @{ var teamCounts = new int[] { 12, 6, 4, 3, 2 }; }
     @foreach (var teamCount in teamCounts)
     {
+        @if (Model.Season > 4 && teamCount == 2)
+        {
+            continue;
+        }
+
         <h2>@TableUtils.FormatDisplay(teamCount)</h2>
         <div class="row mb-4">
             @foreach (var tier in LoungeSettingsService.RecordsTierOrders[Model.Season])
