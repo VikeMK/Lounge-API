@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Lounge.Web.Pages
 {
-    [ResponseCache(Duration = 180)]
     public class TableDetailsPageModel : PageModel
     {
         private readonly ApplicationDbContext _context;

@@ -7,13 +7,16 @@ using Lounge.Web.Storage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Text.Json.Serialization;
 
@@ -96,7 +99,18 @@ namespace Lounge.Web
 
             services.AddHttpClient("NoRedirects").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler() { AllowAutoRedirect = false });
 
-            services.AddRazorPages(options => { options.Conventions.AddPageRoute("/Leaderboard", ""); });
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+            services
+                .AddRazorPages(options => { options.Conventions.AddPageRoute("/Leaderboard", ""); })
+                .AddViewLocalization();
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var cultures = new CultureInfo[] { new("en"), new("ja"), new("fr"), new("de"), new("es"), new("it") };
+                options.DefaultRequestCulture = new RequestCulture("en");
+                options.SupportedCultures = cultures;
+                options.SupportedUICultures = cultures;
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -114,6 +128,9 @@ namespace Lounge.Web
             }
 
             app.UseSwagger();
+
+            var locOptions = app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(locOptions.Value);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles(new StaticFileOptions

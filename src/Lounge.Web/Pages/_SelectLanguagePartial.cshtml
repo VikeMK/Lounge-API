@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Http.Features
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    var currentCulture = Context.Features.Get<IRequestCultureFeature>().RequestCulture.UICulture;
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+<div>
+    <form id="selectLanguage" asp-controller="Home" asp-action="SetLanguage" asp-route-returnurl="@returnUrl" method="post" role="form">
+        <!select class="form-control bg-dark text-light" name="culture" onchange="this.form.submit();">
+            <!option value="" disabled="disabled" selected="selected">🌐</!option>
+            @foreach (var culture in LocOptions.Value.SupportedUICultures)
+            {
+                <!option value="@culture.Name">@culture.NativeName</!option>
+            }
+        </!select>
+    </form>
+</div>

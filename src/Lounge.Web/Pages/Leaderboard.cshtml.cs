@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 namespace Lounge.Web.Pages
 {
-    [ResponseCache(Duration = 30, VaryByQueryKeys = new string[] { "season" })]
     public class LeaderboardPageModel : PageModel
     {
         private readonly ILoungeSettingsService _loungeSettingsService;
