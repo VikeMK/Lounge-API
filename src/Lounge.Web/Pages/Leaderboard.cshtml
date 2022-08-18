@@ -3,16 +3,19 @@
 @using Lounge.Web.Stats
 @using System.Reflection
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Mvc.Localization
 @inject ILoungeSettingsService LoungeSettingsService
+@inject IViewLocalizer Localizer
+
 @model Lounge.Web.Pages.LeaderboardPageModel
 @{
-	ViewData["Title"] = $"Leaderboard - Season {Model.Season}";
+	ViewData["Title"] = $"{Localizer["Leaderboard"]} - {Localizer["Season"]} {Model.Season}";
     Layout = "_Layout";
 }
 
 <div class="navbar navbar-expand-sm navbar-dark bg-dark rounded py-0" style="margin-bottom: 14px;">
     <div class="container-fluid">
-        <span class="navbar-brand">Seasons</span>
+        <span class="navbar-brand">@Localizer["Seasons"]</span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#seasonSelector">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -21,7 +24,7 @@
                 @foreach (var season in LoungeSettingsService.ValidSeasons)
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Leaderboard" asp-route-season="@season">Season @season</a>
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Leaderboard" asp-route-season="@season">@Localizer["Season"] @season</a>
                     </li>
                 }
             </ul>
@@ -32,13 +35,13 @@
     <input type="hidden" value="@Model.Season" id="seasonInput"/>
     <div class="form-row">
         <div class="form-group col-xl-3 col-6">
-            <label for="nameFilter">Name</label>
+            <label for="nameFilter">@Localizer["Name"]</label>
             <input type="text" class="form-control bg-dark text-light" id="nameFilter">
 		</div>
         <div class="form-group col-xl-3 col-6">
-            <label for="countryFilter">Country</label>
+            <label for="countryFilter">@Localizer["Country"]</label>
             <!select class="form-control bg-dark text-light" name="country" id="countryFilter" onchange="refreshLeaderboard()">
-                <!option value="" selected>All Countries</!option>
+                <!option value="" selected>@Localizer["All Countries"]</!option>
 
                 @foreach (var country in Model.ValidCountries.OrderBy(c => LoungeSettingsService.CountryNames[c]))
                 {
@@ -47,19 +50,19 @@
             </!select>
 		</div>
         <div class="form-group col-xl-1 col-sm-2 col-3">
-            <label for="minMmrFilter">Min&nbsp;MMR</label>
+            <label for="minMmrFilter">@Localizer["Min MMR"]</label>
             <input type="number" class="form-control bg-dark text-light" id="minMmrFilter" onchange="refreshLeaderboard()" min=0>
 		</div>
         <div class="form-group col-xl-1 col-sm-2 col-3">
-            <label for="maxMMRFilter">Max&nbsp;MMR</label>
+            <label for="maxMMRFilter">@Localizer["Max MMR"]</label>
             <input type="number" class="form-control bg-dark text-light" id="maxMmrFilter" onchange="refreshLeaderboard()" min=0>
 		</div>
         <div class="form-group col-xl-1 col-sm-2 col-3">
-            <label for="minEventsFilter">Min&nbsp;Events</label>
+            <label for="minEventsFilter">@Localizer["Min Events"]</label>
             <input type="number" class="form-control bg-dark text-light" id="minEventsFilter" onchange="refreshLeaderboard()" min=0>
 		</div>
         <div class="form-group col-xl-1 col-sm-2 col-3">
-            <label for="maxEventsFilter">Max&nbsp;Events</label>
+            <label for="maxEventsFilter">@Localizer["Max Events"]</label>
             <input type="number" class="form-control bg-dark text-light" id="maxEventsFilter" onchange="refreshLeaderboard()" min=0>
 		</div>
         <div class="form-group col-xl-2 col-sm-4">
@@ -69,7 +72,7 @@
                 {
                     var enumName = sortOrder.ToString();
                     var displyName = typeof(LeaderboardSortOrder).GetMember(enumName).First().GetCustomAttribute<DisplayAttribute>()?.GetName() ?? enumName;
-                    <!option value="@enumName" @(sortOrder == LeaderboardSortOrder.Mmr ? "selected" : "")>@displyName</!option>
+                    <!option value="@enumName" @(sortOrder == LeaderboardSortOrder.Mmr ? "selected" : "")>@Localizer[displyName]</!option>
                 }
             </!select>
 		</div>
@@ -80,17 +83,17 @@
         <table id="leaderboardTable" class="table table-striped table-dark table-sm">
             <thead>
                 <tr>
-                    <th>Rank</th>
+                    <th>@Localizer["Rank"]</th>
                     <th style="width: 32px"><!--Country Column--></th>
-                    <th>Name</th>
-                    <th>MMR</th>
-                    <th>Peak MMR</th>
-                    <th>Win Rate</th>
-                    <th>W&nbsp;-&nbsp;L (Last&nbsp;10)</th>
-                    <th>Gain/Loss (Last&nbsp;10)</th>
-                    <th>Events Played</th>
-                    <th>Largest Gain</th>
-                    <th>Largest Loss</th>
+                    <th>@Localizer["Name"]</th>
+                    <th>@Localizer["MMR"]</th>
+                    <th>@Localizer["Peak MMR"]</th>
+                    <th>@Localizer["Win Rate"]</th>
+                    <th>@Localizer["W - L (Last 10)"]</th>
+                    <th>@Localizer["Gain/Loss (Last 10)"]</th>
+                    <th>@Localizer["Events Played"]</th>
+                    <th>@Localizer["Largest Gain"]</th>
+                    <th>@Localizer["Largest Loss"]</th>
                 </tr>
             </thead>
             <tbody id="leaderboardTableBody">
@@ -102,15 +105,15 @@
     </div>
     <div>
         <span style="float: left" class="form-inline">
-            Page&nbsp;
+            @Localizer["Page"]&nbsp;
             <input type="number" value="1" id="pageNumberInput" onchange="onPageChanged()" min="1" max="1" class="form-control bg-dark text-light" style="width: 80px">
-            &nbsp;of&nbsp;
+            &nbsp;@Localizer["of"]&nbsp;
             <span id="maxPageNumber">1</span>
         </span>
         <nav>
             <ul class="pagination pagination-dark justify-content-end">
-                <li class="page-item disabled" onclick="prevPage()" id="prevPageButton"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item disabled" onclick="nextPage()" id="nextPageButton"><a class="page-link" href="#">Next</a></li>
+                <li class="page-item disabled" onclick="prevPage()" id="prevPageButton"><a class="page-link" href="#">@Localizer["Previous"]</a></li>
+                <li class="page-item disabled" onclick="nextPage()" id="nextPageButton"><a class="page-link" href="#">@Localizer["Next"]</a></li>
             </ul>
         </nav>
 	</div>

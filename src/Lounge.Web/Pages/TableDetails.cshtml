@@ -1,20 +1,22 @@
 ﻿@page "{id:int}"
+@using Microsoft.AspNetCore.Mvc.Localization
 @model Lounge.Web.Pages.TableDetailsPageModel
+@inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = $"Table (ID: {Model.Data.Id}) - Season {Model.Data.Season}";
+    ViewData["Title"] = $"{Localizer["Table"]} (ID: {Model.Data.Id}) - {Localizer["Season"]} {Model.Data.Season}";
     Layout = "_Layout";
 }
 <div>
     <dl>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Data.Id)
+            @Localizer[Html.DisplayNameFor(model => model.Data.Id)]
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Data.Id)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Data.CreatedOn)
+            @Localizer[Html.DisplayNameFor(model => model.Data.CreatedOn)]
         </dt>
         <dd class="col-sm-10">
             <span class="utc-to-local" data-time="@Model.Data.CreatedOn.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
@@ -23,7 +25,7 @@
         </dd>
 
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Data.VerifiedOn)
+            @Localizer[Html.DisplayNameFor(model => model.Data.VerifiedOn)]
         </dt>
         @{
             var isVerified = Model.Data.VerifiedOn != null;
@@ -37,7 +39,7 @@
         @if (Model.Data.DeletedOn is not null)
         {
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Data.DeletedOn)
+                @Localizer[Html.DisplayNameFor(model => model.Data.DeletedOn)]
             </dt>
             <dd class="col-sm-10">
                 <span class="utc-to-local" data-time="@Model.Data.DeletedOn.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture)">
@@ -46,20 +48,20 @@
             </dd>
         }
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Data.Format)
+            @Localizer[Html.DisplayNameFor(model => model.Data.Format)]
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Data.Format)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Data.Tier)
+            @Localizer[Html.DisplayNameFor(model => model.Data.Tier)]
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Data.Tier)
         </dd>
     </dl>
     <hr />
-    <h2>@Html.DisplayNameFor(model => model.Data.Url)</h2>
+    <h2>@Localizer[Html.DisplayNameFor(model => model.Data.Url)]</h2>
     <img src="@Model.Data.Url" class="img-fluid"/>
     <hr />
     @{
@@ -69,31 +71,31 @@
         <thead>
             <tr>
                 <th scope="col">
-                    @Html.DisplayNameFor(model => model.Data.Teams[0].Rank)
+                    @Localizer[Html.DisplayNameFor(model => model.Data.Teams[0].Rank)]
                 </th>
                 <th scope="col" style="width: 32px"></th>
                 <th scope="col">
-                    @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].PlayerName)
+                    @Localizer[Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].PlayerName)]
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].Score)
+                    @Localizer[Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].Score)]
                 </th>
                 @if (showMultiplier)
                 {
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].MultiplierString)
+                        @Localizer[Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].MultiplierString)]
                     </th>
                 }
                 @if (Model.Data.VerifiedOn is not null)
                 {
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].PrevMmr)
+                        @Localizer[Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].PrevMmr)]
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].Delta)
+                        @Localizer[Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].Delta)]
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].NewMmr)
+                        @Localizer[Html.DisplayNameFor(model => model.Data.Teams[0].Scores[0].NewMmr)]
                     </th>
                 }
             </tr>

@@ -117,7 +117,7 @@ namespace Lounge.Web.Models.ViewModels
             [Display(Name = "MMR")]
             public int NewMmr { get; set; }
 
-            [Display(Name = "MMR\u00a0Delta")]
+            [Display(Name = "MMR Delta")]
             [DisplayFormat(DataFormatString = "{0:+#;-#;0}")]
             public int MmrDelta { get; set; }
 
