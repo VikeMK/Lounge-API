@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Discord Invite" xml:space="preserve">
-    <value>Discord Invite</value>
+    <value>Discord-Einladung</value>
   </data>
   <data name="Leaderboard" xml:space="preserve">
-    <value>Leaderboard</value>
+    <value>Bestenliste</value>
   </data>
   <data name="MK8DX 150cc Lounge" xml:space="preserve">
     <value>MK8DX 150cc Lounge</value>
   </data>
   <data name="Records" xml:space="preserve">
-    <value>Records</value>
+    <value>Rekorde</value>
   </data>
   <data name="Rules" xml:space="preserve">
-    <value>Rules</value>
+    <value>Regelwerk</value>
   </data>
 </root>

@@ -215,7 +215,7 @@
     <value>Si un joueur quitte après que la première course ait été validée, ils recevront un strike, une pénalité de -50 MMR en plus de la pénalité de MMR référent à la règle IV. i.​</value>
   </data>
   <data name="If a player fails to show up for a match, misses at least half of an event, or trolls during an event (IV. h, IV. j) they will receive the SQ Restricted role for 1 week." xml:space="preserve">
-    <value>Si un joueur ne rejoint pas le match, qu'il manque la moitié des courses, ou qu'il troll durant ce match (IV. h,IV. j) il recevra le rôle SQ Restricted pendant 1 semaine. Ce rôle est un ban des SQ.​</value>
+    <value>Si un joueur ne rejoint pas le match, qu'il manque la moitié des courses, ou qu'il troll durant ce match (IV. h,IV. j) il recevra le rôle SQ Restricted pendant 1 semaine.​</value>
   </data>
   <data name="If a player is unable to sub when needed or does not respond within 5 minutes, they will receive a -50 penalty and a strike." xml:space="preserve">
     <value>Si un joueur mis en sub ne peut pas sub si besoin ou qu'il ne répond pas sous 5 minutes, il recevra un strike et une pénalité de 50 MMR.​</value>
@@ -239,7 +239,7 @@
     <value>Si au moins trois joueurs recontrent un lag de roulette à au moins 2 endroits/moments différents de la map avec preuves vidéos, la course ne comptera pas.​</value>
   </data>
   <data name="If hosts disconnected in the middle of a mogi, hosts must take a 30-second clip to prove that it was unintentional (streaming archive is also allowed)." xml:space="preserve">
-    <value>Si l'host ferme la salle en plein milieu d'un mogi, alors il devra prendre un clip pour prouver que ce n'était pas intentionnel (les rediffusions de live sont autorisés).</value>
+    <value>Si l'host ferme la salle en plein milieu d'un mogi, alors il devra prendre un clip pour prouver que ce n'était pas intentionnel (les rediffusions de live sont autorisées).</value>
   </data>
   <data name="If no races can be finished for an extended amount of time due to lag, the event can be canceled with no players losing MMR." xml:space="preserve">
     <value>Si aucune course ne peut être finie sur une certaine période de temps a cause du lag, le match sera cancel sans perte de MMR pour les joueurs.​</value>
@@ -383,13 +383,13 @@
     <value>Les joueurs qui sont bannis de MKCentral peuvent rencontrer les mêmes conséquences en Lounge, cela dépend de la sévérité et le motif du bannissement.</value>
   </data>
   <data name="Players who consistently cause disruptions in matches such as trolling, targeting specific players, inting etc. will receive a 3-day mute, and may receive increased punishment on repeated instances." xml:space="preserve">
-    <value>b. Les joueurs causant des problèmes pendant les matchs, par exemple en trollant, en faisant exprès de perdre ou en focussant spécifiquement un autre joueur recevront un mute de 3 jours, la sanction sera plus sévère si cela se répète plusieurs fois.</value>
+    <value>Les joueurs causant des problèmes pendant les matchs, par exemple en trollant, en faisant exprès de perdre ou en focussant spécifiquement un autre joueur recevront un mute de 3 jours, la sanction sera plus sévère si cela se répète plusieurs fois.</value>
   </data>
   <data name="Players who consistently cause disruptions in the server such as trolling, flaming, spamming bot commands, etc. will either receive a chat restriction (only allowing them to send certain messages), a mute, or a temporary timeout via staff discretion." xml:space="preserve">
     <value>Les joueurs causant des problèmes par leurs attitudes, par exemple en trollant, en insultant d'autres joueurs ou en abusant des commandes des bots, seront soit sous restriction (ils ne pourront envoyer qu'une liste réduite de messages) ou complètement mute.</value>
   </data>
   <data name="Players who drop for any reason after the poll has been started will receive a -100 MMR strike." xml:space="preserve">
-    <value>i. Les joueurs ne pouvant plus jouer après que le vote soit lancé recevront un strike ainsi qu'une pénalité de -100 MMR, quelque soit la raison.</value>
+    <value>Les joueurs ne pouvant plus jouer après que le vote soit lancé recevront un strike ainsi qu'une pénalité de -100 MMR, quelque soit la raison.</value>
   </data>
   <data name="Players who reach 3 strikes will receive the following punishments:" xml:space="preserve">
     <value>Les joueurs atteignant 3 strikes se verront infliger ceci:</value>
@@ -428,7 +428,7 @@
     <value>Squad Queue</value>
   </data>
   <data name="Squad Queue is a different way of playing lounge that allows players to play with predetermined teammates." xml:space="preserve">
-    <value>Les Squad Queue sont une différentes manières de jouer, elles permettent en effet de jouer avec n'importe quels partenaires. Pour plus d'informations à propros des SQUAD QUEUE cliquez ici.​</value>
+    <value>Les Squad Queue sont une différentes manières de jouer, elles permettent en effet de jouer avec n'importe quels partenaires.​</value>
   </data>
   <data name="Strike System" xml:space="preserve">
     <value>Système de strike</value>
@@ -452,7 +452,7 @@
     <value>Les tags doivent être placés soit au début du pseudo soit à la fin du pseudo.</value>
   </data>
   <data name="Teams missing a player for at least 4 races will lose MMR proportional to the amount of races the player missed; for example, teammates of a player who missed 4 races will receive 8/12 loss, or 6/12 loss if the teammate misses 6 races." xml:space="preserve">
-    <value>Les équipes dont l'un des membres n'a pas joué au moins 4 courses perdront du MMR en fonction du nombre du nombre de courses que n'a pas joué le joueur manquant; par exemple, une équipe qui a perdu un joueur pendant 4 courses perdra seulement 8/12 de MMR, ou 6/12 si le joueur a manqué 6 courses.</value>
+    <value>Les équipes dont l'un des membres n'a pas joué au moins 4 courses perdront du MMR en fonction du nombre de courses que n'a pas joué le joueur manquant; par exemple, une équipe qui a perdu un joueur pendant 4 courses perdra seulement 8/12 de MMR, ou 6/12 si le joueur a manqué 6 courses.</value>
   </data>
   <data name="The first twelve players who originally said can are allowed to vote." xml:space="preserve">
     <value>Uniquement les 12 premières personnes ayant dit can sont autorisés à voter.​</value>
@@ -470,7 +470,7 @@
     <value>Le MMR du sub doit être dans un rayon de moins de 1000 MMR du joueur original.​</value>
   </data>
   <data name="The system will correct itself quite quickly if you deserve a higher/lower grouping." xml:space="preserve">
-    <value>Le système se fixera très vite si vous méritiez un rang plus haut​</value>
+    <value>Le système se fixera très vite si vous méritiez un rang plus haut.​</value>
   </data>
   <data name="The team would still be in the same room with the sub's MMR taken into account." xml:space="preserve">
     <value>L'équipe doit resté dans la même room avec le MMR du sub pris en compte.​</value>
