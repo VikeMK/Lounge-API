@@ -114,6 +114,41 @@ body {
     color: var(--gray);
 }
 
+#rules > li {
+    padding-bottom: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.5em
+}
+
+#rules > li > ul,
+#rules > li > ol {
+    padding-top: 20px;
+    font-weight: initial;
+    font-size: initial;
+    text-transform: initial;
+}
+
+#rules > li > ol > li {
+    padding-bottom: 10px;
+}
+
+#rules > li > ol > li > ul,
+#rules > li > ol > li > ol {
+    padding-top: 10px;
+}
+
+#rules > li >* li::marker {
+    font-weight: bold;
+}
+
 body::-webkit-scrollbar {
     display: none;
+}
+
+#selectLanguage > select {
+    width: 48px;
+    border: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
 }

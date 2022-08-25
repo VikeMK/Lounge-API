@@ -1,17 +1,19 @@
 ﻿@page
 @using Lounge.Web.Settings
 @using Lounge.Web.Utils
+@using Microsoft.AspNetCore.Mvc.Localization
 @inject ILoungeSettingsService LoungeSettingsService
+@inject IViewLocalizer Localizer
 @model Lounge.Web.Pages.RecordsPageModel
 @{
-    ViewData["Title"] = $"Records - Season {Model.Season}";
+    ViewData["Title"] = $"{Localizer["Records"]} - {Localizer["Season"]} {Model.Season}";
     Layout = "_Layout";
     var resultsToShow = 5;
 }
 
 <div class="navbar navbar-expand-sm navbar-dark bg-dark rounded py-0" style="margin-bottom: 14px;">
     <div class="container-fluid">
-        <span class="navbar-brand">Seasons</span>
+        <span class="navbar-brand">@Localizer["Seasons"]</span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#seasonSelector">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -20,7 +22,7 @@
                 @foreach (var season in LoungeSettingsService.ValidSeasons)
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Records" asp-route-season="@season">Season @season</a>
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Records" asp-route-season="@season">@Localizer["Season"] @season</a>
                     </li>
                 }
             </ul>
@@ -49,7 +51,7 @@
                         <thead>
                             <tr>
                                 <th>🏆</th>
-                                <th>Players</th>
+                                <th>@Localizer["Players"]</th>
                                 <th>🏁</th>
                             </tr>
                         </thead>
@@ -84,7 +86,7 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="3">No tables found</td>
+                                    <td colspan="3">@Localizer["No tables found"]</td>
                                 </tr>
                             }
                         </tbody>

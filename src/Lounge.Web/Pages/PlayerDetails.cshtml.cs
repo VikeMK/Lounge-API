@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Lounge.Web.Pages
 {
-    [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "season" })]
     public class PlayerDetailsPageModel : PageModel
     {
         private readonly ILoungeSettingsService _loungeSettingsService;

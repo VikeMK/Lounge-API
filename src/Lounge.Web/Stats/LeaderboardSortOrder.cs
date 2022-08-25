@@ -15,10 +15,10 @@ namespace Lounge.Web.Stats
         [Display(Name = "Win Rate")]
         WinRate,
 
-        [Display(Name = "Win\u00a0-\u00a0Loss (Last\u00a010)")]
+        [Display(Name = "Win - Loss (Last 10)")]
         WinLossLast10, 
 
-        [Display(Name = "Gain/Loss (Last\u00a010)")]
+        [Display(Name = "Gain/Loss (Last 10)")]
         GainLast10,
 
         [Display(Name = "Events Played")]

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Lounge.Web.Pages
 {
-    [ResponseCache(Duration = 180, VaryByQueryKeys = new string[] { "season" })]
     public class RecordsPageModel : PageModel
     {
         private readonly IRecordsCache _recordsCache;

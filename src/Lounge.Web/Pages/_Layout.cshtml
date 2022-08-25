@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -11,24 +13,27 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-page="Leaderboard">MK8DX 150cc Lounge</a>
+                <div style="display: flex">
+                    @await Html.PartialAsync("_SelectLanguagePartial")
+                    <a class="navbar-brand" asp-page="Leaderboard">@Localizer["MK8DX 150cc Lounge"]</a>
+                </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                            aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="mainNavbar">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="Leaderboard">Leaderboard</a>
+                            <a class="nav-link" asp-page="Leaderboard">@Localizer["Leaderboard"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="Records">Records</a>
+                            <a class="nav-link" asp-page="Records">@Localizer["Records"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="https://www.mariokartcentral.com/forums/index.php?link-forums/mk8dx-150cc-lounge-discord-server.250/">Discord Invite</a>
+                            <a class="nav-link" href="https://www.mariokartcentral.com/forums/index.php?link-forums/mk8dx-150cc-lounge-discord-server.250/">@Localizer["Discord Invite"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="https://www.mariokartcentral.com/forums/index.php?threads/s5-mk8dx-150cc-lounge-rules-updated-8-25-21.4716/">Rules</a>
+                            <a class="nav-link" asp-page="Rules">@Localizer["Rules"]</a>
                         </li>
                     </ul>
                 </div>
@@ -43,7 +48,7 @@
 
     <footer class="border-top footer bg-dark">
         <div class="container">
-            &copy; 2021 - Lounge
+            &copy; 2022 - Lounge
         </div>
     </footer>
     <script src="~/lib/jquery/jquery.min.js"></script>
