@@ -6,7 +6,7 @@
 @inject IViewLocalizer Localizer
 @model Lounge.Web.Pages.RecordsPageModel
 @{
-    ViewData["Title"] = $"{Localizer["Records"]} - {Localizer["Season"]} {Model.Season}";
+    ViewData["Title"] = $"{Localizer.GetString("Records")} - {Localizer.GetString("Season")} {Model.Season}";
     Layout = "_Layout";
     var resultsToShow = 5;
 }

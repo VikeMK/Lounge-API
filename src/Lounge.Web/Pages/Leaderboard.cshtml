@@ -9,7 +9,7 @@
 
 @model Lounge.Web.Pages.LeaderboardPageModel
 @{
-	ViewData["Title"] = $"{Localizer["Leaderboard"]} - {Localizer["Season"]} {Model.Season}";
+    ViewData["Title"] = $"{Localizer.GetString("Leaderboard")} - {Localizer.GetString("Season")} {Model.Season}";
     Layout = "_Layout";
 }
 

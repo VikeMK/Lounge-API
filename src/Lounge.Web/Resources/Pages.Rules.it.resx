@@ -420,6 +420,9 @@
   <data name="Room hosts are responsible for taking screenshots of results." xml:space="preserve">
     <value>Room hosts are responsible for taking screenshots of results.</value>
   </data>
+  <data name="Rules" xml:space="preserve">
+    <value>Regole</value>
+  </data>
   <data name="Should players request the room to be reopened if opened early, the host must do so or else receive 1 strike." xml:space="preserve">
     <value>Should players request the room to be reopened if opened early, the host must do so or else receive 1 strike.</value>
   </data>

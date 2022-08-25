@@ -53,7 +53,7 @@
     value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
-            
+
     mimetype: application/x-microsoft.net.object.bytearray.base64
     value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
@@ -419,6 +419,9 @@
   </data>
   <data name="Room hosts are responsible for taking screenshots of results." xml:space="preserve">
     <value>ホストは結果のスクリーンショットを取る必要があります。</value>
+  </data>
+  <data name="Rules" xml:space="preserve">
+    <value>ルール</value>
   </data>
   <data name="Should players request the room to be reopened if opened early, the host must do so or else receive 1 strike." xml:space="preserve">
     <value>その際、プレイヤーから部屋を再開設するよう要求された場合は、ホストはこの指示に従い、再開設をする必要があります。再開設しない場合 strikeが科せられます。</value>

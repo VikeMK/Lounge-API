@@ -4,7 +4,7 @@
 @inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = $"{Localizer["Table"]} (ID: {Model.Data.Id}) - {Localizer["Season"]} {Model.Data.Season}";
+    ViewData["Title"] = $"{Localizer.GetString("Table")} (ID: {Model.Data.Id}) - {Localizer.GetString("Season")} {Model.Data.Season}";
     Layout = "_Layout";
 }
 <div>

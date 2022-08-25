@@ -421,6 +421,9 @@
   <data name="Room hosts are responsible for taking screenshots of results." xml:space="preserve">
     <value>L'host est responsable de prendre les captures d'écran des résultats.</value>
   </data>
+  <data name="Rules" xml:space="preserve">
+    <value>Règles</value>
+  </data>
   <data name="Should players request the room to be reopened if opened early, the host must do so or else receive 1 strike." xml:space="preserve">
     <value>Si un joueur demande à l'host de réouvrir la salle, alors celui-ci devra le faire ou il recevra un strike.</value>
   </data>

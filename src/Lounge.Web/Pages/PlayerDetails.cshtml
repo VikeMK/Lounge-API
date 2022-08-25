@@ -7,7 +7,7 @@
 @inject IViewLocalizer Localizer
 @model Lounge.Web.Pages.PlayerDetailsPageModel
 @{
-    ViewData["Title"] = $"{Model.Data.Name} - {Localizer["Season"]} {Model.Data.Season}";
+    ViewData["Title"] = $"{Model.Data.Name} - {Localizer.GetString("Season")} {Model.Data.Season}";
     Layout = "_Layout";
 }
 
