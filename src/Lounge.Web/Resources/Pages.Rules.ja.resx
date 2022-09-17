@@ -232,7 +232,7 @@
     <value>24時間以内にスクリーンショットまたは集計表が投稿されなかった場合、ホストは -100MMR + strikeを受けます。</value>
   </data>
   <data name="If any player is disqualified from an event for any reason such as, but not limited to, throwing, teaming, or lap-trolling (on any track except Baby Park, in formats other than 6v6 SQ), they will receive a -100 MMR strike." xml:space="preserve">
-    <value>throwing, teaming, lap-trolling (ベビーパーク及び6v6SQは除く）などの理由で模擬を失格になったプレイヤーは -100MMR + strikeを受けます。</value>
+    <value>throwing, teaming, lap-trolling (ベビーパーク及び6v6SQは除く）を行ったプレイヤーは -100MMR + strikeを受けます。</value>
   </data>
   <data name="If at least three players experience delayed items in at least two different item sets during a race with video proof if requested, the race does not count." xml:space="preserve">
     <value>レース中に少なくとも3人のプレイヤーが、少なくとも2つの異なるアイテムボックスにおいて、ラグによりアイテムが決まらない場合、そのレースは無効となります。動画の提出を求められた際には提出する必要があります。</value>
@@ -268,13 +268,13 @@
     <value>2分待たずに部屋を開設した場合、フレンドコードの投稿から7分後に遅刻のペナルティ(IV. b.)が発生します。</value>
   </data>
   <data name="If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike." xml:space="preserve">
-    <value>その際、プレイヤーから部屋を再開設するよう要求された場合は、ホストはこの指示に従い、再開設をする必要があります。再開設しない場合 strikeが科せられます。</value>
+    <value>投票終了から10分経過後にホストがいない場合、参加者全員に -50MMR + strikeが課せられます。</value>
   </data>
   <data name="If this happens to occur during an event, please attempt to capture video proof of the individual who may be causing the lag in the room." xml:space="preserve">
     <value>もしレース中にその模擬を続行不可能にする程度のラグを引き起こしている可能性のあるプレイヤーを見つけた場合、その動画等の証拠を残してください。</value>
   </data>
   <data name="If you already have a rank and would like to change your name, you can request nickname changes by creating a support ticket." xml:space="preserve">
-    <value>既に名前が登録されている場合は、ラウンジ内の #support チャンネルからサポートチケットを発行し、ニックネームの変更を申請してください。</value>
+    <value>既に名前が登録されている場合は、ラウンジ内の #name-change-request チャンネルからニックネームの変更を申請してください。</value>
   </data>
   <data name="If you are unhappy with your placement or feel that you should've been placed higher or lower, then prove it by playing matches." xml:space="preserve">
     <value>ランクに対して納得がいかない場合や、そのランクが高すぎたり低すぎると感じた場合は模擬を行って証明してください。</value>
@@ -286,7 +286,7 @@
     <value>Reporterになりたい場合は、 #self-roles チャンネルを確認してください。</value>
   </data>
   <data name="If you would like a specific nickname for the scoreboard and Discord server, you can ask for that too." xml:space="preserve">
-    <value>サーバーやリーダーボードにおいて使用したい名前がある場合は、スタッフまでご連絡ください。</value>
+    <value>登録時にサーバーやリーダーボードにおいて使用したい名前がある場合は、スタッフまでご連絡ください。</value>
   </data>
   <data name="In most cases, if your name can be used as a Twitter username, you can use it in lounge." xml:space="preserve">
     <value>原則twitterのユーザー名に使用できる名前はラウンジでも使用できます。</value>
@@ -322,13 +322,13 @@
     <value>MKCentral Staffは常に潜伏アカウントが作成されていないかを確認するため、潜伏行為をしないことを強くお勧めします。</value>
   </data>
   <data name="Nicknames may only contain letters (at least one), numbers, spaces, periods/full stops, hyphens or underscores." xml:space="preserve">
-    <value>ニックネームには、文字（少なくとも1つ）、数字、スペース、ピリオド、ハイフン、アンダーバーを使用できます。また、ニックネームに記号やに日本語は使用できません。</value>
+    <value>ニックネームには、アルファベット（少なくとも1つ）、数字、スペース、ピリオド、ハイフン、アンダーバーを使用できます。また、ニックネームに記号やに日本語は使用できません。</value>
   </data>
   <data name="Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room." xml:space="preserve">
     <value>ホストはフレンドコードを投稿してから2分待ち、その間に送られてきたフレンドコードを全て承認してから部屋を開く必要があります。</value>
   </data>
   <data name="Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule III. i.)." xml:space="preserve">
-    <value>部屋が開設されたら、プレイヤーは5分以内に参加する必要があります。（ただし、ルール III. i. の場合を除く）</value>
+    <value>部屋が開設されたら、プレイヤーは5分以内に参加する必要があります。（ただし、ルール III. h. の場合を除く）</value>
   </data>
   <data name="Once a staff member has seen your account, you will be placed into one of the following ranks:" xml:space="preserve">
     <value>プレイヤーは以下のMMRをもとにランク付けされます。</value>
@@ -364,7 +364,7 @@
     <value>プレイヤーは攻撃的、他人を侮辱するもの、不適切な言葉を含む、または法律に違反するような単語をゲーム内の名前に使用することができません。</value>
   </data>
   <data name="Players must use their &lt;b&gt;Lounge Nickname&lt;/b&gt; (or a shortened, legible version) in FFA format events." xml:space="preserve">
-    <value>模擬の形式がFFA（個人形式）の場合は必ず&lt;b&gt;ラウンジ名&lt;/b&gt;（またはわかりやすい短縮名）を使用しなければなりません。</value>
+    <value>模擬の形式がFFA（個人形式）の場合は必ず&lt;b&gt;ラウンジ名&lt;/b&gt;（またはローマ字によるわかりやすい短縮名、ラウンジ名が10文字以内の場合、省略しないことが望ましいです。）を使用しなければなりません。</value>
   </data>
   <data name="Players need to be in the room in 5 minutes. (except rule III. i.)." xml:space="preserve">
     <value>プレイヤーは5分以内に部屋にいる必要があります(rule III. i,を除く）。</value>
@@ -406,7 +406,7 @@
     <value>レース開始後に補欠として参加した場合、以下のルールが適応されます。</value>
   </data>
   <data name="Players who use a different name will receive -50 MMR and a strike." xml:space="preserve">
-    <value>使用しない場合は -50MMR + strikeとなります。</value>
+    <value>使用しない場合は -50MMR + strikeとなります。日本語の使用や極端な省略によりプレイヤーの区別ができない場合も同様にペナルティを受けます。</value>
   </data>
   <data name="Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>このルールに違反した場合、-50MMR + strikeを受けます。</value>
@@ -481,7 +481,7 @@
     <value>不適切な言葉や、他のMKCユーザーになりすますような名前を使用することができません。</value>
   </data>
   <data name="They must start and end with only letters or numbers, and must be between 2-16 characters." xml:space="preserve">
-    <value>先頭及び末尾は文字または数字である必要があり、2から16文字である必要があります。</value>
+    <value>先頭及び末尾はアルファベットまたは数字である必要があり、2から16文字である必要があります。</value>
   </data>
   <data name="This role is essentially a ban from SQ for the duration that the player has the role." xml:space="preserve">
     <value>この役職がついている期間はSquad Queueの参加が不可能となります。</value>
