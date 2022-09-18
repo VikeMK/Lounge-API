@@ -91,10 +91,11 @@ namespace Lounge.Web.Models.ViewModels
         public string Rank => RankData.Name;
 
         [Display(Name = "Forum Link")]
-        public string ForumLink => 
-            RegistryId is int registryId
-                ? $"https://www.mariokartcentral.com/mkc/registry/players/{registryId}"
-                : $"https://www.mariokartcentral.com/forums/index.php?members/{MkcId}/";
+        public string ForumLink => $"https://www.mariokartcentral.com/forums/index.php?members/{MkcId}/";
+
+        [Display(Name = "Registry Link")]
+        public string? RegistryLink =>
+            RegistryId != null ? $"https://www.mariokartcentral.com/mkc/registry/players/{RegistryId}" : null;
 
         [JsonIgnore]
         public IReadOnlyList<int> ValidSeasons { get; set; }

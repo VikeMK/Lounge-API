@@ -183,6 +183,9 @@
   <data name="Rank" xml:space="preserve">
     <value>Rank</value>
   </data>
+  <data name="Registry Link" xml:space="preserve">
+    <value>Registry Link</value>
+  </data>
   <data name="Season" xml:space="preserve">
     <value>Season</value>
   </data>

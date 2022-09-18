@@ -126,8 +126,8 @@
   <data name="3rd offense: 28 day mute" xml:space="preserve">
     <value>3rd offense: 28 day mute</value>
   </data>
-  <data name="A list of players can be found using /l." xml:space="preserve">
-    <value>A list of players can be found using /l.</value>
+  <data name="A list of players can be found using &lt;code&gt;/l&lt;/code&gt;." xml:space="preserve">
+    <value>A list of players can be found using &lt;code&gt;/l&lt;/code&gt;.</value>
   </data>
   <data name="A match has started once the first race has been completed, with the race results being shown." xml:space="preserve">
     <value>A match has started once the first race has been completed, with the race results being shown.</value>
@@ -345,20 +345,20 @@
   <data name="Only gain MMR on the winning team if they play 4 or more races in said event." xml:space="preserve">
     <value>Only gain MMR on the winning team if they play 4 or more races in said event.</value>
   </data>
-  <data name="Players are allowed to type /c in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
-    <value>Players are allowed to type /c in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.).</value>
+  <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
+    <value>Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.).</value>
   </data>
-  <data name="Players are not allowed to type /c while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Players are not allowed to type /c while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike.</value>
+  <data name="Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
+    <value>Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike.</value>
   </data>
   <data name="Players can change their lounge nickname once every 60 days; nicknames cannot be reverted during the 60 day period between changes." xml:space="preserve">
     <value>Players can change their lounge nickname once every 60 days; nicknames cannot be reverted during the 60 day period between changes.</value>
   </data>
-  <data name="Players can queue as a host using the /ch command in MogiBot." xml:space="preserve">
-    <value>Players can queue as a host using the /ch command in MogiBot.</value>
+  <data name="Players can queue as a host using the &lt;code&gt;/ch&lt;/code&gt; command in MogiBot." xml:space="preserve">
+    <value>Players can queue as a host using the &lt;code&gt;/ch&lt;/code&gt; command in MogiBot.</value>
   </data>
-  <data name="Players cannot /d for 15 seconds after typing /c. A /c will automatically expire after 20 minutes have passed." xml:space="preserve">
-    <value>Players cannot /d for 15 seconds after typing /c. A /c will automatically expire after 20 minutes have passed.</value>
+  <data name="Players cannot &lt;code&gt;/d&lt;/code&gt; for 15 seconds after typing &lt;code&gt;/c&lt;/code&gt;. A &lt;code&gt;/c&lt;/code&gt; will automatically expire after 20 minutes have passed." xml:space="preserve">
+    <value>Players cannot &lt;code&gt;/d&lt;/code&gt; for 15 seconds after typing &lt;code&gt;/c&lt;/code&gt;. A &lt;code&gt;/c&lt;/code&gt; will automatically expire after 20 minutes have passed.</value>
   </data>
   <data name="Players may not use an in-game name that is offensive, abusive towards others, contains inappropriate language, or violates any laws." xml:space="preserve">
     <value>Players may not use an in-game name that is offensive, abusive towards others, contains inappropriate language, or violates any laws.</value>
@@ -501,7 +501,7 @@
   <data name="Use of any offensive names will result in a automatic 1 week mute from lounge, as well as possible punishment by MKCentral Staff." xml:space="preserve">
     <value>Use of any offensive names will result in a automatic 1 week mute from lounge, as well as possible punishment by MKCentral Staff.</value>
   </data>
-  <data name="Using MogiBot, the first twelve players to say /c will play." xml:space="preserve">
-    <value>Using MogiBot, the first twelve players to say /c will play.</value>
+  <data name="Using MogiBot, the first twelve players to say &lt;code&gt;/c&lt;/code&gt; will play." xml:space="preserve">
+    <value>Using MogiBot, the first twelve players to say &lt;code&gt;/c&lt;/code&gt; will play.</value>
   </data>
 </root>

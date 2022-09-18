@@ -56,7 +56,7 @@ namespace Lounge.Web.Stats
 
                 var tableScoresByPlayer = dbCache.TableScores.Values
                     .SelectMany(s => s.Values)
-                    .Where(p => dbCache.Tables[p.TableId].Season == season)
+                    .Where(p => dbCache.Tables.TryGetValue(p.TableId, out var table) && table.Season == season)
                     .GroupBy(p => p.PlayerId)
                     .ToDictionary(p => p.Key, p => p.Select(x => x.TableId).ToList());
 

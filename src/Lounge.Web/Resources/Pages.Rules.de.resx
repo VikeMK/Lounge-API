@@ -126,8 +126,8 @@
   <data name="3rd offense: 28 day mute" xml:space="preserve">
     <value>3. Vergehen: 28-tägiger Mute</value>
   </data>
-  <data name="A list of players can be found using /l." xml:space="preserve">
-    <value>Eine Liste von Spielern kann mithilfe von /l aufgerufen werden.</value>
+  <data name="A list of players can be found using &lt;code&gt;/l&lt;/code&gt;." xml:space="preserve">
+    <value>Eine Liste von Spielern kann mithilfe von &lt;code&gt;/l&lt;/code&gt; aufgerufen werden.</value>
   </data>
   <data name="A match has started once the first race has been completed, with the race results being shown." xml:space="preserve">
     <value>Ein Match gilt als "gestarted", sobald das erste Rennen abgeschlossen ist und die Ergebnisse erschienen sind.</value>
@@ -345,20 +345,20 @@
   <data name="Only gain MMR on the winning team if they play 4 or more races in said event." xml:space="preserve">
     <value>Erhalten nur MMR im Gewinnerteam wenn sie 4 oder mehr Rennen im betroffenen Event gespielt haben.</value>
   </data>
-  <data name="Players are allowed to type /c in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
-    <value>Es ist Spielern gestattet, /c in einem anderen Tier zu schreiben als in dem Tier, in welchem sie gerade spielen; jedoch können sie trotzdem Strafen gemäß Regel IV. b., IV. c. erhalten, falls sie dem neuen Raum zu spät beitreten.</value>
+  <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
+    <value>Es ist Spielern gestattet, &lt;code&gt;/c&lt;/code&gt; in einem anderen Tier zu schreiben als in dem Tier, in welchem sie gerade spielen; jedoch können sie trotzdem Strafen gemäß Regel IV. b., IV. c. erhalten, falls sie dem neuen Raum zu spät beitreten.</value>
   </data>
-  <data name="Players are not allowed to type /c while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Spieler dürfen nicht /c schreiben, wenn sie aktuell ein Match im selben Tier spielen. Verstoß gegen diese Regel gibt eine Strafe von -50 MMR und einen Strike.</value>
+  <data name="Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
+    <value>Spieler dürfen nicht &lt;code&gt;/c&lt;/code&gt; schreiben, wenn sie aktuell ein Match im selben Tier spielen. Verstoß gegen diese Regel gibt eine Strafe von -50 MMR und einen Strike.</value>
   </data>
   <data name="Players can change their lounge nickname once every 60 days; nicknames cannot be reverted during the 60 day period between changes." xml:space="preserve">
     <value>Spieler dürfen ihren Loungenamen einmal alle 60 Tage ändern; der Name kann während der 60-tägigen Periode zwischen Namensänderungen nicht zurückgesetzt werden.</value>
   </data>
-  <data name="Players can queue as a host using the /ch command in MogiBot." xml:space="preserve">
-    <value>Spieler können dem Lineup als Host beitreten, indem sie den /ch Command vom MogiBot verwenden.</value>
+  <data name="Players can queue as a host using the &lt;code&gt;/ch&lt;/code&gt; command in MogiBot." xml:space="preserve">
+    <value>Spieler können dem Lineup als Host beitreten, indem sie den &lt;code&gt;/ch&lt;/code&gt; Command vom MogiBot verwenden.</value>
   </data>
-  <data name="Players cannot /d for 15 seconds after typing /c. A /c will automatically expire after 20 minutes have passed." xml:space="preserve">
-    <value>Spieler können den /d Command 15 Sekunden lang nachdem sie /c genutzt haben, nicht verwenden. Sollte ein Spieler in einem Zeitraum von 20 Minuten nach dem Beitreten eines Lineups mit /c keine weitere Nachricht im Chat schreiben, und es versammelt sich kein volles Lineup, wird der Spieler nach einer Erinnerung automatisch entfernt.</value>
+  <data name="Players cannot &lt;code&gt;/d&lt;/code&gt; for 15 seconds after typing &lt;code&gt;/c&lt;/code&gt;. A &lt;code&gt;/c&lt;/code&gt; will automatically expire after 20 minutes have passed." xml:space="preserve">
+    <value>Spieler können den &lt;code&gt;/d&lt;/code&gt; Command 15 Sekunden lang nachdem sie &lt;code&gt;/c&lt;/code&gt; genutzt haben, nicht verwenden. Sollte ein Spieler in einem Zeitraum von 20 Minuten nach dem Beitreten eines Lineups mit &lt;code&gt;/c&lt;/code&gt; keine weitere Nachricht im Chat schreiben, und es versammelt sich kein volles Lineup, wird der Spieler nach einer Erinnerung automatisch entfernt.</value>
   </data>
   <data name="Players may not use an in-game name that is offensive, abusive towards others, contains inappropriate language, or violates any laws." xml:space="preserve">
     <value>Es dürfen keine Ingamenamen genutzt werden, welche beleidigend oder abfällig gegenüber anderen sind, unangebrachte Sprache beinhalten oder gegen jegliche Gesetze verstoßen.</value>
@@ -458,7 +458,7 @@
       spielen müssen, verlieren weniger MMR proportional zur Anzahl der Rennen in Unterzahl; beispielsweise verlieren die Teammates eines Spielers, welcher 4 Rennen verpasst hat, lediglich 8/12 der MMR, oder 6/12 wenn ihr Teammate 6 Rennen verpasst hat.</value>
   </data>
   <data name="The first twelve players who originally said can are allowed to vote." xml:space="preserve">
-    <value>Die ersten 12 Spieler, welche mit /c dem Lineup beigetreten sind, dürfen über das Format abstimmen.</value>
+    <value>Die ersten 12 Spieler, welche mit &lt;code&gt;/c&lt;/code&gt; dem Lineup beigetreten sind, dürfen über das Format abstimmen.</value>
   </data>
   <data name="The mogi should not be started with less than 12 players under any condition." xml:space="preserve">
     <value>Das Mogi sollte keinesfalls mit weniger als 12 Spielern gestartet werden.</value>
@@ -502,7 +502,7 @@
   <data name="Use of any offensive names will result in a automatic 1 week mute from lounge, as well as possible punishment by MKCentral Staff." xml:space="preserve">
     <value>Nutzung von beleidigenden Namen resultiert automatisch in einem einwöchigen Mute in der Lounge; der Staff behält sich darüber hinaus eine Bestrafung auf MKCentral vor.</value>
   </data>
-  <data name="Using MogiBot, the first twelve players to say /c will play." xml:space="preserve">
-    <value>Unter Nutzung des MogiBots nehmen die ersten zwölf Spieler, welche /c schreiben, am Match teil.</value>
+  <data name="Using MogiBot, the first twelve players to say &lt;code&gt;/c&lt;/code&gt; will play." xml:space="preserve">
+    <value>Unter Nutzung des MogiBots nehmen die ersten zwölf Spieler, welche &lt;code&gt;/c&lt;/code&gt; schreiben, am Match teil.</value>
   </data>
 </root>

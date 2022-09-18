@@ -102,8 +102,16 @@
             <dd>@Html.DisplayFor(model => model.Data.PartnerAverage)</dd>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.ForumLink)]</dt>
-            <dd><a href="@Model.Data.ForumLink">Link</a></dd>
+            @if(Model.Data.RegistryLink != null)
+            {
+                <dt>@Localizer[Html.DisplayNameFor(model => model.Data.RegistryLink)]</dt>
+                <dd><a href="@Model.Data.RegistryLink">Link</a></dd>
+            }
+            else
+            {
+                <dt>@Localizer[Html.DisplayNameFor(model => model.Data.ForumLink)]</dt>
+                <dd><a href="@Model.Data.ForumLink">Link</a></dd>
+            }
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Localizer[Html.DisplayNameFor(model => model.Data.CountryName)]</dt>

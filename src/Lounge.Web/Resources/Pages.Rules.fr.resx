@@ -126,8 +126,8 @@
   <data name="3rd offense: 28 day mute" xml:space="preserve">
     <value>3ème strike: mute de 28 jours</value>
   </data>
-  <data name="A list of players can be found using /l." xml:space="preserve">
-    <value>Vous pouvez trouver la liste des joueurs en tapant /l.​</value>
+  <data name="A list of players can be found using &lt;code&gt;/l&lt;/code&gt;." xml:space="preserve">
+    <value>Vous pouvez trouver la liste des joueurs en tapant &lt;code&gt;/l&lt;/code&gt;.​</value>
   </data>
   <data name="A match has started once the first race has been completed, with the race results being shown." xml:space="preserve">
     <value>Le match commence à partir du moment où la première course est finie, avec les résultats de la course qui sont apparues.</value>
@@ -154,7 +154,7 @@
     <value>Toute pénalité doit également être indiquée sur le tableau.​</value>
   </data>
   <data name="Any players later than 12th on the list will be subs, given priority by their order on the list." xml:space="preserve">
-    <value>Tout autre joueur disant /c après le 12ème joueur sera mis en sub, l'ordre de priorité dépendant de l'ordre dans la liste.</value>
+    <value>Tout autre joueur disant &lt;code&gt;/c&lt;/code&gt; après le 12ème joueur sera mis en sub, l'ordre de priorité dépendant de l'ordre dans la liste.</value>
   </data>
   <data name="Anyone who is not part of the original 12 in the line-up is not permitted to vote." xml:space="preserve">
     <value>Tous ceux qui ne sont pas dans la liste des 12 joueurs ne sont pas autorisés à voter.</value>
@@ -346,20 +346,20 @@
   <data name="Only gain MMR on the winning team if they play 4 or more races in said event." xml:space="preserve">
     <value>Gagnent du MMR s'ils gagnent et qu'ils ont joué au moins 4 courses.</value>
   </data>
-  <data name="Players are allowed to type /c in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
-    <value>Les joueurs sont autorisés à /c dans un tier différent de celui dont ils sont déjà, toutefois s'ils arrivent en retard ils peuvent toujours recevoir une pénalité (rule IV. b., IV. c.).</value>
+  <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
+    <value>Les joueurs sont autorisés à &lt;code&gt;/c&lt;/code&gt; dans un tier différent de celui dont ils sont déjà, toutefois s'ils arrivent en retard ils peuvent toujours recevoir une pénalité (rule IV. b., IV. c.).</value>
   </data>
-  <data name="Players are not allowed to type /c while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Les joueurs participant déja dans un mogi ne peuvent pas dire /c. Les joueurs ne respectant pas cette règle recevront un strike ainsi qu'une pénalité de -50 MMR.</value>
+  <data name="Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
+    <value>Les joueurs participant déja dans un mogi ne peuvent pas dire &lt;code&gt;/c&lt;/code&gt;. Les joueurs ne respectant pas cette règle recevront un strike ainsi qu'une pénalité de -50 MMR.</value>
   </data>
   <data name="Players can change their lounge nickname once every 60 days; nicknames cannot be reverted during the 60 day period between changes." xml:space="preserve">
     <value>Vous ne pourrez changer de pseudo qu'une seule fois tous les 60 jours. Vous ne pourrez pas revenir à votre ancien pseudo avant les 60 jours.</value>
   </data>
-  <data name="Players can queue as a host using the /ch command in MogiBot." xml:space="preserve">
-    <value>Les joueurs peuvent dire can en lounge en tant qu'host avec la commande /ch du MogiBot.</value>
+  <data name="Players can queue as a host using the &lt;code&gt;/ch&lt;/code&gt; command in MogiBot." xml:space="preserve">
+    <value>Les joueurs peuvent dire can en lounge en tant qu'host avec la commande &lt;code&gt;/ch&lt;/code&gt; du MogiBot.</value>
   </data>
-  <data name="Players cannot /d for 15 seconds after typing /c. A /c will automatically expire after 20 minutes have passed." xml:space="preserve">
-    <value>Vous pouvez utiliser la commande /c seulement 15 secondes après avoir utilisé /c. Un /c dure 20 minutes.</value>
+  <data name="Players cannot &lt;code&gt;/d&lt;/code&gt; for 15 seconds after typing &lt;code&gt;/c&lt;/code&gt;. A &lt;code&gt;/c&lt;/code&gt; will automatically expire after 20 minutes have passed." xml:space="preserve">
+    <value>Vous pouvez utiliser la commande &lt;code&gt;/c&lt;/code&gt; seulement 15 secondes après avoir utilisé &lt;code&gt;/c&lt;/code&gt;. Un &lt;code&gt;/c&lt;/code&gt; dure 20 minutes.</value>
   </data>
   <data name="Players may not use an in-game name that is offensive, abusive towards others, contains inappropriate language, or violates any laws." xml:space="preserve">
     <value>Les joueurs ne doivent pas utiliser leur pseudo en jeu de façon offensante, abusif envers les autres, contenant un langage inapproprié ou violant les lois.</value>
@@ -502,7 +502,7 @@
   <data name="Use of any offensive names will result in a automatic 1 week mute from lounge, as well as possible punishment by MKCentral Staff." xml:space="preserve">
     <value>Utiliser un nom offensant engendra un mute d'1 semaine du serveur Lounge, voir une sanction du MKCentral Staff.​</value>
   </data>
-  <data name="Using MogiBot, the first twelve players to say /c will play." xml:space="preserve">
-    <value>En utilisant MogiBot, les 12 premiers joueurs à dire /c joueront.</value>
+  <data name="Using MogiBot, the first twelve players to say &lt;code&gt;/c&lt;/code&gt; will play." xml:space="preserve">
+    <value>En utilisant MogiBot, les 12 premiers joueurs à dire &lt;code&gt;/c&lt;/code&gt; joueront.</value>
   </data>
 </root>
