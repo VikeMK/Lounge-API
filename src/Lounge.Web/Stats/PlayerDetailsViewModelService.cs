@@ -216,6 +216,7 @@ namespace Lounge.Web.Stats
                 PlayerId = player.Id,
                 Name = playerData.Name,
                 MkcId = playerData.MkcId,
+                RegistryId = playerData.RegistryId,
                 CountryCode = playerData.CountryCode,
                 CountryName = playerData.CountryCode == null ? null : _loungeSettingsService.CountryNames.GetValueOrDefault(playerData.CountryCode, null!),
                 SwitchFc = playerData.SwitchFc,

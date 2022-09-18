@@ -22,7 +22,18 @@ namespace Lounge.Web.Stats
         public async Task UpdateRegistryDataAsync()
         {
             var registryData = await _api.GetAllPlayersRegistryDataAsync();
-            var registryDataLookup = registryData.ToDictionary(r => r.ForumId);
+            var registryDataLookup = new Dictionary<int, SimplePlayerRegistryData>();
+            foreach (var player in registryData)
+            {
+                if (registryDataLookup.TryGetValue(player.ForumId, out var existingPlayer))
+                {
+                    Console.WriteLine($"Dupliate Forum ID found {player.ForumId}: Registry ID {player.RegistryId} and {existingPlayer.RegistryId}");
+                }
+                else
+                {
+                    registryDataLookup[player.ForumId] = player;
+                }
+            }
 
             var players = await _context.Players.ToListAsync();
 

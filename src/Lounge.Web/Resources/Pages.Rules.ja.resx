@@ -126,8 +126,8 @@
   <data name="3rd offense: 28 day mute" xml:space="preserve">
     <value>3回目の違反: 28日間のミュート</value>
   </data>
-  <data name="A list of players can be found using &quot;!list&quot;." xml:space="preserve">
-    <value>プレイヤーは !l コマンドを使用し、模擬に挙手しているかを確認できます。</value>
+  <data name="A list of players can be found using /l." xml:space="preserve">
+    <value>プレイヤーは \l コマンドを使用し、模擬に挙手しているかを確認できます。</value>
   </data>
   <data name="A match has started once the first race has been completed, with the race results being shown." xml:space="preserve">
     <value>模擬は最初のレースの結果が表示された時点で開始とみなされます。</value>
@@ -259,7 +259,7 @@
     <value>既定の開設時間後にホストが決まった場合は、ホストは2分待ってから部屋を開く必要があります。</value>
   </data>
   <data name="If the player is randomly chosen to be a host, they must post their friend code within 3 minutes of the poll ending." xml:space="preserve">
-    <value>!chを使用して挙手したプレイヤーがホストとして選ばれた場合は、そのプレイヤーは投票終了後3分以内にフレンドコードを投稿する必要があります。</value>
+    <value>/chを使用して挙手したプレイヤーがホストとして選ばれた場合は、そのプレイヤーは投票終了後3分以内にフレンドコードを投稿する必要があります。</value>
   </data>
   <data name="If the proof is convincing, and if the majority of the room agrees on who is causing the lag, staff have the right to punish the individual for a certain amount of time, or warn them to fix their connection before playing again." xml:space="preserve">
     <value>証拠となる動画が客観的に見て説得力があり、その模擬参加者の大部分がそれについて合意した場合、ラウンジスタッフはその個人に対し、一定期間罰則を与えるまたは、次回の模擬までにそれを修正するよう警告する権利を有します。</value>
@@ -345,20 +345,20 @@
   <data name="Only gain MMR on the winning team if they play 4 or more races in said event." xml:space="preserve">
     <value>勝った際には4レース以上参加していた場合にのみMMRを獲得できます。</value>
   </data>
-  <data name="Players are allowed to type &quot;!c&quot; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
+  <data name="Players are allowed to type /c in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
     <value>プレイヤーは模擬参加中であっても、異なるTierであれば挙手することができます。ただし、次の模擬に間に合わなかった場合はペナルティが科せられます(ルール IV. b., IV. c.).。</value>
   </data>
-  <data name="Players are not allowed to type &quot;!c&quot; while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
+  <data name="Players are not allowed to type /c while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>模擬参加中は同じTierの模擬に挙手することができません。このルールに違反した場合、-50MMR + strikeを受けます。</value>
   </data>
   <data name="Players can change their lounge nickname once every 60 days; nicknames cannot be reverted during the 60 day period between changes." xml:space="preserve">
     <value>ニックネームは60日に1度変更可能です。変更後60日間はニックネームをもとに戻すことも、他のものにすることもできません。</value>
   </data>
-  <data name="Players can queue as a host using the !ch command in MogiBot." xml:space="preserve">
-    <value>プレイヤーはMogibotの !ch コマンドを使用することで、ホストとして挙手することができます。</value>
+  <data name="Players can queue as a host using the /ch command in MogiBot." xml:space="preserve">
+    <value>プレイヤーはMogibotの /ch コマンドを使用することで、ホストとして挙手することができます。</value>
   </data>
-  <data name="Players cannot !d for 15 seconds after typing !c/!can. A &quot;!c/can&quot; will automatically expire after 20 minutes have passed." xml:space="preserve">
-    <value>!c, !canは15秒間は取り下げることはできません。また!c, !canは20分が経過した場合自動で取り下げられます。</value>
+  <data name="Players cannot /d for 15 seconds after typing /c. A /c will automatically expire after 20 minutes have passed." xml:space="preserve">
+    <value>/cは15秒間は取り下げることはできません。また/c, /cは20分が経過した場合自動で取り下げられます。</value>
   </data>
   <data name="Players may not use an in-game name that is offensive, abusive towards others, contains inappropriate language, or violates any laws." xml:space="preserve">
     <value>プレイヤーは攻撃的、他人を侮辱するもの、不適切な言葉を含む、または法律に違反するような単語をゲーム内の名前に使用することができません。</value>
@@ -501,7 +501,7 @@
   <data name="Use of any offensive names will result in a automatic 1 week mute from lounge, as well as possible punishment by MKCentral Staff." xml:space="preserve">
     <value>そのような名前を使用した場合、ラウンジから1週間ミュートされ、MKCentral Staffから罰則が科せられる可能性があります。</value>
   </data>
-  <data name="Using MogiBot, the first twelve players to say &quot;!can&quot; or &quot;!c&quot; will play." xml:space="preserve">
-    <value>Mogibotを使い、挙手をします。"!c"または"!can"で挙手が出来ます。</value>
+  <data name="Using MogiBot, the first twelve players to say /c will play." xml:space="preserve">
+    <value>Mogibotを使い、挙手をします。/cまたは/cで挙手が出来ます。</value>
   </data>
 </root>

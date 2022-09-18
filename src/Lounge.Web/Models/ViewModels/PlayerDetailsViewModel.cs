@@ -13,6 +13,8 @@ namespace Lounge.Web.Models.ViewModels
 
         public int MkcId { get; init; }
 
+        public int? RegistryId { get; init; }
+
         public string? CountryCode { get; init; }
 
         [Display(Name = "Country")]
@@ -89,7 +91,10 @@ namespace Lounge.Web.Models.ViewModels
         public string Rank => RankData.Name;
 
         [Display(Name = "Forum Link")]
-        public string ForumLink => $"https://www.mariokartcentral.com/forums/index.php?members/{MkcId}/";
+        public string ForumLink => 
+            RegistryId is int registryId
+                ? $"https://www.mariokartcentral.com/mkc/registry/players/{registryId}"
+                : $"https://www.mariokartcentral.com/forums/index.php?members/{MkcId}/";
 
         [JsonIgnore]
         public IReadOnlyList<int> ValidSeasons { get; set; }
