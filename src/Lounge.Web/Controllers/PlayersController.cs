@@ -46,7 +46,7 @@ namespace Lounge.Web.Controllers
         {
             season ??= _loungeSettingsService.CurrentSeason;
 
-            Player player;
+            Player? player;
             if (id is not null)
             {
                 player = await GetPlayerByIdAsync(id.Value);
@@ -601,19 +601,19 @@ namespace Lounge.Web.Controllers
             return new NameChangeListViewModel.Player(player.Id, player.DiscordId, player.Name, newName!, nameChangeRequestedOn.Value, messageId);
         }
 
-        private Task<Player> GetPlayerByIdAsync(int id) =>
+        private Task<Player?> GetPlayerByIdAsync(int id) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.Id == id);
 
-        private Task<Player> GetPlayerByNameAsync(string name) =>
+        private Task<Player?> GetPlayerByNameAsync(string name) =>
             _context.Players.Include(p => p.SeasonData).Include(p => p.NameHistory).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
 
-        private Task<Player> GetPlayerByMKCIdAsync(int mkcId) =>
+        private Task<Player?> GetPlayerByMKCIdAsync(int mkcId) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.MKCId == mkcId);
 
-        private Task<Player> GetPlayerByDiscordIdAsync(string discordId) =>
+        private Task<Player?> GetPlayerByDiscordIdAsync(string discordId) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.DiscordId == discordId);
 
-        private Task<Player> GetPlayerByFriendCodeAsync(string fc) =>
+        private Task<Player?> GetPlayerByFriendCodeAsync(string fc) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.SwitchFc == fc);
 
         private PlayerLeaderboardData? GetPlayerStats(int id, int season)

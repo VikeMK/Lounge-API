@@ -15,6 +15,7 @@ namespace Lounge.Web.Utils
                 Id = player.Id,
                 DiscordId = player.DiscordId,
                 MKCId = player.MKCId,
+                RegistryId = player.RegistryId,
                 Name = player.Name,
                 CountryCode = player.CountryCode,
                 SwitchFc = player.SwitchFc,
