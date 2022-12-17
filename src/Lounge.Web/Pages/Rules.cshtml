@@ -18,7 +18,7 @@
             </li>
             <li>
                 @Localizer["If you would like a specific nickname for the scoreboard and Discord server, you can ask for that too."]
-                @Localizer["If you already have a rank and would like to change your name, you can request nickname changes by creating a support ticket."]
+                @Localizer["If you already have a rank and would like to change your name, you can request nickname changes in #name-change-request."]
                 @Localizer["Players can change their lounge nickname once every 60 days; nicknames cannot be reverted during the 60 day period between changes."]
                 <ol type="i">
                     <li>
@@ -67,10 +67,12 @@
                     <li><b>Platinum 2</b>: 9000-9999 MMR</li>
                     <li><b>Sapphire 1</b>: 10000-10999 MMR</li>
                     <li><b>Sapphire 2</b>: 11000-11999 MMR</li>
-                    <li><b>Diamond 1</b>: 12000-12999 MMR</li>
-                    <li><b>Diamond 2</b>: 13000-13999 MMR</li>
-                    <li><b>Master</b>: 14000-14999 MMR</li>
-                    <li><b>Grandmaster</b>: 15000+ MMR</li>
+                    <li><b>Ruby 1</b>: 12000-12999 MMR</li>
+                    <li><b>Ruby 2</b>: 13000-13999 MMR</li>
+                    <li><b>Diamond 1</b>: 14000-14999 MMR</li>
+                    <li><b>Diamond 2</b>: 15000-15999 MMR</li>
+                    <li><b>Master</b>: 16000-16999 MMR</li>
+                    <li><b>Grandmaster</b>: 17000+ MMR</li>
                 </ul>
             </li>
             <li>
@@ -81,18 +83,20 @@
             <li>
                 @Localizer["Depending on your rank, you will see 1-2 channels that you can play matches in, listed below:"]
                 <ul style="list-style-type:none">
-                    <li><b>Tier F</b>: Iron 1 + Iron 2 + Placement</li>
-                    <li><b>Tier EF</b>: Iron 2 + Bronze 1</li>
-                    <li><b>Tier E</b>: Bronze 1 + Bronze 2</li>
-                    <li><b>Tier DE</b>: Bronze 2 + Silver 1</li>
-                    <li><b>Tier D</b>: Silver 1 + Silver 2</li>
-                    <li><b>Tier CD</b>: Silver 2 + Gold 1</li>
-                    <li><b>Tier C</b>: Gold 1 + Gold 2</li>
-                    <li><b>Tier BC</b>: Gold 2 + Platinum 1</li>
-                    <li><b>Tier B</b>: Platinum 1 + Platinum 2</li>
-                    <li><b>Tier AB</b>: Platinum 2 + Sapphire 1</li>
-                    <li><b>Tier A</b>: Sapphire 1+</li>
-                    <li><b>Tier S</b>: Sapphire 2+</li>
+                    <li><b>Tier G</b>: Iron 1 + Iron 2 + Placement</li>
+                    <li><b>Tier FG</b>: Iron 2 + Bronze 1</li>
+                    <li><b>Tier F</b>: Bronze 1 + Bronze 2</li>
+                    <li><b>Tier EF</b>: Bronze 2 + Silver 1</li>
+                    <li><b>Tier E</b>: Silver 1 + Silver 2</li>
+                    <li><b>Tier DE</b>: Silver 2 + Gold 1</li>
+                    <li><b>Tier D</b>: Gold 1 + Gold 2</li>
+                    <li><b>Tier CD</b>: Gold 2 + Platinum 1</li>
+                    <li><b>Tier C</b>: Platinum 1 + Platinum 2</li>
+                    <li><b>Tier BC</b>: Platinum 2 + Sapphire 1</li>
+                    <li><b>Tier B</b>: Sapphire 1 + Sapphire 2</li>
+                    <li><b>Tier AB</b>: Sapphire 2 + Ruby 1</li>
+                    <li><b>Tier A</b>: Ruby 1+</li>
+                    <li><b>Tier S</b>: Ruby 2+</li>
                     <li><b>Tier X</b>: Diamond 1+</li>
                 </ul>
             </li>
@@ -114,10 +118,13 @@
                 @Localizer["A list of players can be found using <code>/l</code>."]
             </li>
             <li>
-                @Localizer["Players are not allowed to type <code>/c</code> while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike."]
+                @Localizer["Players are not allowed to type <code>/c</code> in a tier they are currently playing in until they have crossed the finish line at the end of the 12th race. Players who violate this rule will receive -50 MMR and a strike."]
                 <ol type="i">
                     <li>
                         @Localizer["Players are allowed to type <code>/c</code> in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)."]
+                    </li>
+                    <li>
+                        @Localizer["Players who leave an event before it finishes are not allowed to join a mogi until the event they left finishes the 12th race. Players who violate this rule will receive -50 MMR and a strike."]
                     </li>
                 </ol>
             </li>
@@ -145,9 +152,17 @@
                 </ol>
             </li>
             <li>
-                @Localizer["Players can queue as a host using the <code>/ch</code> command in MogiBot."]
+                @Localizer["Players can queue as a host using the <code>/ch</code> command in MogiBot or the <code>^fc</code> command in Stats Bot."]
                 @Localizer["If the player is randomly chosen to be a host, they must post their friend code within 3 minutes of the poll ending."]
                 @Localizer["Failure to post the friend code or refusal to host will result in 1 strike."]
+                <ol type="i">
+                    <li>
+                        @Localizer["Players who are hostbanned or chat restricted are not allowed to host an event."]
+                    </li>
+                    <li>
+                        @Localizer["Players who violate i. will receive a 3-day mute."]
+                    </li>
+                </ol>
             </li>
             <li>
                 @Localizer["Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room."]
@@ -155,7 +170,11 @@
                 @Localizer["Should players request the room to be reopened if opened early, the host must do so or else receive 1 strike."]
             </li>
             <li>
-                @Localizer["If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike."]
+                @Localizer["If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike excluding hostbanned and chat restricted players."]
+            </li>
+            <li>
+                @Localizer["If your rank role changes during a mogi and you are unable to see the chat of the mogi you are participating in, you can temporarily grant your old rank role to yourself in #temprole-requests."]
+                @Localizer["Players who abuse the temprole system in any way will receive -50 MMR and a strike."]
             </li>
         </ol>
     </li>
@@ -178,7 +197,7 @@
                     <li>
                         @Localizer["In the event that a player disconnects before the first race of a mogi starts, the room must be restarted."]
                         @Localizer["This rule only applies once, if a player disconnects before the first race a second time the room should continue without closing."]
-                        @Localizer["A player should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive 1 strike."]
+                        @Localizer["A player should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive -50MMR and a strike."]
                         @Localizer["If the host does not restart, the first race will not count."]
                     </li>
                 </ol>
@@ -243,10 +262,13 @@
                         @Localizer["Tags at the end of the name must either begin with an uppercase letter, number, or be separated from the rest of the name with a separator such as a space or symbol."]
                     </li>
                     <li>
+                        @Localizer["Player names must not begin with the first character of another team's tag."]
+                    </li>
+                    <li>
                         @Localizer["If not stated otherwise, the tag should start at the beginning of the name by default with regard to (i.)"]
                     </li>
                 </ol>
-                @Localizer["Failure to use same tags in the same team for more than 2 races and abide by any of these guidelines (i～iv) for more than 2 races will result in a -25 MMR penalty."]
+                @Localizer["Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -25 MMR penalty."]
             </li>
             <li>
                 @Localizer["Players that drop from an event before it starts will receive -100 MMR and a strike by default."]
@@ -281,6 +303,7 @@
         <ol type="a">
             <li>
                 @Localizer["If 3 or more players from at least 2 different teams disconnect, the race will not count and the room must be reopened."]
+                @Localizer["Players should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike."]
             </li>
             <li>
                 @Localizer["If a race does not finish due to lag, the race will not be counted and the room will be reopened."]
@@ -388,6 +411,20 @@
                 @Localizer["If the host has been decided after opening time, the host has to wait 2 minutes to open the room."]
                 @Localizer["Players need to be in the room in 5 minutes. (except rule III. i.)."]
                 @Localizer["After 10 minutes, the host can start Mogi even if there are not 12 players in the room."]
+            </li>
+        </ol>
+    </li>
+    <li>
+        <span class="rule-category">@Localizer["Other Notes"]</span>
+        <ol type="a">
+            <li>
+                @Localizer["Chat Restricted, Mute, and Hostban roles are for punishments only and are not available upon request."]
+            </li>
+            <li>
+                @Localizer["There is a possibility that penalties may be more severe at the discretion of Lounge Staff, based on severity and history of behavior."]
+            </li>
+            <li>
+                @Localizer["Lounge Staff will make decisions in the event of unexpected circumstances not listed here."]
             </li>
         </ol>
     </li>
