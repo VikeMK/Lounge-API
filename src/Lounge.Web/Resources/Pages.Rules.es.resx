@@ -186,6 +186,9 @@
   <data name="Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -25 MMR penalty." xml:space="preserve">
     <value>No usar los mismos tags en el mismo equipo durante más de 2 carreras y/o no cumplir las reglas de tags (i～iv) durante más de 2 carreras, supondrá una penalización de -25 MMR.</value>
   </data>
+  <data name="For example, if the host posts their friend code at 9:00 and opens the room at 9:02, players are considered late at 9:08." xml:space="preserve">
+    <value>For example, if the host posts their friend code at 9:00 and opens the room at 9:02, players are considered late at 9:08.</value>
+  </data>
   <data name="For example, the following is allowed:" xml:space="preserve">
     <value>Por ejemplo, se permite lo siguiente:</value>
   </data>
@@ -471,6 +474,9 @@
   <data name="Subs are allowed in Squad Queue events; however, the sub's MMR must follow at least one of these conditions:" xml:space="preserve">
     <value>Se permiten sustitutos en los eventos de Squad Queue; sin embargo, el MMR del sustituto debe seguir al menos una de estas condiciones:</value>
   </data>
+  <data name="Symbols that look similar to letters or numbers are classed as the same and cannot be used if another team has claimed it." xml:space="preserve">
+    <value>Symbols that look similar to letters or numbers are classed as the same and cannot be used if another team has claimed it.</value>
+  </data>
   <data name="Tables must be submitted using the MK8DX bot in the Lounge server." xml:space="preserve">
     <value>Las tablas deben enviarse utilizando el bot MK8DX en el server de Lounge.</value>
   </data>
@@ -515,6 +521,9 @@
   </data>
   <data name="They must start and end with only letters or numbers, and must be between 2-16 characters." xml:space="preserve">
     <value>Deben comenzar y terminar solo con letras o números, y deben tener entre 2 y 16 caracteres.</value>
+  </data>
+  <data name="This does not include repicks from random track selection." xml:space="preserve">
+    <value>This does not include repicks from random track selection.</value>
   </data>
   <data name="This role is essentially a ban from SQ for the duration that the player has the role." xml:space="preserve">
     <value>Este rol supone una prohibición de SQ durante el tiempo que el jugador tiene el rol.</value>

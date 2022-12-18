@@ -186,6 +186,9 @@
   <data name="Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -25 MMR penalty." xml:space="preserve">
     <value>Falls ein Team für mehr als zwei Rennen keinen einheitlichen Tag nutzt oder gegen irgendwelche dieser Richtlinien (i~iv) für mehr als zwei Rennen verstößt, bekommt dieses eine -25 MMR Strafe.</value>
   </data>
+  <data name="For example, if the host posts their friend code at 9:00 and opens the room at 9:02, players are considered late at 9:08." xml:space="preserve">
+    <value>For example, if the host posts their friend code at 9:00 and opens the room at 9:02, players are considered late at 9:08.</value>
+  </data>
   <data name="For example, the following is allowed:" xml:space="preserve">
     <value>Beispielsweise ist das Folgende gestattet:</value>
   </data>
@@ -471,6 +474,9 @@
   <data name="Subs are allowed in Squad Queue events; however, the sub's MMR must follow at least one of these conditions:" xml:space="preserve">
     <value>Substitutes sind erlaubt für Squad Queue Matches; allerdings muss die MMR des Substitutes mindestens einer der folgenden Anforderungen genügen:</value>
   </data>
+  <data name="Symbols that look similar to letters or numbers are classed as the same and cannot be used if another team has claimed it." xml:space="preserve">
+    <value>Symbols that look similar to letters or numbers are classed as the same and cannot be used if another team has claimed it.</value>
+  </data>
   <data name="Tables must be submitted using the MK8DX bot in the Lounge server." xml:space="preserve">
     <value>Tables müssen mithilfe des MK8DX Bots im Lounge Server gepostet werden.</value>
   </data>
@@ -516,6 +522,9 @@
   </data>
   <data name="They must start and end with only letters or numbers, and must be between 2-16 characters." xml:space="preserve">
     <value>Sie müssen mit Buchstaben oder Zahlen beginnen und enden und zwischen 2 und 16 Zeichen lang sein.</value>
+  </data>
+  <data name="This does not include repicks from random track selection." xml:space="preserve">
+    <value>This does not include repicks from random track selection.</value>
   </data>
   <data name="This role is essentially a ban from SQ for the duration that the player has the role." xml:space="preserve">
     <value>Diese Rolle bedeutet einen Ban von jeglichen SQ Events während der Spieler diese Rolle hat.</value>
