@@ -5,6 +5,7 @@
         Grandmaster,
         Master,
         Diamond,
+        Ruby,
         Sapphire,
         Platinum,
         Gold,

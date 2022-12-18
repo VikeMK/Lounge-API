@@ -132,7 +132,7 @@
   <data name="A match has started once the first race has been completed, with the race results being shown." xml:space="preserve">
     <value>模擬は最初のレースの結果が表示された時点で開始とみなされます。</value>
   </data>
-  <data name="A player should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive 1 strike." xml:space="preserve">
+  <data name="A player should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive -50MMR and a strike." xml:space="preserve">
     <value>回線落ちの証拠を求められた際に提出できない場合、そのプレイヤーはstrikeを受けます。</value>
   </data>
   <data name="After 10 minutes, the host can start Mogi even if there are not 12 players in the room." xml:space="preserve">
@@ -162,6 +162,9 @@
   <data name="Conduct" xml:space="preserve">
     <value>ラウンジでの振る舞いについて</value>
   </data>
+  <data name="Chat Restricted, Mute, and Hostban roles are for punishments only and are not available upon request." xml:space="preserve">
+    <value>Chat Restricted, Mute, and Hostban roles are for punishments only and are not available upon request.</value>
+  </data>
   <data name="Depending on your rank, you will see 1-2 channels that you can play matches in, listed below:" xml:space="preserve">
     <value>プレイヤーは各ランクに応じて、以下のTierで模擬を行うことができます。</value>
   </data>
@@ -180,8 +183,11 @@
   <data name="Failure to post the friend code or refusal to host will result in 1 strike." xml:space="preserve">
     <value>フレンドコードを投稿しない場合や、ホストをもつことを拒否した場合は strikeが付与されます。</value>
   </data>
-  <data name="Failure to use same tags in the same team for more than 2 races and abide by any of these guidelines (i～iv) for more than 2 races will result in a -25 MMR penalty." xml:space="preserve">
+  <data name="Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -25 MMR penalty." xml:space="preserve">
     <value>同じチーム内で統一したタグを3レース以上使用しなかったり、このガイドラインのいずれか(i～iii)に3レース以上従わなかった場合、 -25MMRのペナルティが科せられます。</value>
+  </data>
+  <data name="For example, if the host posts their friend code at 9:00 and opens the room at 9:02, players are considered late at 9:08." xml:space="preserve">
+    <value>For example, if the host posts their friend code at 9:00 and opens the room at 9:02, players are considered late at 9:08.</value>
   </data>
   <data name="For example, the following is allowed:" xml:space="preserve">
     <value>例えば次のようなものが認められます：​</value>
@@ -267,13 +273,13 @@
   <data name="If the room is opened early, the late penalty (IV. b.) comes into effect after 7 minutes of the friend code being posted." xml:space="preserve">
     <value>2分待たずに部屋を開設した場合、フレンドコードの投稿から7分後に遅刻のペナルティ(IV. b.)が発生します。</value>
   </data>
-  <data name="If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike." xml:space="preserve">
+  <data name="If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike excluding hostbanned and chat restricted players." xml:space="preserve">
     <value>投票終了から10分経過後にホストがいない場合、参加者全員に -50MMR + strikeが課せられます。</value>
   </data>
   <data name="If this happens to occur during an event, please attempt to capture video proof of the individual who may be causing the lag in the room." xml:space="preserve">
     <value>もしレース中にその模擬を続行不可能にする程度のラグを引き起こしている可能性のあるプレイヤーを見つけた場合、その動画等の証拠を残してください。</value>
   </data>
-  <data name="If you already have a rank and would like to change your name, you can request nickname changes by creating a support ticket." xml:space="preserve">
+  <data name="If you already have a rank and would like to change your name, you can request nickname changes in #name-change-request." xml:space="preserve">
     <value>既に名前が登録されている場合は、ラウンジ内の #name-change-request チャンネルからニックネームの変更を申請してください。</value>
   </data>
   <data name="If you are unhappy with your placement or feel that you should've been placed higher or lower, then prove it by playing matches." xml:space="preserve">
@@ -287,6 +293,9 @@
   </data>
   <data name="If you would like a specific nickname for the scoreboard and Discord server, you can ask for that too." xml:space="preserve">
     <value>登録時にサーバーやリーダーボードにおいて使用したい名前がある場合は、スタッフまでご連絡ください。</value>
+  </data>
+  <data name="If your rank role changes during a mogi and you are unable to see the chat of the mogi you are participating in, you can temporarily grant your old rank role to yourself in #temprole-requests." xml:space="preserve">
+    <value>If your rank role changes during a mogi and you are unable to see the chat of the mogi you are participating in, you can temporarily grant your old rank role to yourself in #temprole-requests.</value>
   </data>
   <data name="In most cases, if your name can be used as a Twitter username, you can use it in lounge." xml:space="preserve">
     <value>原則twitterのユーザー名に使用できる名前はラウンジでも使用できます。</value>
@@ -308,6 +317,9 @@
   </data>
   <data name="Joining the Lounge" xml:space="preserve">
     <value>ラウンジ参加にあたって</value>
+  </data>
+  <data name="Lounge Staff will make decisions in the event of unexpected circumstances not listed here." xml:space="preserve">
+    <value>Lounge Staff will make decisions in the event of unexpected circumstances not listed here.</value>
   </data>
   <data name="Making an alternate account to join lounge will result in a heavy penalty in lounge and MKCentral." xml:space="preserve">
     <value>過去にラウンジアカウントを作成したことがあるにもかかわらず、新しくアカウントを作ってプレイする（潜伏行為）を行った場合は、ラウンジ及びMKCから大きなペナルティを受けることとなります。</value>
@@ -345,16 +357,19 @@
   <data name="Only gain MMR on the winning team if they play 4 or more races in said event." xml:space="preserve">
     <value>勝った際には4レース以上参加していた場合にのみMMRを獲得できます。</value>
   </data>
+  <data name="Other Notes" xml:space="preserve">
+    <value>Other Notes</value>
+  </data>
   <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
     <value>プレイヤーは模擬参加中であっても、異なるTierであれば挙手することができます。ただし、次の模擬に間に合わなかった場合はペナルティが科せられます(ルール IV. b., IV. c.).。</value>
   </data>
-  <data name="Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; while already participating in a mogi in the same tier. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
+  <data name="Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; in a tier they are currently playing in until they have crossed the finish line at the end of the 12th race. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>模擬参加中は同じTierの模擬に挙手することができません。このルールに違反した場合、-50MMR + strikeを受けます。</value>
   </data>
   <data name="Players can change their lounge nickname once every 60 days; nicknames cannot be reverted during the 60 day period between changes." xml:space="preserve">
     <value>ニックネームは60日に1度変更可能です。変更後60日間はニックネームをもとに戻すことも、他のものにすることもできません。</value>
   </data>
-  <data name="Players can queue as a host using the &lt;code&gt;/ch&lt;/code&gt; command in MogiBot." xml:space="preserve">
+  <data name="Players can queue as a host using the &lt;code&gt;/ch&lt;/code&gt; command in MogiBot or the &lt;code&gt;^fc&lt;/code&gt; command in Stats Bot." xml:space="preserve">
     <value>プレイヤーはMogibotの &lt;code&gt;/ch&lt;/code&gt; コマンドを使用することで、ホストとして挙手することができます。</value>
   </data>
   <data name="Players cannot &lt;code&gt;/d&lt;/code&gt; for 15 seconds after typing &lt;code&gt;/c&lt;/code&gt;. A &lt;code&gt;/c&lt;/code&gt; will automatically expire after 20 minutes have passed." xml:space="preserve">
@@ -366,8 +381,14 @@
   <data name="Players must use their &lt;b&gt;Lounge Nickname&lt;/b&gt; (or a shortened, legible version) in FFA format events." xml:space="preserve">
     <value>模擬の形式がFFA（個人形式）の場合は必ず&lt;b&gt;ラウンジ名&lt;/b&gt;（またはローマ字によるわかりやすい短縮名、ラウンジ名が10文字以内の場合、省略しないことが望ましいです。）を使用しなければなりません。</value>
   </data>
+  <data name="Player names must not begin with the first character of another team's tag." xml:space="preserve">
+    <value>Player names must not begin with the first character of another team's tag.</value>
+  </data>
   <data name="Players need to be in the room in 5 minutes. (except rule III. i.)." xml:space="preserve">
     <value>プレイヤーは5分以内に部屋にいる必要があります(rule III. i,を除く）。</value>
+  </data>
+  <data name="Players should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike." xml:space="preserve">
+    <value>Players should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike.</value>
   </data>
   <data name="Players that drop from an event before it starts will receive -100 MMR and a strike by default." xml:space="preserve">
     <value>模擬開始前に模擬からドロップしたプレイヤーは、-100MMR + strikeを受けます。</value>
@@ -378,8 +399,14 @@
   <data name="Players that sub in before the first race will be given normal MMR gains or losses." xml:space="preserve">
     <value>最初のレース開始前に(1レース目から)補欠として参加した場合は通常通りMMRの増減が発生します。</value>
   </data>
+  <data name="Players who abuse the temprole system in any way will receive -50 MMR and a strike." xml:space="preserve">
+    <value>Players who abuse the temprole system in any way will receive -50 MMR and a strike.</value>
+  </data>
   <data name="Players who are banned from MKCentral may face similar consequences in Lounge depending on the severity of the ban." xml:space="preserve">
     <value>MKCentralにおいてBanされているプレイヤーは、その内容に応じてはラウンジ内でも同様にBanされる可能性があります。</value>
+  </data>
+  <data name="Players who are hostbanned or chat restricted are not allowed to host an event." xml:space="preserve">
+    <value>Players who are hostbanned or chat restricted are not allowed to host an event.</value>
   </data>
   <data name="Players who consistently cause disruptions in matches such as trolling, targeting specific players, inting etc. will receive a 3-day mute, and may receive increased punishment on repeated instances." xml:space="preserve">
     <value>trolling や特定のプレイヤーやチームを狙う行為、intingなど、模擬中に一貫して混乱を引き起こすプレイヤーは3日間のミュートが科せられます。また、その様な行為を繰り返した場合、より重い罰則を受ける可能性上がります。</value>
@@ -389,6 +416,9 @@
   </data>
   <data name="Players who drop for any reason after the poll has been started will receive a -100 MMR strike." xml:space="preserve">
     <value>投票が始まった後にドロップしたプレイヤーは、いかなる理由があっても -100MMR + strikeを受けます。</value>
+  </data>
+  <data name="Players who leave an event before it finishes are not allowed to join a mogi until the event they left finishes the 12th race. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
+    <value>Players who leave an event before it finishes are not allowed to join a mogi until the event they left finishes the 12th race. Players who violate this rule will receive -50 MMR and a strike.</value>
   </data>
   <data name="Players who reach 3 strikes will receive the following punishments:" xml:space="preserve">
     <value>strikeが3に達した場合、次の罰を受けます。</value>
@@ -407,6 +437,9 @@
   </data>
   <data name="Players who use a different name will receive -50 MMR and a strike." xml:space="preserve">
     <value>使用しない場合は -50MMR + strikeとなります。日本語の使用や極端な省略によりプレイヤーの区別ができない場合も同様にペナルティを受けます。</value>
+  </data>
+  <data name="Players who violate i. will receive a 3-day mute." xml:space="preserve">
+    <value>Players who violate i. will receive a 3-day mute.</value>
   </data>
   <data name="Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>このルールに違反した場合、-50MMR + strikeを受けます。</value>
@@ -440,6 +473,9 @@
   </data>
   <data name="Subs are allowed in Squad Queue events; however, the sub's MMR must follow at least one of these conditions:" xml:space="preserve">
     <value>サブについてはSquad Queueにおいても認められています。ただし、サブのMMRは以下の条件のうち、少なくとも1つに従わなければなりません。</value>
+  </data>
+  <data name="Symbols that look similar to letters or numbers are classed as the same and cannot be used if another team has claimed it." xml:space="preserve">
+    <value>Symbols that look similar to letters or numbers are classed as the same and cannot be used if another team has claimed it.</value>
   </data>
   <data name="Tables must be submitted using the MK8DX bot in the Lounge server." xml:space="preserve">
     <value>集計表はラウンジサーバー内のMK8DX botを使用して送信する必要があります。</value>
@@ -477,11 +513,17 @@
   <data name="The team would still be in the same room with the sub's MMR taken into account." xml:space="preserve">
     <value>チームはサブのプレイヤーのMMRで平均値を求めても、その平均値が部屋のMMRの範囲内に収まっている。</value>
   </data>
+  <data name="There is a possibility that penalties may be more severe at the discretion of Lounge Staff, based on severity and history of behavior." xml:space="preserve">
+    <value>There is a possibility that penalties may be more severe at the discretion of Lounge Staff, based on severity and history of behavior.</value>
+  </data>
   <data name="They also may not contain any vulgar language or impersonate another MKC user." xml:space="preserve">
     <value>不適切な言葉や、他のMKCユーザーになりすますような名前を使用することができません。</value>
   </data>
   <data name="They must start and end with only letters or numbers, and must be between 2-16 characters." xml:space="preserve">
     <value>先頭及び末尾はアルファベットまたは数字である必要があり、2から16文字である必要があります。</value>
+  </data>
+  <data name="This does not include repicks from random track selection." xml:space="preserve">
+    <value>This does not include repicks from random track selection.</value>
   </data>
   <data name="This role is essentially a ban from SQ for the duration that the player has the role." xml:space="preserve">
     <value>この役職がついている期間はSquad Queueの参加が不可能となります。</value>
