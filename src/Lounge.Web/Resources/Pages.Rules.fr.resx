@@ -383,7 +383,7 @@
     <value>Les joueurs doivent utiliser leur Pseudo Lounge (ou une version courte de celui-ci) en FFA. </value>
   </data>
   <data name="Player names must not begin with the first character of another team's tag." xml:space="preserve">
-    <value>Les joueurs ne peuvent pas avoir la première lettre de leur pseudo similaire à la première lettre d'un tag d'une équipe.</value>
+    <value>Les joueurs ne peuvent pas avoir le premier caractère de leur pseudo similaire au premier caractère d'un tag d'une équipe.</value>
   </data>
   <data name="Players need to be in the room in 5 minutes. (except rule III. i.)." xml:space="preserve">
     <value>Les joueurs devront rejoindre la room dans les 5 minutes. (excepté règle III. i.)</value>
