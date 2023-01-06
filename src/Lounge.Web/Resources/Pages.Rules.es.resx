@@ -406,7 +406,7 @@
     <value>Los jugadores que estén prohibidos (baneados) en MKCentral pueden enfrentar consecuencias similares en Lounge, dependiendo de la gravedad de la prohibición.</value>
   </data>
   <data name="Players who are hostbanned or chat restricted are not allowed to host an event." xml:space="preserve">
-    <value>Los jugadores que abusen del sistema de temprole de cualquier forma recibirán -50 MMR y un strike.</value>
+    <value>Los jugadores que tienen hostban no pueden hostear un evento.</value>
   </data>
   <data name="Players who consistently cause disruptions in matches such as trolling, targeting specific players, inting etc. will receive a 3-day mute, and may receive increased punishment on repeated instances." xml:space="preserve">
     <value>Los jugadores que constantemente causen interrupciones en los partidos, como trollear, fastidiar a jugadores específicos (targetear), dejarse perder (intear), etc., recibirán un mute de 3 días y pueden recibir un castigo mayor en instancias repetidas.</value>

@@ -133,7 +133,7 @@
     <value>Ein Match gilt als "gestarted", sobald das erste Rennen abgeschlossen ist und die Ergebnisse erschienen sind.</value>
   </data>
   <data name="A player should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive -50MMR and a strike." xml:space="preserve">
-    <value>Ein Spieler muss auf Anfrage einen Videobeweis (Switch-Clip, Stream, etc.) seines Disconnects präsentieren können; andernfalls erhält dieser einen Strike.</value>
+    <value>Ein Spieler muss in der Lage sein, einen Videobeweis (Switch Clip, Stream o.Ä.) über seinen Disconnect zu liefern, wenn gewünscht; andernfalls erhält er eine Strafe von -50MMR und einen Strike.</value>
   </data>
   <data name="After 10 minutes, the host can start Mogi even if there are not 12 players in the room." xml:space="preserve">
     <value>10 Minuten nach Öffnen des Raumes darf der Hosten diesen starten, selbst wenn sich noch nicht 12 Spieler im Raum befinden.</value>
@@ -163,7 +163,7 @@
     <value>Verhaltensweise</value>
   </data>
   <data name="Chat Restricted, Mute, and Hostban roles are for punishments only and are not available upon request." xml:space="preserve">
-    <value>Chat Restricted, Mute, and Hostban roles are for punishments only and are not available upon request.</value>
+    <value>Die Chat Restricted, Muted und Hostban Rollen sind lediglich für Bestrafungen vorgesehen und werden nicht auf Anfrage vergeben.</value>
   </data>
   <data name="Depending on your rank, you will see 1-2 channels that you can play matches in, listed below:" xml:space="preserve">
     <value>Entsprechend deines Ranges wirst du 1-2 Channels sehen können, in welchen du Matches spielen kannst:</value>
@@ -184,10 +184,10 @@
     <value>Das Nicht-Posten des Freundescodes oder das Weigern zu hosten resultiert in einem Strike.</value>
   </data>
   <data name="Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -25 MMR penalty." xml:space="preserve">
-    <value>Falls ein Team für mehr als zwei Rennen keinen einheitlichen Tag nutzt oder gegen irgendwelche dieser Richtlinien (i~iv) für mehr als zwei Rennen verstößt, bekommt dieses eine -25 MMR Strafe.</value>
+    <value>Wenn nach den ersten 2 Rennen kein einheitlicher Tag im selben Team verwendet wird oder diese Namensrichtlinien nicht eingehalten werden, führt dies zu einer Strafe von -25 MMR.</value>
   </data>
   <data name="For example, if the host posts their friend code at 9:00 and opens the room at 9:02, players are considered late at 9:08." xml:space="preserve">
-    <value>For example, if the host posts their friend code at 9:00 and opens the room at 9:02, players are considered late at 9:08.</value>
+    <value>Wenn der Host beispielsweise seinen Freundescode um 9:00 Uhr posted und den Raum um 9:02 Uhr öffnet, werden Spieler um 9:08 Uhr als verspätet angesehen.</value>
   </data>
   <data name="For example, the following is allowed:" xml:space="preserve">
     <value>Beispielsweise ist das Folgende gestattet:</value>
@@ -274,13 +274,13 @@
     <value>Wenn der Raum früher geöffnet wird, gilt die Strafe für zu spätes Joinen 7 Minuten nach dem Posten des Freundescodes.</value>
   </data>
   <data name="If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike excluding hostbanned and chat restricted players." xml:space="preserve">
-    <value>Falls sich kein Host innerhalb von 10 Minuten nach Abschluss der Formatwahl findet, erhält das gesamte Lineup eine Strafe von -50 MMR und einen Strike.</value>
+    <value>Wenn es 10 Minuten nach dem Ende der Formatabstimmung keinen Host für ein Mogi gibt, erhält das gesamte Lineup eine Strafe von -50MMR und einen Strike (Spieler mit den Hostban und Chat Restricted Rollen sind davon ausgeschlossen).</value>
   </data>
   <data name="If this happens to occur during an event, please attempt to capture video proof of the individual who may be causing the lag in the room." xml:space="preserve">
     <value>Falls dies während eines Matches vorkommt, sollte versucht werden, einen Videoclip des Spielers, welcher den Lag verursacht, zu speichern.</value>
   </data>
   <data name="If you already have a rank and would like to change your name, you can request nickname changes in #name-change-request." xml:space="preserve">
-    <value>Wenn du bereits einen Rang hast und deinen Namen gerne ändern möchtest, kannst du eine Namensänderung im #namechange-request Channel beantragen.</value>
+    <value>Wenn du bereits einen Rang hast und deinen Namen ändern möchtest, kannst du im #name-change-request Channel eine Namensänderung beantragen.</value>
   </data>
   <data name="If you are unhappy with your placement or feel that you should've been placed higher or lower, then prove it by playing matches." xml:space="preserve">
     <value>Wenn du unzufrieden mit deiner ursprünglichen Platzierung bist oder der Meinung bist, dass du höher oder niedrigen hättest platziert werden sollen, dann beweise dies indem du Matches spielst.</value>
@@ -295,7 +295,7 @@
     <value>Falls du einen spezifischen Namen für das Scoreboard und den Discord Server haben möchtest, kannst du dies beantragen.</value>
   </data>
   <data name="If your rank role changes during a mogi and you are unable to see the chat of the mogi you are participating in, you can temporarily grant your old rank role to yourself in #temprole-requests." xml:space="preserve">
-    <value>If your rank role changes during a mogi and you are unable to see the chat of the mogi you are participating in, you can temporarily grant your old rank role to yourself in #temprole-requests.</value>
+    <value>Wenn sich deine Rang-Rolle während eines Mogis ändert und du den Chat des Mogis, an dem du teilnimmst, nicht mehr sehen kannst, kannst du dir vorübergehend deine alte Rang-Rolle in #temprole-requests geben.</value>
   </data>
   <data name="In most cases, if your name can be used as a Twitter username, you can use it in lounge." xml:space="preserve">
     <value>In den meisten Fällen sind Namen, welche als Twitter Nutzernamen funktionieren, auch für die Lounge zugelassen.</value>
@@ -319,7 +319,7 @@
     <value>Beitritt in die Lounge</value>
   </data>
   <data name="Lounge Staff will make decisions in the event of unexpected circumstances not listed here." xml:space="preserve">
-    <value>Lounge Staff will make decisions in the event of unexpected circumstances not listed here.</value>
+    <value>Der Lounge Staff trifft Entscheidungen bei unerwarteten Umständen, die hier nicht aufgeführt sind.</value>
   </data>
   <data name="Making an alternate account to join lounge will result in a heavy penalty in lounge and MKCentral." xml:space="preserve">
     <value>Das Erstellen eines "Alternate Accounts" zum Joinen in die Lounge resultiert in einer heftigen Strafe in der Lounge selbst und auf MKCentral.</value>
@@ -358,19 +358,19 @@
     <value>Erhalten nur MMR im Gewinnerteam wenn sie 4 oder mehr Rennen im betroffenen Event gespielt haben.</value>
   </data>
   <data name="Other Notes" xml:space="preserve">
-    <value>Other Notes</value>
+    <value>Sonstige Hinweise</value>
   </data>
   <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
     <value>Es ist Spielern gestattet, &lt;code&gt;/c&lt;/code&gt; in einem anderen Tier zu schreiben als in dem Tier, in welchem sie gerade spielen; jedoch können sie trotzdem Strafen gemäß Regel IV. b., IV. c. erhalten, falls sie dem neuen Raum zu spät beitreten.</value>
   </data>
   <data name="Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; in a tier they are currently playing in until they have crossed the finish line at the end of the 12th race. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Spieler dürfen nicht &lt;code&gt;/c&lt;/code&gt; schreiben, wenn sie aktuell ein Match im selben Tier spielen. Verstoß gegen diese Regel gibt eine Strafe von -50 MMR und einen Strike.</value>
+    <value>Spieler dürfen &lt;code&gt;/c&lt;/code&gt; in dem Tier, in welchem sie gerade spielen, nicht verwenden, bis sie am Ende des 12. Rennens die Ziellinie überquert haben. Spieler, die gegen diese Regel verstoßen, erhalten -50 MMR und einen Strike.</value>
   </data>
   <data name="Players can change their lounge nickname once every 60 days; nicknames cannot be reverted during the 60 day period between changes." xml:space="preserve">
     <value>Spieler dürfen ihren Loungenamen einmal alle 60 Tage ändern; der Name kann während der 60-tägigen Periode zwischen Namensänderungen nicht zurückgesetzt werden.</value>
   </data>
   <data name="Players can queue as a host using the &lt;code&gt;/ch&lt;/code&gt; command in MogiBot or the &lt;code&gt;^fc&lt;/code&gt; command in Stats Bot." xml:space="preserve">
-    <value>Spieler können dem Lineup als Host beitreten, indem sie den &lt;code&gt;/ch&lt;/code&gt; Command vom MogiBot verwenden.</value>
+    <value>Spieler können sich mit dem Befehl &lt;code&gt;/ch&lt;/code&gt; im MogiBot oder dem Befehl &lt;code&gt;^fc&lt;/code&gt; im Stats Bot als Host anmelden.</value>
   </data>
   <data name="Players cannot &lt;code&gt;/d&lt;/code&gt; for 15 seconds after typing &lt;code&gt;/c&lt;/code&gt;. A &lt;code&gt;/c&lt;/code&gt; will automatically expire after 20 minutes have passed." xml:space="preserve">
     <value>Spieler können den &lt;code&gt;/d&lt;/code&gt; Command 15 Sekunden lang nachdem sie &lt;code&gt;/c&lt;/code&gt; genutzt haben, nicht verwenden. Sollte ein Spieler in einem Zeitraum von 20 Minuten nach dem Beitreten eines Lineups mit &lt;code&gt;/c&lt;/code&gt; keine weitere Nachricht im Chat schreiben, und es versammelt sich kein volles Lineup, wird der Spieler nach einer Erinnerung automatisch entfernt.</value>
@@ -382,13 +382,13 @@
     <value>Spieler müssen ihren &lt;b&gt;Lounge Nickname&lt;/b&gt; (oder eine verkürzte, klar erkennbare Version) in Matches im FFA Format verwenden.</value>
   </data>
   <data name="Player names must not begin with the first character of another team's tag." xml:space="preserve">
-    <value>Player names must not begin with the first character of another team's tag.</value>
+    <value>Spielernamen dürfen nicht mit dem ersten Zeichen des Tags eines anderen Teams beginnen.</value>
   </data>
   <data name="Players need to be in the room in 5 minutes. (except rule III. i.)." xml:space="preserve">
     <value>Spieler müssen dem Raum in 5 Minuten beigetreten sein (Ausnahme: Regel III. i.).</value>
   </data>
   <data name="Players should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Players should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike.</value>
+    <value>Spieler müssen einen Videobeweis (Switch Clip, Stream o.Ä.) über ihren Disconnect vorlegen, wenn sie darum gebeten werden; andernfalls erhalten sie -50 MMR und einen Strike.</value>
   </data>
   <data name="Players that drop from an event before it starts will receive -100 MMR and a strike by default." xml:space="preserve">
     <value>Spieler, welche das Lineup nach Versammlung und vor Beginn des ersten Rennens verlassen, erhalten eine Strafe von -100 MMR und einen Strike.</value>
@@ -400,13 +400,13 @@
     <value>Spieler, welche am Match als Substitute Spieler vor Beginn des ersten Rennens teilnehmen, gewinnen oder verlieren regulär MMR.</value>
   </data>
   <data name="Players who abuse the temprole system in any way will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Players who abuse the temprole system in any way will receive -50 MMR and a strike.</value>
+    <value>Spieler, die das temprole System in irgendeiner Weise missbrauchen, erhalten -50 MMR und einen Strike.</value>
   </data>
   <data name="Players who are banned from MKCentral may face similar consequences in Lounge depending on the severity of the ban." xml:space="preserve">
     <value>Spieler, welche von der MKCentral Website gebannt sind, müssen je nach Härte des Falls mit ähnlichen Konsquenzen in der Lounge rechnen.</value>
   </data>
   <data name="Players who are hostbanned or chat restricted are not allowed to host an event." xml:space="preserve">
-    <value>Players who are hostbanned or chat restricted are not allowed to host an event.</value>
+    <value>Spieler mit Hostverbot oder der Chat Restricted Rolle dürfen kein Mogi hosten.</value>
   </data>
   <data name="Players who consistently cause disruptions in matches such as trolling, targeting specific players, inting etc. will receive a 3-day mute, and may receive increased punishment on repeated instances." xml:space="preserve">
     <value>Spieler, welche vermehrt den Spielfluss behindern durch z.B. Trolling, gezieltes Fokussieren eines bestimmten Spielers oder absichtliches Verlieren, erhalten einen Mute von 3 Tagen und müssen mit verstärkten Strafen bei Wiederholung rechnen.</value>
@@ -418,7 +418,7 @@
     <value>Spieler, welche aus egal welchem Grund nach Abschluss der Formatabstimmung das Lineup verlassen, erhalten eine Strafe von -100 MMR und einen Strike.</value>
   </data>
   <data name="Players who leave an event before it finishes are not allowed to join a mogi until the event they left finishes the 12th race. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Players who leave an event before it finishes are not allowed to join a mogi until the event they left finishes the 12th race. Players who violate this rule will receive -50 MMR and a strike.</value>
+    <value>Spieler, die ein Mogi vor dem Ende verlassen, dürfen einem neuen Mogi nicht beitreten, bis das Event, das sie verlassen haben, das 12. Rennen beendet. Spieler, die gegen diese Regel verstoßen, erhalten -50 MMR und einen Strike.</value>
   </data>
   <data name="Players who reach 3 strikes will receive the following punishments:" xml:space="preserve">
     <value>Spieler, welche 3 Strikes erhalten, werden folgendermaßen bestraft:</value>
@@ -439,7 +439,7 @@
     <value>Spieler, welche einen anderen Namen benutzen, erhalten eine Strafe von -50 MMR und einen Strike.</value>
   </data>
   <data name="Players who violate i. will receive a 3-day mute." xml:space="preserve">
-    <value>Players who violate i. will receive a 3-day mute.</value>
+    <value>Spieler, die gegen I. verstoßen, erhalten eine 3-tägige Stummschaltung.</value>
   </data>
   <data name="Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>Für das Missachten dieser Regel bekommt der Spieler eine Strafe von -50 MMR und einen Strike. </value>
@@ -475,7 +475,7 @@
     <value>Substitutes sind erlaubt für Squad Queue Matches; allerdings muss die MMR des Substitutes mindestens einer der folgenden Anforderungen genügen:</value>
   </data>
   <data name="Symbols that look similar to letters or numbers are classed as the same and cannot be used if another team has claimed it." xml:space="preserve">
-    <value>Symbols that look similar to letters or numbers are classed as the same and cannot be used if another team has claimed it.</value>
+    <value>Symbole, die Buchstaben oder Zahlen ähneln, werden als dasselbe Symbol klassifiziert und können daher nicht verwendet werden, wenn ein anderes Team den Tag zuvor beansprucht hat.</value>
   </data>
   <data name="Tables must be submitted using the MK8DX bot in the Lounge server." xml:space="preserve">
     <value>Tables müssen mithilfe des MK8DX Bots im Lounge Server gepostet werden.</value>
@@ -515,7 +515,7 @@
     <value>Das Team wäre immer noch im selben Raum unter Berücksichtigung der MMR des Substitutes.</value>
   </data>
   <data name="There is a possibility that penalties may be more severe at the discretion of Lounge Staff, based on severity and history of behavior." xml:space="preserve">
-    <value>There is a possibility that penalties may be more severe at the discretion of Lounge Staff, based on severity and history of behavior.</value>
+    <value>Es besteht die Möglichkeit, dass die Strafen nach Ermessen des Lounge Staffs härter ausfallen können, je nach Schwere des Vergehens und vergangenen Verhaltensauffälligkeiten.</value>
   </data>
   <data name="They also may not contain any vulgar language or impersonate another MKC user." xml:space="preserve">
     <value>Sie dürfen zudem keine vulgäre Sprache enthalten oder einen anderen MKC Nutzer imitieren.</value>
@@ -524,7 +524,7 @@
     <value>Sie müssen mit Buchstaben oder Zahlen beginnen und enden und zwischen 2 und 16 Zeichen lang sein.</value>
   </data>
   <data name="This does not include repicks from random track selection." xml:space="preserve">
-    <value>This does not include repicks from random track selection.</value>
+    <value>Nicht davon betroffen sind Repicks, welche aufgrund von der Option "zufällige Streckenwahl" auftreten.</value>
   </data>
   <data name="This role is essentially a ban from SQ for the duration that the player has the role." xml:space="preserve">
     <value>Diese Rolle bedeutet einen Ban von jeglichen SQ Events während der Spieler diese Rolle hat.</value>
