@@ -321,6 +321,9 @@
   <data name="Lounge Staff will make decisions in the event of unexpected circumstances not listed here." xml:space="preserve">
     <value>Si ocurre algo que no se mencionan aquí, el lounge staff tomará la decisión.</value>
   </data>
+  <data name="Making a claim: If you believe someone is targeting, please take multiple videos as evidence and report them using the ticket system." xml:space="preserve">
+    <value>Para reportar a alguien: si crees que alguien te está haciendo focus, agradeceríamos que grabes varios vídeos y los incluyas como evidencia a través de un ticket.</value>
+  </data>
   <data name="Making an alternate account to join lounge will result in a heavy penalty in lounge and MKCentral." xml:space="preserve">
     <value>Hacerse una cuenta secundaria (alter) para unirse al Lounge supondrá un castigo severo tanto en el Lounge como en MKCentral.</value>
   </data>
@@ -335,6 +338,9 @@
   </data>
   <data name="Nicknames may only contain letters (at least one), numbers, spaces, periods/full stops, hyphens or underscores." xml:space="preserve">
     <value>Los nombres solo pueden contener letras (al menos una), números, espacios, puntos/puntos, guiones o guiones bajos.</value>
+  </data>
+  <data name="Note: We encourage you to consider different play styles players may have, lag/genuine mistakes, and how close your mogi is in terms of points before submitting your claim." xml:space="preserve">
+    <value>Posdata: Recomendamos que se consideren tanto los diversos estilos de juego que el jugador pueda tener, el lag que pueda haber y errores no intencionales, además de la cercanía entre puntos de los equipos en el evento antes de reclamar.</value>
   </data>
   <data name="Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room." xml:space="preserve">
     <value>Una vez se ha decidido un host, debe esperar 2 minutos después de publicar su código de amigo (FC) para aceptar las solicitudes de amistad antes de abrir la sala.</value>
@@ -361,7 +367,7 @@
     <value>Otras Notas</value>
   </data>
   <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
-    <value>Los jugadores pueden escribir &lt;code&gt;/c&lt;/code&gt; en un canal diferente al que están jugando actualmente; sin embargo, aún están sujetos a sanciones si no se unen a tiempo (regla IV.b., IV.c.).</value>
+    <value>Los jugadores pueden escribir &lt;code&gt;/c&lt;/code&gt; en un tier diferente al que están jugando actualmente; sin embargo, aún están sujetos a sanciones si no se unen a tiempo (regla IV.b., IV.c.).</value>
   </data>
   <data name="Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; in a tier they are currently playing in until they have crossed the finish line at the end of the 12th race. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>Los jugadores no pueden escribir &lt;code&gt;/c&lt;/code&gt; en el tier que están jugando mientras estén jugando hasta pasar la linea de meta,los jugadores que no cumplan esta regla, recibirán -50 MMR y un strike.</value>
@@ -409,7 +415,7 @@
     <value>Los jugadores que tienen hostban no pueden hostear un evento.</value>
   </data>
   <data name="Players who consistently cause disruptions in matches such as trolling, targeting specific players, inting etc. will receive a 3-day mute, and may receive increased punishment on repeated instances." xml:space="preserve">
-    <value>Los jugadores que constantemente causen interrupciones en los partidos, como trollear, fastidiar a jugadores específicos (targetear), dejarse perder (intear), etc., recibirán un mute de 3 días y pueden recibir un castigo mayor en instancias repetidas.</value>
+    <value>Los jugadores que causen problemas durante los eventos como, por ejemplo: trollear, hacer focus a otros jugadores e intear; recibirán un muteo de 3 días, en caso de no ser la primera vez, se aplicarán castigos más severos.</value>
   </data>
   <data name="Players who consistently cause disruptions in the server such as trolling, flaming, spamming bot commands, etc. will either receive a chat restriction (only allowing them to send certain messages), a mute, or a temporary timeout via staff discretion." xml:space="preserve">
     <value>Los jugadores que constantemente causen interrupciones en el server de Lounge, como trollear, insultar, spammear comandos de bots, etc., recibirán una restricción de chat (CR) (la cual solo les permite enviar ciertos mensajes), un mute o una expulsión temporal del canal o servidor (timeout) a discreción del staff de Lounge.</value>
@@ -459,6 +465,9 @@
   <data name="Should players request the room to be reopened if opened early, the host must do so or else receive 1 strike." xml:space="preserve">
     <value>Si los jugadores solicitan que se vuelva a abrir la sala si se abre más temprano de lo que debería, el host debe hacerlo o de lo contrario recibirá una penalización de un strike.</value>
   </data>
+  <data name="Some examples of targeting: slowing to red the same player, slowing to star the same player, spamming items at the same player excessively, and so on." xml:space="preserve">
+    <value>Algunos ejemplos de focus son: frenarse para tirarle roja al mismo jugador, frenarse para darle con estrella y spammearle demasiados items.</value>
+  </data>
   <data name="Squad Queue" xml:space="preserve">
     <value>Squad Queue</value>
   </data>
@@ -488,6 +497,9 @@
   </data>
   <data name="Tags must either all be placed at the beginning of players' names or all at the end of players' names." xml:space="preserve">
     <value>Las etiquetas (tags) deben colocarse o todas al principio de los nombres de los jugadores o todas al final de los nombres de los jugadores.</value>
+  </data>
+  <data name="Targeting is defined as disrupting the race of another player through excessive item use whereby their race is significantly/negatively impacted by score or placement; and/or the player targeting impacts their own race in a similar manner." xml:space="preserve">
+    <value>Hacer focus quiere decir arruinar la carrera de otro jugador usando objetos de más para matarlo, lo que hace que la puntuación/posición de alguno o ambos jugadores sea gravemente perjudicada.</value>
   </data>
   <data name="Teams missing a player for at least 4 races will lose MMR proportional to the amount of races the player missed; for example, teammates of a player who missed 4 races will receive 8/12 loss, or 6/12 loss if the teammate misses 6 races." xml:space="preserve">
     <value>Los equipos que pierdan un jugador durante al menos 4 carreras perderán MMR proporcional a la cantidad de carreras que el jugador se perdió; por ejemplo, los compañeros de equipo de un jugador que se perdió 4 carreras recibirán 8/12 de pérdida, o 6/12 de pérdida si el compañero de equipo se pierde 6 carreras.</value>
@@ -545,5 +557,8 @@
   </data>
   <data name="Using MogiBot, the first twelve players to say &lt;code&gt;/c&lt;/code&gt; will play." xml:space="preserve">
     <value>Con MogiBot, jugarán los primeros doce jugadores que digan &lt;code&gt;/c&lt;/code&gt;.</value>
+  </data>
+  <data name="Videos can be from switch clips, MKTV, streams with timestamps, etc." xml:space="preserve">
+    <value>Los vídeos pueden ser de clips de la Switch, MKTV, streams con los momentos indicados y demás.</value>
   </data>
 </root>

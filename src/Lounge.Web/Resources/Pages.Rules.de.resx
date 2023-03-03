@@ -321,6 +321,9 @@
   <data name="Lounge Staff will make decisions in the event of unexpected circumstances not listed here." xml:space="preserve">
     <value>Der Lounge Staff trifft Entscheidungen bei unerwarteten Umständen, die hier nicht aufgeführt sind.</value>
   </data>
+  <data name="Making a claim: If you believe someone is targeting, please take multiple videos as evidence and report them using the ticket system." xml:space="preserve">
+    <value>Behauptungen aufstellen: Wenn Sie glauben, dass jemand ein Fokus begeht, nehmen Sie bitte mehrere Videos als Beweis auf und melden Sie diese über das Ticketsystem.</value>
+  </data>
   <data name="Making an alternate account to join lounge will result in a heavy penalty in lounge and MKCentral." xml:space="preserve">
     <value>Das Erstellen eines "Alternate Accounts" zum Joinen in die Lounge resultiert in einer heftigen Strafe in der Lounge selbst und auf MKCentral.</value>
   </data>
@@ -335,6 +338,9 @@
   </data>
   <data name="Nicknames may only contain letters (at least one), numbers, spaces, periods/full stops, hyphens or underscores." xml:space="preserve">
     <value>Spitznamen in der Lounge dürfen lediglich Buchstaben (min. einer), Nummern, Leerzeichen, Punkte, Bindestriche oder Unterstriche enthalten.</value>
+  </data>
+  <data name="Note: We encourage you to consider different play styles players may have, lag/genuine mistakes, and how close your mogi is in terms of points before submitting your claim." xml:space="preserve">
+    <value>Hinweis: Wir ermutigen dich, verschiedene Spielstile von Spielern, schlechte Verbindungen/echte Fehler und den Punktestand deines Gegners im Mogi zu berücksichtigen, bevor du deinen Anspruch einreichst.</value>
   </data>
   <data name="Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room." xml:space="preserve">
     <value>Sobald ein Host festgelegt wurde, muss dieser 2 Minuten warten, nachdem der Freundescode gepostet wurde, um Freundschaftsanfragen anzunehmen, bevor der Raum geöffnet wird.</value>
@@ -409,7 +415,7 @@
     <value>Spieler mit Hostverbot oder der Chat Restricted Rolle dürfen kein Mogi hosten.</value>
   </data>
   <data name="Players who consistently cause disruptions in matches such as trolling, targeting specific players, inting etc. will receive a 3-day mute, and may receive increased punishment on repeated instances." xml:space="preserve">
-    <value>Spieler, welche vermehrt den Spielfluss behindern durch z.B. Trolling, gezieltes Fokussieren eines bestimmten Spielers oder absichtliches Verlieren, erhalten einen Mute von 3 Tagen und müssen mit verstärkten Strafen bei Wiederholung rechnen.</value>
+    <value>Spieler, die wiederkehrend Störungen im Spiel verursachen, wie z. B. Trollen, gezieltes Fokussieren auf bestimmte Spieler, absichtliches Inting usw., erhalten einen 3-tägigen Mute und können bei bei wiederholtem Handeln eine härtere Strafe erhalten.</value>
   </data>
   <data name="Players who consistently cause disruptions in the server such as trolling, flaming, spamming bot commands, etc. will either receive a chat restriction (only allowing them to send certain messages), a mute, or a temporary timeout via staff discretion." xml:space="preserve">
     <value>Spieler, welche vermehrt für Störungen verantwortlich sind (u.a. Trolling, Flaming, das Spammen von Bot Commands), erhalten entweder eine Chat Restriction (dies gestattet ihnen lediglich, bestimmte Nachrichten abzuschicken), einen Mute oder ein temporäres Timeout; der Staff entscheidet hierüber.</value>
@@ -459,6 +465,9 @@
   <data name="Should players request the room to be reopened if opened early, the host must do so or else receive 1 strike." xml:space="preserve">
     <value>Sollte ein Spieler die Neueröffnung des Raumes fordern, wenn der Raum zu früh geöffnet wurde, muss der Host dies tun; andernfalls erhält er einen Strike.</value>
   </data>
+  <data name="Some examples of targeting: slowing to red the same player, slowing to star the same player, spamming items at the same player excessively, and so on." xml:space="preserve">
+    <value>Einige Beispiele für Fokussen: Verlangsamen, um denselben Spieler mehrfach mit einem roten Panzer abzuschießen, um denselben Spieler mehrfach mit einem Stern zu überfahren, übermäßiges Spammen von Items auf denselben Spieler und so weiter.</value>
+  </data>
   <data name="Squad Queue" xml:space="preserve">
     <value>Squad Queue</value>
   </data>
@@ -488,6 +497,9 @@
   </data>
   <data name="Tags must either all be placed at the beginning of players' names or all at the end of players' names." xml:space="preserve">
     <value>Tags müssen stets einheitlich zu Beginn des Spielernamens oder am Ende des Spielernamens platziert sein.</value>
+  </data>
+  <data name="Targeting is defined as disrupting the race of another player through excessive item use whereby their race is significantly/negatively impacted by score or placement; and/or the player targeting impacts their own race in a similar manner." xml:space="preserve">
+    <value>Gezieltes Fokussieren ist definiert als Störung des Rennens eines anderen Spielers durch bewussten Gebrauch von Items, wodurch dessen Rennen durch Punkte oder Platzierung negativ beeinflusst wird; und/oder der Spieler, auf den das Targeting zielt, sein eigenes Rennen zerstört um das Rennen seines gezielten Zieles zu zerstören.</value>
   </data>
   <data name="Teams missing a player for at least 4 races will lose MMR proportional to the amount of races the player missed; for example, teammates of a player who missed 4 races will receive 8/12 loss, or 6/12 loss if the teammate misses 6 races." xml:space="preserve">
     <value>Teams, welche mit einem Spieler weniger für mindestens 
@@ -546,5 +558,8 @@
   </data>
   <data name="Using MogiBot, the first twelve players to say &lt;code&gt;/c&lt;/code&gt; will play." xml:space="preserve">
     <value>Unter Nutzung des MogiBots nehmen die ersten zwölf Spieler, welche &lt;code&gt;/c&lt;/code&gt; schreiben, am Match teil.</value>
+  </data>
+  <data name="Videos can be from switch clips, MKTV, streams with timestamps, etc." xml:space="preserve">
+    <value>Die Videos können von Switch-Clips, MKTV, Streams mit Zeitstempeln usw. stammen.</value>
   </data>
 </root>

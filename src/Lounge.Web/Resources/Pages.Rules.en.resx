@@ -321,6 +321,9 @@
   <data name="Lounge Staff will make decisions in the event of unexpected circumstances not listed here." xml:space="preserve">
     <value>Lounge Staff will make decisions in the event of unexpected circumstances not listed here.</value>
   </data>
+  <data name="Making a claim: If you believe someone is targeting, please take multiple videos as evidence and report them using the ticket system." xml:space="preserve">
+    <value>Making a claim: If you believe someone is targeting, please take multiple videos as evidence and report them using the ticket system.</value>
+  </data>
   <data name="Making an alternate account to join lounge will result in a heavy penalty in lounge and MKCentral." xml:space="preserve">
     <value>Making an alternate account to join lounge will result in a heavy penalty in lounge and MKCentral.</value>
   </data>
@@ -335,6 +338,9 @@
   </data>
   <data name="Nicknames may only contain letters (at least one), numbers, spaces, periods/full stops, hyphens or underscores." xml:space="preserve">
     <value>Nicknames may only contain letters (at least one), numbers, spaces, periods/full stops, hyphens or underscores.</value>
+  </data>
+  <data name="Note: We encourage you to consider different play styles players may have, lag/genuine mistakes, and how close your mogi is in terms of points before submitting your claim." xml:space="preserve">
+    <value>Note: We encourage you to consider different play styles players may have, lag/genuine mistakes, and how close your mogi is in terms of points before submitting your claim.</value>
   </data>
   <data name="Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room." xml:space="preserve">
     <value>Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room.</value>
@@ -459,6 +465,9 @@
   <data name="Should players request the room to be reopened if opened early, the host must do so or else receive 1 strike." xml:space="preserve">
     <value>Should players request the room to be reopened if opened early, the host must do so or else receive 1 strike.</value>
   </data>
+  <data name="Some examples of targeting: slowing to red the same player, slowing to star the same player, spamming items at the same player excessively, and so on." xml:space="preserve">
+    <value>Some examples of targeting: slowing to red the same player, slowing to star the same player, spamming items at the same player excessively, and so on.</value>
+  </data>
   <data name="Squad Queue" xml:space="preserve">
     <value>Squad Queue</value>
   </data>
@@ -488,6 +497,9 @@
   </data>
   <data name="Tags must either all be placed at the beginning of players' names or all at the end of players' names." xml:space="preserve">
     <value>Tags must either all be placed at the beginning of players' names or all at the end of players' names.</value>
+  </data>
+  <data name="Targeting is defined as disrupting the race of another player through excessive item use whereby their race is significantly/negatively impacted by score or placement; and/or the player targeting impacts their own race in a similar manner." xml:space="preserve">
+    <value>Targeting is defined as disrupting the race of another player through excessive item use whereby their race is significantly/negatively impacted by score or placement; and/or the player targeting impacts their own race in a similar manner.</value>
   </data>
   <data name="Teams missing a player for at least 4 races will lose MMR proportional to the amount of races the player missed; for example, teammates of a player who missed 4 races will receive 8/12 loss, or 6/12 loss if the teammate misses 6 races." xml:space="preserve">
     <value>Teams missing a player for at least 4 races will lose MMR proportional to the amount of races the player missed; for example, teammates of a player who missed 4 races will receive 8/12 loss, or 6/12 loss if the teammate misses 6 races.</value>
@@ -545,5 +557,8 @@
   </data>
   <data name="Using MogiBot, the first twelve players to say &lt;code&gt;/c&lt;/code&gt; will play." xml:space="preserve">
     <value>Using MogiBot, the first twelve players to say &lt;code&gt;/c&lt;/code&gt; will play.</value>
+  </data>
+  <data name="Videos can be from switch clips, MKTV, streams with timestamps, etc." xml:space="preserve">
+    <value>Videos can be from switch clips, MKTV, streams with timestamps, etc.</value>
   </data>
 </root>
