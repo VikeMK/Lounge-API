@@ -152,6 +152,15 @@
                 </ol>
             </li>
             <li>
+                @Localizer["If your rank role changes during a mogi and you are unable to see the chat of the mogi you are participating in, you can temporarily grant your old rank role to yourself in #temprole-requests."]
+                @Localizer["Players who abuse the temprole system in any way will receive -50 MMR and a strike."]
+            </li>
+        </ol>
+    </li>
+    <li>
+        <span class="rule-category">@Localizer["Host"]</span>
+        <ol type="a">
+            <li>
                 @Localizer["Players can queue as a host using the <code>/ch</code> command in MogiBot or the <code>^fc</code> command in Stats Bot."]
                 @Localizer["If the player is randomly chosen to be a host, they must post their friend code within 3 minutes of the poll ending."]
                 @Localizer["Failure to post the friend code or refusal to host will result in 1 strike."]
@@ -173,8 +182,36 @@
                 @Localizer["If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike excluding hostbanned and chat restricted players."]
             </li>
             <li>
-                @Localizer["If your rank role changes during a mogi and you are unable to see the chat of the mogi you are participating in, you can temporarily grant your old rank role to yourself in #temprole-requests."]
-                @Localizer["Players who abuse the temprole system in any way will receive -50 MMR and a strike."]
+                @Localizer["In the event that a player disconnects before the first race of a mogi starts (by the end of Lakitu Countdown), the room must be restarted regardless of video proof submissions."]
+                @Localizer["This rule only applies once, if a player disconnects before the first race a second time the room should continue without closing."]
+                @Localizer["A player should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50MMR and a strike."]
+                @Localizer["If the host does not restart, the first race will not count and an additional 13th race will need to be played at the end."]
+            </li>
+            <li>
+                @Localizer["Hosts should start the room with the following settings:"]
+                <ul style="list-style-type:none">
+                    <li>@Localizer["<b>Class</b>: 150cc"]</li>
+                    <li>@Localizer["<b>Teams</b>: No Teams"]</li>
+                    <li>@Localizer["<b>Items</b>: Normal Items"]</li>
+                    <li>@Localizer["<b>COM</b>: Hard COM"]</li>
+                    <li>@Localizer["<b>COM Vehicles</b>: All Vehicles"]</li>
+                    <li>@Localizer["<b>Race Count</b>: 12 Races"]</li>
+                </ul>
+                @Localizer["Hosts who do not comply with the above race settings may have the corresponding races declared invalid and may be subject to a Hostban penalty."]
+            </li>
+            <li>
+                @Localizer["Hosts that start the room with less than 12 players, close the room for no reason, or otherwise cause unnecessary disruptions will receive -50 and a strike, and may be prohibited from hosting in the future."]
+                @Localizer["If hosts disconnected in the middle of a mogi, hosts must take a 30-second clip to prove that it was unintentional (streaming archive is also allowed)."]
+                @Localizer["Typing ^hostban in any channel will show the list of host-banned players."]
+                <ol type="i">
+                    <li>
+                        @Localizer["Host-banned players must wait at least 90 days before appealing their hostban."]
+                    </li>
+                </ol>
+            </li>
+            <li>
+                @Localizer["Room hosts are responsible for taking screenshots of results."]
+                @Localizer["If the host failing to take screenshots prevents a table from being made, the hots will receive -100MMR and a strike."]
             </li>
         </ol>
     </li>
@@ -194,12 +231,6 @@
                 <ol type="i">
                     <li>
                         @Localizer["If a lineup is struggling to find a sub, please tag Lounge Staff to tag @here for a sub."]
-                    </li>
-                    <li>
-                        @Localizer["In the event that a player disconnects before the first race of a mogi starts, the room must be restarted."]
-                        @Localizer["This rule only applies once, if a player disconnects before the first race a second time the room should continue without closing."]
-                        @Localizer["A player should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive -50MMR and a strike."]
-                        @Localizer["If the host does not restart, the first race will not count."]
                     </li>
                 </ol>
             </li>
@@ -221,16 +252,21 @@
             <li>
                 @Localizer["Players who repick a course will receive a -50 MMR penalty."]
                 @Localizer["This does not include repicks from random track selection."]
-                @Localizer["Players who repick a course at least twice will also receive a strike."]
+                @Localizer["Players who repick a course at least twice will receive a -50 MMR penalty for each instance and a strike (e.g. repicking twice results in -100 MMR + strike, repicking three times results in -150 MMR + strike)."]
                 <ol type="i">
+                    <li>
+                        @Localizer["If the player who reported the repick files an objection and no video or other evidence can be confirmed, the penalty may be revoked."]
+                        @Localizer["However, in that case we may check the facts with the reporter and other players who participated in the mogi."]
+                    </li>
                     <li>
                         @Localizer["In Squad Queue 6v6 matches, repicking a course will also result in a -20 penalty to the team's score (subtracted from the offending player's score)."]
                     </li>
                 </ol>
             </li>
             <li>
-                @Localizer["Players must use their <b>Lounge Nickname</b> (or a shortened, legible version) in FFA format events."]
-                @Localizer["Players who use a different name will receive -50 MMR and a strike."]
+                @Localizer["Players must use their <b>Lounge Nickname</b> (or a shortened, legible version if the number of characters is more than 10) in FFA format events."]
+                @Localizer["Japanese characters are not allowed."]
+                @Localizer["Failure to use Lounge Nickname or abide by any of these naming guidelines after the first 2 races will result in -50 MMR."]
             </li>
             <li>
                 @Localizer["In team matches, players must decide on a tag to use in their name with their teammates."]
@@ -273,14 +309,14 @@
                         @Localizer["If not stated otherwise, the tag should start at the beginning of the name by default with regard to (i.)"]
                     </li>
                 </ol>
-                @Localizer["Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -25 MMR penalty."]
+                @Localizer["Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -50 MMR penalty."]
             </li>
             <li>
                 @Localizer["Players that drop from an event before it starts will receive -100 MMR and a strike by default."]
                 @Localizer["If a player drops after the first race has been completed, they will receive a -50 MMR strike and receive an MMR penalty according to rule IV. i."]
             </li>
             <li>
-                @Localizer["Teams missing a player for at least 4 races will lose MMR proportional to the amount of races the player missed; for example, teammates of a player who missed 4 races will receive 8/12 loss, or 6/12 loss if the teammate misses 6 races."]
+                @Localizer["Teams missing a player for at least 4 races will lose MMR proportional to the amount of races the player missed; for example, teammates of a player who missed 6 races will receive 6/12 loss, or 0/12 loss if the teammate misses 12 races."]
                 @Localizer["The player who missed at least 4 races will receive a strike and have their MMR loss increased proportional to the number of races missed; for example, a player who missed 4 races will receive 16/12 loss."]
                 @Localizer["Increased MMR losses are capped at 20/12 loss (8 races or more missing)."]
             </li>
@@ -288,18 +324,8 @@
                 @Localizer["If any player is disqualified from an event for any reason such as, but not limited to, throwing, teaming, or lap-trolling (on any track except Baby Park, in formats other than 6v6 SQ), they will receive a -100 MMR strike."]
             </li>
             <li>
-                @Localizer["Hosts that start the room with less than 12 players, close the room for no reason, or otherwise cause unnecessary disruptions will receive -50 and a strike, and may be prohibited from hosting in the future."]
-                @Localizer["If hosts disconnected in the middle of a mogi, hosts must take a 30-second clip to prove that it was unintentional (streaming archive is also allowed)."]
-                @Localizer["Typing ^hostban in any channel will show the list of host-banned players."]
-                <ol type="i">
-                    <li>
-                        @Localizer["Host-banned players must wait at least 90 days before appealing their hostban."]
-                    </li>
-                </ol>
-            </li>
-            <li>
                 @Localizer["Players may not use an in-game name that is offensive, abusive towards others, contains inappropriate language, or violates any laws."]
-                @Localizer["Use of any offensive names will result in a automatic 1 week mute from lounge, as well as possible punishment by MKCentral Staff."]
+                @Localizer["Use of any offensive names will result in a warning or mute depending on the severity of the name, as well as possible punishment by MKCentral Staff."]
             </li>
         </ol>
     </li>
@@ -307,8 +333,8 @@
         <span class="rule-category">@Localizer["Disconnections and Lag"]</span>
         <ol type="a">
             <li>
-                @Localizer["If 3 or more players from at least 2 different teams disconnect, the race will not count and the room must be reopened."]
-                @Localizer["Players should provide video proof (switch clip, stream, etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike."]
+                @Localizer["If 3 or more players from at least 2 different teams disconnect, the race will not count and the room must be reopened regardless of video proof submissions."]
+                @Localizer["Players should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike."]
             </li>
             <li>
                 @Localizer["If a race does not finish due to lag, the race will not be counted and the room will be reopened."]
@@ -339,6 +365,9 @@
                     <li>@Localizer["2nd offense: 14 day mute"]</li>
                     <li>@Localizer["3rd offense: 28 day mute"]</li>
                 </ol>
+            </li>
+            <li>
+                @Localizer["Strike limits are reset each season."]
             </li>
         </ol>
     </li>
@@ -381,10 +410,6 @@
                 @Localizer["Any penalties that occurred during the match must also be stated."]
             </li>
             <li>
-                @Localizer["Room hosts are responsible for taking screenshots of results."]
-                @Localizer["If an event fails to have a screenshot or table posted within 24 hours, the host of the room will receive -100 and a strike."]
-            </li>
-            <li>
                 @Localizer["Only certain people will be given access to the results channels in order to prevent spam."]
                 @Localizer["If you want to become reporter, please check the #self-roles channel."]
             </li>
@@ -419,6 +444,9 @@
                     <li>
                         @Localizer["The sub's MMR is within 1000 MMR of the original player."]
                     </li>
+                    <li>
+                        @Localizer["In the case that a team violates either of the above conditions, any MMR they win from the event will be voided."]
+                    </li>
                 </ol>
             </li>
             <li>
@@ -431,6 +459,9 @@
     <li>
         <span class="rule-category">@Localizer["Other Notes"]</span>
         <ol type="a">
+            <li>
+                @Localizer["Please read the \"Ticket Guidelines\" section of the support/reports channels before creating a support/report ticket."]
+            </li>
             <li>
                 @Localizer["Chat Restricted, Mute, and Hostban roles are for punishments only and are not available upon request."]
             </li>
