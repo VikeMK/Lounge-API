@@ -212,14 +212,17 @@
   <data name="Host-banned players must wait at least 90 days before appealing their hostban." xml:space="preserve">
     <value>hostbanになったプレイヤーは90日経った後に解除してもらうよう申請できるようになります。</value>
   </data>
+  <data name="Hosts should start the room with the following settings:">
+    <value>Hosts should start the room with the following settings:</value>
+  </data>
   <data name="Hosts that start the room with less than 12 players, close the room for no reason, or otherwise cause unnecessary disruptions will receive -50 and a strike, and may be prohibited from hosting in the future." xml:space="preserve">
     <value>12人未満で模擬を開始したり、理由もなく部屋を閉じたり、そのほか不必要な混乱を引き起こしたホストは -50MMR + strikeを受け、将来ホストを持つことが禁止される可能性があります。</value>
   </data>
+  <data name="Hosts who do not comply with the above race settings may have the corresponding races declared invalid and may be subject to a Hostban penalty." xml:space="preserve">
+    <value>Hosts who do not comply with the above race settings may have the corresponding races declared invalid and may be subject to a Hostban penalty.</value>
+  </data>
   <data name="However, in that case we may check the facts with the reporter and other players who participated in the mogi." xml:space="preserve">
     <value>However, in that case we may check the facts with the reporter and other players who participated in the mogi.</value>
-  </data>
-  <data name="If the player who reported the repick files an objection and no video or other evidence can be confirmed, the penalty may be revoked." xml:space="preserve">
-    <value>If the player who reported the repick files an objection and no video or other evidence can be confirmed, the penalty may be revoked.</value>
   </data>
   <data name="If 3 or more players from at least 2 different teams disconnect, the race will not count and the room must be reopened regardless of video proof submissions." xml:space="preserve">
     <value>If 3 or more players from at least 2 different teams disconnect, the race will not count and the room must be reopened regardless of video proof submissions.</value>
@@ -269,8 +272,8 @@
   <data name="If the host does not restart, the first race will not count and an additional 13th race will need to be played at the end." xml:space="preserve">
     <value>If the host does not restart, the first race will not count and an additional 13th race will need to be played at the end.</value>
   </data>
-  <data name="If the host failing to take screenshots prevents a table from being made, the hots will receive -100MMR and a strike." xml:space="preserve">
-    <value>If the host failing to take screenshots prevents a table from being made, the hots will receive -100MMR and a strike.</value>
+  <data name="If the host failing to take screenshots prevents a table from being made, the host will receive -100MMR and a strike." xml:space="preserve">
+    <value>If the host failing to take screenshots prevents a table from being made, the host will receive -100MMR and a strike.</value>
   </data>
   <data name="If the host has been decided after opening time, the host has to wait 2 minutes to open the room." xml:space="preserve">
     <value>既定の開設時間後にホストが決まった場合は、ホストは2分待ってから部屋を開く必要があります。</value>
