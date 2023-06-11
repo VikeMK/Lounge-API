@@ -230,10 +230,10 @@
   <data name="If a lineup is struggling to find a sub, please tag Lounge Staff to tag @here for a sub." xml:space="preserve">
     <value>補欠を見つけることが困難な場合、ラウンジスタッフにメンションし、 @hereの通知をお願いしてください。</value>
   </data>
-  <data name="If a player drops after the first race has been completed, they will receive a -50 MMR strike and receive an MMR penalty according to rule IV. i." xml:space="preserve">
+  <data name="If a player drops after the first race has been completed, they will receive a -50 MMR strike and receive an MMR penalty according to rule V. i." xml:space="preserve">
     <value>最初のレース終了以降にドロップした場合、-50MMR + strikeを受け、ルールV.i. に沿ってMMRペナルティを受けます。</value>
   </data>
-  <data name="If a player fails to show up for a match, misses at least half of an event, or trolls during an event (IV. h, IV. j) they will receive the SQ Restricted role for 1 week." xml:space="preserve">
+  <data name="If a player fails to show up for a match, misses at least half of an event, or trolls during an event (V. j.) they will receive the SQ Restricted role for 1 week." xml:space="preserve">
     <value>プレイヤーが模擬に参加できない、または模擬の半分以上に参加していない場合、また模擬において荒らし等の行為 (V. j.) を行った場合は1週間SQ Restrictedと呼ばれる役職を付与されます。</value>
   </data>
   <data name="If a player is unable to sub when needed or does not respond within 5 minutes, they will receive a -50 penalty and a strike." xml:space="preserve">
@@ -287,7 +287,7 @@
   <data name="If the proof is convincing, and if the majority of the room agrees on who is causing the lag, staff have the right to punish the individual for a certain amount of time, or warn them to fix their connection before playing again." xml:space="preserve">
     <value>証拠となる動画が客観的に見て説得力があり、その模擬参加者の大部分がそれについて合意した場合、ラウンジスタッフはその個人に対し、一定期間罰則を与えるまたは、次回の模擬までにそれを修正するよう警告する権利を有します。</value>
   </data>
-  <data name="If the room is opened early, the late penalty (IV. b.) comes into effect after 7 minutes of the friend code being posted." xml:space="preserve">
+  <data name="If the room is opened early, the late penalty (V. b.) comes into effect after 7 minutes of the friend code being posted." xml:space="preserve">
     <value>2分待たずに部屋を開設した場合、フレンドコードの投稿から7分後に遅刻のペナルティ(V. b.)が発生します。</value>
   </data>
   <data name="If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike excluding hostbanned and chat restricted players." xml:space="preserve">
@@ -368,7 +368,7 @@
   <data name="Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room." xml:space="preserve">
     <value>ホストはフレンドコードを投稿してから2分待ち、その間に送られてきたフレンドコードを全て承認してから部屋を開く必要があります。</value>
   </data>
-  <data name="Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule III. i.)." xml:space="preserve">
+  <data name="Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule IV. b.)." xml:space="preserve">
     <value>部屋が開設されたら、プレイヤーは5分以内に参加する必要があります。（ただし、ルール IV. b. の場合を除く）</value>
   </data>
   <data name="Once a staff member has seen your account, you will be placed into one of the following ranks:" xml:space="preserve">
@@ -389,7 +389,7 @@
   <data name="Other Notes" xml:space="preserve">
     <value>その他の注意事項</value>
   </data>
-  <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
+  <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule V. a., V. b., V. c.)." xml:space="preserve">
     <value>プレイヤーは模擬参加中であっても、異なるTierであれば挙手することができます。ただし、次の模擬に間に合わなかった場合はペナルティが科せられます(ルール V. a.,  V. b., V. c.).。</value>
   </data>
   <data name="Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; in a tier they are currently playing in until they have crossed the finish line at the end of the 12th race. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
@@ -413,7 +413,7 @@
   <data name="Player names must not begin with the first character of another team's tag." xml:space="preserve">
     <value>模擬参加時のプレイヤー名は、他チームの1文字目と同じ文字を使用してはなりません。</value>
   </data>
-  <data name="Players need to be in the room in 5 minutes. (except rule III. i.)." xml:space="preserve">
+  <data name="Players need to be in the room in 5 minutes. (except rule IV. b.)." xml:space="preserve">
     <value>プレイヤーは5分以内に部屋にいる必要があります(rule IV. b.を除く)。</value>
   </data>
   <data name="Players should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike." xml:space="preserve">
@@ -587,22 +587,22 @@
   <data name="Videos can be from switch clips, MKTV, streams with timestamps, etc." xml:space="preserve">
     <value>動画に関しては、Switchの機能である30秒クリップやMKTV、自身または他人視点の配信などでも構いません。</value>
   </data>
-  <data name="&lt;b&gt;Class&lt;b&gt;: 150cc" xml:space="preserve">
-    <value>&lt;b&gt;クラス&lt;b&gt;: 150cc</value>
+  <data name="&lt;b&gt;Class&lt;/b&gt;: 150cc" xml:space="preserve">
+    <value>&lt;b&gt;クラス&lt;/b&gt;: 150cc</value>
   </data>
-  <data name="&lt;b&gt;Teams&lt;b&gt;: No Teams" xml:space="preserve">
-    <value>&lt;b&gt;チーム&lt;b&gt;: 個人戦</value>
+  <data name="&lt;b&gt;Teams&lt;/b&gt;: No Teams" xml:space="preserve">
+    <value>&lt;b&gt;チーム&lt;/b&gt;: 個人戦</value>
   </data>
-  <data name="&lt;b&gt;Items&lt;b&gt;: Normal Items" xml:space="preserve">
-    <value>&lt;b&gt;アイテム&lt;b&gt;: ノーマル アイテム</value>
+  <data name="&lt;b&gt;Items&lt;/b&gt;: Normal Items" xml:space="preserve">
+    <value>&lt;b&gt;アイテム&lt;/b&gt;: ノーマル アイテム</value>
   </data>
-  <data name="&lt;b&gt;COM&lt;b&gt;: Hard COM" xml:space="preserve">
-    <value>&lt;b&gt;CPU&lt;b&gt;: CPUつよい</value>
+  <data name="&lt;b&gt;COM&lt;/b&gt;: Hard COM" xml:space="preserve">
+    <value>&lt;b&gt;CPU&lt;/b&gt;: CPUつよい</value>
   </data>
-  <data name="&lt;b&gt;COM Vehicles&lt;b&gt;: All Vehicles" xml:space="preserve">
-    <value>&lt;b&gt;CPUマシン&lt;b&gt;: マシンすべて</value>
+  <data name="&lt;b&gt;COM Vehicles&lt;/b&gt;: All Vehicles" xml:space="preserve">
+    <value>&lt;b&gt;CPUマシン&lt;/b&gt;: マシンすべて</value>
   </data>
-  <data name="&lt;b&gt;Race Count&lt;b&gt;: 12 Races" xml:space="preserve">
-    <value>&lt;b&gt;レース数&lt;b&gt;: 12レース</value>
+  <data name="&lt;b&gt;Race Count&lt;/b&gt;: 12 Races" xml:space="preserve">
+    <value>&lt;b&gt;レース数&lt;/b&gt;: 12レース</value>
   </data>
 </root>

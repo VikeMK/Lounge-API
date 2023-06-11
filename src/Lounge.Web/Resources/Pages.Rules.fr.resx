@@ -133,7 +133,7 @@
     <value>Le match commence à partir du moment où la première course est finie, avec les résultats de la course qui sont apparues.</value>
   </data>
   <data name="A player should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50MMR and a strike." xml:space="preserve">
-    <value>A player should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50MMR and a strike.</value>
+    <value>Les joueurs doivent montrer une preuve vidéo (clip de la switch, stream, écran d'erreur de la switch etc.) de leur déconnection si cela leur est demandé; sans quoi ils recevront une pénalité de -50MMR et un strike.</value>
   </data>
   <data name="After 10 minutes, the host can start Mogi even if there are not 12 players in the room." xml:space="preserve">
     <value>Après 10 minutes, l'host peut démarrer le mogi même s'il n'y a pas 12 joueurs.​</value>
@@ -184,7 +184,7 @@
     <value>Ne pas poster son code-ami ou refuser de host entraînera 1 strike.</value>
   </data>
   <data name="Failure to use Lounge Nickname or abide by any of these naming guidelines after the first 2 races will result in -50 MMR." xml:space="preserve">
-    <value>Failure to use Lounge Nickname or abide by any of these naming guidelines after the first 2 races will result in -50 MMR.</value>
+    <value>Le fait de ne pas utiliser son pseudo Lounge ou de suivre l'une de ces conditions suivantes après les 2 premières courses recevront une pénalité de -50MMR.</value>
   </data>
   <data name="Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -50 MMR penalty." xml:space="preserve">
     <value>Ne pas utiliser le même tag que son équipe ou ne respecter aucune de ces règles par rapport au pseudo après les 2 premières courses engendrera une pénalité de -50MMR.</value>
@@ -214,28 +214,28 @@
     <value>Les joueurs interdits d'host (qui ont le rôle Hostban) doivent attendre 90 jours pour faire appel.​</value>
   </data>
   <data name="Hosts should start the room with the following settings:">
-    <value>Hosts should start the room with the following settings:</value>
+    <value>Les hosts doivent lancer la salle en suivant ces paramètres:</value>
   </data>
   <data name="Hosts that start the room with less than 12 players, close the room for no reason, or otherwise cause unnecessary disruptions will receive -50 and a strike, and may be prohibited from hosting in the future." xml:space="preserve">
     <value>Un host qui lance la salle sans les 12 joueurs, ferme la salle sans raison apparente, ou cause des problèmes recevra un strike et une pénalité de -50 MMR, et pourrait être interdit d'host un match a l'avenir.</value>
   </data>
   <data name="Hosts who do not comply with the above race settings may have the corresponding races declared invalid and may be subject to a Hostban penalty." xml:space="preserve">
-    <value>Hosts who do not comply with the above race settings may have the corresponding races declared invalid and may be subject to a Hostban penalty.</value>
+    <value>Les hosts qui ne suivent pas les paramètres suivants seront susceptibles d'invalidation des courses jouées ainsi que d'être hostban.</value>
   </data>
   <data name="However, in that case we may check the facts with the reporter and other players who participated in the mogi." xml:space="preserve">
-    <value>However, in that case we may check the facts with the reporter and other players who participated in the mogi.</value>
+    <value>Cependant, nous nous réservons la possibilité de vérifier les faits avec la personne ayant report et les joueurs ayant pris part au lounge.</value>
   </data>
   <data name="If 3 or more players from at least 2 different teams disconnect, the race will not count and the room must be reopened regardless of video proof submissions." xml:space="preserve">
-    <value>If 3 or more players from at least 2 different teams disconnect, the race will not count and the room must be reopened regardless of video proof submissions.</value>
+    <value>Si 3 joueurs ou plus d'au moins 2 équipes différentes sont déconnectés, la course ne comptera pas et la salle doit être réouverte même en l'absence d'une preuve vidéo.</value>
   </data>
   <data name="If a lineup is struggling to find a sub, please tag Lounge Staff to tag @here for a sub." xml:space="preserve">
     <value>Si vous avez du mal a trouver un sub, demander aux Lounge Staff de tag @here.​</value>
   </data>
-  <data name="If a player drops after the first race has been completed, they will receive a -50 MMR strike and receive an MMR penalty according to rule IV. i." xml:space="preserve">
-    <value>Si un joueur quitte après que la première course ait été validée, il recevra un strike, une pénalité de -50 MMR en plus de la pénalité de MMR référent à la règle IV. i.​</value>
+  <data name="If a player drops after the first race has been completed, they will receive a -50 MMR strike and receive an MMR penalty according to rule V. i." xml:space="preserve">
+    <value>Si un joueur quitte après que la première course ait été validée, il recevra un strike, une pénalité de -50 MMR en plus de la pénalité de MMR référent à la règle V. i.​</value>
   </data>
-  <data name="If a player fails to show up for a match, misses at least half of an event, or trolls during an event (IV. h, IV. j) they will receive the SQ Restricted role for 1 week." xml:space="preserve">
-    <value>Si un joueur ne rejoint pas le match, qu'il manque au moins la moitié des courses, ou qu'il troll durant ce match (IV. h,IV. j) il recevra le rôle SQ Restricted pendant 1 semaine.​</value>
+  <data name="If a player fails to show up for a match, misses at least half of an event, or trolls during an event (V. j.) they will receive the SQ Restricted role for 1 week." xml:space="preserve">
+    <value>Si un joueur ne rejoint pas le match, qu'il manque au moins la moitié des courses, ou qu'il troll durant ce match (V. j.) il recevra le rôle SQ Restricted pendant 1 semaine.​</value>
   </data>
   <data name="If a player is unable to sub when needed or does not respond within 5 minutes, they will receive a -50 penalty and a strike." xml:space="preserve">
     <value>Si un joueur mis en sub ne peut pas sub si besoin ou qu'il ne répond pas sous 5 minutes, il recevra un strike et une pénalité de -50 MMR.​</value>
@@ -271,10 +271,10 @@
     <value>Si le mogi est un FFA, le mogi peut commencer dès lors qu'un host a été donné.​</value>
   </data>
   <data name="If the host does not restart, the first race will not count and an additional 13th race will need to be played at the end." xml:space="preserve">
-    <value>If the host does not restart, the first race will not count and an additional 13th race will need to be played at the end.</value>
+    <value>Si l'host ne ré-ouvre pas la salle, la première course ne comptera pas et une 13ème course devra être jouée.</value>
   </data>
-  <data name="If the host failing to take screenshots prevents a table from being made, the hots will receive -100MMR and a strike." xml:space="preserve">
-    <value>If the host failing to take screenshots prevents a table from being made, the hots will receive -100MMR and a strike.</value>
+  <data name="If the host failing to take screenshots prevents a table from being made, the host will receive -100MMR and a strike." xml:space="preserve">
+    <value>Si le fait que l'host n'ait pas pris de capture d'écran résulte en l'impossibilité de pouvoir faire la table du lounge, l'host recevra une pénalité de -100 MMR et un strike.</value>
   </data>
   <data name="If the host has been decided after opening time, the host has to wait 2 minutes to open the room." xml:space="preserve">
     <value>Si un host a été décidé après l'horaire d'ouverture, alors celui-ci devra attendre 2 minutes avant d'ouvrir la room.</value>
@@ -283,13 +283,13 @@
     <value>Si le joueur est sélectionné aléatoirement pour être un host, il doit poster son code ami dans les 3 minutes qui suivent la fin des votes.</value>
   </data>
   <data name="If the player who reported the repick files an objection and no video or other evidence can be confirmed, the penalty may be revoked." xml:space="preserve">
-    <value>If the player who reported the repick files an objection and no video or other evidence can be confirmed, the penalty may be revoked.</value>
+    <value>Si aucune preuve ne démontre la version de celui l'ayant report, la pénalité peut être levée.</value>
   </data>
   <data name="If the proof is convincing, and if the majority of the room agrees on who is causing the lag, staff have the right to punish the individual for a certain amount of time, or warn them to fix their connection before playing again." xml:space="preserve">
     <value>Si la preuve est suffisante et que la majorité des joueurs est d'accord sur quel joueur lag, le staff a le droit de punir ce joueur pour un certain temps, ou de l'avertir de s'assurer d'avoir une bonne connexion avant de jouer un futur match.​</value>
   </data>
-  <data name="If the room is opened early, the late penalty (IV. b.) comes into effect after 7 minutes of the friend code being posted." xml:space="preserve">
-    <value>Si la salle a été ouverte plus tôt, la pénalité de retard (IV. b.) prendra effet alors 7 minutes après que l'host ait posté son code-amis.</value>
+  <data name="If the room is opened early, the late penalty (V. b.) comes into effect after 7 minutes of the friend code being posted." xml:space="preserve">
+    <value>Si la salle a été ouverte plus tôt, la pénalité de retard (V. b.) prendra effet alors 7 minutes après que l'host ait posté son code-amis.</value>
   </data>
   <data name="If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike excluding hostbanned and chat restricted players." xml:space="preserve">
     <value>Si un host n'a pas été annoncé au bout de 10 minutes après la fin des votes, la line-up entière recevra un strike et une pénalité de -50MMR excepté les joueurs ayant le rôle "Chat Restricted" ou "Hostban".</value>
@@ -328,16 +328,16 @@
     <value>Dans les matchs d'équipe, les joueurs doivent décider d'un tag d'équipe entre eux.</value>
   </data>
   <data name="In the case that a team violates either of the above conditions, any MMR they win from the event will be voided." xml:space="preserve">
-    <value>In the case that a team violates either of the above conditions, any MMR they win from the event will be voided.</value>
+    <value>Dans le cas où une équipe viole l'une de ces conditions, aucun MMR ne pourra être gagné lors de ce lounge pour cette équipe.</value>
   </data>
   <data name="In the event that a player disconnects before the first race of a mogi starts (by the end of Lakitu Countdown), the room must be restarted regardless of video proof submissions." xml:space="preserve">
-    <value>In the event that a player disconnects before the first race of a mogi starts (by the end of Lakitu Countdown), the room must be restarted regardless of video proof submissions.</value>
+    <value>Dans le cas où un joueur déconnecte avant le début de la première course du mogi (avant la fin du décompte de Lakitu), la salle doit être ré-ouverte même en l'absence d'une preuve vidéo.</value>
   </data>
   <data name="Increased MMR losses are capped at 20/12 loss (8 races or more missing)." xml:space="preserve">
     <value>Cette perte de MMR en plus est capté a 20/12 (8 courses ou plus manquées).​</value>
   </data>
   <data name="Japanese characters are not allowed." xml:space="preserve">
-    <value>Japanese characters are not allowed.</value>
+    <value>Les charactères japonais ne sont pas autorisés</value>
   </data>
   <data name="Joining the Lounge" xml:space="preserve">
     <value>Rejoindre le Lounge</value>
@@ -369,8 +369,8 @@
   <data name="Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room." xml:space="preserve">
     <value>Une fois qu'un host a été décidé, l'host doit attendre 2 minutes avant d'ouvrir la salle afin d'accepter les demandes d'amis.</value>
   </data>
-  <data name="Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule III. i.)." xml:space="preserve">
-    <value>Une fois le salle ouverte, les joueurs devront rejoindre celle-ci dans les 5 minutes. (excepté règle III. i.).</value>
+  <data name="Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule IV. b.)." xml:space="preserve">
+    <value>Une fois le salle ouverte, les joueurs devront rejoindre celle-ci dans les 5 minutes. (excepté règle IV. b.).</value>
   </data>
   <data name="Once a staff member has seen your account, you will be placed into one of the following ranks:" xml:space="preserve">
     <value>Une fois que un membre du staff a vu votre compte, il vous donnera l'un de ces rang:​</value>
@@ -390,8 +390,8 @@
   <data name="Other Notes" xml:space="preserve">
     <value>Autres Notes</value>
   </data>
-  <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
-    <value>Les joueurs sont autorisés à &lt;code&gt;/c&lt;/code&gt; dans un tier différent de celui dont ils sont déjà, toutefois s'ils arrivent en retard ils peuvent toujours recevoir une pénalité (rule IV. b., IV. c.).</value>
+  <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule V. a., V. b., V. c.)." xml:space="preserve">
+    <value>Les joueurs sont autorisés à &lt;code&gt;/c&lt;/code&gt; dans un tier différent de celui dont ils sont déjà, toutefois s'ils arrivent en retard ils peuvent toujours recevoir une pénalité (rule V. a., V. b., V. c.).</value>
   </data>
   <data name="Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; in a tier they are currently playing in until they have crossed the finish line at the end of the 12th race. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>Les joueurs ne sont pas autorisés à utiliser la commande &lt;code&gt;/c&lt;/code&gt; dans un tier où ils sont déjà en train de jouer jusqu'à qu'ils aient passé la ligne d'arrivée de la 12ème course. Les joueurs ne respectant pas cette règle recevront un strike et une pénalité de -50MMR.</value>
@@ -409,16 +409,16 @@
     <value>Les joueurs ne doivent pas utiliser leur pseudo en jeu de façon offensante, abusif envers les autres, contenant un langage inapproprié ou violant les lois.</value>
   </data>
   <data name="Players must use their &lt;b&gt;Lounge Nickname&lt;/b&gt; (or a shortened, legible version if the number of characters is more than 10) in FFA format events." xml:space="preserve">
-    <value>Players must use their &lt;b&gt;Lounge Nickname&lt;/b&gt; (or a shortened, legible version if the number of characters is more than 10) in FFA format events.</value>
+    <value>Les joueurs doivent utiliser leurs &lt;b&gt;Pseudo Lounge&lt;/b&gt; (ou une version lisible de leur pseudo si celui-ci dépasse les 10 charactères) en FFA.</value>
   </data>
   <data name="Player names must not begin with the first character of another team's tag." xml:space="preserve">
     <value>Si vous avez décidé de placer votre tag à la fin de votre pseudo, vous ne pouvez pas avoir le premier caractère de votre pseudo similaire au premier caractère d'un tag d'une équipe.</value>
   </data>
-  <data name="Players need to be in the room in 5 minutes. (except rule III. i.)." xml:space="preserve">
-    <value>Les joueurs devront rejoindre la room dans les 5 minutes. (excepté règle III. i.)</value>
+  <data name="Players need to be in the room in 5 minutes. (except rule IV. b.)." xml:space="preserve">
+    <value>Les joueurs devront rejoindre la room dans les 5 minutes. (excepté règle IV. b.)</value>
   </data>
   <data name="Players should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Players should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike.</value>
+    <value>Les joueurs doivent présenter une preuve vidéo (clip de la switch, stream, écran d'erreur de la switch etc.) de leur déconnection si il lui est demandé; sans quoi ils recevront une pénalité de -50 MMR et un strike.</value>
   </data>
   <data name="Players that drop from an event before it starts will receive -100 MMR and a strike by default." xml:space="preserve">
     <value>Les joueurs qui quittent un match avant que celui-ci ne commence recevront un strike et une pénalité de -100 MMR.</value>
@@ -457,7 +457,7 @@
     <value>Un joueur recevant une pénalité pour avoir quitté un match, laptroll, rejoint la salle en retard, ou fait équipe en FFA recevra également un strike.</value>
   </data>
   <data name="Players who repick a course at least twice will receive a -50 MMR penalty for each instance and a strike (e.g. repicking twice results in -100 MMR + strike, repicking three times results in -150 MMR + strike)." xml:space="preserve">
-    <value>Players who repick a course at least twice will receive a -50 MMR penalty for each instance and a strike (e.g. repicking twice results in -100 MMR + strike, repicking three times results in -150 MMR + strike).</value>
+    <value>Les joueurs qui repeat une course au moins 2 fois recevront une pénalité de -50 MMR pour chaque repeat ainsi qu'un strike. (ex : repeat 2 fois résulte en une pénalité de -100 MMR et un strike, repeat 3 fois résulte en une pénalité de -150 MMR et un strike.)</value>
   </data>
   <data name="Players who repick a course will receive a -50 MMR penalty." xml:space="preserve">
     <value>Les joueurs qui repeat une course recevront une pénalité de -50 MMR.</value>
@@ -472,13 +472,13 @@
     <value>Les joueurs ne respectant pas cette règle recevront un strike ainsi qu'une pénalité de -50MMR.</value>
   </data>
   <data name="Please read the &quot;Ticket Guidelines&quot; section of the support/reports channels before creating a support/report ticket." xml:space="preserve">
-    <value>Please read the "Ticket Guidelines" section of the support/reports channels before creating a support/report ticket.</value>
+    <value>Veuillez lire les "instructions d'utilisations des tickets" des sections support/report avant de créer un ticket support/report.</value>
   </data>
   <data name="Ranking System" xml:space="preserve">
     <value>Système de rang</value>
   </data>
   <data name="Results" xml:space="preserve">
-    <value>Resultats</value>
+    <value>Résultats</value>
   </data>
   <data name="Room hosts are responsible for taking screenshots of results." xml:space="preserve">
     <value>L'host est responsable de prendre les captures d'écran des résultats.</value>
@@ -496,10 +496,10 @@
     <value>Squad Queue</value>
   </data>
   <data name="Squad Queue is a different way of playing lounge that allows players to play with predetermined teammates." xml:space="preserve">
-    <value>Les Squad Queue sont une différentes manières de jouer, elles permettent en effet de jouer avec n'importe quels partenaires.​</value>
+    <value>Les Squad Queue sont une différentes manières de jouer, elles permettent de jouer avec n'importe quels partenaires.​</value>
   </data>
   <data name="Strike limits are reset each season." xml:space="preserve">
-    <value>Strike limits are reset each season.</value>
+    <value>Les strike limits sont remises à jour chaque saison.</value>
   </data>
   <data name="Strike System" xml:space="preserve">
     <value>Système de strike</value>
@@ -580,30 +580,30 @@
     <value>Lorsque vous rejoignez le serveur pour la première fois, vous devez envoyer le lien de votre compte registry dans le channel &lt;b&gt;#mkcentral-links&lt;/b&gt; du serveur Discord.</value>
   </data>
   <data name="Use of any offensive names will result in a warning or mute depending on the severity of the name, as well as possible punishment by MKCentral Staff." xml:space="preserve">
-    <value>Use of any offensive names will result in a warning or mute depending on the severity of the name, as well as possible punishment by MKCentral Staff.</value>
+    <value>L'utilisation d'un nom offensif résultera en un avertissement ou un mute en fonction de la sévérité du dit nom, avec possibilité de poursuite par le Staff MKCentral.</value>
   </data>
   <data name="Using MogiBot, the first twelve players to say &lt;code&gt;/c&lt;/code&gt; will play." xml:space="preserve">
     <value>En utilisant MogiBot, les 12 premiers joueurs à utiliser la commande &lt;code&gt;/c&lt;/code&gt; joueront.</value>
   </data>
   <data name="Videos can be from switch clips, MKTV, streams with timestamps, etc." xml:space="preserve">
-    <value>Les vidéos peuvent provenir de clips provenant de la switch, de MKTV, de streams avec le timecode, etc.</value>
+    <value>Les vidéos peuvent provenir de clips provenant de la switch, de MKTV, de streams avec timecode, etc.</value>
   </data>
-  <data name="&lt;b&gt;Class&lt;b&gt;: 150cc" xml:space="preserve">
-    <value>&lt;b&gt;Class&lt;b&gt;: 150cc</value>
+  <data name="&lt;b&gt;Class&lt;/b&gt;: 150cc" xml:space="preserve">
+    <value>&lt;b&gt;Mode&lt;/b&gt;: Grand Prix 150cc</value>
   </data>
-  <data name="&lt;b&gt;Teams&lt;b&gt;: No Teams" xml:space="preserve">
-    <value>&lt;b&gt;Teams&lt;b&gt;: No Teams</value>
+  <data name="&lt;b&gt;Teams&lt;/b&gt;: No Teams" xml:space="preserve">
+    <value>&lt;b&gt;Equipes&lt;/b&gt;: Chacun pour soi</value>
   </data>
-  <data name="&lt;b&gt;Items&lt;b&gt;: Normal Items" xml:space="preserve">
-    <value>&lt;b&gt;Items&lt;b&gt;: Normal Items</value>
+  <data name="&lt;b&gt;Items&lt;/b&gt;: Normal Items" xml:space="preserve">
+    <value>&lt;b&gt;Objets&lt;/b&gt;: Mode normal</value>
   </data>
-  <data name="&lt;b&gt;COM&lt;b&gt;: Hard COM" xml:space="preserve">
-    <value>&lt;b&gt;COM&lt;b&gt;: Hard COM</value>
+  <data name="&lt;b&gt;COM&lt;/b&gt;: Hard COM" xml:space="preserve">
+    <value>&lt;b&gt;IA&lt;/b&gt;: IA difficile</value>
   </data>
-  <data name="&lt;b&gt;COM Vehicles&lt;b&gt;: All Vehicles" xml:space="preserve">
-    <value>&lt;b&gt;COM Vehicles&lt;b&gt;: All Vehicles</value>
+  <data name="&lt;b&gt;COM Vehicles&lt;/b&gt;: All Vehicles" xml:space="preserve">
+    <value>&lt;b&gt;Véhicules IA&lt;/b&gt;: Tous les véhicules</value>
   </data>
-  <data name="&lt;b&gt;Race Count&lt;b&gt;: 12 Races" xml:space="preserve">
-    <value>&lt;b&gt;Race Count&lt;b&gt;: 12 Races</value>
+  <data name="&lt;b&gt;Race Count&lt;/b&gt;: 12 Races" xml:space="preserve">
+    <value>&lt;b&gt;Nombre de courses&lt;/b&gt;: 12 Courses</value>
   </data>
 </root>

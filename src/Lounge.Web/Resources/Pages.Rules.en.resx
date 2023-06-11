@@ -231,11 +231,11 @@
   <data name="If a lineup is struggling to find a sub, please tag Lounge Staff to tag @here for a sub." xml:space="preserve">
     <value>If a lineup is struggling to find a sub, please tag Lounge Staff to tag @here for a sub.</value>
   </data>
-  <data name="If a player drops after the first race has been completed, they will receive a -50 MMR strike and receive an MMR penalty according to rule IV. i." xml:space="preserve">
-    <value>If a player drops after the first race has been completed, they will receive a -50 MMR strike and receive an MMR penalty according to rule IV. i.</value>
+  <data name="If a player drops after the first race has been completed, they will receive a -50 MMR strike and receive an MMR penalty according to rule V. i." xml:space="preserve">
+    <value>If a player drops after the first race has been completed, they will receive a -50 MMR strike and receive an MMR penalty according to rule V. i.</value>
   </data>
-  <data name="If a player fails to show up for a match, misses at least half of an event, or trolls during an event (IV. h, IV. j) they will receive the SQ Restricted role for 1 week." xml:space="preserve">
-    <value>If a player fails to show up for a match, misses at least half of an event, or trolls during an event (IV. h, IV. j) they will receive the SQ Restricted role for 1 week.</value>
+  <data name="If a player fails to show up for a match, misses at least half of an event, or trolls during an event (V. j.) they will receive the SQ Restricted role for 1 week." xml:space="preserve">
+    <value>If a player fails to show up for a match, misses at least half of an event, or trolls during an event (V. j.) they will receive the SQ Restricted role for 1 week.</value>
   </data>
   <data name="If a player is unable to sub when needed or does not respond within 5 minutes, they will receive a -50 penalty and a strike." xml:space="preserve">
     <value>If a player is unable to sub when needed or does not respond within 5 minutes, they will receive a -50 penalty and a strike.</value>
@@ -288,8 +288,8 @@
   <data name="If the proof is convincing, and if the majority of the room agrees on who is causing the lag, staff have the right to punish the individual for a certain amount of time, or warn them to fix their connection before playing again." xml:space="preserve">
     <value>If the proof is convincing, and if the majority of the room agrees on who is causing the lag, staff have the right to punish the individual for a certain amount of time, or warn them to fix their connection before playing again.</value>
   </data>
-  <data name="If the room is opened early, the late penalty (IV. b.) comes into effect after 7 minutes of the friend code being posted." xml:space="preserve">
-    <value>If the room is opened early, the late penalty (IV. b.) comes into effect after 7 minutes of the friend code being posted.</value>
+  <data name="If the room is opened early, the late penalty (V. b.) comes into effect after 7 minutes of the friend code being posted." xml:space="preserve">
+    <value>If the room is opened early, the late penalty (V. b.) comes into effect after 7 minutes of the friend code being posted.</value>
   </data>
   <data name="If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike excluding hostbanned and chat restricted players." xml:space="preserve">
     <value>If there is no host for a mogi 10 minutes after the poll ends, the entire lineup will receive -50 and a strike excluding hostbanned and chat restricted players.</value>
@@ -369,8 +369,8 @@
   <data name="Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room." xml:space="preserve">
     <value>Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room.</value>
   </data>
-  <data name="Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule III. i.)." xml:space="preserve">
-    <value>Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule III. i.).</value>
+  <data name="Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule IV. b.)." xml:space="preserve">
+    <value>Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule IV. b.).</value>
   </data>
   <data name="Once a staff member has seen your account, you will be placed into one of the following ranks:" xml:space="preserve">
     <value>Once a staff member has seen your account, you will be placed into one of the following ranks:</value>
@@ -390,8 +390,8 @@
   <data name="Other Notes" xml:space="preserve">
     <value>Other Notes</value>
   </data>
-  <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.)." xml:space="preserve">
-    <value>Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule IV. b., IV. c.).</value>
+  <data name="Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule V. a., V. b., V. c.)." xml:space="preserve">
+    <value>Players are allowed to type &lt;code&gt;/c&lt;/code&gt; in a different tier than the one they are currently playing in; however, they are still subject to penalties if they fail to join in time (rule V. a., V. b., V. c.).</value>
   </data>
   <data name="Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; in a tier they are currently playing in until they have crossed the finish line at the end of the 12th race. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>Players are not allowed to type &lt;code&gt;/c&lt;/code&gt; in a tier they are currently playing in until they have crossed the finish line at the end of the 12th race. Players who violate this rule will receive -50 MMR and a strike.</value>
@@ -414,8 +414,8 @@
   <data name="Player names must not begin with the first character of another team's tag." xml:space="preserve">
     <value>Player names must not begin with the first character of another team's tag.</value>
   </data>
-  <data name="Players need to be in the room in 5 minutes. (except rule III. i.)." xml:space="preserve">
-    <value>Players need to be in the room in 5 minutes. (except rule III. i.).</value>
+  <data name="Players need to be in the room in 5 minutes. (except rule IV. b.)." xml:space="preserve">
+    <value>Players need to be in the room in 5 minutes. (except rule IV. b.).</value>
   </data>
   <data name="Players should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike." xml:space="preserve">
     <value>Players should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike.</value>
@@ -588,22 +588,22 @@
   <data name="Videos can be from switch clips, MKTV, streams with timestamps, etc." xml:space="preserve">
     <value>Videos can be from switch clips, MKTV, streams with timestamps, etc.</value>
   </data>
-  <data name="&lt;b&gt;Class&lt;b&gt;: 150cc" xml:space="preserve">
-    <value>&lt;b&gt;Class&lt;b&gt;: 150cc</value>
+  <data name="&lt;b&gt;Class&lt;/b&gt;: 150cc" xml:space="preserve">
+    <value>&lt;b&gt;Class&lt;/b&gt;: 150cc</value>
   </data>
-  <data name="&lt;b&gt;Teams&lt;b&gt;: No Teams" xml:space="preserve">
-    <value>&lt;b&gt;Teams&lt;b&gt;: No Teams</value>
+  <data name="&lt;b&gt;Teams&lt;/b&gt;: No Teams" xml:space="preserve">
+    <value>&lt;b&gt;Teams&lt;/b&gt;: No Teams</value>
   </data>
-  <data name="&lt;b&gt;Items&lt;b&gt;: Normal Items" xml:space="preserve">
-    <value>&lt;b&gt;Items&lt;b&gt;: Normal Items</value>
+  <data name="&lt;b&gt;Items&lt;/b&gt;: Normal Items" xml:space="preserve">
+    <value>&lt;b&gt;Items&lt;/b&gt;: Normal Items</value>
   </data>
-  <data name="&lt;b&gt;COM&lt;b&gt;: Hard COM" xml:space="preserve">
-    <value>&lt;b&gt;COM&lt;b&gt;: Hard COM</value>
+  <data name="&lt;b&gt;COM&lt;/b&gt;: Hard COM" xml:space="preserve">
+    <value>&lt;b&gt;COM&lt;/b&gt;: Hard COM</value>
   </data>
-  <data name="&lt;b&gt;COM Vehicles&lt;b&gt;: All Vehicles" xml:space="preserve">
-    <value>&lt;b&gt;COM Vehicles&lt;b&gt;: All Vehicles</value>
+  <data name="&lt;b&gt;COM Vehicles&lt;/b&gt;: All Vehicles" xml:space="preserve">
+    <value>&lt;b&gt;COM Vehicles&lt;/b&gt;: All Vehicles</value>
   </data>
-  <data name="&lt;b&gt;Race Count&lt;b&gt;: 12 Races" xml:space="preserve">
-    <value>&lt;b&gt;Race Count&lt;b&gt;: 12 Races</value>
+  <data name="&lt;b&gt;Race Count&lt;/b&gt;: 12 Races" xml:space="preserve">
+    <value>&lt;b&gt;Race Count&lt;/b&gt;: 12 Races</value>
   </data>
 </root>
