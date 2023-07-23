@@ -240,7 +240,8 @@ namespace Lounge.Web.Stats
                 AverageScore = playerData.Events.Average(e => (int?)e.Score),
                 NoSQAverageScore = playerData.Events.Where(e => e.Event.Tier != "SQ").Average(e => (int?)e.Score),
                 AverageLastTen = playerData.Events.Take(10).Average(e => (int?)e.Score),
-                PartnerAverage = playerData.Events.SelectMany(p => p.PartnerScores).Cast<int?>().Average()
+                PartnerAverage = playerData.Events.SelectMany(p => p.PartnerScores).Cast<int?>().Average(),
+                NoSQPartnerAverage = playerData.Events.Where(e => e.Event.Tier != "SQ").SelectMany(p => p.PartnerScores).Cast<int?>().Average()
             };
 
             return vm;
