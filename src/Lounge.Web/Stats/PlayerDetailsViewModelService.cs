@@ -237,9 +237,9 @@ namespace Lounge.Web.Stats
                 LargestGainTableId = playerData.LargestGain?.EventId,
                 LargestLoss = playerData.LargestLoss?.Amount,
                 LargestLossTableId = playerData.LargestLoss?.EventId,
-                AverageScore = playerData.Events.Average(e => (int?)e.Score),
-                AverageLastTen = playerData.Events.Take(10).Average(e => (int?)e.Score),
-                PartnerAverage = playerData.Events.SelectMany(p => p.PartnerScores).Cast<int?>().Average()
+                AverageScore = playerData.AverageScore,
+                AverageLastTen = playerData.AverageLastTen,
+                PartnerAverage = playerData.PartnerAverage,
             };
 
             return vm;
