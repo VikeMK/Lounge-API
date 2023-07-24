@@ -237,11 +237,11 @@ namespace Lounge.Web.Stats
                 LargestGainTableId = playerData.LargestGain?.EventId,
                 LargestLoss = playerData.LargestLoss?.Amount,
                 LargestLossTableId = playerData.LargestLoss?.EventId,
-                AverageScore = playerData.Events.Average(e => (int?)e.Score),
-                NoSQAverageScore = playerData.Events.Where(e => e.Event.Tier != "SQ").Average(e => (int?)e.Score),
-                AverageLastTen = playerData.Events.Take(10).Average(e => (int?)e.Score),
-                PartnerAverage = playerData.Events.SelectMany(p => p.PartnerScores).Cast<int?>().Average(),
-                NoSQPartnerAverage = playerData.Events.Where(e => e.Event.Tier != "SQ").SelectMany(p => p.PartnerScores).Cast<int?>().Average()
+                AverageScore = playerData.AverageScore,
+                NoSQAverageScore = playerData.NoSQAverageScore,
+                AverageLastTen = playerData.AverageLastTen,
+                PartnerAverage = playerData.PartnerAverage,
+                NoSQPartnerAverage = playerData.NoSQPartnerAverage
             };
 
             return vm;
