@@ -120,6 +120,9 @@
   <data name="Average Score" xml:space="preserve">
     <value>Average Score</value>
   </data>
+  <data name="Average Score (No SQ)" xml:space="preserve">
+    <value>Average Score (No SQ)</value>
+  </data>
   <data name="Average Score (Last 10)" xml:space="preserve">
     <value>Average Score (Last 10)</value>
   </data>
@@ -170,6 +173,9 @@
   </data>
   <data name="Partner Average Score" xml:space="preserve">
     <value>Partner Average Score</value>
+  </data>
+  <data name="Partner Average Score (No SQ)" xml:space="preserve">
+    <value>Partner Average Score (No SQ)</value>
   </data>
   <data name="Peak MMR" xml:space="preserve">
     <value>Peak MMR</value>
