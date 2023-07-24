@@ -20,18 +20,18 @@
             <ul class="navbar-nav">
                 @foreach (var season in LoungeSettingsService.ValidSeasons)
                 {
-                    <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Stats" asp-route-season="@season">@Localizer["Season"] @season</a>
-                    </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Stats" asp-route-season="@season">@Localizer["Season"] @season</a>
+                                </li>
+
                 }
-            </ul>
+
+   </ul>
         </div>
     </div>
 </div>
 
-<input type="hidden" value="@Model.Season" id="seasonInput"/>
-
-<h1 class="m-4 text-center">Division Data</h1>
+<h1 class="m-4 text-center">@Localizer["Division Data"]</h1>
 
 <canvas id="statDivisionChartBody"></canvas>
 
@@ -69,7 +69,7 @@
     </dl>  
 </div>  
 
-<h1 class="m-4 text-center">Country Data</h1>
+<h1 class="m-4 text-center">@Localizer["Country Data"]</h1>
 
 <div class="row m-2">
     <canvas id="statPopulationCountryChartBody" class="col-lg-6 col-md-6 col-sm-12 col-xs-12"></canvas>
@@ -90,7 +90,7 @@
 
 <canvas class="m-2" id="statTopCountryChartBody"></canvas>
 
-<h1 class="m-4 text-center">Activity Data</h1>
+<h1 class="m-4 text-center">@Localizer["Activity Data"]</h1>
 
 <div class="row m-2">
     <canvas id="statMogiFormatChartBody" class="col-lg-6 col-md-6 col-sm-6 col-xs-6"></canvas>
@@ -136,27 +136,27 @@
 
 @section Scripts
     {
-                <script src="~/lib/jquery/jquery.min.js"></script>
-                <script src="~/lib/chartjs/chart.min.js"></script>
-                <script src="~/js/stats.js"></script>
-                <script>
-                    function updatePage(data) {
-                        updateStatsChart(data);
-                        updateStats(data);
-                        updatePopulationCountryChart(data);
-                        updateOverallCountryChart(data, @Model.Season);
-                        updateTopCountryChart(data, @Model.Season);
-                        updateMogiFormatChart(data);
-                        updateMogiActivityChart(data, @Model.Season);
-                        updateMogiTables(data, @Model.Season);
-                    }
+                            <script src="~/lib/jquery/jquery.min.js"></script>
+                            <script src="~/lib/chartjs/chart.min.js"></script>
+                            <script src="~/js/stats.js"></script>
+                            <script>
+                                function updatePage(data) {
+                                    updateStatsChart(data);
+                                    updateStats(data);
+                                    updatePopulationCountryChart(data);
+                                    updateOverallCountryChart(data, @Model.Season);
+                                    updateTopCountryChart(data, @Model.Season);
+                                    updateMogiFormatChart(data);
+                                    updateMogiActivityChart(data, @Model.Season);
+                                    updateMogiTables(data, @Model.Season);
+                                }
 
-                    const url = `/api/player/stats?season=${@Model.Season}`;
-                    fetch(url)
-                        .then((response) => response.json())
-                        .then((data) => updatePage(data))
-                        .catch((error) => {
-                            console.log(`Error fetching Stats`);
-                    });
-                </script>
+                                const url = `/api/player/stats?season=${@Model.Season}`;
+                                fetch(url)
+                                    .then((response) => response.json())
+                                    .then((data) => updatePage(data))
+                                    .catch((error) => {
+                                        console.log(`Error fetching Stats`);
+                                });
+                            </script>
     }
