@@ -262,8 +262,7 @@ namespace Lounge.Web.Controllers
                 .Select(p => new StatsPlayerViewModel.Player(
                     p.Name,
                     p.Mmr,
-                    p.CountryCode,
-                    p.EventsPlayed
+                    p.CountryCode
                     ))
                 .ToList();
 
