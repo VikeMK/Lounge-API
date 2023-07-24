@@ -252,9 +252,7 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("stats")]
         [AllowAnonymous]
-        public async Task<ActionResult<StatsViewModel>> Leaderboard(
-            [ValidSeason] int? season = null
-        )
+        public ActionResult<StatsViewModel> Leaderboard([ValidSeason] int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason;
 
@@ -373,15 +371,14 @@ namespace Lounge.Web.Controllers
                 AverageMmr = mmrTotal / players.Count;
             }
 
-            var tables = await _context.Tables
-                .AsNoTracking()
+            var tables = _dbCache.Tables.Values
                 .Where(t => t.Season == season)
                 .Select(t => new StatsTableViewModel.Table(
                     t.CreatedOn,
                     t.NumTeams,
                     t.Tier
                 ))
-                .ToListAsync();
+                .ToList();
 
             foreach (var table in tables)
             {
