@@ -34,6 +34,10 @@
         "jquery.validate.min.js",
         "jquery.validate.js"
       ]
+    },
+    {
+      "library": "Chart.js@3.9.0",
+      "destination": "wwwroot/lib/chartjs/"
     }
   ]
 }
