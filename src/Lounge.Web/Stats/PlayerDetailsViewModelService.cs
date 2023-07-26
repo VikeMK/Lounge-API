@@ -238,8 +238,10 @@ namespace Lounge.Web.Stats
                 LargestLoss = playerData.LargestLoss?.Amount,
                 LargestLossTableId = playerData.LargestLoss?.EventId,
                 AverageScore = playerData.AverageScore,
+                NoSQAverageScore = playerData.NoSQAverageScore,
                 AverageLastTen = playerData.AverageLastTen,
                 PartnerAverage = playerData.PartnerAverage,
+                NoSQPartnerAverage = playerData.NoSQPartnerAverage
             };
 
             return vm;

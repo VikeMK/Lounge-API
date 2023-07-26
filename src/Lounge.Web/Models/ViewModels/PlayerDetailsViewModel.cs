@@ -73,6 +73,10 @@ namespace Lounge.Web.Models.ViewModels
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
         public double? AverageScore { get; init; }
 
+        [Display(Name = "Average Score (No SQ)")]
+        [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+        public double? NoSQAverageScore { get; init; }
+
         [Display(Name = "Average Score (Last 10)")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
         public double? AverageLastTen { get; init; }
@@ -80,6 +84,10 @@ namespace Lounge.Web.Models.ViewModels
         [Display(Name = "Partner Average Score")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
         public double? PartnerAverage { get; init; }
+
+        [Display(Name = "Partner Average Score (No SQ)")]
+        [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+        public double? NoSQPartnerAverage { get; init; }
 
         public List<MmrChange> MmrChanges { get; init; }
 

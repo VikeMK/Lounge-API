@@ -23,8 +23,10 @@ namespace Lounge.Web.Stats
         (int Amount, int EventId)? LargestGain,
         (int Amount, int EventId)? LargestLoss,
         double? AverageScore,
+        double? NoSQAverageScore,
         double? AverageLastTen,
         double? PartnerAverage,
+        double? NoSQPartnerAverage,
         int? OverallRank = null)
     {
         public PlayerLeaderboardData(
@@ -49,8 +51,10 @@ namespace Lounge.Web.Stats
                 LargestGain: Events.Where(e => e.MmrDelta > 0).Max(e => ((int, int)?)(e.MmrDelta, e.TableId)),
                 LargestLoss: Events.Where(e => e.MmrDelta < 0).Min(e => ((int, int)?)(e.MmrDelta, e.TableId)),
                 AverageScore: Events.Average(e => (int?)e.Score),
+                NoSQAverageScore: Events.Where(e => e.Event.Tier != "SQ").Average(e => (int?)e.Score),
                 AverageLastTen: Events.Take(10).Average(e => (int?)e.Score),
                 PartnerAverage: Events.SelectMany(p => p.PartnerScores).Cast<int?>().Average(),
+                NoSQPartnerAverage: Events.Where(e => e.Event.Tier != "SQ").SelectMany(p => p.PartnerScores).Cast<int?>().Average(),
                 OverallRank)
         {
         }
