@@ -94,12 +94,20 @@
             <dd>@Html.DisplayFor(model => model.Data.AverageScore)</dd>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.NoSQAverageScore)]</dt>
+            <dd>@Html.DisplayFor(model => model.Data.NoSQAverageScore)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Localizer[Html.DisplayNameFor(model => model.Data.AverageLastTen)]</dt>
             <dd>@Html.DisplayFor(model => model.Data.AverageLastTen)</dd>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Localizer[Html.DisplayNameFor(model => model.Data.PartnerAverage)]</dt>
             <dd>@Html.DisplayFor(model => model.Data.PartnerAverage)</dd>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.NoSQPartnerAverage)]</dt>
+            <dd>@Html.DisplayFor(model => model.Data.NoSQPartnerAverage)</dd>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             @if(Model.Data.RegistryLink != null)

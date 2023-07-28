@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,22 +117,64 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Discord Invite" xml:space="preserve">
-    <value>Invito di Discord</value>
+  <data name="Seasons" xml:space="preserve">
+    <value>Seasons</value>
   </data>
-  <data name="Leaderboard" xml:space="preserve">
-    <value>Classifica</value>
+  <data name="Division Data" xml:space="preserve">
+    <value>Division Data</value>
   </data>
-  <data name="MK8DX 150cc Lounge" xml:space="preserve">
-    <value>MK8DX 150cc Lounge</value>
+  <data name="Division" xml:space="preserve">
+    <value>Division</value>
   </data>
-  <data name="Records" xml:space="preserve">
-    <value>Record</value>
+  <data name="Players" xml:space="preserve">
+    <value>Players</value>
   </data>
-  <data name="Rules" xml:space="preserve">
-    <value>Regole</value>
+  <data name="% of Players" xml:space="preserve">
+    <value>% of Players</value>
   </data>
-  <data name="Stats" xml:space="preserve">
-    <value>Statistiche</value>
+  <data name="Percentiles" xml:space="preserve">
+    <value>Percentiles</value>
+  </data>
+  <data name="Total Players" xml:space="preserve">
+    <value>Total Players</value>
+  </data>
+  <data name="Total Mogis" xml:space="preserve">
+    <value>Total Mogis</value>
+  </data>
+  <data name="Average MMR" xml:space="preserve">
+    <value>Average MMR</value>
+  </data>
+  <data name="Median MMR" xml:space="preserve">
+    <value>Median MMR</value>
+  </data>
+  <data name="Country Data" xml:space="preserve">
+    <value>Country Data</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="Population" xml:space="preserve">
+    <value>Population</value>
+  </data>
+  <data name="% of Total Population" xml:space="preserve">
+    <value>% of Total Population</value>
+  </data>
+  <data name="Activity Data" xml:space="preserve">
+    <value>Activity Data</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Mogis" xml:space="preserve">
+    <value>Mogis</value>
+  </data>
+  <data name="% of Mogis" xml:space="preserve">
+    <value>% of Mogis</value>
+  </data>
+  <data name="Tier" xml:space="preserve">
+    <value>Tier</value>
+  </data>
+  <data name="Day of Week" xml:space="preserve">
+    <value>Day of Week</value>
   </data>
 </root>

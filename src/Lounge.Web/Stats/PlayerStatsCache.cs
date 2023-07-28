@@ -97,7 +97,7 @@ namespace Lounge.Web.Stats
                 foreach (var playerId in playerLookup.Keys)
                 {
                     var sortedEventsList = playerEventsLookup[playerId].OrderByDescending(e => tablesLookup[e.TableId].VerifiedOn).ToList();
-                    playerLookup[playerId] = playerLookup[playerId] with { Events = sortedEventsList };
+                    playerLookup[playerId] = playerLookup[playerId].WithUpdatedEvents(sortedEventsList);
                 }
 
                 var playersSortedByMmr = playerLookup.Values

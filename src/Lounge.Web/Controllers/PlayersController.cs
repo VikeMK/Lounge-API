@@ -250,6 +250,188 @@ namespace Lounge.Web.Controllers
             return new NameChangeListViewModel { Players = nameChanges };
         }
 
+        [HttpGet("stats")]
+        [AllowAnonymous]
+        public ActionResult<StatsViewModel> Leaderboard([ValidSeason] int? season = null)
+        {
+            season ??= _loungeSettingsService.CurrentSeason;
+
+            var players = _playerStatCache
+                .GetAllStats(season.Value)
+                .Where(p => p.HasEvents)
+                .Select(p => new StatsPlayerViewModel.Player(
+                    p.Name,
+                    p.Mmr,
+                    p.CountryCode
+                    ))
+                .ToList();
+
+            var divisionData = new List<StatsViewModel.Division>();
+            var countryData = new Dictionary<string, StatsViewModel.Country>();
+            var activityData = new StatsViewModel.Activity
+            {
+                FormatData = new Dictionary<string, int>(),
+                DailyActivity = new Dictionary<string, Dictionary<string, int>>(),
+                DayOfWeekActivity = new Dictionary<string, int>
+                {
+                    { "Sunday", 0 },
+                    { "Monday", 0 },
+                    { "Tuesday", 0 },
+                    { "Wednesday", 0 },
+                    { "Thursday", 0 },
+                    { "Friday", 0 },
+                    { "Saturday", 0 },
+                },
+                TierActivity = new Dictionary<string, int>()
+            };
+            string? currRank = null;
+            var mmrTotal = 0;
+            var mogiTotal = 0;
+            var tierCount = 0;
+            var AverageMmr = 0;
+            foreach (var player in players)
+            {
+                mmrTotal += player.Mmr ?? 0;
+                string MmrRank = _loungeSettingsService.GetRank(player.Mmr, season.Value).Name.ToString();
+                if (currRank != MmrRank)
+                {
+                    if (currRank != null)
+                    {
+                        divisionData.Add(new StatsViewModel.Division
+                        {
+                            Tier = currRank,
+                            Count = tierCount
+                        });
+                    }
+                    currRank = MmrRank;
+                    tierCount = 0;
+                }
+                tierCount++;
+
+                if (player.CountryCode != null)
+                {
+                    if (!countryData.ContainsKey(player.CountryCode))
+                    {
+                        countryData.Add(player.CountryCode, new StatsViewModel.Country
+                        {
+                            PlayerTotal = 0,
+                            TotalAverageMmr = 0,
+                            TopSixMmr = 0,
+                            TopSixPlayers = new List<StatsViewModel.Player>()
+                        });
+                    }
+                    countryData[player.CountryCode].PlayerTotal += 1;
+                    countryData[player.CountryCode].TotalAverageMmr += player.Mmr ?? 0;
+                    if (countryData[player.CountryCode].PlayerTotal <= 6)
+                    {
+                        countryData[player.CountryCode].TopSixMmr += player.Mmr ?? 0;
+                        countryData[player.CountryCode].TopSixPlayers.Add(new StatsViewModel.Player
+                        {
+                            Name = player.Name,
+                            Mmr = player.Mmr ?? 0
+                        });
+                    }
+                }
+            }
+
+            var median = 0;
+
+            if (players.Count > 0)
+            {
+                divisionData.Add(new StatsViewModel.Division
+                {
+                    Tier = currRank,
+                    Count = tierCount
+                });
+
+                foreach (var (key, value) in countryData)
+                {
+                    countryData[key].TotalAverageMmr = value.TotalAverageMmr / value.PlayerTotal;
+                    var topDivisor = value.PlayerTotal < 6 ? value.PlayerTotal : 6;
+                    countryData[key].TopSixMmr = value.TopSixMmr / topDivisor;
+                }
+
+                int mid = players.Count / 2;
+                if (players.Count % 2 != 0)
+                {
+                    if (players[mid].Mmr != null)
+                    {
+                        median = players[mid].Mmr.Value;
+                    }
+                }
+                else
+                {
+                    if (players[mid].Mmr != null)
+                    {
+                        median = (players[mid].Mmr.Value + players[mid - 1].Mmr.Value) / 2;
+                    }
+                }
+
+                AverageMmr = mmrTotal / players.Count;
+            }
+
+            var tables = _dbCache.Tables.Values
+                .Where(t => t.Season == season && t.DeletedOn == null && t.VerifiedOn != null)
+                .Select(t => new StatsTableViewModel.Table(
+                    t.CreatedOn,
+                    t.NumTeams,
+                    t.Tier
+                ))
+                .ToList();
+
+            foreach (var table in tables)
+            {
+                mogiTotal++;
+                if (table.Tier != "SQ")
+                {
+                    var tableFormat = TableUtils.FormatDisplay(table.NumTeams);
+                    if (!activityData.FormatData.ContainsKey(tableFormat))
+                    {
+                        activityData.FormatData[tableFormat] = 0;
+                    }
+                    activityData.FormatData[tableFormat]++;
+                }
+
+                string normalizedTime = table.CreatedOn.ToString("yyyy'-'MM'-'dd");
+                activityData.DayOfWeekActivity[table.CreatedOn.DayOfWeek.ToString()]++;
+
+                if (!activityData.DailyActivity.ContainsKey(normalizedTime))
+                {
+                    var dictionary = new Dictionary<string, int>
+                    {
+                        { "Total", 0 }
+                    };
+                    activityData.DailyActivity.Add(normalizedTime, dictionary);
+                }
+
+                var currentTime = activityData.DailyActivity[normalizedTime];
+                if (!currentTime.ContainsKey(table.Tier))
+                {
+                    currentTime.Add(table.Tier, 0);
+                }
+
+                currentTime["Total"]++;
+                currentTime[table.Tier]++;
+
+                if (!activityData.TierActivity.ContainsKey(table.Tier))
+                {
+                    activityData.TierActivity.Add(table.Tier, 0);
+                }
+                activityData.TierActivity[table.Tier]++;
+            }
+
+            return new StatsViewModel
+            {
+                TotalPlayers = players.Count,
+                TotalMogis = mogiTotal,
+                AverageMmr = AverageMmr,
+                MedianMmr = median,
+                DivisionData = divisionData,
+                CountryData = countryData,
+                ActivityData = activityData
+            };
+        }
+
         [HttpPost("create")]
         public async Task<ActionResult<PlayerViewModel>> Create(string name, int mkcId, int? mmr, string? discordId = null)
         {
