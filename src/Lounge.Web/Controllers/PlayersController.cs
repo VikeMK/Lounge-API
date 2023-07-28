@@ -258,7 +258,7 @@ namespace Lounge.Web.Controllers
 
             var players = _playerStatCache
                 .GetAllStats(season.Value)
-                .Where(p => p.Mmr != null)
+                .Where(p => p.HasEvents)
                 .Select(p => new StatsPlayerViewModel.Player(
                     p.Name,
                     p.Mmr,
@@ -371,7 +371,7 @@ namespace Lounge.Web.Controllers
             }
 
             var tables = _dbCache.Tables.Values
-                .Where(t => t.Season == season)
+                .Where(t => t.Season == season && t.DeletedOn == null && t.VerifiedOn != null)
                 .Select(t => new StatsTableViewModel.Table(
                     t.CreatedOn,
                     t.NumTeams,

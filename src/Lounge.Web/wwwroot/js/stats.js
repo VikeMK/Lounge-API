@@ -18,6 +18,7 @@ const chartSeasonConfig = {
         X: ["Diamond", "Master"],
         S: ["Sapphire", "Diamond", "Master"],
         A: ["Platinum", "Sapphire", "Diamond", "Master"],
+        AB: ["Gold", "Platinum"],
         B: ["Gold"],
         C: ["Silver"],
         D: ["Bronze"],
@@ -766,6 +767,13 @@ function updateTopCountryChart(data, season) {
           display: false,
         },
       },
+      scales: {
+        xAxes: {
+          ticks: {
+            autoSkip: false
+          }
+        }
+      }
     },
   });
 }

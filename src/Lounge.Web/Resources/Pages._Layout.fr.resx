@@ -132,4 +132,7 @@
   <data name="Rules" xml:space="preserve">
     <value>Règles</value>
   </data>
+  <data name="Stats" xml:space="preserve">
+    <value>Statistiques</value>
+  </data>
 </root>
