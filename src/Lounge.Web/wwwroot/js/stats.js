@@ -640,6 +640,11 @@ function updateMogiFormatChart(data) {
   );
   const noSQMogiTotal = mogiFormatData.reduce((a, b) => a + b[1], 0);
 
+  const windowSize = Math.max(
+    document.documentElement.clientWidth,
+    window.innerWidth || 0
+  );
+
   new Chart(document.getElementById("statMogiFormatChartBody"), {
     type: "pie",
     data: {
@@ -655,7 +660,16 @@ function updateMogiFormatChart(data) {
     },
     options: {
       responsive: true,
-      aspectRatio: 2,
+      aspectRatio: windowSize <= 767 ? 1.1 : windowSize <= 991 ? 1.4 : 2,
+      onResize: (chart, size) => {
+        const windowSize = Math.max(
+          document.documentElement.clientWidth,
+          window.innerWidth || 0
+        );
+
+        chart.options.aspectRatio =
+          windowSize <= 767 ? 1.1 : windowSize <= 991 ? 1.4 : 2;
+      },
       plugins: {
         title: {
           display: true,
@@ -859,6 +873,11 @@ function updatePopulationCountryChart(data) {
     ]);
   }
 
+  const windowSize = Math.max(
+    document.documentElement.clientWidth,
+    window.innerWidth || 0
+  );
+
   new Chart(document.getElementById("statPopulationCountryChartBody"), {
     type: "pie",
     data: {
@@ -874,7 +893,16 @@ function updatePopulationCountryChart(data) {
     },
     options: {
       responsive: true,
-      aspectRatio: 2,
+      aspectRatio: windowSize <= 767 ? 1 : windowSize <= 991 ? 1.4 : 2,
+      onResize: (chart, size) => {
+        const windowSize = Math.max(
+          document.documentElement.clientWidth,
+          window.innerWidth || 0
+        );
+
+        chart.options.aspectRatio =
+          windowSize <= 767 ? 1 : windowSize <= 991 ? 1.4 : 2;
+      },
       plugins: {
         title: {
           display: true,
