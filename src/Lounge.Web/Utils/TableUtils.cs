@@ -50,7 +50,9 @@ namespace Lounge.Web.Utils
 
         public async static Task<byte[]> GetImageDataAsync(string url)
         {
-            using var client = new HttpClient();
+            using var httpClientHandler = new HttpClientHandler();
+            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            using var client = new HttpClient(httpClientHandler);
             return await client.GetByteArrayAsync(url);
         }
 
