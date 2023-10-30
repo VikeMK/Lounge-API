@@ -508,6 +508,23 @@ function updateMogiTables(data, season) {
     tierTableBody.appendChild(tr);
   }
 
+  let daysInSeason = 0;
+  let mogisPerDay = 0;
+
+  if (Object.keys(data.activityData.dailyActivity).length > 0) {
+    const mogiActivity = Object.entries(data.activityData.dailyActivity).sort(
+      (a, b) => new Date(a[0]) - new Date(b[0])
+    );
+
+    const beginning = new Date(mogiActivity[0][0]).getTime();
+    const end = new Date(mogiActivity[mogiActivity.length - 1][0]).getTime();
+    daysInSeason = Math.round((end - beginning) / (1000 * 60 * 60 * 24)) + 1;
+    mogisPerDay = Math.round((100 * data.totalMogis) / daysInSeason) / 100;
+  }
+
+  document.getElementById("days-in-season").innerHTML = daysInSeason;
+  document.getElementById("average-mogis-per-day").innerHTML = mogisPerDay;
+
   const weekdayTableColors = [
     "#a3022c",
     "#9370db",
@@ -568,6 +585,9 @@ function updateMogiActivityChart(data, season) {
     (a, b) => new Date(a[0]) - new Date(b[0])
   );
 
+  const seasonDataset = Seasons[season].RecordsTierOrder.reverse();
+  seasonDataset.unshift("SQ");
+
   const title = (tooltipItems) => {
     const index = tooltipItems[0].dataIndex;
     const date = mogiActivity[index];
@@ -591,12 +611,14 @@ function updateMogiActivityChart(data, season) {
     type: "bar",
     data: {
       labels: mogiActivity.map((row) => row[0]),
-      datasets: Seasons[season].RecordsTierOrder.reverse().map((tier) => {
+      datasets: seasonDataset.map((tier) => {
         return {
           label: tier,
           data: mogiActivity.map((date) => date[1][tier]),
           backgroundColor:
-            colors[Seasons[season].DivisionsToTier[tier][0].split(" ")[0]],
+            tier !== "SQ"
+              ? colors[Seasons[season].DivisionsToTier[tier][0].split(" ")[0]]
+              : "#FFFFFF",
         };
       }),
     },
@@ -640,6 +662,11 @@ function updateMogiFormatChart(data) {
   );
   const noSQMogiTotal = mogiFormatData.reduce((a, b) => a + b[1], 0);
 
+  const windowSize = Math.max(
+    document.documentElement.clientWidth,
+    window.innerWidth || 0
+  );
+
   new Chart(document.getElementById("statMogiFormatChartBody"), {
     type: "pie",
     data: {
@@ -655,7 +682,16 @@ function updateMogiFormatChart(data) {
     },
     options: {
       responsive: true,
-      aspectRatio: 2,
+      aspectRatio: windowSize <= 767 ? 1.1 : windowSize <= 991 ? 1.4 : 2,
+      onResize: (chart, size) => {
+        const windowSize = Math.max(
+          document.documentElement.clientWidth,
+          window.innerWidth || 0
+        );
+
+        chart.options.aspectRatio =
+          windowSize <= 767 ? 1.1 : windowSize <= 991 ? 1.4 : 2;
+      },
       plugins: {
         title: {
           display: true,
@@ -770,10 +806,10 @@ function updateTopCountryChart(data, season) {
       scales: {
         xAxes: {
           ticks: {
-            autoSkip: false
-          }
-        }
-      }
+            autoSkip: false,
+          },
+        },
+      },
     },
   });
 }
@@ -859,6 +895,11 @@ function updatePopulationCountryChart(data) {
     ]);
   }
 
+  const windowSize = Math.max(
+    document.documentElement.clientWidth,
+    window.innerWidth || 0
+  );
+
   new Chart(document.getElementById("statPopulationCountryChartBody"), {
     type: "pie",
     data: {
@@ -874,7 +915,16 @@ function updatePopulationCountryChart(data) {
     },
     options: {
       responsive: true,
-      aspectRatio: 2,
+      aspectRatio: windowSize <= 767 ? 1 : windowSize <= 991 ? 1.4 : 2,
+      onResize: (chart, size) => {
+        const windowSize = Math.max(
+          document.documentElement.clientWidth,
+          window.innerWidth || 0
+        );
+
+        chart.options.aspectRatio =
+          windowSize <= 767 ? 1 : windowSize <= 991 ? 1.4 : 2;
+      },
       plugins: {
         title: {
           display: true,

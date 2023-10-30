@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +30,7 @@ namespace Lounge.Web.Data.ChangeTracking
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             long lastSynchronizationVersion;
-            while ((lastSynchronizationVersion = await InitializeAsync()) != -1)
+            while ((lastSynchronizationVersion = await InitializeAsync()) == -1)
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
 
             while (!stoppingToken.IsCancellationRequested)
