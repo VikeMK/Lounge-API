@@ -35,6 +35,8 @@ namespace Lounge.Web.Models.ViewModels
             public int? LargestGain { get; init; }
 
             public int? LargestLoss { get; init; }
+            public double? NoSQAverageScore { get; init; }
+            public double? NoSQAverageScoreLastTen { get; init; }
 
             public Rank? MmrRank { get; init; }
 

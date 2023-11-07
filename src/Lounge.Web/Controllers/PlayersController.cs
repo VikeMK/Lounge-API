@@ -223,6 +223,8 @@ namespace Lounge.Web.Controllers
                         GainLossLastTen = player.HasEvents ? player.LastTenGainLoss : null,
                         LargestGain = player.LargestGain?.Amount,
                         LargestLoss = player.LargestLoss?.Amount,
+                        NoSQAverageScore = player.NoSQAverageScore,
+                        NoSQAverageScoreLastTen = player.NoSQAverageLastTen,
                         MmrRank = _loungeSettingsService.GetRank(player.Mmr, season),
                         MaxMmrRank = _loungeSettingsService.GetRank(player.MaxMmr, season),
                         CountryCode = player.CountryCode

@@ -96,8 +96,17 @@ namespace Lounge.Web
             services.AddHostedService<DbChangeTrackingBackgroundService>();
 
             services.Configure<LoungeSettings>(Configuration);
-
-            services.AddHttpClient("NoRedirects").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler() { AllowAutoRedirect = false });
+            services.AddHttpClient("WithRedirects").ConfigurePrimaryHttpMessageHandler(() =>
+                new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                });
+            services.AddHttpClient("NoRedirects").ConfigurePrimaryHttpMessageHandler(() => 
+                new HttpClientHandler() 
+                { 
+                    AllowAutoRedirect = false, 
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator 
+                });
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services

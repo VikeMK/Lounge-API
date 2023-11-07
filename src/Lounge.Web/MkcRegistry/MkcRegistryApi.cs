@@ -21,7 +21,7 @@ namespace Lounge.Web.Stats
 
         public async Task<DetailedRegistryData> GetPlayerRegistryDataAsync(int registryId)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = _httpClientFactory.CreateClient("WithRedirects");
             var url = $"https://www.mariokartcentral.com/mkc/api/registry/players/{registryId}";
             var resp = await client.GetAsync(url);
             if (resp.StatusCode == HttpStatusCode.OK)
@@ -70,7 +70,7 @@ namespace Lounge.Web.Stats
 
         public async Task<IReadOnlyList<SimplePlayerRegistryData>> GetAllPlayersRegistryDataAsync()
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = _httpClientFactory.CreateClient("WithRedirects");
             var url = "https://www.mariokartcentral.com/mkc/api/registry/players/category/all";
             var resp = await client.GetAsync(url);
             if (resp.StatusCode == HttpStatusCode.OK)

@@ -25,6 +25,7 @@ namespace Lounge.Web.Stats
         double? AverageScore,
         double? NoSQAverageScore,
         double? AverageLastTen,
+        double? NoSQAverageLastTen,
         double? PartnerAverage,
         double? NoSQPartnerAverage,
         int? OverallRank = null)
@@ -53,6 +54,7 @@ namespace Lounge.Web.Stats
                 AverageScore: Events.Average(e => (int?)e.Score),
                 NoSQAverageScore: Events.Where(e => e.Event.Tier != "SQ").Average(e => (int?)e.Score),
                 AverageLastTen: Events.Take(10).Average(e => (int?)e.Score),
+                NoSQAverageLastTen: Events.Where(e => e.Event.Tier != "SQ").Take(10).Average(e => (int?)e.Score),
                 PartnerAverage: Events.SelectMany(p => p.PartnerScores).Cast<int?>().Average(),
                 NoSQPartnerAverage: Events.Where(e => e.Event.Tier != "SQ").SelectMany(p => p.PartnerScores).Cast<int?>().Average(),
                 OverallRank)

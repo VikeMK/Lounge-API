@@ -101,8 +101,6 @@ function updateLeaderboard(leaderboardData, page, pageSize) {
         appendCell(document.createTextNode(`${player.winsLastTen} - ${player.lossesLastTen}`));
         appendCell(document.createTextNode(player.gainLossLastTen === undefined ? "N/A" : `${player.gainLossLastTen > 0 ? "+" : ""}${player.gainLossLastTen}`));
         appendCell(document.createTextNode(player.eventsPlayed));
-        appendCell(document.createTextNode(player.largestGain ? `+${player.largestGain}` : "-"));
-        appendCell(document.createTextNode(player.largestLoss || "-"));
 
         newBody.appendChild(tr);
     }
