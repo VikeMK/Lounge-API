@@ -32,73 +32,79 @@
     </div>
 </div>
 <!form class="mb-3">
-    <input type="hidden" value="@Model.Season" id="seasonInput"/>
-    <div class="form-row">
-        <div class="form-group col-xl-3 col-6">
-            <label for="nameFilter">@Localizer["Name"]</label>
-            <input type="text" class="form-control bg-dark text-light" id="nameFilter">
-		</div>
-        <div class="form-group col-xl-3 col-6">
-            <label for="countryFilter">@Localizer["Country"]</label>
-            <!select class="form-control bg-dark text-light" name="country" id="countryFilter" onchange="refreshLeaderboard()">
-                <!option value="" selected>@Localizer["All Countries"]</!option>
+<input type="hidden" value="@Model.Season" id="seasonInput" />
+<div class="form-row">
+    <div class="form-group col-xl-3 col-6">
+        <label for="nameFilter">@Localizer["Name"]</label>
+        <input type="text" class="form-control bg-dark text-light" id="nameFilter">
+    </div>
+    <div class="form-group col-xl-3 col-6">
+        <label for="countryFilter">@Localizer["Country"]</label>
+        <!select class="form-control bg-dark text-light" name="country" id="countryFilter" onchange="refreshLeaderboard()">
+        <!option value="" selected>@Localizer["All Countries"]</!option>
 
                 @foreach (var country in Model.ValidCountries.OrderBy(c => LoungeSettingsService.CountryNames[c]))
                 {
-                    <!option value="@country">@LoungeSettingsService.CountryNames[country]</!option>
+            <!option value="@country">@LoungeSettingsService.CountryNames[country]</!option>
                 }
-            </!select>
-		</div>
-        <div class="form-group col-xl-1 col-sm-2 col-3">
-            <label for="minMmrFilter">@Localizer["Min MMR"]</label>
-            <input type="number" class="form-control bg-dark text-light" id="minMmrFilter" onchange="refreshLeaderboard()" min=0>
-		</div>
-        <div class="form-group col-xl-1 col-sm-2 col-3">
-            <label for="maxMMRFilter">@Localizer["Max MMR"]</label>
-            <input type="number" class="form-control bg-dark text-light" id="maxMmrFilter" onchange="refreshLeaderboard()" min=0>
-		</div>
-        <div class="form-group col-xl-1 col-sm-2 col-3">
-            <label for="minEventsFilter">@Localizer["Min Events"]</label>
-            <input type="number" class="form-control bg-dark text-light" id="minEventsFilter" onchange="refreshLeaderboard()" min=0>
-		</div>
-        <div class="form-group col-xl-1 col-sm-2 col-3">
-            <label for="maxEventsFilter">@Localizer["Max Events"]</label>
-            <input type="number" class="form-control bg-dark text-light" id="maxEventsFilter" onchange="refreshLeaderboard()" min=0>
-		</div>
-        <div class="form-group col-xl-2 col-sm-4">
-            <label for="nameFilter">Sort By</label>
-            <!select class="form-control bg-dark text-light" name="sortOrder" id="sortBySelect" onchange="refreshLeaderboard()">
+        </!select>
+    </div>
+    <div class="form-group col-xl-1 col-sm-2 col-3">
+        <label for="minMmrFilter">@Localizer["Min MMR"]</label>
+        <input type="number" class="form-control bg-dark text-light" id="minMmrFilter" onchange="refreshLeaderboard()" min=0>
+    </div>
+    <div class="form-group col-xl-1 col-sm-2 col-3">
+        <label for="maxMMRFilter">@Localizer["Max MMR"]</label>
+        <input type="number" class="form-control bg-dark text-light" id="maxMmrFilter" onchange="refreshLeaderboard()" min=0>
+    </div>
+    <div class="form-group col-xl-1 col-sm-2 col-3">
+        <label for="minEventsFilter">@Localizer["Min Events"]</label>
+        <input type="number" class="form-control bg-dark text-light" id="minEventsFilter" onchange="refreshLeaderboard()" min=0>
+    </div>
+    <div class="form-group col-xl-1 col-sm-2 col-3">
+        <label for="maxEventsFilter">@Localizer["Max Events"]</label>
+        <input type="number" class="form-control bg-dark text-light" id="maxEventsFilter" onchange="refreshLeaderboard()" min=0>
+    </div>
+    <div class="form-group col-xl-2 col-sm-4">
+        <label for="nameFilter">@Localizer["Sort By"]</label>
+        <!select class="form-control bg-dark text-light" name="sortOrder" id="sortBySelect" onchange="refreshLeaderboard()">
                 @foreach (var sortOrder in Enum.GetValues<LeaderboardSortOrder>())
                 {
                     var enumName = sortOrder.ToString();
                     var displyName = typeof(LeaderboardSortOrder).GetMember(enumName).First().GetCustomAttribute<DisplayAttribute>()?.GetName() ?? enumName;
-                    <!option value="@enumName" @(sortOrder == LeaderboardSortOrder.Mmr ? "selected" : "")>@Localizer[displyName]</!option>
+            <!option value="@enumName" @(sortOrder == LeaderboardSortOrder.Mmr ? "selected" : "")>@Localizer[displyName]</!option>
                 }
-            </!select>
-		</div>
-	</div>
+        </!select>
+    </div>
+</div>
 </!form>
 <div class="text-center d-none" id="leaderboard">
     <div class="table-responsive">
         <table id="leaderboardTable" class="table table-striped table-dark table-sm">
             <thead>
                 <tr>
-                    <th>@Localizer["Rank"]</th>
-                    <th style="width: 32px"><!--Country Column--></th>
-                    <th>@Localizer["Name"]</th>
-                    <th>@Localizer["MMR"]</th>
-                    <th>@Localizer["Peak MMR"]</th>
+                    <th rowspan="2" class="align-middle">@Localizer["Rank"]</th>
+                    <th rowspan="2" style="width: 32px" class="align-middle"><!--Country Column--></th>
+                    <th rowspan="2" class="align-middle">@Localizer["Name"]</th>
+                    <th rowspan="2" class="align-middle">@Localizer["MMR"]</th>
+                    <th rowspan="2" class="align-middle">@Localizer["Peak MMR"]</th>
+                    <th colspan="3" class="table-sub-header">@Localizer["All Events"]</th>
+                    <th colspan="3" class="table-sub-header">@Localizer["Last 10"]</th>
+                </tr>
+                <tr class="table-sub-header-row-2">
+                    <th>@Localizer["Played"]</th>
                     <th>@Localizer["Win Rate"]</th>
-                    <th>@Localizer["W - L (Last 10)"]</th>
-                    <th>@Localizer["Gain/Loss (Last 10)"]</th>
-                    <th>@Localizer["Events Played"]</th>
+                    <th>@Localizer["Avg (No SQ)"]</th>
+                    <th>@Localizer["W - L"]</th>
+                    <th>@Localizer["Gain/Loss"]</th>
+                    <th>@Localizer["Avg (No SQ)"]</th>
                 </tr>
             </thead>
             <tbody id="leaderboardTableBody">
                 <tr>
                     <td colspan="11">Fetching Leaderboard Data...</td>
-			    </tr>
-			</tbody>
+                </tr>
+            </tbody>
         </table>
     </div>
     <div>
@@ -114,7 +120,7 @@
                 <li class="page-item disabled" onclick="nextPage()" id="nextPageButton"><a class="page-link" href="#">@Localizer["Next"]</a></li>
             </ul>
         </nav>
-	</div>
+    </div>
 </div>
 
 @section Scripts

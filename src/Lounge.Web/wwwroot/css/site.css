@@ -2,85 +2,119 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
 }
 
 /* Provide sufficient contrast against dark background */
 a {
-  color: #58a6ff;
+    color: #58a6ff;
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
+
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .border-top {
-  border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #e5e5e5;
 }
+
 .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
 button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+    font-size: 1rem;
+    line-height: inherit;
 }
 
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
-}
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
 }
 
-.rank-Grandmaster { color: #a3022c; }
-.rank-Master { color: #9370db; }
-.rank-Diamond { color: #b9f2ff; }
-.rank-Ruby { color: #d51c5e; }
-.rank-Sapphire { color: #286cd3; }
-.rank-Platinum { color: #3fabb8; }
-.rank-Gold { color: #f1c232; }
-.rank-Silver { color: #cccccc; }
-.rank-Bronze { color: #b45f06; }
-.rank-Iron { color: #817876; }
-.rank-Placement { /*color: #817876*/ }
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+}
+
+.rank-Grandmaster {
+    color: #a3022c;
+}
+
+.rank-Master {
+    color: #9370db;
+}
+
+.rank-Diamond {
+    color: #b9f2ff;
+}
+
+.rank-Ruby {
+    color: #d51c5e;
+}
+
+.rank-Sapphire {
+    color: #286cd3;
+}
+
+.rank-Platinum {
+    color: #3fabb8;
+}
+
+.rank-Gold {
+    color: #f1c232;
+}
+
+.rank-Silver {
+    color: #cccccc;
+}
+
+.rank-Bronze {
+    color: #b45f06;
+}
+
+.rank-Iron {
+    color: #817876;
+}
+
+.rank-Placement { /*color: #817876*/
+}
 
 /* Ensure that cell values inside tables are not word wrapped */
 .table-dark td {
@@ -139,7 +173,7 @@ body {
     padding-top: 10px;
 }
 
-#rules > li >* li::marker {
+#rules > li > * li::marker {
     font-weight: bold;
 }
 
@@ -152,4 +186,25 @@ body::-webkit-scrollbar {
     border: none;
     -moz-appearance: none;
     -webkit-appearance: none;
+}
+
+th.table-sub-header {
+    font-size: 0.8rem;
+    border-bottom: none !important;
+}
+
+th.table-sub-header::after {
+    content: "";
+    display: block;
+    border-bottom: 2px solid teal;
+    width: 96%;
+    position: relative;
+    left: 2%;
+    bottom: -4.8px;
+}
+
+tr.table-sub-header-row-2 > th {
+    border-top: none !important;
+    font-size: 0.8rem;
+    width: 110px;
 }

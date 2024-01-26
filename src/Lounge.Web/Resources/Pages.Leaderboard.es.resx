@@ -120,20 +120,32 @@
   <data name="All Countries" xml:space="preserve">
     <value>All Countries</value>
   </data>
+  <data name="All Events" xml:space="preserve">
+    <value>All Events</value>
+  </data>
+  <data name="Avg (No SQ)" xml:space="preserve">
+    <value>Avg&#xA0;(No&#xA0;SQ)</value>
+  </data>
+  <data name="Average Score (No SQ)" xml:space="preserve">
+    <value>Average Score (No SQ)</value>
+  </data>
+  <data name="Average (No SQ, Last 10)" xml:space="preserve">
+    <value>Average (No SQ, Last 10)</value>
+  </data>
   <data name="Country" xml:space="preserve">
     <value>Country</value>
   </data>
   <data name="Events Played" xml:space="preserve">
     <value>Events Played</value>
   </data>
+  <data name="Gain/Loss" xml:space="preserve">
+    <value>Gain/Loss</value>
+  </data>
   <data name="Gain/Loss (Last 10)" xml:space="preserve">
     <value>Gain/Loss (Last&#xA0;10)</value>
   </data>
-  <data name="Largest Gain" xml:space="preserve">
-    <value>Largest Gain</value>
-  </data>
-  <data name="Largest Loss" xml:space="preserve">
-    <value>Largest Loss</value>
+  <data name="Last 10" xml:space="preserve">
+    <value>Last 10</value>
   </data>
   <data name="Leaderboard" xml:space="preserve">
     <value>Leaderboard</value>
@@ -168,6 +180,9 @@
   <data name="Peak MMR" xml:space="preserve">
     <value>Peak MMR</value>
   </data>
+  <data name="Played" xml:space="preserve">
+    <value>Played</value>
+  </data>
   <data name="Previous" xml:space="preserve">
     <value>Previous</value>
   </data>
@@ -180,8 +195,11 @@
   <data name="Seasons" xml:space="preserve">
     <value>Seasons</value>
   </data>
-  <data name="W - L (Last 10)" xml:space="preserve">
-    <value>W&#xA0;-&#xA0;L (Last&#xA0;10)</value>
+  <data name="Sort By" xml:space="preserve">
+    <value>Sort By</value>
+  </data>
+  <data name="W - L" xml:space="preserve">
+    <value>W&#xA0;-&#xA0;L</value>
   </data>
   <data name="Win - Loss (Last 10)" xml:space="preserve">
     <value>Win&#xA0;-&#xA0;Loss (Last&#xA0;10)</value>

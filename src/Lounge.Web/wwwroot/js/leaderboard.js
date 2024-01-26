@@ -97,10 +97,12 @@ function updateLeaderboard(leaderboardData, page, pageSize) {
         appendCell(document.createTextNode(player.mmr >= 0 ? player.mmr : "Placement"), mmrRankClass);
         appendCell(document.createTextNode(player.maxMmr >= 0 ? player.maxMmr : "N/A"), player.maxMmrRank ? `rank-${player.maxMmrRank.division}` : null);
 
+        appendCell(document.createTextNode(player.eventsPlayed));
         appendCell(document.createTextNode(player.winRate >= 0 ? `${(player.winRate * 100).toFixed(1)}%` : "N/A"));
+        appendCell(document.createTextNode(player.noSQAverageScore >= 0 ? player.noSQAverageScore.toFixed(1) : "N/A"));
         appendCell(document.createTextNode(`${player.winsLastTen} - ${player.lossesLastTen}`));
         appendCell(document.createTextNode(player.gainLossLastTen === undefined ? "N/A" : `${player.gainLossLastTen > 0 ? "+" : ""}${player.gainLossLastTen}`));
-        appendCell(document.createTextNode(player.eventsPlayed));
+        appendCell(document.createTextNode(player.noSQAverageScoreLastTen >= 0 ? player.noSQAverageScoreLastTen.toFixed(1) : "N/A"));
 
         newBody.appendChild(tr);
     }
