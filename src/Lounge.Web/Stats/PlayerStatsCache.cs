@@ -159,13 +159,14 @@ namespace Lounge.Web.Stats
                     .OrderByDescending(s => s.EventsPlayed)
                     .ThenBy(s => s.OverallRank)
                     .ThenBy(s => s.Name),
-                LeaderboardSortOrder.LargestGain => playerData
+                LeaderboardSortOrder.AverageScoreNoSQ => playerData
                     .OrderByDescending(s => s.HasEvents)
-                    .ThenByDescending(s => s.LargestGain)
-                    .ThenBy(s => s.OverallRank),
-                LeaderboardSortOrder.LargestLoss => playerData
+                    .ThenByDescending(s => s.NoSQAverageScore)
+                    .ThenBy(s => s.OverallRank)
+                    .ThenBy(s => s.Name),
+                LeaderboardSortOrder.AverageScoreNoSQLast10 => playerData
                     .OrderByDescending(s => s.HasEvents)
-                    .ThenBy(s => s.LargestLoss)
+                    .ThenByDescending(s => s.NoSQAverageLastTen)
                     .ThenBy(s => s.OverallRank)
                     .ThenBy(s => s.Name),
                 _ => playerData.OrderBy(p => p.OverallRank).ThenBy(p => p.Name)
