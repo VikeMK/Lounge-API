@@ -484,7 +484,7 @@
     <value>Spieler, welche MMR Strafen für das vorzeitige Verlassen eines Matches, Laptrolling, zu spätem Beitritt in den Raum, Targetting oder Teaming erhalten, bekommen außerdem einen Strike.</value>
   </data>
   <data name="Players who repick a course at least twice will receive a -50 MMR penalty for each instance and a strike (e.g. repicking twice results in -100 MMR + strike, repicking three times results in -150 MMR + strike)." xml:space="preserve">
-    <value>Players who repick a course at least twice will receive a -50 MMR penalty for each instance and a strike (e.g. repicking twice results in -100 MMR + strike, repicking three times results in -150 MMR + strike).</value>
+    <value>Spieler, welche eine Strecke min. zweimal „repicken“ (d.h. eine bereits gespielt Strecke kommt erneut dran; Zufällig ist hiervon ausgenommen), erhalten eine -50 MMR-Penalty für jedes Vorkommnis (z.B. zwei Repicks führen zu -100 MMR und Strike, drei Repicks zu -150 MMR und Strike).</value>
   </data>
   <data name="Players who repick a course will receive a -50 MMR penalty." xml:space="preserve">
     <value>Spieler, welche eine Strecke repicken, erhalten eine Strafe von -50 MMR.</value>
