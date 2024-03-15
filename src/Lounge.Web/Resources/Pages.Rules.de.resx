@@ -222,7 +222,7 @@
   <data name="For more information about Squad Queue, click &lt;a href=&quot;https://www.mariokartcentral.com/forums/index.php?threads/introducing-150cc-lounge-squad-queue.6061/&quot;&gt;here&lt;/a&gt;." xml:space="preserve">
     <value>Für mehr Informationen über Squad Queues, klicke &lt;a href="https://www.mariokartcentral.com/forums/index.php?threads/introducing-150cc-lounge-squad-queue.6061/"&gt;hier&lt;/a&gt;.</value>
   </data>
-  <data name="Gathering Lineups" xml:space="preserve">
+  <data name="Gathering Lineups (Tier System)" xml:space="preserve">
     <value>Die Sammlung eines Lineups</value>
   </data>
   <data name="Host" xml:space="preserve">
@@ -270,8 +270,8 @@
   <data name="If any player is disqualified from an event for any reason such as, but not limited to, throwing, teaming, or lap-trolling (on any track except Baby Park, in formats other than 6v6 SQ), they will receive a -100 MMR strike." xml:space="preserve">
     <value>Wenn ein Spieler von einem Match disqualifiziert wird für einen Grund wie, unter anderem, aber nicht ausschließlich, absichtliches Verlieren, Teaming oder Laptrolling (Ausnahme: Baby Park, 6v6 SQ), erhält dieser eine -100 MMR Strafe und einen Strike.</value>
   </data>
-  <data name="If at least three players experience delayed items in at least two different item sets during a race with video proof if requested, the race does not count." xml:space="preserve">
-    <value>Wenn mindestens drei Spieler eine Verzögerung im Itemroulette bei mindestens zwei verschiedenen Itemsets innerhalb eines Rennens erleben und auf Anfrage einen Videobeweis bereitstellen können, zählt das Rennen nicht.</value>
+  <data name="If a player cannot rejoin due to an error, the player can request to reopen only once, and the room must be reopened." xml:space="preserve">
+    <value>If a player cannot rejoin due to an error, the player can request to reopen only once, and the room must be reopened.</value>
   </data>
   <data name="If hosts disconnected in the middle of a mogi, hosts must take a 30-second clip to prove that it was unintentional (streaming archive is also allowed)." xml:space="preserve">
     <value>Wenn der Host während des Matches disconnected, muss dieser einen 30-sekündigen Clip (Switch-Clip oder Stream) bereitstellen, zum Beweis, dass der Raumcrash nicht absichtlich herbeigeführt worden ist.</value>
@@ -297,7 +297,7 @@
   <data name="If the host has been decided after opening time, the host has to wait 2 minutes to open the room." xml:space="preserve">
     <value>Wenn der Host nicht vor der regulären Öffnungszeit entschieden ist, muss der Host zwei Minuten warten, bevor der Raum geöffnet wird.</value>
   </data>
-  <data name="If the player is randomly chosen to be a host, they must post their friend code within 3 minutes of the poll ending." xml:space="preserve">
+  <data name="If the player is randomly chosen to be a host, they must post the room ID or their friend code within 2 minutes of the poll ending unless they have entered the room ID into MogiBot in advance." xml:space="preserve">
     <value>Wenn der Spieler zufällig als Host ausgewählt wurde, muss dieser seinen Freundescode innerhalb von 3 Minuten nach dem Ende der Formatwahl posten.</value>
   </data>
   <data name="If the player who reported the repick files an objection and no video or other evidence can be confirmed, the penalty may be revoked." xml:space="preserve">
@@ -384,11 +384,11 @@
   <data name="Note: We encourage you to consider different play styles players may have, lag/genuine mistakes, and how close your mogi is in terms of points before submitting your claim." xml:space="preserve">
     <value>Hinweis: Wir ermutigen dich, verschiedene Spielstile von Spielern, schlechte Verbindungen/echte Fehler und den Punktestand deines Gegners im Mogi zu berücksichtigen, bevor du deinen Anspruch einreichst.</value>
   </data>
-  <data name="Once a host has been decided, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room." xml:space="preserve">
+  <data name="If the room is being hosted with a friend code, the host must wait 2 minutes after posting their friend code to accept friend requests before opening the room." xml:space="preserve">
     <value>Sobald ein Host festgelegt wurde, muss dieser 2 Minuten warten, nachdem der Freundescode gepostet wurde, um Freundschaftsanfragen anzunehmen, bevor der Raum geöffnet wird.</value>
   </data>
-  <data name="Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule IV. b.)." xml:space="preserve">
-    <value>Sobald der Raum geöffnet ist, haben Spieler 5 Minuten Zeit, diesem beizutreten, außer der Raum wurde verfrüht geöffnet (s. Regel IV. b.).</value>
+  <data name="Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule IV. c.) or before the scheduled time in Lounge Queue events." xml:space="preserve">
+    <value>Sobald der Raum geöffnet ist, haben Spieler 5 Minuten Zeit, diesem beizutreten, außer der Raum wurde verfrüht geöffnet (s. Regel IV. c.).</value>
   </data>
   <data name="Once a staff member has seen your account, you will be placed into one of the following ranks:" xml:space="preserve">
     <value>Sobald ein Staffmitglied deinen Account gesehen hat, wirst du in einen der folgenden Ränge platziert:</value>
@@ -417,7 +417,7 @@
   <data name="Players can change their lounge nickname once every 60 days; nicknames cannot be reverted during the 60 day period between changes." xml:space="preserve">
     <value>Spieler dürfen ihren Loungenamen einmal alle 60 Tage ändern; der Name kann während der 60-tägigen Periode zwischen Namensänderungen nicht zurückgesetzt werden.</value>
   </data>
-  <data name="Players can queue as a host using the &lt;code&gt;/ch&lt;/code&gt; command in MogiBot or the &lt;code&gt;^fc&lt;/code&gt; command in Stats Bot." xml:space="preserve">
+  <data name="Players can queue as a host using the &lt;code&gt;/ch&lt;/code&gt; command in MogiBot;" xml:space="preserve">
     <value>Spieler können sich mit dem Befehl &lt;code&gt;/ch&lt;/code&gt; im MogiBot oder dem Befehl &lt;code&gt;^fc&lt;/code&gt; im Stats Bot als Host anmelden.</value>
   </data>
   <data name="Players cannot &lt;code&gt;/d&lt;/code&gt; for 15 seconds after typing &lt;code&gt;/c&lt;/code&gt;. A &lt;code&gt;/c&lt;/code&gt; will automatically expire after 20 minutes have passed." xml:space="preserve">
@@ -429,7 +429,7 @@
   <data name="Players must arrange uppercase/lowercase and hiragana/katakana tags with their teammates." xml:space="preserve">
     <value>Die Spieler müssen mit ihren Teampartnern einheitlich Groß-/Kleinschreibung und Hiragana/Katakana-Tags vereinbaren.</value>
   </data>
-  <data name="Players must use their &lt;b&gt;Lounge Nickname&lt;/b&gt; (or a shortened, legible version) in FFA format events." xml:space="preserve">
+  <data name="Players must use their Lounge Nickname (or a shortened, legible version if the shortened version is more than 10 characters) in FFA format events. Japanese characters are not allowed." xml:space="preserve">
     <value>Spieler müssen ihren Lounge-Namen (oder eine verkürzte, lesbare Version) in FFA-Events verwenden.</value>
   </data>
   <data name="Player names must not begin with the first character of another team's tag." xml:space="preserve">
@@ -597,7 +597,7 @@
   <data name="This role is essentially a ban from SQ for the duration that the player has the role." xml:space="preserve">
     <value>Diese Rolle bedeutet einen Ban von jeglichen SQ Events während der Spieler diese Rolle hat.</value>
   </data>
-  <data name="This rule only applies once, if a player disconnects before the first race a second time the room should continue without closing." xml:space="preserve">
+  <data name="This rule only applies once, if a player disconnects before the mogi a second time the room should continue without closing." xml:space="preserve">
     <value>Diese Regel tritt nur einmal in Kraft; sollte ein Spieler ein weiteres Mal vor dem ersten Rennen disconnecten, sollte der Raum nicht erneut geschlossen werden.</value>
   </data>
   <data name="Two teams may not use tags which begin with the same character (uppercase and lowercase of the same letters counts as the same character) and two teams may not use hiragana and katakana tags of the same sound (e.g. あ★Cynda, ア★DUGO); the team which declares their tag first in the chat will have priority regarding this rule." xml:space="preserve">
@@ -636,4 +636,88 @@
   <data name="&lt;b&gt;Race Count&lt;/b&gt;: 12 Races" xml:space="preserve">
     <value>&lt;b&gt;Rennen&lt;/b&gt;: 12 Rennen</value>
   </data>
+  <data name="Gathering Lineups (Lounge Queue)" xml:space="preserve">
+    <value>Gathering Lineups (Lounge Queue)</value>
+  </data>
+  <data name="In the #queue-join channel, players can type &lt;code&gt;/c&lt;/code&gt; to queue into matches for each hour." xml:space="preserve">
+    <value>In the #queue-join channel, players can type &lt;code&gt;/c&lt;/code&gt; to queue into matches for each hour.</value>
+  </data>
+  <data name="Between :55 and :58 at each hour, the queue will close and rooms will be created in order of MMR." xml:space="preserve">
+    <value>Between :55 and :58 at each hour, the queue will close and rooms will be created in order of MMR.</value>
+  </data>
+  <data name="If a multiple of 12 players cannot be reached by the queue closing time, the last players to queue will be removed." xml:space="preserve">
+    <value>If a multiple of 12 players cannot be reached by the queue closing time, the last players to queue will be removed.</value>
+  </data>
+  <data name="Once rooms have been created, players can click on buttons in their room threads to vote for a format." xml:space="preserve">
+    <value>Once rooms have been created, players can click on buttons in their room threads to vote for a format.</value>
+  </data>
+  <data name="Clicking the button for the format you have voted for will undo your vote. Format votes are anonymous." xml:space="preserve">
+    <value>Clicking the button for the format you have voted for will undo your vote. Format votes are anonymous.</value>
+  </data>
+  <data name="Players who drop for any reason after the poll has been started will receive a -100 MMR strike." xml:space="preserve">
+    <value>Players who drop for any reason after the poll has been started will receive a -100 MMR strike.</value>
+  </data>
+  <data name="If the event is an FFA, only a host will be needed and the event can start immediately." xml:space="preserve">
+    <value>If the event is an FFA, only a host will be needed and the event can start immediately.</value>
+  </data>
+  <data name="If the event is a 2v2, 3v3, or a 4v4 mogi, teams will be randomized." xml:space="preserve">
+    <value>If the event is a 2v2, 3v3, or a 4v4 mogi, teams will be randomized.</value>
+  </data>
+  <data name="Once teams are randomized, they are final and cannot be changed. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
+    <value>Once teams are randomized, they are final and cannot be changed. Players who violate this rule will receive -50 MMR and a strike.</value>
+  </data>
+  <data name="In the event that a sub is needed, players can use the &lt;code&gt;/sub&lt;/code&gt; command to have the bot search for a sub in #queue-subs." xml:space="preserve">
+    <value>In the event that a sub is needed, players can use the &lt;code&gt;/sub&lt;/code&gt; command to have the bot search for a sub in #queue-subs.</value>
+  </data>
+  <data name="Players can sub into a room if their MMR is within 500 of the lowest player or 500 of the highest player of that room." xml:space="preserve">
+    <value>Players can sub into a room if their MMR is within 500 of the lowest player or 500 of the highest player of that room.</value>
+  </data>
+  <data name="If a sub cannot be found 20 minutes after the scheduled start time, an event may be canceled with no penalty to the remaining players." xml:space="preserve">
+    <value>If a sub cannot be found 20 minutes after the scheduled start time, an event may be canceled with no penalty to the remaining players.</value>
+  </data>
+  <data name="If staff intervention is needed in a Lounge Queue room, players can use the &lt;code&gt;!staff&lt;/code&gt; command." xml:space="preserve">
+    <value>If staff intervention is needed in a Lounge Queue room, players can use the &lt;code&gt;!staff&lt;/code&gt; command.</value>
+  </data>
+  <data name="These rules do not apply in the hourly Lounge Queue format; players may queue up for their next match immediately and do not have to wait for their current matches to finish." xml:space="preserve">
+    <value>These rules do not apply in the hourly Lounge Queue format; players may queue up for their next match immediately and do not have to wait for their current matches to finish.</value>
+  </data>
+  <data name="if no host is chosen automatically after the format is decided, players can volunteer as a host by posting room ID or using the &lt;code&gt;^fc&lt;/code&gt; command in StatsBot." xml:space="preserve">
+    <value>if no host is chosen automatically after the format is decided, players can volunteer as a host by posting room ID or using the &lt;code&gt;^fc&lt;/code&gt; command in StatsBot.</value>
+  </data>
+  <data name="Please post the room ID in uppercase letters. Failure to do so may be subject to a hostban penalty if confusion arises when entering or leaving the room." xml:space="preserve">
+    <value>Please post the room ID in uppercase letters. Failure to do so may be subject to a hostban penalty if confusion arises when entering or leaving the room.</value>
+  </data>
+  <data name="If you are livestreaming your lounge matches, it is recommended to hide the Room ID in some way when it is visible on the screen to prevent random players from joining." xml:space="preserve">
+    <value>If you are livestreaming your lounge matches, it is recommended to hide the Room ID in some way when it is visible on the screen to prevent random players from joining.</value>
+  </data>
+  <data name="If a random player joins the room and the room has to be restarted, it is recommended to switch to hosting the room through a friend code only." xml:space="preserve">
+    <value>If a random player joins the room and the room has to be restarted, it is recommended to switch to hosting the room through a friend code only.</value>
+  </data>
+  <data name="If a random player can be identified as a player in the Lounge, please make a report ticket in #reports." xml:space="preserve">
+    <value>If a random player can be identified as a player in the Lounge, please make a report ticket in #reports.</value>
+  </data>
+  <data name="If a room ID is posted in a Lounge Queue room at 8:57, the late penalty will be at 9:06." xml:space="preserve">
+    <value>If a room ID is posted in a Lounge Queue room at 8:57, the late penalty will be at 9:06.</value>
+  </data>
+  <data name="This penalty applies even if you sub, so be sure to ask the other players in your match which courses have been played, or pick Random on the track select screen." xml:space="preserve">
+    <value>This penalty applies even if you sub, so be sure to ask the other players in your match which courses have been played, or pick Random on the track select screen.</value>
+  </data>
+  <data name="Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language." xml:space="preserve">
+    <value>Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language.</value>
+  </data>
+  <data name="FFA names must be distinguishable from players who may have similar names in the same mogi." xml:space="preserve">
+    <value>FFA names must be distinguishable from players who may have similar names in the same mogi.</value>
+  </data>
+  <data name="The player who missed at least 4 races will receive a strike." xml:space="preserve">
+    <value>The player who missed at least 4 races will receive a strike. </value>
+  </data>
+  <data name="After the first race, the partner participating in the mogi can have a choice as to whether or not to sub the dropped player." xml:space="preserve">
+    <value>After the first race, the partner participating in the mogi can have a choice as to whether or not to sub the dropped player.</value>
+  </data>
+  <data name="If the reopening request is made before the end of the Lakitu count, the races run up to that point will be considered valid; if the reopening request is made after the race has started, the races will be considered valid up to the race." xml:space="preserve">
+    <value>If the reopening request is made before the end of the Lakitu count, the races run up to that point will be considered valid; if the reopening request is made after the race has started, the races will be considered valid up to the race.</value>
+  </data>
+  <data name="However, the player must provide proof of an error in failing to rejoin if requested, the player will receive -50 MMR and strike." xml:space="preserve">
+    <value>However, the player must provide proof of an error in failing to rejoin if requested, the player will receive -50 MMR and strike.</value>
+  </data> 
 </root>
