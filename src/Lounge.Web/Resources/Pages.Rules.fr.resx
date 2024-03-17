@@ -718,6 +718,6 @@
     <value>Toutes les courses qui ont déjà commencé (une fois le décompte du Lakitu terminé) avant que le joueur demande une réouverture de la salle compteront toujours.</value>
   </data>
   <data name="Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike." xml:space="preserve">
-    <value>Le joueur devra fournir une preuve vidéo de leur erreur si cela leur est demandé; ne pas montrer la preuve engendrera un strike et une pénalité de -50MMR.</value>
+    <value>Le joueur devra fournir une preuve vidéo de leur erreur si cela lui est demandé; ne pas montrer la preuve engendrera un strike et une pénalité de -50MMR.</value>
   </data> 
 </root>
