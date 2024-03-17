@@ -269,8 +269,8 @@
   <data name="If any player is disqualified from an event for any reason such as, but not limited to, throwing, teaming, or lap-trolling (on any track except Baby Park, in formats other than 6v6 SQ), they will receive a -100 MMR strike." xml:space="preserve">
     <value>throwing, teaming, lap-trolling (ベビーパーク及び6v6SQは除く)を行ったプレイヤーは -100MMR + strikeを受けます。</value>
   </data>
-  <data name="If a player cannot rejoin due to an error, the player can request to reopen only once, and the room must be reopened." xml:space="preserve">
-    <value>If a player cannot rejoin due to an error, the player can request to reopen only once, and the room must be reopened.</value>
+  <data name="If a player cannot rejoin the room due to an error (such as connection incompatibility with another player in the room), the player can call for the room to be reopened one time." xml:space="preserve">
+    <value>If a player cannot rejoin the room due to an error (such as connection incompatibility with another player in the room), the player can call for the room to be reopened one time.</value>
   </data>
   <data name="If hosts disconnected in the middle of a mogi, hosts must take a 30-second clip to prove that it was unintentional (streaming archive is also allowed)." xml:space="preserve">
     <value>模擬の途中でホストの回線が落ちた場合、ホストは30秒の画面録画または配信のアーカイブを提出し、意図的ではないことを証明する必要があります。</value>
@@ -710,13 +710,13 @@
   <data name="The player who missed at least 4 races will receive a strike." xml:space="preserve">
     <value>The player who missed at least 4 races will receive a strike. </value>
   </data>
-  <data name="After the first race, the partner participating in the mogi can have a choice as to whether or not to sub the dropped player." xml:space="preserve">
-    <value>After the first race, the partner participating in the mogi can have a choice as to whether or not to sub the dropped player.</value>
+  <data name="If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player." xml:space="preserve">
+    <value>If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player.</value>
   </data>
-  <data name="If the reopening request is made before the end of the Lakitu count, the races run up to that point will be considered valid; if the reopening request is made after the race has started, the races will be considered valid up to the race." xml:space="preserve">
-    <value>If the reopening request is made before the end of the Lakitu count, the races run up to that point will be considered valid; if the reopening request is made after the race has started, the races will be considered valid up to the race.</value>
+  <data name="All races which have started (when Lakitu's countdown has finished) prior to the player asking for a reopen will still count." xml:space="preserve">
+    <value>All races which have started (when Lakitu's countdown has finished) prior to the player asking for a reopen will still count.</value>
   </data>
-  <data name="However, the player must provide proof of an error in failing to rejoin if requested, the player will receive -50 MMR and strike." xml:space="preserve">
-    <value>However, the player must provide proof of an error in failing to rejoin if requested, the player will receive -50 MMR and strike.</value>
+  <data name="Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike." xml:space="preserve">
+    <value>Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike.</value>
   </data> 
 </root>
