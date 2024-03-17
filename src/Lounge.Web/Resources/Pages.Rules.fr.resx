@@ -706,10 +706,10 @@
     <value>Les joueurs ne doivent pas ajouter d'autres caractères dans leur pseudo qui ne sont pas compris dans leur pseudo lounge, cela inclut les caractères spéciaux ou des lettres d'un autre langage qui ressemblent à des lettres de l'alphabet.</value>
   </data>
   <data name="FFA names must be distinguishable from players who may have similar names in the same mogi." xml:space="preserve">
-    <value>Les pseudos en FFA doivent être différentiables des autres joueurs qui pourraient avoir un pseudo similaire dans le même match. </value>
+    <value>Les pseudos en FFA doivent être différentiables des autres joueurs qui pourraient avoir un pseudo similaire dans le même match.</value>
   </data>
   <data name="The player who missed at least 4 races will receive a strike." xml:space="preserve">
-    <value>Le joueur qui manquera au moins 4 courses recevra un strike. </value>
+    <value>Le joueur qui manquera au moins 4 courses recevra un strike.</value>
   </data>
   <data name="If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player." xml:space="preserve">
     <value>Si un joueur quitte un match après la première course, son partenaire a le choix de remplacer ou non le joueur ayant quitté le match.</value>

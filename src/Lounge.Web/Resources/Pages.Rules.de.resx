@@ -709,7 +709,7 @@
     <value>FFA names must be distinguishable from players who may have similar names in the same mogi.</value>
   </data>
   <data name="The player who missed at least 4 races will receive a strike." xml:space="preserve">
-    <value>The player who missed at least 4 races will receive a strike. </value>
+    <value>The player who missed at least 4 races will receive a strike.</value>
   </data>
   <data name="If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player." xml:space="preserve">
     <value>If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player.</value>
