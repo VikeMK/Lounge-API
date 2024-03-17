@@ -193,7 +193,7 @@
     <value>No usar tu nombre de Lounge o incumplir alguna de estas directrices sobre el nombre después de las 2 primeras carreras, resultará en -50 MMR.</value>
   </data>
   <data name="FFA names must be distinguishable from players who may have similar names in the same mogi." xml:space="preserve">
-    <value>Los nombres en FFA deben ser distinguibles entre jugadores que puedan tener nombres similares dentro del mismo evento.</value>
+    <value>Los nombres en eventos FFA deben ser distinguibles de otros nombres que puedan haber en el mismo evento.</value>
   </data>
   <data name="FFA names must be legible in English." xml:space="preserve">
     <value>Los nombres en FFA deben ser legibles en inglés.</value>
@@ -231,7 +231,7 @@
   <data name="Host-banned players must wait at least 90 days before appealing their hostban." xml:space="preserve">
     <value>Jugadores baneados de ser host deben esperar al menos 90 días antes de apelar su baneo de ser host.</value>
   </data>
-  <data name="Hosts should start the room with the following settings:">
+  <data name="Hosts should start the room with the following settings:" xml:space="preserve">
     <value>Los hosts deberán empezar la partida con la siguiente configuración:</value>
   </data>
   <data name="Hosts that start the room with less than 12 players, close the room for no reason, or otherwise cause unnecessary disruptions will receive -50 and a strike, and may be prohibited from hosting in the future." xml:space="preserve">
@@ -286,7 +286,7 @@
     <value>Si el evento es un mogi 2v2, 3v3 o 4v4, los equipos serán aleatorios.</value>
   </data>
   <data name="If the event is an FFA, only a host will be needed and the event can start immediately." xml:space="preserve">
-    <value>Si el evento es un FFA, solo se necesitará un host y el evento puede comenzar de inmediato.</value>
+    <value>Si el evento es un FFA, solo se necesitará un host y se podrá empezar inmediatamente.</value>
   </data>
   <data name="If the host does not restart, the first race will not count and an additional 13th race will need to be played at the end." xml:space="preserve">
     <value>Si el host no abre sala, la primera carrera no contará y se tendrá que jugar una 13º carrera al final.</value>
@@ -466,7 +466,7 @@
     <value>Los jugadores que constantemente causen interrupciones en el server de Lounge, como trollear, insultar, spammear comandos de bots, etc., recibirán una restricción de chat (CR) (la cual solo les permite enviar ciertos mensajes), un mute o una expulsión temporal del canal o servidor (timeout) a discreción del staff de Lounge.</value>
   </data>
   <data name="Players who drop for any reason after the poll has been started will receive a -100 MMR strike." xml:space="preserve">
-    <value>Los jugadores que abandonen un evento por cualquier motivo después de que se haya iniciado la votación recibirán una penalización de -100 MMR y un strike.</value>
+    <value>Los jugadores que abandonen el evento por cualquier motivo después de que la votación haya comenzado, recibirán una penalización de -100 MMR + strike.</value>
   </data>
   <data name="Players who drop from an event are ineligible for MMR gain from that mogi even if their team wins." xml:space="preserve">
     <value>Los jugadores que dropeen (abandonen) un evento no ganarán MMR de ese evento, incluso si su equipo gana.</value>
@@ -654,15 +654,6 @@
   <data name="Clicking the button for the format you have voted for will undo your vote. Format votes are anonymous." xml:space="preserve">
     <value>Hacer click por el formato que has votado previamente, deshace tu voto. Los votos son anónimos.</value>
   </data>
-  <data name="Players who drop for any reason after the poll has been started will receive a -100 MMR strike." xml:space="preserve">
-    <value>Los jugadores que abandonen el evento por cualquier motivo después de que la votación haya comenzado, recibirán una penalización de -100 MMR + strike.</value>
-  </data>
-  <data name="If the event is an FFA, only a host will be needed and the event can start immediately." xml:space="preserve">
-    <value>Si el evento es un FFA, solo se necesitará un host y se podrá empezar inmediatamente.</value>
-  </data>
-  <data name="If the event is a 2v2, 3v3, or a 4v4 mogi, teams will be randomized." xml:space="preserve">
-    <value>Si el evento es un mogi 2v2, 3v3 o 4v4, los equipos serán aleatorios.</value>
-  </data>
   <data name="Once teams are randomized, they are final and cannot be changed. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>Una vez se hayan definido los equipos, estos no podrán ser cambiados. Los jugadores que incumplan esta regla, recibirán una penalización de -50 MMR + strike.</value>
   </data>
@@ -705,19 +696,16 @@
   <data name="Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language." xml:space="preserve">
     <value>Los jugadores no deben añadir ningún caracter que no pertenezca a su nombre de Lounge, incluyendo caracteres de otros lenguajes que se puedan parecer.</value>
   </data>
-  <data name="FFA names must be distinguishable from players who may have similar names in the same mogi." xml:space="preserve">
-    <value>Los nombres en eventos FFA deben ser distinguibles de otros nombres que puedan haber en el mismo evento.</value>
-  </data>
   <data name="The player who missed at least 4 races will receive a strike." xml:space="preserve">
     <value>El jugador que se pierda al menos 4 carreras, recibirá un strike.</value>
   </data>
   <data name="If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player." xml:space="preserve">
-    <value>If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player.</value>
+    <value>Players must use their Lounge Nickname (or a shortened, legible version if the shortened version is more than 10 characters) in FFA format events. Japanese characters are not allowed.</value>
   </data>
   <data name="All races which have started (when Lakitu's countdown has finished) prior to the player asking for a reopen will still count." xml:space="preserve">
-    <value>All races which have started (when Lakitu's countdown has finished) prior to the player asking for a reopen will still count.</value>
+    <value>Si la petición de reabrir la sala se hace antes de que termine la cuenta atrás del Lakitu (es decir, cuando empieza la carrera), se darán por válidas las carreras anteriores. Si por el contrario, se hace después de que empiece la carrera, se cuentan tanto las carreras anteriores como la carrera que se está jugando.</value>
   </data>
   <data name="Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike." xml:space="preserve">
-    <value>Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike.</value>
+    <value>Sin embargo, el jugador debe mandar pruebas de que se está produciendo un error al unirse a sala en caso de que se pidan pruebas. Si el jugador no consigue demostrarlo, será penalizado con -50 MMR + strike.</value>
   </data>
 </root>

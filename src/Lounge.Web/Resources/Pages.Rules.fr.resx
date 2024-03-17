@@ -1,4 +1,4 @@
-﻿﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -429,7 +429,7 @@
   <data name="Players must arrange uppercase/lowercase and hiragana/katakana tags with their teammates." xml:space="preserve">
     <value>Les joueurs doivent s’accorder sur le type de caractères utilisés (majuscule ou minuscule / hiragana ou katakana) avec leurs coéquipiers.</value>
   </data>
-  <data name="Players must use their &lt;b&gt;Lounge Nickname&lt;/b&gt; (or a shortened, legible version if the shortened version is more than 10 characters) in FFA format events. Japanese characters are not allowed." xml:space="preserve">
+  <data name="Players must use their Lounge Nickname (or a shortened, legible version if the shortened version is more than 10 characters) in FFA format events. Japanese characters are not allowed." xml:space="preserve">
     <value>Les joueurs doivent utiliser leur &lt;b&gt;Pseudo Lounge&lt;/b&gt; (ou une version raccourci lisible) durant les matchs FFA. Les caractères japonais ne sont pas autorisés.</value>
   </data>
   <data name="Player names must not begin with the first character of another team's tag." xml:space="preserve">
@@ -654,15 +654,7 @@
   <data name="Clicking the button for the format you have voted for will undo your vote. Format votes are anonymous." xml:space="preserve">
     <value>En cliquant une seconde fois sur le bouton du format pour lequel il aura voté, son vote sera annulé. Les votes dans les fils sont anonymes. </value>
   </data>
-  <data name="Players who drop for any reason after the poll has been started will receive a -100 MMR strike." xml:space="preserve">
-    <value>Un joueur qui drop pour quelconque raison après que les votes aient démarré recevra un strike et une pénalité de -100MMR.</value>
-  </data>
-  <data name="If the event is an FFA, only a host will be needed and the event can start immediately." xml:space="preserve">
-    <value>Si le mode choisi est FFA, il suffit d’avoir un host pour que l’événement puisse commencer immédiatement. </value>
-  </data>
-  <data name="If the event is a 2v2, 3v3, or a 4v4 mogi, teams will be randomized." xml:space="preserve">
-    <value>Si le mode de jeu choisi est 2v2, 3v3 ou 4v4, les équipes seront tirées au sort aléatoirement. </value>
-  </data>
+  
   <data name="Once teams are randomized, they are final and cannot be changed. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>Les équipes tirées au sort aléatoirement ne peuvent être changées, chaque joueur ne respectant pas cette règle recevra un strike et une pénalité de -50MMR.</value>
   </data>
@@ -705,9 +697,6 @@
   <data name="Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language." xml:space="preserve">
     <value>Les joueurs ne doivent pas ajouter d'autres caractères dans leur pseudo qui ne sont pas compris dans leur pseudo lounge, cela inclut les caractères spéciaux ou des lettres d'un autre langage qui ressemblent à des lettres de l'alphabet.</value>
   </data>
-  <data name="FFA names must be distinguishable from players who may have similar names in the same mogi." xml:space="preserve">
-    <value>Les pseudos en FFA doivent être différentiables des autres joueurs qui pourraient avoir un pseudo similaire dans le même match.</value>
-  </data>
   <data name="The player who missed at least 4 races will receive a strike." xml:space="preserve">
     <value>Le joueur qui manquera au moins 4 courses recevra un strike.</value>
   </data>
@@ -718,6 +707,6 @@
     <value>Toutes les courses qui ont déjà commencé (une fois le décompte du Lakitu terminé) avant que le joueur demande une réouverture de la salle compteront toujours.</value>
   </data>
   <data name="Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike." xml:space="preserve">
-    <value>Le joueur devra fournir une preuve vidéo de leur erreur si cela lui est demandé; ne pas montrer la preuve engendrera un strike et une pénalité de -50MMR.</value>
+    <value>Le joueur devra fournir une preuve vidéo de son erreur si cela lui est demandé; ne pas montrer la preuve engendrera un strike et une pénalité de -50MMR.</value>
   </data> 
 </root>

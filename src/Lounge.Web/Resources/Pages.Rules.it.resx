@@ -654,15 +654,7 @@
   <data name="Clicking the button for the format you have voted for will undo your vote. Format votes are anonymous." xml:space="preserve">
     <value>Clicking the button for the format you have voted for will undo your vote. Format votes are anonymous.</value>
   </data>
-  <data name="Players who drop for any reason after the poll has been started will receive a -100 MMR strike." xml:space="preserve">
-    <value>Players who drop for any reason after the poll has been started will receive a -100 MMR strike.</value>
-  </data>
-  <data name="If the event is an FFA, only a host will be needed and the event can start immediately." xml:space="preserve">
-    <value>If the event is an FFA, only a host will be needed and the event can start immediately.</value>
-  </data>
-  <data name="If the event is a 2v2, 3v3, or a 4v4 mogi, teams will be randomized." xml:space="preserve">
-    <value>If the event is a 2v2, 3v3, or a 4v4 mogi, teams will be randomized.</value>
-  </data>
+  
   <data name="Once teams are randomized, they are final and cannot be changed. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
     <value>Once teams are randomized, they are final and cannot be changed. Players who violate this rule will receive -50 MMR and a strike.</value>
   </data>
@@ -704,9 +696,6 @@
   </data>
   <data name="Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language." xml:space="preserve">
     <value>Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language.</value>
-  </data>
-  <data name="FFA names must be distinguishable from players who may have similar names in the same mogi." xml:space="preserve">
-    <value>FFA names must be distinguishable from players who may have similar names in the same mogi.</value>
   </data>
   <data name="The player who missed at least 4 races will receive a strike." xml:space="preserve">
     <value>The player who missed at least 4 races will receive a strike.</value>
