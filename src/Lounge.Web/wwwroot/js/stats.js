@@ -383,6 +383,69 @@ const chartSeasonConfig = {
         G: ["Iron 1", "Iron 2", "Placement"],
       },
     },
+    11: {
+      Ranks: {
+        "Iron 1": 0,
+        "Iron 2": 1000,
+        "Bronze 1": 2000,
+        "Bronze 2": 3000,
+        "Silver 1": 4000,
+        "Silver 2": 5000,
+        "Gold 1": 6000,
+        "Gold 2": 7000,
+        "Platinum 1": 8000,
+        "Platinum 2": 9000,
+        "Sapphire 1": 10000,
+        "Sapphire 2": 11000,
+        "Ruby 1": 12000,
+        "Ruby 2": 13000,
+        "Diamond 1": 14000,
+        "Diamond 2": 15000,
+        Master: 16000,
+        Grandmaster: 17000,
+      },
+      RecordsTierOrder: [
+        "X",
+        "S",
+        "A",
+        "AB",
+        "B",
+        "BC",
+        "C",
+        "CD",
+        "D",
+        "DE",
+        "E",
+        "EF",
+        "F",
+        "FG",
+        "G",
+      ],
+      DivisionsToTier: {
+        X: ["Diamond 1", "Diamond 2", "Master", "Grandmaster"],
+        S: ["Ruby 2", "Diamond 1", "Diamond 2", "Master", "Grandmaster"],
+        A: [
+          "Ruby 1",
+          "Ruby 2",
+          "Diamond 1",
+          "Diamond 2",
+          "Master",
+          "Grandmaster",
+        ],
+        AB: ["Sapphire 2", "Ruby 1"],
+        B: ["Sapphire 1", "Sapphire 2"],
+        BC: ["Platinum 2", "Sapphire 1"],
+        C: ["Platinum 1", "Platinum 2"],
+        CD: ["Gold 2", "Platinum 1"],
+        D: ["Gold 1", "Gold 2"],
+        DE: ["Silver 2", "Gold 1"],
+        E: ["Silver 1", "Silver 2"],
+        EF: ["Bronze 2", "Silver 1"],
+        F: ["Bronze 1", "Bronze 2"],
+        FG: ["Iron 2", "Bronze 1"],
+        G: ["Iron 1", "Iron 2", "Placement"],
+      },
+    },
   },
   Colors: {
     Grandmaster: "#a3022c",
@@ -509,6 +572,7 @@ const chartSeasonConfig = {
 };
 
 const getDivisionName = (mmr, season) => {
+  if (chartSeasonConfig.Seasons[season] == null) season = 11;
   const currArray = Object.entries(chartSeasonConfig.Seasons[season].Ranks);
   if (mmr === 0) return currArray[0][0].split(" ")[0];
   currArray.push(["currPlayer", mmr]);
