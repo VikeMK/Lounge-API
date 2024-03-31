@@ -182,7 +182,7 @@
   <data name="Exceptions may be granted on a case-by-case basis." xml:space="preserve">
     <value>ただし例外がある可能性があります。</value>
   </data>
-  <data name="Failure to post the friend code or refusal to host will result in 1 strike." xml:space="preserve">
+  <data name="Failure to post the room ID or the friend code or refusal to host will result in 1 strike." xml:space="preserve">
     <value>フレンドコードを投稿しない場合や、ホストをもつことを拒否した場合は strikeが付与されます。</value>
   </data>
   <data name="Failure to use your Lounge Nickname or abide by any of these naming guidelines after the first 2 races will result in -50 MMR." xml:space="preserve">

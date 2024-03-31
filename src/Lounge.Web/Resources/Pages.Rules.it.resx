@@ -183,7 +183,7 @@
   <data name="Exceptions may be granted on a case-by-case basis." xml:space="preserve">
     <value>Eccezioni possono venire concesse a discrezione dello staff a seconda della situazione.</value>
   </data>
-  <data name="Failure to post the friend code or refusal to host will result in 1 strike." xml:space="preserve">
+  <data name="Failure to post the room ID or the friend code or refusal to host will result in 1 strike." xml:space="preserve">
     <value>Il mancato invio del codice amico e il rifiuto di hostare risulteranno in uno strike.</value>
   </data>
   <data name="Failure to use your Lounge Nickname or abide by any of these naming guidelines after the first 2 races will result in -50 MMR." xml:space="preserve">
@@ -271,7 +271,7 @@
     <value>Se un giocatore viene squalificato da un evento per qualunque motivo tra cui, ma non limitato a, throwing (perdere di proposito), teaming, o lap-trolling (su qualunque pista ad eccezione per Baby Park, in qualunque formato che non sia 6v6 SQ), riceverà -100 MMR ed uno strike.</value>
   </data>
   <data name="If a player cannot rejoin the room due to an error (such as connection incompatibility with another player in the room), the player can call for the room to be reopened one time." xml:space="preserve">
-    <value>If a player cannot rejoin the room due to an error (such as connection incompatibility with another player in the room), the player can call for the room to be reopened one time.</value>
+    <value>Se un giocatore non riesce a rientrare nella stanza per via di un errore (come un'incompatibilità di connessione con un altro giocatore nella stanza),il giocatore può richiedere di fare riaprire la stanza una volta.</value>
   </data>
   <data name="If hosts disconnected in the middle of a mogi, hosts must take a 30-second clip to prove that it was unintentional (streaming archive is also allowed)." xml:space="preserve">
     <value>Se l'host si disconnette nel mezzo di un mogi, l'host deve fare una clip di 30 secondi dove dimostra che la disconnessione non sia volontaria (va bene anche il proprio stream come prova).</value>
@@ -281,9 +281,6 @@
   </data>
   <data name="If not stated otherwise, the tag should start at the beginning of the name by default with regard to (i.)" xml:space="preserve">
     <value>Se non viene comunicato altrimenti, la tag del proprio team è sempre a inizio nome con rispetto della regola (i.)</value>
-  </data>
-  <data name="If the event is a 2v2, 3v3, or a 4v4 mogi, teams will be randomized." xml:space="preserve">
-    <value>Se l'evento è 2v2, 3v3, o 4v4, i team verranno decisi casualmente.</value>
   </data>
   <data name="If the event is an FFA, only a host will be needed and the event can start immediately." xml:space="preserve">
     <value>Se l'evento è un FFA, è semplicemente necessario un host e l'evento può iniziare immediatamente.</value>
@@ -640,73 +637,81 @@
     <value>Gathering Lineups (Lounge Queue)</value>
   </data>
   <data name="In the #queue-join channel, players can type &lt;code&gt;/c&lt;/code&gt; to queue into matches for each hour." xml:space="preserve">
-    <value>In the #queue-join channel, players can type &lt;code&gt;/c&lt;/code&gt; to queue into matches for each hour.</value>
+    <value>Nel canale #queue-join channel, i giocatori possono digitare &lt;code&gt;/c&lt;/code&gt; per mettersi in queue per le partite per ogni ora.</value>
   </data>
   <data name="Between :55 and :58 at each hour, the queue will close and rooms will be created in order of MMR." xml:space="preserve">
-    <value>Between :55 and :58 at each hour, the queue will close and rooms will be created in order of MMR.</value>
+    <value>Tra :55 e :58 di ogni ora, la queue chiuderà e le lobby verranno create in ordine di MMR.</value>
   </data>
   <data name="If a multiple of 12 players cannot be reached by the queue closing time, the last players to queue will be removed." xml:space="preserve">
-    <value>If a multiple of 12 players cannot be reached by the queue closing time, the last players to queue will be removed.</value>
+    <value>Se non si raggiunge un multiplo di 12 giocatori  entro l'orario di chiusura della queue, gli ultimi giocatori a mettersi in queue verranno rimossi.</value>
   </data>
   <data name="Once rooms have been created, players can click on buttons in their room threads to vote for a format." xml:space="preserve">
-    <value>Once rooms have been created, players can click on buttons in their room threads to vote for a format.</value>
+    <value>Una volta create le lobby, i giocatori possono cliccare sui pulsanti nei thread della loro lobby per votare per il formato da giocare.</value>
   </data>
   <data name="Clicking the button for the format you have voted for will undo your vote. Format votes are anonymous." xml:space="preserve">
-    <value>Clicking the button for the format you have voted for will undo your vote. Format votes are anonymous.</value>
+    <value>Cliccare sul pusante per il formato che hai votato rimuoverà il voto. I voti sono anonimi.</value>
   </data>
-  
+  <data name="Players who drop for any reason after the poll has been started will receive a -100 MMR strike." xml:space="preserve">
+    <value>I giocatori che abbandonano l'evento per qualsiasi motivo dopo l'inizio della votazione per il formato riceveranno -100MMR ed uno strike.</value>
+  </data>
+  <data name="If the event is an FFA, only a host will be needed and the event can start immediately." xml:space="preserve">
+    <value>Se l'evento è FFA, è necessario solo un host e l'evento può iniziare immediatamente.</value>
+  </data>
+  <data name="If the event is a 2v2, 3v3, or a 4v4 mogi, teams will be randomized." xml:space="preserve">
+    <value>Se l'evento è 2v2, 3v3, o 4v4, le squadre verranno create casualmente.</value>
+  </data>
   <data name="Once teams are randomized, they are final and cannot be changed. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Once teams are randomized, they are final and cannot be changed. Players who violate this rule will receive -50 MMR and a strike.</value>
+    <value>Una volta che le squadre sono state randomizzate, sono finalizzate e non possono essere cambiate. I giocatori che violano questa regola riceveranno -50MMR ed uno strike.</value>
   </data>
   <data name="In the event that a sub is needed, players can use the &lt;code&gt;/sub&lt;/code&gt; command to have the bot search for a sub in #queue-subs." xml:space="preserve">
-    <value>In the event that a sub is needed, players can use the &lt;code&gt;/sub&lt;/code&gt; command to have the bot search for a sub in #queue-subs.</value>
+    <value>Nello scenario in cui è necessario un sostituto, i giocatori possono usare il comando &lt;code&gt;/sub&lt;/code&gt; per fare in modo che il bot cerchi un sostituto in #queue-subs.</value>
   </data>
   <data name="Players can sub into a room if their MMR is within 500 of the lowest player or 500 of the highest player of that room." xml:space="preserve">
-    <value>Players can sub into a room if their MMR is within 500 of the lowest player or 500 of the highest player of that room.</value>
+    <value>I giocatori possono fare da sostituti in una stanza se il loro MMR rientra entro 500 punti da quelli del giocatore più basso o quello più alto di quella stanza.</value>
   </data>
   <data name="If a sub cannot be found 20 minutes after the scheduled start time, an event may be canceled with no penalty to the remaining players." xml:space="preserve">
-    <value>If a sub cannot be found 20 minutes after the scheduled start time, an event may be canceled with no penalty to the remaining players.</value>
+    <value>Se un sostituto non viene trovato entro 20 minuti dall'orario di inizio, l'evento può essere cancellato senza penalità per i partecipanti rimasti.</value>
   </data>
   <data name="If staff intervention is needed in a Lounge Queue room, players can use the &lt;code&gt;!staff&lt;/code&gt; command." xml:space="preserve">
-    <value>If staff intervention is needed in a Lounge Queue room, players can use the &lt;code&gt;!staff&lt;/code&gt; command.</value>
+    <value>Se serve l'intervento dello staff in una stanza Lounge Queue, i giocatori possono usare il comando &lt;code&gt;!staff&lt;/code&gt;.</value>
   </data>
   <data name="These rules do not apply in the hourly Lounge Queue format; players may queue up for their next match immediately and do not have to wait for their current matches to finish." xml:space="preserve">
-    <value>These rules do not apply in the hourly Lounge Queue format; players may queue up for their next match immediately and do not have to wait for their current matches to finish.</value>
+    <value>Queste regole non si applicano nel formato a ore della Lounge Queue; i giocatori possono mettersi in queue per il prossimo match immediatamente e non devono aspettare la fine del loro match corrente.</value>
   </data>
   <data name="if no host is chosen automatically after the format is decided, players can volunteer as a host by posting room ID or using the &lt;code&gt;^fc&lt;/code&gt; command in StatsBot." xml:space="preserve">
-    <value>if no host is chosen automatically after the format is decided, players can volunteer as a host by posting room ID or using the &lt;code&gt;^fc&lt;/code&gt; command in StatsBot.</value>
+    <value>Se non c'è un host deciso automaticamente dopo che il formato è stato scelto, i giocatori possono offrirsi volontariamente come host postando l'ID della stanza o usando il comando &lt;code&gt;^fc&lt;/code&gt; in StatsBot.</value>
   </data>
   <data name="Please post the room ID in uppercase letters. Failure to do so may be subject to a hostban penalty if confusion arises when entering or leaving the room." xml:space="preserve">
-    <value>Please post the room ID in uppercase letters. Failure to do so may be subject to a hostban penalty if confusion arises when entering or leaving the room.</value>
+    <value>Per favore posta l'ID della stanza con lettere maiuscole. Il mancato rispetto della regola può comportare un hostban in caso causi confusione tra i giocatori.</value>
   </data>
   <data name="If you are livestreaming your lounge matches, it is recommended to hide the Room ID in some way when it is visible on the screen to prevent random players from joining." xml:space="preserve">
-    <value>If you are livestreaming your lounge matches, it is recommended to hide the Room ID in some way when it is visible on the screen to prevent random players from joining.</value>
+    <value>Se strai streammando i tuoi match in lounge, è consigliato nascondere l'ID della stanza in qualche modo per evitare che giocatori estranei all'evento possano unirsi.</value>
   </data>
   <data name="If a random player joins the room and the room has to be restarted, it is recommended to switch to hosting the room through a friend code only." xml:space="preserve">
-    <value>If a random player joins the room and the room has to be restarted, it is recommended to switch to hosting the room through a friend code only.</value>
+    <value>Se un giocatore estraneo alla stanza si unisce e la stanza deve essere riaperta, è consigliato hostare la stanza usando il codice amico al posto dell'ID.</value>
   </data>
   <data name="If a random player can be identified as a player in the Lounge, please make a report ticket in #reports." xml:space="preserve">
-    <value>If a random player can be identified as a player in the Lounge, please make a report ticket in #reports.</value>
+    <value>Se un giocatore estraneo alla stanza può essere identificato come un giocatore registrato in Lounge, per favore fai un ticket per segnalarlo in #reports.</value>
   </data>
   <data name="If a room ID is posted in a Lounge Queue room at 8:57, the late penalty will be at 9:06." xml:space="preserve">
-    <value>If a room ID is posted in a Lounge Queue room at 8:57, the late penalty will be at 9:06.</value>
+    <value>Se l'ID della stanza viene postato nel thread della Lounge Queue alle 8:57, la penalità rimane alle 9:06.</value>
   </data>
   <data name="This penalty applies even if you sub, so be sure to ask the other players in your match which courses have been played, or pick Random on the track select screen." xml:space="preserve">
-    <value>This penalty applies even if you sub, so be sure to ask the other players in your match which courses have been played, or pick Random on the track select screen.</value>
+    <value>Questa penalità si applica anche se fai da sostituto, per sicurezza chiedi agli altri giocatori nel match quali piste sono state già giocate oppure vota casuale.</value>
   </data>
   <data name="Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language." xml:space="preserve">
-    <value>Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language.</value>
+    <value>I giocatori non devono aggiungere nessun carattere al loro nome in lounge, inclusi caratteri visualmente simili di un'altra lingua.</value>
   </data>
   <data name="The player who missed at least 4 races will receive a strike." xml:space="preserve">
-    <value>The player who missed at least 4 races will receive a strike.</value>
+    <value>I giocatori che mancano ad almeno 4 gare riceveranno uno strike.</value>
   </data>
   <data name="If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player." xml:space="preserve">
-    <value>If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player.</value>
+    <value>Se un giocatore abbandona dopo la prima gara, il loro partner nel mogi può scegliere se cercarsi un sostituto o meno per il giocatore mancante.</value>
   </data>
   <data name="All races which have started (when Lakitu's countdown has finished) prior to the player asking for a reopen will still count." xml:space="preserve">
-    <value>All races which have started (when Lakitu's countdown has finished) prior to the player asking for a reopen will still count.</value>
+    <value>Tutte le gare che sono iniziate (quando il conto alla rovescia di Lakitu finisce) prima che il giocatore richieda di riaprire la stanza conteranno.</value>
   </data>
   <data name="Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike." xml:space="preserve">
-    <value>Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike.</value>
+    <value>I giocatori devono poter dare prova dei loro problemi di connessione se richiesti; il mancato invio di prove risulterà in -50MMR ed uno strike.</value>
   </data>
 </root>

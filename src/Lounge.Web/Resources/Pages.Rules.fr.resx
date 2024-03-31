@@ -183,8 +183,8 @@
   <data name="Exceptions may be granted on a case-by-case basis." xml:space="preserve">
     <value>Des exceptions peuvent être faites cas par cas.</value>
   </data>
-  <data name="Failure to post the friend code or refusal to host will result in 1 strike." xml:space="preserve">
-    <value>Ne pas poster son code-ami ou refuser de host entraînera 1 strike.</value>
+  <data name="Failure to post the room ID or the friend code or refusal to host will result in 1 strike." xml:space="preserve">
+    <value>Ne pas poster son room ID ou code-ami ou refuser de host entraînera 1 strike.</value>
   </data>
   <data name="Failure to abide by any of these naming guidelines after the first 2 races will result in -50 MMR." xml:space="preserve">
     <value>Le fait de ne pas respecter ces règles après les 2 premières courses résulte en une pénalité de -50MMR.</value>
