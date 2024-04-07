@@ -186,16 +186,16 @@
     <value>フレンドコードを投稿しない場合や、ホストをもつことを拒否した場合は strikeが付与されます。</value>
   </data>
   <data name="Failure to use your Lounge Nickname or abide by any of these naming guidelines after the first 2 races will result in -50 MMR." xml:space="preserve">
-    <value>Failure to use your Lounge Nickname or abide by any of these naming guidelines after the first 2 races will result in -50 MMR.</value>
+    <value>最初の3レース目以降、上記のルールに従わなかった場合は -50MMRとなります。</value>
   </data>
   <data name="Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -50 MMR penalty." xml:space="preserve">
     <value>3レース目以降に同じチーム内で統一したタグを使用しなかったり、名前に関するルール従わなかった場合、 -50MMRのペナルティが科せられます。</value>
   </data>
   <data name="FFA names must be distinguishable from players who may have similar names in the same mogi." xml:space="preserve">
-    <value>FFA names must be distinguishable from players who may have similar names in the same mogi.</value>
+    <value>FFA の名前は、同じ模擬の類似した名前のプレイヤーと区別できなければなりません。</value>
   </data>
   <data name="FFA names must be legible in English." xml:space="preserve">
-    <value>FFA names must be legible in English.</value>
+    <value>日本語を使用することはできません。</value>
   </data>
   <data name="For example, if 2 players with Lounge Nicknames of WaluigiPlayer1 and WaluigiPlayer2 are in the same mogi:" xml:space="preserve">
     <value>For example, if 2 players with Lounge Nicknames of WaluigiPlayer1 and WaluigiPlayer2 are in the same mogi:</value>
@@ -222,7 +222,7 @@
     <value>Squad Queueの詳細については&lt;a href="https://www.mariokartcentral.com/forums/index.php?threads/introducing-150cc-lounge-squad-queue.6061/"&gt;こちら&lt;/a&gt;をご覧ください。</value>
   </data>
   <data name="Gathering Lineups (Tier System)" xml:space="preserve">
-    <value>模擬に参加するにあたって</value>
+    <value>模擬に参加するにあたって(Tier System)</value>
   </data>
   <data name="Host" xml:space="preserve">
     <value>ホストに関するルール</value>
@@ -270,7 +270,7 @@
     <value>throwing, teaming, lap-trolling (ベビーパーク及び6v6SQは除く)を行ったプレイヤーは -100MMR + strikeを受けます。</value>
   </data>
   <data name="If a player cannot rejoin the room due to an error (such as connection incompatibility with another player in the room), the player can call for the room to be reopened one time." xml:space="preserve">
-    <value>If a player cannot rejoin the room due to an error (such as connection incompatibility with another player in the room), the player can call for the room to be reopened one time.</value>
+    <value>エラーによって部屋に再合流できない場合、1度のみ再開設を要求でき、ホストは部屋を再開設する必要があります。</value>
   </data>
   <data name="If hosts disconnected in the middle of a mogi, hosts must take a 30-second clip to prove that it was unintentional (streaming archive is also allowed)." xml:space="preserve">
     <value>模擬の途中でホストの回線が落ちた場合、ホストは30秒の画面録画または配信のアーカイブを提出し、意図的ではないことを証明する必要があります。</value>
@@ -297,7 +297,7 @@
     <value>既定の開設時間後にホストが決まった場合は、ホストは2分待ってから部屋を開く必要があります。</value>
   </data>
   <data name="If the player is randomly chosen to be a host, they must post the room ID or their friend code within 2 minutes of the poll ending unless they have entered the room ID into MogiBot in advance." xml:space="preserve">
-    <value>&lt;code&gt;/ch&lt;/code&gt;を使用して挙手したプレイヤーがホストとして選ばれた場合は、そのプレイヤーは投票終了後3分以内にフレンドコードを投稿する必要があります。</value>
+    <value>&lt;code&gt;/ch&lt;/code&gt;を使用して挙手したプレイヤーがホストとして選ばれた場合は、事前にMogiBotにロビーIDを入力している場合を除き、そのプレイヤーは投票終了後2分以内にロビーIDまたはフレンドコードを投稿する必要があります。</value>
   </data>
   <data name="If the player who reported the repick files an objection and no video or other evidence can be confirmed, the penalty may be revoked." xml:space="preserve">
     <value>リピックを申告したプレイヤーが異議申し立てを行い、ビデオ等の証拠が確認できない場合、ペナルティを取り消すことがあります。</value>
@@ -387,7 +387,7 @@
     <value>ホストはフレンドコードを投稿してから2分待ち、その間に送られてきたフレンドコードを全て承認してから部屋を開く必要があります。</value>
   </data>
   <data name="Once a room has been opened, players will have 5 minutes to join the room, unless the room is opened early (refer to rule IV. c.) or before the scheduled time in Lounge Queue events." xml:space="preserve">
-    <value>部屋が開設されたら、プレイヤーは5分以内に参加する必要があります。（ただし、ルール IV. c. の場合を除く）</value>
+    <value>部屋が開設されたら、プレイヤーは5分以内に参加する必要があります。ただし部屋が早く開設した場合(ルール IV. c. を参照） やLOUNGE QUEUEで予定された時間より早く開設された場合は除きます</value>
   </data>
   <data name="Once a staff member has seen your account, you will be placed into one of the following ranks:" xml:space="preserve">
     <value>プレイヤーは以下のMMRをもとにランク付けされます。</value>
@@ -417,7 +417,7 @@
     <value>ニックネームは60日に1度変更可能です。変更後60日間はニックネームをもとに戻すことも、他のものにすることもできません。</value>
   </data>
   <data name="Players can queue as a host using the &lt;code&gt;/ch&lt;/code&gt; command in MogiBot;" xml:space="preserve">
-    <value>プレイヤーはMogibotの &lt;code&gt;/ch&lt;/code&gt; コマンド、またはStats Botの &lt;code&gt;^fc&lt;/code&gt; コマンドを使用することで、ホストを持つことができます。</value>
+    <value>プレイヤーはMogibotの &lt;code&gt;/ch&lt;/code&gt; コマンドを使用することで、ホストを持つことができます。</value>
   </data>
   <data name="Players cannot &lt;code&gt;/d&lt;/code&gt; for 15 seconds after typing &lt;code&gt;/c&lt;/code&gt;. A &lt;code&gt;/c&lt;/code&gt; will automatically expire after 20 minutes have passed." xml:space="preserve">
     <value>&lt;code&gt;/c&lt;/code&gt;は15秒間は取り下げることはできません。また&lt;code&gt;/c&lt;/code&gt;は20分が経過した場合自動で取り下げられます。</value>
@@ -600,7 +600,7 @@
     <value>このルールは1度のみ適応され、1レース目開始前の回線落ちが2度目の場合は続行となります。</value>
   </data>
   <data name="Two teams may not use tags which begin with the same character (uppercase and lowercase of the same letters counts as the same character) and two teams may not use hiragana and katakana tags of the same sound (e.g. あ★Cynda, ア★DUGO); the team which declares their tag first in the chat will have priority regarding this rule." xml:space="preserve">
-    <value>Two teams may not use tags which begin with the same character (uppercase and lowercase of the same letters counts as the same character) and two teams may not use hiragana and katakana tags of the same sound (e.g. あ★Cynda, ア★DUGO); the team which declares their tag first in the chat will have priority regarding this rule.</value>
+    <value>同じ文字で始まるタグを使用することはできません (同じ文字の大文字小文字は同じものとして判断されます)。また、同音の平仮名カタカナのタグを使用することはできません。(例. あ★Cynda, ア★DUGO) チャット内で先に宣言したチームが優先されます。</value>
   </data>
   <data name="Typing ^hostban in any channel will show the list of host-banned players." xml:space="preserve">
     <value>ラウンジ内のいずれかのチャンネルで ^hostban と入力するとホストを持つことが禁止されているプレイヤーのリストが表示されます。</value>
@@ -609,7 +609,7 @@
     <value>サーバーに参加し、&lt;b&gt;#mkcentral-links&lt;/b&gt;チャンネルにあなたのMKCentral Registryアカウントを送信してください。</value>
   </data>
   <data name="Use of any offensive names or Miis will result in a warning or mute depending on the severity of the name, as well as possible punishment by MKCentral Staff." xml:space="preserve">
-    <value>Use of any offensive names or Miis will result in a warning or mute depending on the severity of the name, as well as possible punishment by MKCentral Staff.</value>
+    <value>プレイヤーは攻撃的、他人を侮辱するもの、不適切な言葉を含む、または法律に違反するような単語をゲーム内の名前やMiiに使用することができません。 使用した場合、警告またはミュートの対象となり、MKCentral Staffから罰則が科せられる可能性があります。</value>
   </data>
   <data name="Using MogiBot, the first twelve players to say &lt;code&gt;/c&lt;/code&gt; will play." xml:space="preserve">
     <value>Mogibotを使い、挙手をします。&lt;code&gt;/c&lt;/code&gt;で挙手が出来ます。</value>
@@ -636,75 +636,75 @@
     <value>&lt;b&gt;レース数&lt;/b&gt;: 12レース</value>
   </data>
   <data name="Gathering Lineups (Lounge Queue)" xml:space="preserve">
-    <value>Gathering Lineups (Lounge Queue)</value>
+    <value>模擬に参加するにあたって (Lounge Queue)</value>
   </data>
   <data name="In the #queue-join channel, players can type &lt;code&gt;/c&lt;/code&gt; to queue into matches for each hour." xml:space="preserve">
-    <value>In the #queue-join channel, players can type &lt;code&gt;/c&lt;/code&gt; to queue into matches for each hour.</value>
+    <value>#queue-joinチャンネルでプレイヤーは&lt;code&gt;/c&lt;/code&gt;を入力することで、各時間の模擬に挙手することができます。</value>
   </data>
   <data name="Between :55 and :58 at each hour, the queue will close and rooms will be created in order of MMR." xml:space="preserve">
-    <value>Between :55 and :58 at each hour, the queue will close and rooms will be created in order of MMR.</value>
+    <value>毎時55分から58分の間にqueueは閉じられ、MMR順にルームが作られます。</value>
   </data>
   <data name="If a multiple of 12 players cannot be reached by the queue closing time, the last players to queue will be removed." xml:space="preserve">
-    <value>If a multiple of 12 players cannot be reached by the queue closing time, the last players to queue will be removed.</value>
+    <value>queueが閉じられる時間までに12の倍数のプレイヤー数に到達しなかった場合、最後に挙手したプレイヤーはその時間の模擬に参加することができません。</value>
   </data>
   <data name="Once rooms have been created, players can click on buttons in their room threads to vote for a format." xml:space="preserve">
-    <value>Once rooms have been created, players can click on buttons in their room threads to vote for a format.</value>
+    <value>ルームが作成されると、プレイヤーはルームのスレッドにあるボタンをクリックして、形式に投票することができます。</value>
   </data>
   <data name="Clicking the button for the format you have voted for will undo your vote. Format votes are anonymous." xml:space="preserve">
-    <value>Clicking the button for the format you have voted for will undo your vote. Format votes are anonymous.</value>
+    <value>投票した形式のボタンをクリックすると、その投票は取り消されます。形式投票は匿名です。</value>
   </data>
   <data name="Once teams are randomized, they are final and cannot be changed. Players who violate this rule will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Once teams are randomized, they are final and cannot be changed. Players who violate this rule will receive -50 MMR and a strike.</value>
+    <value>チームが確定されたのちにチームを変更することができません。 このルールに違反した場合、-50MMR + strikeを受けます。</value>
   </data>
   <data name="In the event that a sub is needed, players can use the &lt;code&gt;/sub&lt;/code&gt; command to have the bot search for a sub in #queue-subs." xml:space="preserve">
-    <value>In the event that a sub is needed, players can use the &lt;code&gt;/sub&lt;/code&gt; command to have the bot search for a sub in #queue-subs.</value>
+    <value>サブが必要な場合、プレイヤーは&lt;code&gt;/sub&lt;/code&gt;コマンドを使用し、#queue-subs でボットにサブが必要であるということを示すメッセージを送ります。</value>
   </data>
   <data name="Players can sub into a room if their MMR is within 500 of the lowest player or 500 of the highest player of that room." xml:space="preserve">
-    <value>Players can sub into a room if their MMR is within 500 of the lowest player or 500 of the highest player of that room.</value>
+    <value>ルーム内でMMRが最高のプレイヤーと最低のプレイヤーから500MMR以内のプレイヤーが参加出来ます。</value>
   </data>
   <data name="If a sub cannot be found 20 minutes after the scheduled start time, an event may be canceled with no penalty to the remaining players." xml:space="preserve">
-    <value>If a sub cannot be found 20 minutes after the scheduled start time, an event may be canceled with no penalty to the remaining players.</value>
+    <value>模擬開始時刻から20分経過してもサブが見つからない場合、部屋で待っているプレイヤーにペナルティを与えることなく、模擬をキャンセルすることができます。</value>
   </data>
   <data name="If staff intervention is needed in a Lounge Queue room, players can use the &lt;code&gt;!staff&lt;/code&gt; command." xml:space="preserve">
-    <value>If staff intervention is needed in a Lounge Queue room, players can use the &lt;code&gt;!staff&lt;/code&gt; command.</value>
+    <value>ルームでスタッフを呼ぶ必要がある場合、プレイヤーは&lt;code&gt;!staff&lt;/code&gt;コマンドを使用することができます。</value>
   </data>
   <data name="These rules do not apply in the hourly Lounge Queue format; players may queue up for their next match immediately and do not have to wait for their current matches to finish." xml:space="preserve">
-    <value>These rules do not apply in the hourly Lounge Queue format; players may queue up for their next match immediately and do not have to wait for their current matches to finish.</value>
+    <value>このルールは1時間ごとのLounge Queue形式では適用されません。プレイヤーは模擬参加中であっても、次の時刻のqueueに挙手することができます。</value>
   </data>
   <data name="if no host is chosen automatically after the format is decided, players can volunteer as a host by posting room ID or using the &lt;code&gt;^fc&lt;/code&gt; command in StatsBot." xml:space="preserve">
-    <value>if no host is chosen automatically after the format is decided, players can volunteer as a host by posting room ID or using the &lt;code&gt;^fc&lt;/code&gt; command in StatsBot.</value>
+    <value>プレイヤーはMogibotの /ch コマンド、ロビーIDの投稿、またはStats Botの&lt;code&gt;^fc&lt;/code&gt;コマンドを使用することで、ホストを持つことができます。</value>
   </data>
   <data name="Please post the room ID in uppercase letters. Failure to do so may be subject to a hostban penalty if confusion arises when entering or leaving the room." xml:space="preserve">
-    <value>Please post the room ID in uppercase letters. Failure to do so may be subject to a hostban penalty if confusion arises when entering or leaving the room.</value>
+    <value>ロビーIDは大文字で投稿してください。大文字で投稿せずに入退室時に混乱が生じた場合、hostbanになる可能性があります</value>
   </data>
   <data name="If you are livestreaming your lounge matches, it is recommended to hide the Room ID in some way when it is visible on the screen to prevent random players from joining." xml:space="preserve">
-    <value>If you are livestreaming your lounge matches, it is recommended to hide the Room ID in some way when it is visible on the screen to prevent random players from joining.</value>
+    <value>ラウンジを配信する場合、部外者の参加を防ぐためにロビーIDが配信上に映るときは、何らかの方法でロビーIDを隠すことをお勧めします。</value>
   </data>
   <data name="If a random player joins the room and the room has to be restarted, it is recommended to switch to hosting the room through a friend code only." xml:space="preserve">
-    <value>If a random player joins the room and the room has to be restarted, it is recommended to switch to hosting the room through a friend code only.</value>
+    <value>部外者が部屋に参加し、再開設しなければならなくなった場合フレンドコードのみで部屋を開設するように切り替えることを推奨します</value>
   </data>
   <data name="If a random player can be identified as a player in the Lounge, please make a report ticket in #reports." xml:space="preserve">
-    <value>If a random player can be identified as a player in the Lounge, please make a report ticket in #reports.</value>
+    <value>部外者がラウンジのプレイヤーであることが確認できた場合は、#reportsにてチケットを作成してください。</value>
   </data>
   <data name="If a room ID is posted in a Lounge Queue room at 8:57, the late penalty will be at 9:06." xml:space="preserve">
-    <value>If a room ID is posted in a Lounge Queue room at 8:57, the late penalty will be at 9:06.</value>
+    <value>LOUNGE QUEUEの部屋に8:57にロビーIDが投稿された場合、9:06以降に入室したプレイヤーは遅刻とみなされます。</value>
   </data>
   <data name="This penalty applies even if you sub, so be sure to ask the other players in your match which courses have been played, or pick Random on the track select screen." xml:space="preserve">
-    <value>This penalty applies even if you sub, so be sure to ask the other players in your match which courses have been played, or pick Random on the track select screen.</value>
+    <value>このペナルティーはサブとして参加した場合にも適用されるので、同じ模擬のプレイヤーに既に選ばれたコースを聞いたり、おまかせを選んだりするようにしてください。</value>
   </data>
   <data name="Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language." xml:space="preserve">
-    <value>Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language.</value>
+    <value>プレイヤーは、自分のラウンジ名に含まれない文字を追加してはいけません</value>
   </data>
   <data name="The player who missed at least 4 races will receive a strike." xml:space="preserve">
-    <value>The player who missed at least 4 races will receive a strike.</value>
+    <value>4レース以上レースに参加できなかった場合、strikeになります。</value>
   </data>
   <data name="If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player." xml:space="preserve">
-    <value>If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player.</value>
+    <value>1レース目以降、dropしたプレイヤーのサブの有無に関して、模擬に参加している相方が選択できるものとする。</value>
   </data>
   <data name="All races which have started (when Lakitu's countdown has finished) prior to the player asking for a reopen will still count." xml:space="preserve">
-    <value>All races which have started (when Lakitu's countdown has finished) prior to the player asking for a reopen will still count.</value>
+    <value>プレイヤーが再開設を要求する前に開始された(ジュゲムのカウント終了した)レースはすべて有効になります。</value>
   </data>
   <data name="Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike." xml:space="preserve">
-    <value>Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike.</value>
+    <value>ただし、合流できないエラーの証拠を求められた際に提出できない場合は-50MMR + strikeを受けます。</value>
   </data> 
 </root>
