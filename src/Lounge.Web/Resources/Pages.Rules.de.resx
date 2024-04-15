@@ -186,7 +186,7 @@
   <data name="Failure to post the room ID or the friend code or refusal to host will result in 1 strike." xml:space="preserve">
     <value>Die Nichtbekanntgabe der Raum-ID oder des Freundescodes oder die Weigerung, Gastgeber zu sein, führt zu 1 Strike.</value>
   </data>
-  <data name="Failure to use your Lounge Nickname or abide by any of these naming guidelines after the first 2 races will result in -50 MMR." xml:space="preserve">
+  <data name="Failure to abide by any of these naming guidelines after the first 2 races will result in -50 MMR." xml:space="preserve">
     <value>Die Nichtverwendung des Lounge-Namens oder die Nichteinhaltung dieser Namensrichtlinien nach den ersten 2 Rennen führt zu einer -50 MMR-Penalty.</value>
   </data>
   <data name="Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -50 MMR penalty." xml:space="preserve">
