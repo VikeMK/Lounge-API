@@ -12,6 +12,8 @@ namespace Lounge.Web.Stats
     {
         private readonly ILoungeSettingsService _loungeSettingsService;
         private IReadOnlyDictionary<string, int> _playerIdByNameLookup = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        private IReadOnlyDictionary<string, int> _playerIdByDiscordLookup = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        private IReadOnlyDictionary<string, int> _playerIdByFCLookup = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         private IReadOnlyDictionary<int, IReadOnlyDictionary<int, PlayerDetails>> _playerDetailsLookupBySeason = new Dictionary<int, IReadOnlyDictionary<int, PlayerDetails>>();
 
         public PlayerDetailsCache(ILoungeSettingsService loungeSettingsService)
@@ -34,6 +36,20 @@ namespace Lounge.Web.Stats
         {
             var normalizedName = PlayerUtils.NormalizeName(name);
             var hasValue = _playerIdByNameLookup.TryGetValue(normalizedName, out var id);
+            playerId = id;
+            return hasValue;
+        }
+
+        public bool TryGetPlayerIdByDiscord(string discord, [NotNullWhen(true)] out int? playerId)
+        {
+            var hasValue = _playerIdByDiscordLookup.TryGetValue(discord, out var id);
+            playerId = id;
+            return hasValue;
+        }
+
+        public bool TryGetPlayerIdByFC(string fc, [NotNullWhen(true)] out int? playerId)
+        {
+            var hasValue = _playerIdByFCLookup.TryGetValue(fc, out var id);
             playerId = id;
             return hasValue;
         }
@@ -82,8 +98,24 @@ namespace Lounge.Web.Stats
                             nameChangesByPlayer.GetValueOrDefault(p.Id) ?? new List<int>()));
             }
 
-            var playerNamesToId = dbCache.Players.Select(p => new KeyValuePair<string, int>(p.Value.NormalizedName, p.Key));
-            _playerIdByNameLookup = new Dictionary<string, int>(playerNamesToId, StringComparer.OrdinalIgnoreCase);
+            var playerNamesToId = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            var playerDiscordsToId = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            var playerFCsToId = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+            foreach ((var playerId, var player) in dbCache.Players)
+            {
+                playerNamesToId[player.NormalizedName] = playerId;
+
+                if (player.DiscordId is string discordId)
+                    playerDiscordsToId[discordId] = playerId;
+
+                if (player.SwitchFc is string switchFC)
+                    playerFCsToId[switchFC] = playerId;
+            }
+
+            _playerIdByNameLookup = playerNamesToId;
+            _playerIdByDiscordLookup = playerDiscordsToId;
+            _playerIdByFCLookup = playerFCsToId;
             _playerDetailsLookupBySeason = newPlayerDetailsLookup;
         }
     }

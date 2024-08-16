@@ -82,7 +82,7 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("details")]
         [AllowAnonymous]
-        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, [ValidSeason] int? season = null)
+        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, string? discordId = null, string? fc = null, [ValidSeason] int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason;
 
@@ -91,7 +91,22 @@ namespace Lounge.Web.Controllers
             {
                 playerId = id.Value;
             }
-            else if (name is null || !_playerDetailsCache.TryGetPlayerIdByName(name, out playerId))
+            else if (name is not null)
+            {
+                if (!_playerDetailsCache.TryGetPlayerIdByName(name, out playerId))
+                    return NotFound();
+            }
+            else if (discordId is not null)
+            {
+                if (!_playerDetailsCache.TryGetPlayerIdByDiscord(discordId, out playerId))
+                    return NotFound();
+            }
+            else if (fc is not null)
+            {
+                if (!_playerDetailsCache.TryGetPlayerIdByFC(fc, out playerId))
+                    return NotFound();
+            }
+            else
             {
                 return NotFound();
             }
