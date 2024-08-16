@@ -12,17 +12,17 @@ namespace Lounge.Web.Models.ViewModels
 
         public int MedianMmr { get; init; }
 
-        public List<Division> DivisionData { get; init; }
+        public required List<Division> DivisionData { get; init; }
 
         public class Division
         {
-            public string Tier { get; init; }
+            public required string Tier { get; init; }
 
             public int Count { get; init; }
 
         }
 
-        public Dictionary<string, Country> CountryData { get; init; }
+        public required Dictionary<string, Country> CountryData { get; init; }
 
         public class Country
         {
@@ -32,27 +32,27 @@ namespace Lounge.Web.Models.ViewModels
 
             public double TopSixMmr { get; set; }
 
-            public List<Player> TopSixPlayers { get; set; }
+            public required List<Player> TopSixPlayers { get; set; }
         }
 
         public class Player
         {
-            public string Name { get; init; }
+            public required string Name { get; init; }
 
             public int Mmr { get; init; }
         }
 
-        public Activity ActivityData { get; init; }
+        public required Activity ActivityData { get; init; }
 
         public class Activity
         {
-            public Dictionary<string, int> FormatData { get; init; }
+            public required Dictionary<string, int> FormatData { get; init; }
 
-            public Dictionary<string, Dictionary<string, int>> DailyActivity { get; init; }
+            public required Dictionary<string, Dictionary<string, int>> DailyActivity { get; init; }
 
-            public Dictionary<string, int> DayOfWeekActivity { get; init; }
+            public required Dictionary<string, int> DayOfWeekActivity { get; init; }
 
-            public Dictionary<string, int> TierActivity { get; init; }
+            public required Dictionary<string, int> TierActivity { get; init; }
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Lounge.Web.Pages
         }
 
         public int Season { get; set; }
-        public IReadOnlySet<string> ValidCountries { get; set; }
+        public required IReadOnlySet<string> ValidCountries { get; set; }
 
         public IActionResult OnGet([ValidSeason] int? season = null)
         {

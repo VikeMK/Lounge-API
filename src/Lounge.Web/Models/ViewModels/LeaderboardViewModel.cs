@@ -6,7 +6,7 @@ namespace Lounge.Web.Models.ViewModels
     {
         public int TotalPlayers { get; init; }
 
-        public List<Player> Data { get; init; }
+        public required List<Player> Data { get; init; }
 
         public class Player
         {
@@ -16,7 +16,7 @@ namespace Lounge.Web.Models.ViewModels
 
             public string? CountryCode { get; init; }
 
-            public string Name { get; init; }
+            public required string Name { get; init; }
 
             public int? Mmr { get; init; }
 

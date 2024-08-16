@@ -9,7 +9,7 @@ namespace Lounge.Web.Models.ViewModels
     {
         public int PlayerId { get; init; }
 
-        public string Name { get; init; }
+        public required string Name { get; init; }
 
         public int MkcId { get; init; }
 
@@ -89,12 +89,12 @@ namespace Lounge.Web.Models.ViewModels
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
         public double? NoSQPartnerAverage { get; init; }
 
-        public List<MmrChange> MmrChanges { get; init; }
+        public required List<MmrChange> MmrChanges { get; init; }
 
-        public List<NameChange> NameHistory { get; init; }
+        public required List<NameChange> NameHistory { get; init; }
 
         [JsonIgnore]
-        public Rank RankData { get; init; }
+        public required Rank RankData { get; init; }
 
         public string Rank => RankData.Name;
 
@@ -106,7 +106,7 @@ namespace Lounge.Web.Models.ViewModels
             RegistryId != null ? $"https://www.mariokartcentral.com/mkc/registry/players/{RegistryId}" : null;
 
         [JsonIgnore]
-        public IReadOnlyList<int> ValidSeasons { get; set; }
+        public IReadOnlyList<int>? ValidSeasons { get; set; }
 
 
         public class MmrChange

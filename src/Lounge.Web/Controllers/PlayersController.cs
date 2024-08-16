@@ -309,8 +309,8 @@ namespace Lounge.Web.Controllers
             foreach (var player in players)
             {
                 mmrTotal += player.Mmr ?? 0;
-                string MmrRank = _loungeSettingsService.GetRank(player.Mmr, season.Value).Name.ToString();
-                if (currRank != MmrRank)
+                string mmrRank = _loungeSettingsService.GetRank(player.Mmr, season.Value)!.Name.ToString();
+                if (currRank != mmrRank)
                 {
                     if (currRank != null)
                     {
@@ -320,7 +320,7 @@ namespace Lounge.Web.Controllers
                             Count = tierCount
                         });
                     }
-                    currRank = MmrRank;
+                    currRank = mmrRank;
                     tierCount = 0;
                 }
                 tierCount++;
@@ -401,7 +401,7 @@ namespace Lounge.Web.Controllers
                 mogiTotal++;
                 if (table.Tier != "SQ")
                 {
-                    var tableFormat = TableUtils.FormatDisplay(table.NumTeams);
+                    var tableFormat = TableUtils.FormatDisplay(table.NumTeams)!;
                     if (!activityData.FormatData.ContainsKey(tableFormat))
                     {
                         activityData.FormatData[tableFormat] = 0;
@@ -693,7 +693,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("requestNameChange")]
-        public async Task<ActionResult<NameChangeListViewModel.Player>> RequestNameChange(string? name, string newName)
+        public async Task<ActionResult<NameChangeListViewModel.Player>> RequestNameChange(string name, string newName)
         {
             var player = await GetPlayerByNameAsync(name);
             if (player is null)

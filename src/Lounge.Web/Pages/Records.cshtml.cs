@@ -18,7 +18,7 @@ namespace Lounge.Web.Pages
         }
 
         public int Season { get; set; }
-        public RecordsCache.SeasonRecords Records { get; set; }
+        public required RecordsCache.SeasonRecords Records { get; set; }
 
         public IActionResult OnGet([ValidSeason] int? season = null)
         {

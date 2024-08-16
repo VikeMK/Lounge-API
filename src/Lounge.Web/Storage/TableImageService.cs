@@ -14,7 +14,7 @@ namespace Lounge.Web.Storage
 
         public TableImageService(IConfiguration configuration)
         {
-            this.AzureStorageConnectionString = configuration.GetConnectionString(AzureStorageConnectionStringKey);
+            this.AzureStorageConnectionString = configuration.GetConnectionString(AzureStorageConnectionStringKey)!;
         }
 
         public async Task UploadTableImageAsync(int tableId, byte[] image)

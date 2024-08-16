@@ -5,7 +5,7 @@ namespace Lounge.Web.Settings
     public class LoungeSettings
     {
         public int CurrentSeason { get; set; }
-        public IReadOnlyDictionary<string, SeasonSettings> Seasons { get; set; }
-        public IReadOnlyDictionary<string, string> CountryNames { get; set; }
+        public required IReadOnlyDictionary<string, SeasonSettings> Seasons { get; set; }
+        public required IReadOnlyDictionary<string, string> CountryNames { get; set; }
     }
 }

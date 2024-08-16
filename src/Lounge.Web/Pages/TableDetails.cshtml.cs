@@ -20,7 +20,7 @@ namespace Lounge.Web.Pages
             _loungeSettingsService = loungeSettingsService;
         }
 
-        public TableDetailsViewModel Data { get; set; }
+        public required TableDetailsViewModel Data { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {

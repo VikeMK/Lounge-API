@@ -47,10 +47,12 @@ namespace Lounge.Web.Data.ChangeTracking
 
         private async Task<List<TChange>> GetTableChangesAsync<TChange, TEntity>(string tableName, long lastSynchronizationVersion)
             where TChange : Change<TEntity>
+#pragma warning disable EF1002 // Risk of vulnerability to SQL injection.
             where TEntity : class =>
             await _context.Set<TChange>()
                 .FromSqlRaw($"SELECT * FROM CHANGETABLE(CHANGES dbo.{tableName}, {{0}}) AS CT", lastSynchronizationVersion)
                 .Include(x => x.Entity)
                 .ToListAsync();
+#pragma warning restore EF1002 // Risk of vulnerability to SQL injection.
     }
 }

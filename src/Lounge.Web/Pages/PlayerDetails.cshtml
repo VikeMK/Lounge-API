@@ -19,7 +19,7 @@
         </button>
         <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
             <ul class="navbar-nav">
-                @foreach (var season in Model.Data.ValidSeasons)
+                @foreach (var season in Model.Data.ValidSeasons!)
                 {
                     <li class="nav-item">
                         <a class="nav-link @(season == Model.Data.Season ? "active" : "")" asp-page="PlayerDetails" asp-route-id="@Model.Data.PlayerId" asp-route-season="@season">@Localizer["Season"] @season</a>

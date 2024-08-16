@@ -12,6 +12,6 @@ namespace Lounge.Web.Models.ViewModels
         public int Amount => NewMmr - PrevMmr;
         public DateTime? DeletedOn { get; init; }
         public int PlayerId { get; init; }
-        public string PlayerName { get; init; }
+        public required string PlayerName { get; init; }
     }
 }

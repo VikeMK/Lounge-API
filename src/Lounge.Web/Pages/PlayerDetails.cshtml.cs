@@ -17,7 +17,7 @@ namespace Lounge.Web.Pages
             _loungeSettingsService = loungeSettingsService;
             _playerDetailsViewModelService = playerDetailsViewModelService;
         }
-        public PlayerDetailsViewModel Data { get; set; }
+        public required PlayerDetailsViewModel Data { get; set; }
 
         public IActionResult OnGet(int id, [ValidSeason] int? season = null)
         {

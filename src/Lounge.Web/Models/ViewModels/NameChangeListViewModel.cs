@@ -5,7 +5,7 @@ namespace Lounge.Web.Models.ViewModels
 {
     public class NameChangeListViewModel
     {
-        public List<Player> Players { get; init; }
+        public required List<Player> Players { get; init; }
 
         public record Player(int Id, string? DiscordId, string Name, string NewName, DateTime RequestedOn, string? MessageId);
     }

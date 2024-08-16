@@ -17,23 +17,28 @@ namespace Lounge.Web.Authentication
         private readonly string apiPassword;
         private readonly string apiSecondaryPassword;
 
-        public BasicAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, IConfiguration configuration) : base(options, logger, encoder, clock)
+        public BasicAuthenticationHandler(
+            IOptionsMonitor<AuthenticationSchemeOptions> options,
+            ILoggerFactory logger,
+            UrlEncoder encoder,
+            IConfiguration configuration) 
+            : base(options, logger, encoder)
         {
-            apiUsername = configuration["APICredentials:Username"];
-            apiPassword = configuration["APICredentials:Password"];
-            apiSecondaryPassword = configuration["APICredentials:PasswordSecondary"];
+            apiUsername = configuration["APICredentials:Username"]!;
+            apiPassword = configuration["APICredentials:Password"]!;
+            apiSecondaryPassword = configuration["APICredentials:PasswordSecondary"]!;
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (!Request.Headers.ContainsKey("Authorization") || !Request.Headers["Authorization"].ToString().StartsWith("Basic "))
+            if (!Request.Headers.TryGetValue("Authorization", out var authorizationHeader) || !authorizationHeader.ToString().StartsWith("Basic "))
             {
                 return Task.FromResult(AuthenticateResult.NoResult());
             }
 
             try
             {
-                var authenticationHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
+                var authenticationHeader = AuthenticationHeaderValue.Parse(authorizationHeader.ToString());
                 var credentialBytes = Convert.FromBase64String(authenticationHeader.Parameter!);
                 var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':');
                 var username = credentials[0];
