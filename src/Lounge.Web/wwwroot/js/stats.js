@@ -761,6 +761,7 @@ const chartSeasonConfig = {
 };
 
 const getDivisionName = (mmr, season) => {
+  if (chartSeasonConfig.Seasons[season] == null) season = 11;
   const currArray = Object.entries(chartSeasonConfig.Seasons[season].Ranks);
   if (mmr === 0) return currArray[0][0].split(" ")[0];
   currArray.push(["currPlayer", mmr]);
