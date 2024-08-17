@@ -227,7 +227,7 @@ namespace Lounge.Web.Stats
                 OverallRank = playerData.IsHidden ? null : playerData.OverallRank,
                 MmrChanges = mmrChanges,
                 NameHistory = nameHistory,
-                RankData = _loungeSettingsService.GetRank(playerData.Mmr, season)!,
+                RankData = _loungeSettingsService.GetRank(playerData.Mmr, season),
                 EventsPlayed = playerData.EventsPlayed,
                 WinRate = playerData.WinRate,
                 WinsLastTen = playerData.LastTenWins,

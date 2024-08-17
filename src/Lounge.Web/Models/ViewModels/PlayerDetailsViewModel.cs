@@ -94,9 +94,9 @@ namespace Lounge.Web.Models.ViewModels
         public required List<NameChange> NameHistory { get; init; }
 
         [JsonIgnore]
-        public required Rank RankData { get; init; }
+        public Rank? RankData { get; init; }
 
-        public string Rank => RankData.Name;
+        public string? Rank => RankData?.Name;
 
         [Display(Name = "Forum Link")]
         public string ForumLink => $"https://www.mariokartcentral.com/forums/index.php?members/{MkcId}/";

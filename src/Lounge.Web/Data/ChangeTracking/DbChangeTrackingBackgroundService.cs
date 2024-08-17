@@ -1,4 +1,5 @@
 ﻿using Lounge.Web.Data.Entities;
+using Lounge.Web.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,16 +16,22 @@ namespace Lounge.Web.Data.ChangeTracking
     {
         private readonly ILogger<DbChangeTrackingBackgroundService> _logger;
         private readonly IServiceProvider _services;
-        private readonly IChangeTrackingSubscriber _dbCache;
+        private readonly IChangeTrackingSubscriber _changeTrackingSubscriber;
+        private readonly IDatabaseCacheService _databaseCacheService;
+        private readonly IDbCache _dbCache;
 
         public DbChangeTrackingBackgroundService(
             ILogger<DbChangeTrackingBackgroundService> logger,
             IServiceProvider services,
-            IChangeTrackingSubscriber dbCache)
+            IChangeTrackingSubscriber dbCache,
+            IDatabaseCacheService databaseCacheService,
+            IDbCache dbCacheDataSource)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _services = services ?? throw new ArgumentNullException(nameof(services));
-            _dbCache = dbCache ?? throw new ArgumentNullException(nameof(dbCache));
+            _changeTrackingSubscriber = dbCache ?? throw new ArgumentNullException(nameof(dbCache));
+            _databaseCacheService = databaseCacheService ?? throw new ArgumentNullException(nameof(databaseCacheService));
+            _dbCache = dbCacheDataSource ?? throw new ArgumentNullException(nameof(dbCacheDataSource));
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -44,40 +51,64 @@ namespace Lounge.Web.Data.ChangeTracking
         {
             try
             {
-                using var scope = _services.CreateScope();
-
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var changeTracker = scope.ServiceProvider.GetRequiredService<IChangeTracker>();
-                var synchronizationVersion = await changeTracker.GetCurrentSynchronizationVersionAsync();
-
-                var bonuses = await context.Bonuses.AsNoTracking().ToListAsync();
-                var penalties = await context.Penalties.AsNoTracking().ToListAsync();
-                var placements = await context.Placements.AsNoTracking().ToListAsync();
-                var players = await context.Players.AsNoTracking().ToListAsync();
-                var playerSeasonData = await context.PlayerSeasonData.AsNoTracking().ToListAsync();
-
-                var tables = new List<Table>();
-                var maxTableId = (await context.Tables.AnyAsync())
-                    ? await context.Tables.Select(t => t.Id).MaxAsync()
-                    : 0;
-
-                for (int i = 0; i < maxTableId; i += 10000)
+                var cachedData = await _databaseCacheService.GetLatestCacheDataAsync();
+                if (cachedData == null)
                 {
-                    tables.AddRange(await context.Tables.Where(t => t.Id >= i && t.Id < (i + 10000)).AsNoTracking().ToListAsync());
-                    await Task.Delay(10);
-                }
+                    using var scope = _services.CreateScope();
 
-                var tableScores = new List<TableScore>();
-                for (int i = 0; i < maxTableId; i += 2500)
+                    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    var changeTracker = scope.ServiceProvider.GetRequiredService<IChangeTracker>();
+                    var synchronizationVersion = await changeTracker.GetCurrentSynchronizationVersionAsync();
+
+                    var bonuses = await context.Bonuses.AsNoTracking().ToListAsync();
+                    var penalties = await context.Penalties.AsNoTracking().ToListAsync();
+                    var placements = await context.Placements.AsNoTracking().ToListAsync();
+                    var players = await context.Players.AsNoTracking().ToListAsync();
+                    var playerSeasonData = await context.PlayerSeasonData.AsNoTracking().ToListAsync();
+
+                    var tables = new List<Table>();
+                    var maxTableId = (await context.Tables.AnyAsync())
+                        ? await context.Tables.Select(t => t.Id).MaxAsync()
+                        : 0;
+
+                    for (int i = 0; i < maxTableId; i += 10000)
+                    {
+                        tables.AddRange(await context.Tables.Where(t => t.Id >= i && t.Id < (i + 10000)).AsNoTracking().ToListAsync());
+                        await Task.Delay(10);
+                    }
+
+                    var tableScores = new List<TableScore>();
+                    for (int i = 0; i < maxTableId; i += 2500)
+                    {
+                        tableScores.AddRange(await context.TableScores.Where(t => t.TableId >= i && t.TableId < (i + 2500)).AsNoTracking().ToListAsync());
+                        await Task.Delay(10);
+                    }
+
+                    var nameChanges = await context.NameChanges.AsNoTracking().ToListAsync();
+
+                    _changeTrackingSubscriber.Initialize(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores, nameChanges);
+                    await _databaseCacheService.UpdateLatestCacheDataAsync(synchronizationVersion, new DbCacheData
+                    {
+                        Bonuses = _dbCache.Bonuses,
+                        Penalties = _dbCache.Penalties,
+                        Placements = _dbCache.Placements,
+                        Players = _dbCache.Players,
+                        PlayerSeasonData = _dbCache.PlayerSeasonData,
+                        Tables = _dbCache.Tables,
+                        TableScores = _dbCache.TableScores,
+                        NameChanges = _dbCache.NameChanges,
+                    });
+
+                    return synchronizationVersion;
+                }
+                else
                 {
-                    tableScores.AddRange(await context.TableScores.Where(t => t.TableId >= i && t.TableId < (i + 2500)).AsNoTracking().ToListAsync());
-                    await Task.Delay(10);
+                    (var version, var data) = cachedData;
+                    _changeTrackingSubscriber.Initialize(
+                        data.Bonuses.Values, data.Penalties.Values, data.Placements.Values, data.Players.Values, data.PlayerSeasonData.Values.SelectMany(psd => psd.Values),
+                        data.Tables.Values, data.TableScores.Values.SelectMany(ts => ts.Values), data.NameChanges.Values);
+                    return version;
                 }
-
-                var nameChanges = await context.NameChanges.AsNoTracking().ToListAsync();
-
-                _dbCache.Initialize(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores, nameChanges);
-                return synchronizationVersion;
             }
             catch (Exception ex)
             {
@@ -105,7 +136,7 @@ namespace Lounge.Web.Data.ChangeTracking
                 var nameChanges = await changeTracker.GetNameChangeChangesAsync(lastSynchronizationVersion);
 
                 if (bonuses.Any() || penalties.Any() || placements.Any() || players.Any() || playerSeasonData.Any() || tables.Any() || tableScores.Any())
-                    _dbCache.HandleChanges(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores, nameChanges);
+                    _changeTrackingSubscriber.HandleChanges(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores, nameChanges);
 
                 return synchronizationVersion;
             }

@@ -32,7 +32,7 @@ namespace Lounge.Web.Data.ChangeTracking
         public IReadOnlyDictionary<int, Placement> Placements => _placements;
         public IReadOnlyDictionary<int, NameChange> NameChanges => _nameChanges;
 
-        public void Initialize(List<Bonus> bonuses, List<Penalty> penalties, List<Placement> placements, List<Player> players, List<PlayerSeasonData> playerSeasonData, List<Table> tables, List<TableScore> tableScores, List<NameChange> nameChanges)
+        public void Initialize(IEnumerable<Bonus> bonuses, IEnumerable<Penalty> penalties, IEnumerable<Placement> placements, IEnumerable<Player> players, IEnumerable<PlayerSeasonData> playerSeasonData, IEnumerable<Table> tables, IEnumerable<TableScore> tableScores, IEnumerable<NameChange> nameChanges)
         {
             foreach (var bonus in bonuses)
                 _bonuses[bonus.Id] = bonus;

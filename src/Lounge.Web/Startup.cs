@@ -83,6 +83,7 @@ namespace Lounge.Web
             services.AddSingleton<IPlayerDetailsViewModelService, PlayerDetailsViewModelService>();
 
             services.AddSingleton<ITableImageService, TableImageService>();
+            services.AddSingleton<IDatabaseCacheService, DatabaseCacheService>();
             services.AddSingleton<ILoungeSettingsService, LoungeSettingsService>();
             services.AddSingleton<IMkcRegistryApi, MkcRegistryApi>();
             services.AddTransient<IMkcRegistryDataUpdater, MkcRegistryDataUpdater>();
