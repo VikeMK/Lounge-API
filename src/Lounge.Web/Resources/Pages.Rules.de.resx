@@ -186,14 +186,14 @@
   <data name="Failure to post the room ID or the friend code or refusal to host will result in 1 strike." xml:space="preserve">
     <value>Die Nichtbekanntgabe der Raum-ID oder des Freundescodes oder die Weigerung, Gastgeber zu sein, führt zu 1 Strike.</value>
   </data>
-  <data name="Failure to abide by any of these naming guidelines after the first 2 races will result in -50 MMR." xml:space="preserve">
-    <value>Die Nichtverwendung des Lounge-Namens oder die Nichteinhaltung dieser Namensrichtlinien nach den ersten 2 Rennen führt zu einer -50 MMR-Penalty.</value>
+  <data name="The following examples are permitted by these rules (using the lounge name Cyndaquil):" xml:space="preserve">
+    <value>Die folgenden Beispiele sind nach diesen Regeln erlaubt (unter Verwendung des Lounge-Namens Cyndaquil):</value>
   </data>
   <data name="Failure to use same tags in the same team or abide by any of these naming guidelines after the first 2 races will result in a -50 MMR penalty." xml:space="preserve">
     <value>Wenn nach den ersten 2 Rennen kein einheitlicher Tag im selben Team verwendet wird oder diese Namensrichtlinien nicht eingehalten werden, führt dies zu einer Strafe von -50 MMR.</value>
   </data>
-  <data name="FFA names must be distinguishable from players who may have similar names in the same mogi." xml:space="preserve">
-    <value>FFA-Namen müssen sich von Spielern mit ähnlichen Namen im selben Mogi unterscheiden lassen.</value>
+  <data name="Players may not replace characters which are part of their Lounge name with similar-looking special characters." xml:space="preserve">
+    <value>FFA-Namen müssen von Spielern unterschieden werden können, die ähnliche Namen im selben Mogi haben.</value>
   </data>
   <data name="FFA names must be legible in English." xml:space="preserve">
     <value>FFA-Namen müssen in Englisch lesbar sein.</value>
@@ -243,8 +243,8 @@
   <data name="However, in that case we may check the facts with the reporter and other players who participated in the mogi." xml:space="preserve">
     <value>Jedoch werden wir in so einem Fall, den Sachverhalt mit anderen Teilnehmern des Mogis besprechen.</value>
   </data>
-  <data name="If 3 or more players from at least 2 different teams disconnect or experience delayed items (only coins or shrooms)  in at least two different item sets during a race, the race will not count and the room must be reopened regardless of video proof submissions." xml:space="preserve">
-    <value>Wenn 3 oder mehr Spieler aus mindestens 2 verschiedenen Teams während eines Rennens einen Disconnect bekommen oder Itemlag (nur Münzen oder Pilze) in mindestens zwei verschiedenen Itemsets erfahren, wird das Rennen nicht gewertet und der Raum muss unabhängig von der Vorlage eines Videobeweises neu aufgemacht werden.</value>
+  <data name="If 3 or more players from at least 2 different teams disconnect or experience delayed items (only coins or shrooms), the race will not count and the room must be reopened regardless of video proof submissions." xml:space="preserve">
+    <value>Wenn 3 oder mehr Spieler aus mindestens 2 verschiedenen Teams die Verbindung unterbrechen oder verzögerte Items erhalten (nur Münzen oder Pilze), wird das Rennen nicht gewertet und der Raum muss unabhängig von den eingereichten Videobeweisen wieder geöffnet werden.</value>
   </data>
   <data name="If a lineup is struggling to find a sub, please tag Lounge Staff to tag @here for a sub." xml:space="preserve">
     <value>Falls ein Lineup Schwierigkeiten hat, einen Substitute zu finden, taggt bitte den Lounge Staff, damit dieser mithilfe von @here nach einem Sub suchen kann.</value>
@@ -270,8 +270,8 @@
   <data name="If any player is disqualified from an event for any reason such as, but not limited to, throwing, teaming, or lap-trolling (on any track except Baby Park, in formats other than 6v6 SQ), they will receive a -100 MMR strike." xml:space="preserve">
     <value>Wenn ein Spieler von einem Match disqualifiziert wird für einen Grund wie, unter anderem, aber nicht ausschließlich, absichtliches Verlieren, Teaming oder Laptrolling (Ausnahme: Baby Park, 6v6 SQ), erhält dieser eine -100 MMR Strafe und einen Strike.</value>
   </data>
-  <data name="If a player cannot rejoin the room due to an error (such as connection incompatibility with another player in the room), the player can call for the room to be reopened one time." xml:space="preserve">
-    <value>Wenn ein Spieler aufgrund eines Fehlers (z.B. Inkompatibilität der Verbindung mit einem anderen Spieler im Raum) nicht wieder in den Raum eintreten kann, kann der Spieler einmalig die Wiedereröffnung des Raumes verlangen.</value>
+  <data name="If a player cannot rejoin the room due to an error (such as connection incompatibility with another player in the room), the player can call for the room to be reopened." xml:space="preserve">
+    <value>Wenn ein Spieler aufgrund eines Fehlers (z. B. Inkompatibilität der Verbindung mit einem anderen Spieler im Raum) nicht wieder in den Raum eintreten kann, kann der Spieler verlangen, dass der Raum wieder geöffnet wird. </value>
   </data>
   <data name="If hosts disconnected in the middle of a mogi, hosts must take a 30-second clip to prove that it was unintentional (streaming archive is also allowed)." xml:space="preserve">
     <value>Wenn der Host während des Matches disconnected, muss dieser einen 30-sekündigen Clip (Switch-Clip oder Stream) bereitstellen, zum Beweis, dass der Raumcrash nicht absichtlich herbeigeführt worden ist.</value>
@@ -345,8 +345,8 @@
   <data name="In team matches, players must decide on a tag to use in their name with their teammates." xml:space="preserve">
     <value>In Teammatches müssen sich die Spieler auf einen gemeinsamen Tag mit ihren Teammates einigen.</value>
   </data>
-  <data name="In the case that a team violates either of the above conditions, any MMR they win from the event will be voided and also receive SQ Restricted." xml:space="preserve">
-    <value>Verstößt ein Team gegen eine der oben genannten Bedingungen, wird alle MMR, die es aus dem Event gewonnen hat, für dieses Team annulliert und die betreffenden Spieler werden "SQ Restricted", d.h. von zukünftigen Squad Queues ausgeschlossen.</value>
+  <data name="In the case that a team doesn't satisfy either of the above conditions, any MMR they win from the event will be voided and they will receive the SQ Restricted role for 7 days." xml:space="preserve">
+    <value>Falls ein Team eine der oben genannten Bedingungen nicht erfüllt, werden alle MMR, die es durch das Ereignis gewonnen hat, für ungültig erklärt und es erhält für 7 Tage die SQ-Rolle „Restricted“.</value>
   </data>
   <data name="In the event of a room closure after the first race, hosts have to wait 5 minutes after they reopen; after 5 minutes, the host can start the mogi even if there aren't 12 players in the room." xml:space="preserve">
     <value>Im Falle einer Schließung des Raums nach dem ersten Rennen muss der Host 5 Minuten nach der Wiedereröffnung warten; nach 5 Minuten kann der Host das Mogi starten, auch wenn sich keine 12 Spieler im Raum befinden.</value>
@@ -429,8 +429,8 @@
   <data name="Players must arrange uppercase/lowercase and hiragana/katakana tags with their teammates." xml:space="preserve">
     <value>Die Spieler müssen mit ihren Teampartnern einheitlich Groß-/Kleinschreibung und Hiragana/Katakana-Tags vereinbaren.</value>
   </data>
-  <data name="Players must use their Lounge Nickname (or a shortened, legible version if the shortened version is more than 10 characters) in FFA format events. Japanese characters are not allowed." xml:space="preserve">
-    <value>Spieler müssen ihren Lounge-Namen (oder eine verkürzte, lesbare Version) in FFA-Events verwenden.</value>
+  <data name="Players must use an in-game name containing their Lounge Nickname (or a shortened, legible version) in FFA format events. Japanese characters are not allowed." xml:space="preserve">
+    <value>Spieler müssen bei FFA-Events einen Namen im Spiel verwenden, der ihren Lounge Nickname (oder eine verkürzte, lesbare Version) enthält. Japanische Schriftzeichen sind nicht erlaubt.</value>
   </data>
   <data name="Player names must not begin with the first character of another team's tag." xml:space="preserve">
     <value>Spielernamen dürfen nicht mit dem ersten Zeichen des Tags eines anderen Teams beginnen.</value>
@@ -438,8 +438,8 @@
   <data name="Players need to be in the room in 5 minutes. (except rule IV. b.)." xml:space="preserve">
     <value>Spieler müssen dem Raum in 5 Minuten beigetreten sein (Ausnahme: Regel IV. b.).</value>
   </data>
-  <data name="Players should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike." xml:space="preserve">
-    <value>Jeder Spieler sollte ein Videobeweis von seinem Disconnect haben, wenn danach gefragt wird. Falls er dazu nicht in der Lage ist, erhält er einen Strike und -50MMR.</value>
+  <data name="Players who disconnect or receive delayed items should type in the room chat to alert the host if the room needs to be reopened." xml:space="preserve">
+    <value>Spieler, deren Verbindung unterbrochen wird oder die verzögerte Items erhalten, sollten im Chat des Raums tippen, um den Host zu informieren, wenn der Raum wieder geöffnet werden muss</value>
   </data>
   <data name="Players that drop from an event before it starts will receive -100 MMR and a strike by default." xml:space="preserve">
     <value>Spieler, welche das Lineup nach Versammlung und vor Beginn des ersten Rennens verlassen, erhalten eine Strafe von -100 MMR und einen Strike.</value>
@@ -459,8 +459,8 @@
   <data name="Players who are hostbanned or chat restricted are not allowed to host an event." xml:space="preserve">
     <value>Spieler mit Hostverbot oder der Chat Restricted Rolle dürfen kein Mogi hosten.</value>
   </data>
-  <data name="Players who consistently cause disruptions in matches such as trolling, targeting specific players, inting etc. will receive a 3-day mute, and may receive increased punishment on repeated instances." xml:space="preserve">
-    <value>Spieler, die wiederkehrend Störungen im Spiel verursachen, wie z. B. Trollen, gezieltes Fokussieren auf bestimmte Spieler, absichtliches Inting usw., erhalten einen 3-tägigen Mute und können bei bei wiederholtem Handeln eine härtere Strafe erhalten.</value>
+  <data name="Players who consistently cause disruptions in matches such as trolling, targeting specific players, using unviable combos with the purpose of losing, inting etc, may receive a mute of varying length depending on severity and whether it is a repeated offense." xml:space="preserve">
+    <value>Spieler, die ständig Störungen in Matches verursachen, wie z.B. Trolling, das targetten von bestimmten Spielern, das Verwenden von unrentablen Combos mit dem Ziel zu verlieren, inting etc. können eine Stummschaltung von unterschiedlicher Länge erhalten, abhängig von der Schwere und davon, ob es sich um ein wiederholtes Vergehen handelt.</value>
   </data>
   <data name="Players who consistently cause disruptions in the server such as trolling, flaming, spamming bot commands, etc. will either receive a chat restriction (only allowing them to send certain messages), a mute, or a temporary timeout via staff discretion." xml:space="preserve">
     <value>Spieler, welche vermehrt für Störungen verantwortlich sind (u.a. Trolling, Flaming, das Spammen von Bot Commands), erhalten entweder eine Chat Restriction (dies gestattet ihnen lediglich, bestimmte Nachrichten abzuschicken), einen Mute oder ein temporäres Timeout; der Staff entscheidet hierüber.</value>
@@ -537,8 +537,8 @@
   <data name="Strikes expire after 30 days. Players have a limit of 3 strikes." xml:space="preserve">
     <value>Strikes werden automatisch nach 30 Tagen gelöscht. Spieler haben eine Grenze von 3 Strikes.</value>
   </data>
-  <data name="Subs are allowed in Squad Queue events; however, the sub's MMR must follow at least one of these conditions:" xml:space="preserve">
-    <value>Substitutes sind erlaubt für Squad Queue Matches; allerdings muss die MMR des Substitutes mindestens einer der folgenden Anforderungen genügen:</value>
+  <data name="Subs are allowed in Squad Queue events; however, the sub's MMR must follow at least one of the following conditions:" xml:space="preserve">
+    <value>Subs sind in Squad Queue Events erlaubt, allerdings muss die MMR des Subs mindestens eine der folgenden Bedingungen erfüllen:</value>
   </data>
   <data name="Symbols/characters from any language that closely resemble characters in your Lounge Nickname are acceptable, as long as it remains legible and only forms part of the name." xml:space="preserve">
     <value>Symbole/Zeichen aus einer beliebigen Sprache, die den Zeichen des Lounge-Namens ähneln, sind zulässig, solange sie lesbar bleiben und nur einen Teil des Namens bilden.</value>
@@ -561,8 +561,8 @@
   <data name="Targeting is defined as disrupting the race of another player through excessive item use whereby their race is significantly/negatively impacted by score or placement; and/or the player targeting impacts their own race in a similar manner." xml:space="preserve">
     <value>Gezieltes Fokussieren ist definiert als Störung des Rennens eines anderen Spielers durch bewussten Gebrauch von Items, wodurch dessen Rennen durch Punkte oder Platzierung negativ beeinflusst wird; und/oder der Spieler, auf den das Targeting zielt, sein eigenes Rennen zerstört um das Rennen seines gezielten Zieles zu zerstören.</value>
   </data>
-  <data name="Teams missing a player (including because of disconnections) for at least 4 races will lose MMR proportional to the amount of races the player missed; for example, teammates of a player who missed 6 races will receive 6/12 loss, or 0/12 loss if the teammate misses 12 races." xml:space="preserve">
-    <value>Teams, denen ein Spieler (auch wegen Verbindungsabbrüchen) für mindestens 4 Rennen fehlt, verlieren (reduziert) MMR proportional zur Anzahl der verpassten Rennen; zum Beispiel erhalten Teampartner eines Spielers, der 6 Rennen verpasst hat, 6/12 Loss, oder 0/12 Loss, wenn der Teampartner 12 Rennen verpasst.</value>
+  <data name="Teams missing a player (including because of disconnections) for at least 3 races will lose MMR proportional to the amount of races the player missed, or have their loss nullified if a player misses at least 8 races; for example, teammates of a player who missed 6 races will receive 6/12 loss, or 0/12 loss if the teammate misses 8 races." xml:space="preserve">
+    <value>Teams, die einen Spieler (auch wegen Verbindungsabbrüchen) für mindestens 3 Rennen vermissen, verlieren MMR proportional zur Anzahl der verpassten Rennen, oder ihr Verlust wird annulliert, wenn ein Spieler mindestens 8 Rennen verpasst; zum Beispiel erhalten Teamkollegen eines Spielers, der 6 Rennen verpasst hat, 6/12 Verlust, oder 0/12 Verlust, wenn der Teamkollege 8 Rennen verpasst.</value>
   </data>
   <data name="The first twelve players who originally said can are allowed to vote." xml:space="preserve">
     <value>Die ersten 12 Spieler, welche mit &lt;code&gt;/c&lt;/code&gt; dem Lineup beigetreten sind, dürfen über das Format abstimmen.</value>
@@ -666,8 +666,8 @@
   <data name="If a sub cannot be found 20 minutes after the scheduled start time, an event may be canceled with no penalty to the remaining players." xml:space="preserve">
     <value>Wenn 20 Minuten nach der geplanten Startzeit kein Ersatzspieler gefunden werden kann, kann ein Event ohne Strafe für die verbleibenden Spieler abgebrochen werden.</value>
   </data>
-  <data name="If staff intervention is needed in a Lounge Queue room, players can use the &lt;code&gt;!staff&lt;/code&gt; command." xml:space="preserve">
-    <value>Wenn das Personal in einem Lounge Queue-Raum eingreifen muss, können die Spieler den Befehl &lt;code&gt;!staff&lt;/code&gt; verwenden.</value>
+  <data name="If staff intervention is needed in a Lounge Queue room, players can use the &lt;code&gt;/ping_staff&lt;/code&gt; command." xml:space="preserve">
+    <value>Wenn das Personal in einem Lounge Queue-Raum eingreifen muss, können die Spieler den Befehl &lt;code&gt;/ping_staff&lt;/code&gt; verwenden.</value>
   </data>
   <data name="These rules do not apply in the hourly Lounge Queue format; players may queue up for their next match immediately and do not have to wait for their current matches to finish." xml:space="preserve">
     <value>Diese Regeln gelten nicht für das stündliche Lounge Queue Format; Spieler können sich sofort für ihr nächstes Spiel eintragen und müssen nicht warten, bis ihr aktuelles Spiel beendet ist.</value>
@@ -696,8 +696,8 @@
   <data name="Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language." xml:space="preserve">
     <value>Spieler dürfen keine Sonderzeichen hinzufügen, die nicht in ihrem Lounge-Namen enthalten sind, einschließlich des Ersetzens von Sonderzeichen durch visuell ähnliche einer anderen Sprache.</value>
   </data>
-  <data name="The player who missed at least 4 races will receive a strike." xml:space="preserve">
-    <value>Ein Spieler, der mindestens 4 Rennen verpasst hat, erhält einen Strike.</value>
+  <data name="Players who miss at least 3 races will receive -50mmr and a strike." xml:space="preserve">
+    <value>Spieler, die mindestens 3 Rennen verpassen, erhalten -50mmr Strafe und einen Strike.</value>
   </data>
   <data name="If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player." xml:space="preserve">
     <value>Wenn ein Spieler nach dem ersten Rennen ausfällt, kann sein Partner, der an der Mogi teilnimmt, wählen, ob er einen Ersatz für den ausgefallenen Spieler sucht oder nicht.</value>
@@ -707,5 +707,35 @@
   </data>
   <data name="Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike." xml:space="preserve">
     <value>Spieler sollten in der Lage sein, ihre Probleme zu beweisen, wenn sie dazu aufgefordert werden; das Versäumnis, einen Beweis zu liefern, führt zu -50 MMR und einem Strike.</value>
+  </data>
+  <data name="Players must use the friend code registered to their MKCentral account when playing Lounge events." xml:space="preserve"> 
+    <value>Spieler müssen den Freundescode verwenden, der in ihrem MKCentral-Account registriert ist, wenn sie Lounge-Events spielen.</value>
+  </data>
+  <data name="Players who play events using an unregistered friend code will be muted until they can be verified as the owner of the account, and may be given additional punishments depending on the severity of the offense." xml:space="preserve"> 
+    <value>Spieler, die Events mit einem nicht registrierten Freundescode spielen, werden gemutet, bis sie als Besitzer des Kontos verifiziert werden können, und können je nach Schwere des Vergehens mit zusätzlichen Strafen belegt werden.</value>
+  </data>
+  <data name="If there are players who cannot join the room due to an error, it is recommended to change the host." xml:space="preserve"> 
+    <value>Wenn es Spieler gibt, die dem Raum aufgrund eines Fehlers nicht beitreten können, wird empfohlen, den Host zu wechseln.</value>
+  </data>
+  <data name="Players who are unable to join the room due to an error will not be penalized if the issues occur before the start of the event." xml:space="preserve"> 
+    <value>Spieler, die den Raum aufgrund eines Fehlers nicht betreten können, werden nicht bestraft, wenn die Probleme vor Beginn des Events auftreten.</value>
+  </data>
+  <data name="Players should be able to provide proof of their issues if requested; failure to provide proof will result in -100 MMR and strike." xml:space="preserve"> 
+    <value>Die Spieler sollten in der Lage sein, ihre Probleme zu beweisen, wenn sie dazu aufgefordert werden; das Versäumnis, den Beweis zu erbringen, führt zu -100 MMR und einen Strike.</value>
+  </data>
+  <data name="Players should provide video proof (switch clip, stream, error history etc.) of their disconnection/item lag if requested; otherwise they will receive -50 MMR and a strike." xml:space="preserve"> 
+    <value>Spieler sollten einen Videobeweis (Switch-Clip, Stream, Fehlerprotokoll usw.) ihrer Verbindungsunterbrechung/verzögerten Items vorlegen, wenn sie dazu aufgefordert werden; ansonsten erhalten sie -50 MMR und einen Strike.</value>
+  </data>
+  <data name="This rule only applies once per mogi, if a player cannot rejoin the room due to an error a second time the room should continue without closing." xml:space="preserve"> 
+    <value>Diese Regel gilt nur einmal pro Mogi. Wenn ein Spieler den Raum aufgrund eines Fehlers ein zweites Mal nicht wieder betreten kann, sollte der Raum ohne Schließung fortgesetzt werden.</value>
+  </data>
+  <data name="If a player gets a sub for their team in a Squad Queue match, they must notify the other players in their room thread." xml:space="preserve"> 
+    <value>Wenn ein Spieler in einem Squad Queue-Match einen Ersatz für sein Team bekommt, muss er die anderen Spieler in seinem Raum-Thread darüber informieren.</value>
+  </data>
+  <data name="Players who do not notify and cause unnecessary disruptions may be SQ Restricted, or Muted." xml:space="preserve"> 
+    <value>Spieler, die dies nicht tun und unnötige Störungen verursachen, können mit SQ Restricted oder Mute belegt werden.</value>
+  </data>
+  <data name="Failure to abide by any of these naming guidelines after the first 2 races will result in -50 MMR." xml:space="preserve"> 
+    <value>Die Nichteinhaltung einer dieser Benennungsrichtlinien bis zum 3. Rennen führt zu -50 MMR.</value>
   </data> 
 </root>
