@@ -696,7 +696,7 @@
     <value>3レース以上レースに参加できなかった場合、-50mmr + strikeになります。</value>
   </data>
   <data name="If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player." xml:space="preserve">
-    <value>最初のレース終了以降にドロップした場合は-50MMR + strikeを受け、ルールV.i. に沿ってMMRペナルティを受けます。</value>
+    <value>1レース目以降、dropしたプレイヤーのサブの有無に関して模擬に参加している相方が選択できるものとする。</value>
   </data>
   <data name="All races which have started (when Lakitu's countdown has finished) prior to the player asking for a reopen will still count." xml:space="preserve">
     <value>プレイヤーが再開設を要求する前に開始された(ジュゲムのカウント終了した)レースはすべて有効になります。</value>
