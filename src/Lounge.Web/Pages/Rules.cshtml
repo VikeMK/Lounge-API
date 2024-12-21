@@ -47,6 +47,10 @@
                     @Localizer["MKCentral Staff will find out if an alternate account is made, so it's highly recommended to not do so."]
                 </span>
             </li>
+            <li>
+                @Localizer["Players must use the friend code registered to their MKCentral account when playing Lounge events."]
+                @Localizer["Players who play events using an unregistered friend code will be muted until they can be verified as the owner of the account, and may be given additional punishments depending on the severity of the offense."]
+            </li>
         </ol>
     </li>
     <li>
@@ -132,7 +136,7 @@
                 @Localizer["If a sub cannot be found 20 minutes after the scheduled start time, an event may be canceled with no penalty to the remaining players."]
             </li>
             <li>
-                @Localizer["If staff intervention is needed in a Lounge Queue room, players can use the <code>!staff</code> command."]
+                @Localizer["If staff intervention is needed in a Lounge Queue room, players can use the <code>/ping_staff</code> command."]
             </li>
         </ol>
     </li>
@@ -288,6 +292,13 @@
                     <li>
                         @Localizer["If a lineup is struggling to find a sub, please tag Lounge Staff to tag @here for a sub."]
                     </li>
+                    <li>
+                        @Localizer["If there are players who cannot join the room due to an error, it is recommended to change the host."]
+                    </li>
+                    <li>
+                        @Localizer["Players who are unable to join the room due to an error will not be penalized if the issues occur before the start of the event."]
+                        @Localizer["Players should be able to provide proof of their issues if requested; failure to provide proof will result in -100 MMR and strike."]
+                    </li>
                 </ol>
             </li>
             <li>
@@ -321,21 +332,42 @@
                 </ol>
             </li>
             <li>
-                @Localizer["Players must use their Lounge Nickname (or a shortened, legible version if the shortened version is more than 10 characters) in FFA format events. Japanese characters are not allowed."]
-                    <ol type="i">
-                        <li>
-                            @Localizer["Shortened names must be at least 3 characters long."]
-                        </li>
-                        <li>
-                            @Localizer["Players must not add any characters that are not in their lounge name, including replacing characters with visually similar ones of a different language."]
-                        </li>
-                        <li>
-                            @Localizer["FFA names must be distinguishable from players who may have similar names in the same mogi."]
-                        </li>
-                        <li>
-                            @Localizer["Failure to abide by any of these naming guidelines after the first 2 races will result in -50 MMR."]
-                        </li>
-                    </ol>
+                @Localizer["Players must use an in-game name containing their Lounge Nickname (or a shortened, legible version) in FFA format events. Japanese characters are not allowed."]
+                <ol type="i">
+                    <li>
+                        @Localizer["Shortened names must be at least 3 characters long."]
+                    </li>
+                    <li>
+                        @Localizer["FFA names must be distinguishable from players who may have similar names in the same mogi."]
+                    </li>
+                    <li>
+                        @Localizer["Players may not replace characters which are part of their Lounge name with similar-looking special characters."]
+                    </li>
+                    <li>
+                        @Localizer["The following examples are permitted by these rules (using the lounge name Cyndaquil):"]
+                        <ul>
+                            <li>
+                                Cyndaquil
+                            </li>
+                            <li>
+                                A★Cynda
+                            </li>
+                            <li>
+                                Cynda
+                            </li>
+                        </ul>
+                        @Localizer["and the following is not allowed:"]
+                        <ul>
+                            <li>
+                                ©yれD4
+                            </li>
+                            <li>
+                                c
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+                @Localizer["Failure to abide by any of these naming guidelines after the first 2 races will result in -50 MMR."]
             </li>
             <li>
                 @Localizer["In team matches, players must decide on a tag to use in their name with their teammates."]
@@ -395,8 +427,8 @@
                 @Localizer["Players who drop from an event are ineligible for MMR gain from that mogi even if their team wins."]
             </li>
             <li>
-                @Localizer["Teams missing a player (including because of disconnections) for at least 4 races will lose MMR proportional to the amount of races the player missed; for example, teammates of a player who missed 6 races will receive 6/12 loss, or 0/12 loss if the teammate misses 12 races."]
-                @Localizer["The player who missed at least 4 races will receive a strike."]
+                @Localizer["Teams missing a player (including because of disconnections) for at least 3 races will lose MMR proportional to the amount of races the player missed, or have their loss nullified if a player misses at least 8 races; for example, teammates of a player who missed 6 races will receive 6/12 loss, or 0/12 loss if the teammate misses 8 races."]
+                @Localizer["Players who miss at least 3 races will receive -50mmr and a strike."]
                 <ol type="i">
                     <li>
                         @Localizer["If a player drops after the first race, their partner participating in the mogi can choose whether or not to find a sub for the dropped player."]
@@ -416,8 +448,9 @@
         <span class="rule-category">@Localizer["Disconnections and Lag"]</span>
         <ol type="a">
             <li>
-                @Localizer["If 3 or more players from at least 2 different teams disconnect or experience delayed items (only coins or shrooms)  in at least two different item sets during a race, the race will not count and the room must be reopened regardless of video proof submissions."]
-                @Localizer["Players should provide video proof (switch clip, stream, error history etc.) of their disconnection if requested; otherwise they will receive -50 MMR and a strike."]
+                @Localizer["If 3 or more players from at least 2 different teams disconnect or experience delayed items (only coins or shrooms), the race will not count and the room must be reopened regardless of video proof submissions."]
+                @Localizer["Players who disconnect or receive delayed items should type in the room chat to alert the host if the room needs to be reopened."]
+                @Localizer["Players should provide video proof (switch clip, stream, error history etc.) of their disconnection/item lag if requested; otherwise they will receive -50 MMR and a strike."]
             </li>
             <li>
                 @Localizer["If a race does not finish due to lag, the race will not be counted and the room will be reopened."]
@@ -430,8 +463,9 @@
                 @Localizer["If the proof is convincing, and if the majority of the room agrees on who is causing the lag, staff have the right to punish the individual for a certain amount of time, or warn them to fix their connection before playing again."]
             </li>
             <li>
-                @Localizer["If a player cannot rejoin the room due to an error (such as connection incompatibility with another player in the room), the player can call for the room to be reopened one time."]
+                @Localizer["If a player cannot rejoin the room due to an error (such as connection incompatibility with another player in the room), the player can call for the room to be reopened."]
                 @Localizer["All races which have started (when Lakitu's countdown has finished) prior to the player asking for a reopen will still count."]
+                @Localizer["This rule only applies once per mogi, if a player cannot rejoin the room due to an error a second time the room should continue without closing."]
                 @Localizer["Players should be able to provide proof of their issues if requested; failure to provide proof will result in -50 MMR and a strike."]
             </li>
         </ol>
@@ -463,7 +497,7 @@
                 @Localizer["Players who consistently cause disruptions in the server such as trolling, flaming, spamming bot commands, etc. will either receive a chat restriction (only allowing them to send certain messages), a mute, or a temporary timeout via staff discretion."]
             </li>
             <li>
-                @Localizer["Players who consistently cause disruptions in matches such as trolling, targeting specific players, inting etc. will receive a 3-day mute, and may receive increased punishment on repeated instances."]
+                @Localizer["Players who consistently cause disruptions in matches such as trolling, targeting specific players, using unviable combos with the purpose of losing, inting etc, may receive a mute of varying length depending on severity and whether it is a repeated offense."]
                 <ol type="i">
                     <li>@Localizer["Targeting is defined as disrupting the race of another player through excessive item use whereby their race is significantly/negatively impacted by score or placement; and/or the player targeting impacts their own race in a similar manner."]</li>
                     <li>
@@ -521,7 +555,7 @@
                 </ol>
             </li>
             <li>
-                @Localizer["Subs are allowed in Squad Queue events; however, the sub's MMR must follow at least one of these conditions:"]
+                @Localizer["Subs are allowed in Squad Queue events; however, the sub's MMR must follow at least one of the following conditions:"]
                 <ol type="i">
                     <li>
                         @Localizer["The team would still be in the same room with the sub's MMR taken into account."]
@@ -529,10 +563,12 @@
                     <li>
                         @Localizer["The sub's MMR is within 1000 MMR of the original player."]
                     </li>
-                    <li>
-                        @Localizer["In the case that a team violates either of the above conditions, any MMR they win from the event will be voided and also receive SQ Restricted."]
-                    </li>
                 </ol>
+                @Localizer["In the case that a team doesn't satisfy either of the above conditions, any MMR they win from the event will be voided and they will receive the SQ Restricted role for 7 days."]
+            </li>
+            <li>
+                @Localizer["If a player gets a sub for their team in a Squad Queue match, they must notify the other players in their room thread."]
+                @Localizer["Players who do not notify and cause unnecessary disruptions may be SQ Restricted, or Muted."]
             </li>
             <li>
                 @Localizer["If the host has been decided after opening time, the host has to wait 2 minutes to open the room."]
