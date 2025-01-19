@@ -51,9 +51,9 @@ namespace Lounge.Web.Data.ChangeTracking
         {
             try
             {
-                var cachedData = await _databaseCacheService.GetLatestCacheDataAsync();
-                if (cachedData == null)
-                {
+                //var cachedData = await _databaseCacheService.GetLatestCacheDataAsync();
+                //if (cachedData == null)
+                //{
                     using var scope = _services.CreateScope();
 
                     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -87,28 +87,28 @@ namespace Lounge.Web.Data.ChangeTracking
                     var nameChanges = await context.NameChanges.AsNoTracking().ToListAsync();
 
                     _changeTrackingSubscriber.Initialize(bonuses, penalties, placements, players, playerSeasonData, tables, tableScores, nameChanges);
-                    await _databaseCacheService.UpdateLatestCacheDataAsync(synchronizationVersion, new DbCacheData
-                    {
-                        Bonuses = _dbCache.Bonuses,
-                        Penalties = _dbCache.Penalties,
-                        Placements = _dbCache.Placements,
-                        Players = _dbCache.Players,
-                        PlayerSeasonData = _dbCache.PlayerSeasonData,
-                        Tables = _dbCache.Tables,
-                        TableScores = _dbCache.TableScores,
-                        NameChanges = _dbCache.NameChanges,
-                    });
+                    //await _databaseCacheService.UpdateLatestCacheDataAsync(synchronizationVersion, new DbCacheData
+                    //{
+                    //    Bonuses = _dbCache.Bonuses,
+                    //    Penalties = _dbCache.Penalties,
+                    //    Placements = _dbCache.Placements,
+                    //    Players = _dbCache.Players,
+                    //    PlayerSeasonData = _dbCache.PlayerSeasonData,
+                    //    Tables = _dbCache.Tables,
+                    //    TableScores = _dbCache.TableScores,
+                    //    NameChanges = _dbCache.NameChanges,
+                    //});
 
                     return synchronizationVersion;
-                }
-                else
-                {
-                    (var version, var data) = cachedData;
-                    _changeTrackingSubscriber.Initialize(
-                        data.Bonuses.Values, data.Penalties.Values, data.Placements.Values, data.Players.Values, data.PlayerSeasonData.Values.SelectMany(psd => psd.Values),
-                        data.Tables.Values, data.TableScores.Values.SelectMany(ts => ts.Values), data.NameChanges.Values);
-                    return version;
-                }
+                //}
+                //else
+                //{
+                //    (var version, var data) = cachedData;
+                //    _changeTrackingSubscriber.Initialize(
+                //        data.Bonuses.Values, data.Penalties.Values, data.Placements.Values, data.Players.Values, data.PlayerSeasonData.Values.SelectMany(psd => psd.Values),
+                //        data.Tables.Values, data.TableScores.Values.SelectMany(ts => ts.Values), data.NameChanges.Values);
+                //    return version;
+                //}
             }
             catch (Exception ex)
             {

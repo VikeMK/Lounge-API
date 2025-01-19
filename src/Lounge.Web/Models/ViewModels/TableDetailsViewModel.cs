@@ -112,3 +112,4 @@ namespace Lounge.Web.Models.ViewModels
         }
     }
 }
+

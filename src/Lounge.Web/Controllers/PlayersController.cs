@@ -129,6 +129,7 @@ namespace Lounge.Web.Controllers
                 .Where(p => (minMmr == null || p.Mmr >= minMmr) && (maxMmr == null || p.Mmr <= maxMmr))
                 .Select(p => new PlayerListViewModel.Player(
                     p.Name,
+                    p.Id,
                     p.MkcId,
                     p.Mmr,
                     p.DiscordId,
@@ -546,8 +547,45 @@ namespace Lounge.Web.Controllers
 
             var vm = PlayerUtils.GetPlayerViewModel(player, seasonData);
 
-            return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, vm);
+            return CreatedAtAction(nameof(Placement), new { name = player.Name }, vm);
         }
+
+        // TODO: Get this working
+        //[HttpPost("bulkPlacement")]
+        //public async Task<IActionResult> BulkPlacement([FromBody] BulkPlacementViewModel request)
+        //{
+        //    var season = _loungeSettingsService.CurrentSeason;
+
+        //    // If any matches have been played at all for this season yet, return an error
+        //    if (await _context.TableScores.AnyAsync(s => s.Table.Season == season))
+        //        return BadRequest("Cannot bulk place players if matches have already been played for the season.");
+
+        //    var alreadyPlacedIds = (await _context.Placements.Where(p => p.Season == season)
+        //        .Select(p => p.PlayerId)
+        //        .ToListAsync()).ToHashSet();
+
+        //    var time = DateTime.UtcNow;
+
+        //    foreach (var playerPlacement in request.PlayerPlacements)
+        //    {
+        //        // Get player id using cache
+        //        if (!_playerDetailsCache.TryGetPlayerIdByName(playerPlacement.Name, out int? playerId))
+        //            return BadRequest($"Player {playerPlacement.Name} not found.");
+
+        //        if (alreadyPlacedIds.Contains(playerId.Value))
+        //            return BadRequest($"Player {playerPlacement.Name} ({playerId.Value}) has already been placed.");
+
+        //        Placement placement = new() { Mmr = playerPlacement.Mmr, PrevMmr = null, AwardedOn = time, PlayerId = playerId.Value, Season = season };
+        //        PlayerSeasonData newSeasonData = new() { Mmr = playerPlacement.Mmr, Season = season, PlayerId = playerId.Value };
+
+        //        _context.Placements.Add(placement);
+        //        _context.PlayerSeasonData.Add(newSeasonData);
+        //    }
+
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
 
         [HttpPost("update/name")]
         public async Task<IActionResult> ChangeName(string name, string newName)

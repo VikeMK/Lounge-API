@@ -6,6 +6,6 @@ namespace Lounge.Web.Models.ViewModels
     {
         public required List<Player> Players { get; init; }
 
-        public record Player(string Name, int MKCId, int? Mmr, string? DiscordId, int EventsPlayed);
+        public record Player(string Name, int Id, int MKCId, int? Mmr, string? DiscordId, int EventsPlayed);
     }
 }
