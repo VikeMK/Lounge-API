@@ -57,7 +57,7 @@ namespace Lounge.Web.Controllers
             }
             else if (mkcId is not null)
             {
-                player = await GetPlayerByMKCIdAsync(mkcId.Value);
+                player = await GetPlayerByRegistryIdAsync(mkcId.Value);
             }
             else if (discordId is not null)
             {
@@ -130,7 +130,7 @@ namespace Lounge.Web.Controllers
                 .Select(p => new PlayerListViewModel.Player(
                     p.Name,
                     p.Id,
-                    p.MkcId,
+                    p.RegistryId ?? -1,
                     p.Mmr,
                     p.DiscordId,
                     p.EventsPlayed))
@@ -170,7 +170,7 @@ namespace Lounge.Web.Controllers
                 {
                     if (int.TryParse(search[4..], out var mkcId))
                     {
-                        playerId = _dbCache.Players.Values.FirstOrDefault(p => p.MKCId == mkcId)?.Id;
+                        playerId = _dbCache.Players.Values.FirstOrDefault(p => p.RegistryId == mkcId)?.Id;
                     }
 
                     playerId ??= -1;
@@ -455,11 +455,7 @@ namespace Lounge.Web.Controllers
         {
             var season = _loungeSettingsService.CurrentSeason;
 
-            var registryId = await _mkcRegistryApi.GetRegistryIdAsync(mkcId);
-            if (registryId is null)
-                return BadRequest("User is not registered");
-
-            var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(registryId.Value);
+            var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(mkcId);
             var normalizedName = PlayerUtils.NormalizeName(name);
 
             Player player = new()
@@ -468,7 +464,7 @@ namespace Lounge.Web.Controllers
                 NormalizedName = normalizedName,
                 MKCId = mkcId,
                 DiscordId = discordId,
-                RegistryId = registryId,
+                RegistryId = mkcId,
                 CountryCode = registryData.CountryCode,
                 SwitchFc = registryData.SwitchFc,
                 NameHistory = new List<NameChange> { new NameChange { Name = name, NormalizedName = normalizedName, ChangedOn = DateTime.UtcNow } }
@@ -495,9 +491,9 @@ namespace Lounge.Web.Controllers
                 if (nameMatchExists)
                     return BadRequest("User with that name already exists");
 
-                var mkcIdMatchExists = await _context.Players.AnyAsync(p => p.MKCId == player.MKCId);
+                var mkcIdMatchExists = await _context.Players.AnyAsync(p => p.RegistryId == player.RegistryId);
                 if (mkcIdMatchExists)
-                    return BadRequest("User with that MKC ID already exists");
+                    return BadRequest("User with that Registry ID already exists");
 
                 var discordIdMatchExists = await _context.Players.AnyAsync(p => p.DiscordId == player.DiscordId);
                 if (discordIdMatchExists)
@@ -627,22 +623,12 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            var registryId = await _mkcRegistryApi.GetRegistryIdAsync(newMkcId);
-
             player.MKCId = newMkcId;
-            player.RegistryId = registryId;
+            player.RegistryId = newMkcId;
 
-            if (registryId != null)
-            {
-                var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(registryId.Value);
-                player.CountryCode = registryData.CountryCode;
-                player.SwitchFc = registryData.SwitchFc;
-            }
-            else
-            {
-                player.CountryCode = null;
-                player.SwitchFc = null;
-            }
+            var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(newMkcId);
+            player.CountryCode = registryData.CountryCode;
+            player.SwitchFc = registryData.SwitchFc;
 
             try
             {
@@ -650,9 +636,9 @@ namespace Lounge.Web.Controllers
             }
             catch (DbUpdateException)
             {
-                var mkcIdMatchExists = await _context.Players.AnyAsync(p => p.MKCId == player.MKCId);
+                var mkcIdMatchExists = await _context.Players.AnyAsync(p => p.RegistryId == player.RegistryId);
                 if (mkcIdMatchExists)
-                    return BadRequest("User with that MKC ID already exists");
+                    return BadRequest("User with that Registry ID already exists");
 
                 throw;
             }
@@ -709,10 +695,7 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            var mkcId = player.MKCId;
-
-            var registryId = await _mkcRegistryApi.GetRegistryIdAsync(mkcId);
-            player.RegistryId = registryId;
+            var registryId = player.RegistryId;
             if (registryId != null)
             {
                 var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(registryId.Value);
@@ -844,8 +827,8 @@ namespace Lounge.Web.Controllers
         private Task<Player?> GetPlayerByNameAsync(string name) =>
             _context.Players.Include(p => p.SeasonData).Include(p => p.NameHistory).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
 
-        private Task<Player?> GetPlayerByMKCIdAsync(int mkcId) =>
-            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.MKCId == mkcId);
+        private Task<Player?> GetPlayerByRegistryIdAsync(int registryId) =>
+            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.RegistryId == registryId);
 
         private Task<Player?> GetPlayerByDiscordIdAsync(string discordId) =>
             _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.DiscordId == discordId);

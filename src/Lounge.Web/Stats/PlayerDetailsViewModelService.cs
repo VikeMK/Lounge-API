@@ -215,7 +215,7 @@ namespace Lounge.Web.Stats
             {
                 PlayerId = player.Id,
                 Name = playerData.Name,
-                MkcId = playerData.MkcId,
+                MkcId = playerData.RegistryId ?? -1,
                 RegistryId = playerData.RegistryId,
                 CountryCode = playerData.CountryCode,
                 CountryName = playerData.CountryCode == null ? null : _loungeSettingsService.CountryNames.GetValueOrDefault(playerData.CountryCode, null!),

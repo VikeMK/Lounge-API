@@ -72,7 +72,7 @@ namespace Lounge.Web.Controllers
             var player = await _context.Players
                 .Where(p => 
                     (name == null || p.NormalizedName == PlayerUtils.NormalizeName(name)) && 
-                    (mkcId == null || p.MKCId == mkcId.Value))
+                    (mkcId == null || p.RegistryId == mkcId.Value))
                 .Select(p => new
                 {
                     p.Id,

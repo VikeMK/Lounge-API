@@ -21,45 +21,45 @@ namespace Lounge.Web.Stats
 
         public async Task UpdateRegistryDataAsync()
         {
-            var registryData = await _api.GetAllPlayersRegistryDataAsync();
-            var registryDataLookup = new Dictionary<int, SimplePlayerRegistryData>();
-            foreach (var player in registryData)
-            {
-                if (registryDataLookup.TryGetValue(player.ForumId, out var existingPlayer))
-                {
-                    Console.WriteLine($"Dupliate Forum ID found {player.ForumId}: Registry ID {player.RegistryId} and {existingPlayer.RegistryId}");
-                }
-                else
-                {
-                    registryDataLookup[player.ForumId] = player;
-                }
-            }
+            //var registryData = await _api.GetAllPlayersRegistryDataAsync();
+            //var registryDataLookup = new Dictionary<int, MkcRegistryData>();
+            //foreach (var player in registryData)
+            //{
+            //    if (registryDataLookup.TryGetValue(player.ForumId, out var existingPlayer))
+            //    {
+            //        Console.WriteLine($"Dupliate Forum ID found {player.ForumId}: Registry ID {player.RegistryId} and {existingPlayer.RegistryId}");
+            //    }
+            //    else
+            //    {
+            //        registryDataLookup[player.ForumId] = player;
+            //    }
+            //}
 
-            var players = await _context.Players.ToListAsync();
+            //var players = await _context.Players.ToListAsync();
 
-            foreach (var player in players)
-            {
-                if (registryDataLookup.TryGetValue(player.MKCId, out var registryPlayerData))
-                {
-                    if (player.RegistryId != registryPlayerData.RegistryId)
-                        player.RegistryId = registryPlayerData.RegistryId;
+            //foreach (var player in players)
+            //{
+            //    if (registryDataLookup.TryGetValue(player.MKCId, out var registryPlayerData))
+            //    {
+            //        if (player.RegistryId != registryPlayerData.RegistryId)
+            //            player.RegistryId = registryPlayerData.RegistryId;
 
-                    var countryCode = registryPlayerData.CountryCode;
+            //        var countryCode = registryPlayerData.CountryCode;
 
-                    // ZZ and XX are invalid country codes that should be treated as null
-                    // AQ is Antarctica and is used by individuals who want their country to be hidden
-                    if (countryCode is "ZZ" or "XX" or "AQ")
-                        countryCode = null;
+            //        // ZZ and XX are invalid country codes that should be treated as null
+            //        // AQ is Antarctica and is used by individuals who want their country to be hidden
+            //        if (countryCode is "ZZ" or "XX" or "AQ")
+            //            countryCode = null;
 
-                    if (player.CountryCode != countryCode)
-                        player.CountryCode = countryCode;
+            //        if (player.CountryCode != countryCode)
+            //            player.CountryCode = countryCode;
 
-                    if (player.SwitchFc != registryPlayerData.SwitchFc)
-                        player.SwitchFc = registryPlayerData.SwitchFc;
-                }
-            }
+            //        if (player.SwitchFc != registryPlayerData.SwitchFc)
+            //            player.SwitchFc = registryPlayerData.SwitchFc;
+            //    }
+            //}
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
         }
     }
 }

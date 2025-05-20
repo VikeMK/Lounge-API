@@ -14,7 +14,7 @@ namespace Lounge.Web.Utils
             {
                 Id = player.Id,
                 DiscordId = player.DiscordId,
-                MKCId = player.MKCId,
+                MKCId = player.RegistryId ?? -1,
                 RegistryId = player.RegistryId,
                 Name = player.Name,
                 CountryCode = player.CountryCode,

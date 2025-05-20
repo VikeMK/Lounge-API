@@ -41,8 +41,7 @@ namespace Lounge.Web.Data
             modelBuilder.Entity<NameChange>().ToTable("NameChanges");
 
             modelBuilder.Entity<Player>()
-                .HasIndex(p => p.MKCId)
-                .IsUnique();
+                .HasIndex(p => p.RegistryId);
 
             modelBuilder.Entity<Player>()
                 .HasIndex(p => p.DiscordId)
