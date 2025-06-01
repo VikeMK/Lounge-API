@@ -12,6 +12,7 @@ using Lounge.Web.Storage;
 using Lounge.Web.Settings;
 using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Data.Entities;
+using Lounge.Web.Models.Enums;
 
 namespace Lounge.Web.Controllers
 {
@@ -48,13 +49,13 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to, [ValidSeason] int? season = null)
+        public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to, Game game = Game.MK8DX, [ValidSeason] int? season = null)
         {
-            season ??= _loungeSettingsService.CurrentSeason;
+            season ??= _loungeSettingsService.CurrentSeason[game];
 
             var tables = await _context.Tables
                 .AsNoTracking()
-                .Where(t => t.CreatedOn >= from && (to == null || t.CreatedOn <= to) && t.Season == season)
+                .Where(t => t.CreatedOn >= from && (to == null || t.CreatedOn <= to) && t.Season == season && t.Game == (int)game)
                 .SelectPropertiesForTableDetails()
                 .ToListAsync();
 
@@ -63,21 +64,21 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("unverified")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables([ValidSeason] int? season = null)
+        public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables(Game game = Game.MK8DX, [ValidSeason] int? season = null)
         {
-            season ??= _loungeSettingsService.CurrentSeason;
+            season ??= _loungeSettingsService.CurrentSeason[game];
 
             var tables = await _context.Tables
                 .AsNoTracking()
                 .SelectPropertiesForTableDetails()
-                .Where(t => t.VerifiedOn == null && t.DeletedOn == null && t.Season == season)
+                .Where(t => t.VerifiedOn == null && t.DeletedOn == null && t.Season == season && t.Game == (int)game)
                 .ToListAsync();
 
             return tables.Select(t => TableUtils.GetTableDetails(t, _loungeSettingsService)).ToList();
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, bool squadQueue = false)
+        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, Game game = Game.MK8DX, bool squadQueue = false)
         {
             if (vm.Scores.Count != 12)
                 return BadRequest("Must supply 12 scores");
@@ -138,7 +139,8 @@ namespace Lounge.Web.Controllers
                 Tier = vm.Tier,
                 Scores = tableScores,
                 AuthorId = vm.AuthorId,
-                Season = _loungeSettingsService.CurrentSeason,
+                Season = _loungeSettingsService.CurrentSeason[game],
+                Game = (int)game
             };
 
             await _context.Tables.AddAsync(table);
@@ -150,12 +152,12 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("setMultipliers")]
-        public async Task<IActionResult> SetMultipliers(int tableId, [FromBody] Dictionary<string, double> multipliers)
+        public async Task<IActionResult> SetMultipliers(int tableId, Game game, [FromBody] Dictionary<string, double> multipliers)
         {
             var table = await _context.Tables
                 .Include(t => t.Scores)
                 .ThenInclude(t => t.Player)
-                .FirstOrDefaultAsync(t => t.Id == tableId);
+                .FirstOrDefaultAsync(t => t.Id == tableId && t.Game == (int)game);
 
             if (table is null)
                 return NotFound();
@@ -186,12 +188,12 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("setScores")]
-        public async Task<IActionResult> SetScores(int tableId, [FromBody] Dictionary<string, int> scores)
+        public async Task<IActionResult> SetScores(int tableId, Game game, [FromBody] Dictionary<string, int> scores)
         {
             var table = await _context.Tables
                 .Include(t => t.Scores)
                 .ThenInclude(t => t.Player)
-                .FirstOrDefaultAsync(t => t.Id == tableId);
+                .FirstOrDefaultAsync(t => t.Id == tableId && t.Game == (int)game);
 
             if (table is null)
                 return NotFound();
@@ -266,9 +268,9 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("setTableMessageId")]
-        public async Task<IActionResult> SetTableMessageId(int tableId, string tableMessageId)
+        public async Task<IActionResult> SetTableMessageId(int tableId, Game game, string tableMessageId)
         {
-            var table = await _context.Tables.FirstOrDefaultAsync(t => t.Id == tableId);
+            var table = await _context.Tables.FirstOrDefaultAsync(t => t.Id == tableId && t.Game == (int)game);
 
             if (table is null)
                 return NotFound();
@@ -281,9 +283,9 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("setUpdateMessageId")]
-        public async Task<IActionResult> SetUpdateMessageId(int tableId, string updateMessageId)
+        public async Task<IActionResult> SetUpdateMessageId(int tableId, Game game, string updateMessageId)
         {
-            var table = await _context.Tables.FirstOrDefaultAsync(t => t.Id == tableId);
+            var table = await _context.Tables.FirstOrDefaultAsync(t => t.Id == tableId && t.Game == (int)game);
 
             if (table is null)
                 return NotFound();
@@ -296,12 +298,12 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("verify")]
-        public async Task<ActionResult<TableDetailsViewModel>> Verify(int tableId, bool preview=false)
+        public async Task<ActionResult<TableDetailsViewModel>> Verify(int tableId, Game game, bool preview=false)
         {
             var table = await _context.Tables
                 .Include(t => t.Scores)
                 .ThenInclude(t => t.Player.SeasonData)
-                .FirstOrDefaultAsync(t => t.Id == tableId);
+                .FirstOrDefaultAsync(t => t.Id == tableId && t.Game == (int)game);
 
             if (table is null)
                 return NotFound();
@@ -317,7 +319,7 @@ namespace Lounge.Web.Controllers
             var season = table.Season;
             var seasonDataLookup = table.Scores.ToDictionary(
                 s => s.PlayerId,
-                s => s.Player.SeasonData.FirstOrDefault(s => s.Season == season));
+                s => s.Player.SeasonData.FirstOrDefault(s => s.Season == season && s.Game == (int)game));
 
             var unplacedPlayers = table.Scores
                 .Where(s => seasonDataLookup[s.PlayerId] == null)
@@ -327,7 +329,7 @@ namespace Lounge.Web.Controllers
             if (unplacedPlayers.Any())
                 return BadRequest($"The following players have not been placed yet: {string.Join(", ", unplacedPlayers)}");
 
-            double formatMultiplier = TableUtils.GetFormatMultiplier(table, _loungeSettingsService.SquadQueueMultipliers[season]);
+            double formatMultiplier = TableUtils.GetFormatMultiplier(table, _loungeSettingsService.SquadQueueMultipliers[game][season]);
 
             var scores = new (string Player, int Score, int CurrentMmr, double Multiplier)[numTeams][];
             for (int i = 0; i < numTeams; i++)
@@ -361,7 +363,7 @@ namespace Lounge.Web.Controllers
                 else
                 {
                     var playerTotalMatches = await _context.TableScores
-                        .CountAsync(s => s.PlayerId == score.PlayerId && s.Table.VerifiedOn != null && s.Table.DeletedOn == null && s.Table.Season == season);
+                        .CountAsync(s => s.PlayerId == score.PlayerId && s.Table.VerifiedOn != null && s.Table.DeletedOn == null && s.Table.Season == season && s.Table.Game == (int)game);
 
                     if (playerTotalMatches >= 4)
                     {
@@ -398,12 +400,12 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(int tableId)
+        public async Task<IActionResult> Delete(int tableId, Game game)
         {
             var table = await _context.Tables
                 .Include(t => t.Scores)
                 .ThenInclude(t => t.Player.SeasonData)
-                .FirstOrDefaultAsync(t => t.Id == tableId);
+                .FirstOrDefaultAsync(t => t.Id == tableId && t.Game == (int)game);
 
             if (table is null)
                 return NotFound();
@@ -412,12 +414,12 @@ namespace Lounge.Web.Controllers
                 return BadRequest("Table has already been deleted");
 
             var season = table.Season;
-            if (season != _loungeSettingsService.CurrentSeason)
+            if (season != _loungeSettingsService.CurrentSeason[(Game)table.Game])
                 return BadRequest("Table is from a previous season and can't be deleted");
 
             var seasonDataLookup = table.Scores.ToDictionary(
                 s => s.PlayerId,
-                s => s.Player.SeasonData.FirstOrDefault(s => s.Season == season));
+                s => s.Player.SeasonData.FirstOrDefault(s => s.Season == season && s.Game == table.Game));
 
             table.DeletedOn = DateTime.UtcNow;
 

@@ -10,6 +10,7 @@ namespace Lounge.Web.Settings
     public class LoungeSettingsService : ILoungeSettingsService
     {
         private Lazy<ParsedLoungeSettings> _settings;
+        private static readonly IReadOnlyList<Game> _validGames = [Game.MK8DX];
 
         public LoungeSettingsService(IOptionsMonitor<LoungeSettings> optionsMonitor)
         {
@@ -17,21 +18,23 @@ namespace Lounge.Web.Settings
             optionsMonitor.OnChange((settings) => _settings = new Lazy<ParsedLoungeSettings>(() => ParsedLoungeSettings.Create(optionsMonitor.CurrentValue)));
         }
 
-        public int CurrentSeason => _settings.Value.CurrentSeason;
+        public IReadOnlyList<Game> ValidGames => _validGames;
 
-        public IReadOnlyList<int> ValidSeasons => _settings.Value.ValidSeasons;
+        public IReadOnlyDictionary<Game, int> CurrentSeason => _settings.Value.CurrentSeason;
+
+        public IReadOnlyDictionary<Game, IReadOnlyList<int>> ValidSeasons => _settings.Value.ValidSeasons;
 
         public IReadOnlyDictionary<string, string> CountryNames => _settings.Value.CountryNames;
 
-        public IReadOnlyDictionary<int, TimeSpan> LeaderboardRefreshDelays => _settings.Value.LeaderboardRefreshDelays;
+        public IReadOnlyDictionary<Game, IReadOnlyDictionary<int, TimeSpan>> LeaderboardRefreshDelays => _settings.Value.LeaderboardRefreshDelays;
 
-        public IReadOnlyDictionary<int, double> SquadQueueMultipliers => _settings.Value.SquadQueueMultipliers;
+        public IReadOnlyDictionary<Game, IReadOnlyDictionary<int, double>> SquadQueueMultipliers => _settings.Value.SquadQueueMultipliers;
 
-        public IReadOnlyDictionary<int, IReadOnlyList<string>> RecordsTierOrders => _settings.Value.RecordsTierOrders;
+        public IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders => _settings.Value.RecordsTierOrders;
 
-        public Rank? GetRank(int? mmr, int season)
+        public Rank? GetRank(int? mmr, Game game, int season)
         {
-            if (_settings.Value.MmrRanks.TryGetValue(season, out var mmrRanks))
+            if (_settings.Value.MmrRanks[game].TryGetValue(season, out var mmrRanks))
             {
                 if (mmr is null)
                     return new Rank(Division.Placement);
@@ -52,54 +55,74 @@ namespace Lounge.Web.Settings
         }
 
         record ParsedLoungeSettings(
-            int CurrentSeason,
-            IReadOnlyList<int> ValidSeasons,
-            IReadOnlyDictionary<int, TimeSpan> LeaderboardRefreshDelays,
-            IReadOnlyDictionary<int, double> SquadQueueMultipliers,
-            IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>> MmrRanks,
+            IReadOnlyDictionary<Game, int> CurrentSeason,
+            IReadOnlyDictionary<Game, IReadOnlyList<int>> ValidSeasons,
+            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, TimeSpan>> LeaderboardRefreshDelays,
+            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, double>> SquadQueueMultipliers,
+            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>> MmrRanks,
             IReadOnlyDictionary<string, string> CountryNames,
-            IReadOnlyDictionary<int, IReadOnlyList<string>> RecordsTierOrders)
+            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders)
         {
-            public static  ParsedLoungeSettings Create(LoungeSettings loungeSettings)
+            public static ParsedLoungeSettings Create(LoungeSettings loungeSettings)
             {
-                var validSeasons = new List<int>();
-                var refreshDelays = new Dictionary<int, TimeSpan>();
-                var sqMultipliers = new Dictionary<int, double>();
-                var mmrRanks = new Dictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>();
-                var recordsTierOrders = new Dictionary<int, IReadOnlyList<string>>();
+                var currentSeason = new Dictionary<Game, int>();
+                var allValidSeasons = new Dictionary<Game, IReadOnlyList<int>>();
+                var allRefreshDelays = new Dictionary<Game, IReadOnlyDictionary<int, TimeSpan>>();
+                var allSqMultipliers = new Dictionary<Game, IReadOnlyDictionary<int, double>>();
+                var allMmrRanks = new Dictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>>();
+                var allRecordsTierOrders = new Dictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>>();
 
-                foreach ((var seasonStr, var settings) in loungeSettings.Seasons)
+                foreach ((var gameStr, var gameSettings) in loungeSettings.Games)
                 {
-                    if (int.TryParse(seasonStr, out int season))
+                    var game = Enum.Parse<Game>(gameStr, true);
+
+                    var validSeasons = new List<int>();
+                    var refreshDelays = new Dictionary<int, TimeSpan>();
+                    var sqMultipliers = new Dictionary<int, double>();
+                    var mmrRanks = new Dictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>();
+                    var recordsTierOrders = new Dictionary<int, IReadOnlyList<string>>();
+
+                    foreach ((var seasonStr, var settings) in gameSettings.Seasons)
                     {
-                        validSeasons.Add(season);
-                        refreshDelays[season] = settings.LeaderboardRefreshDelay;
-                        sqMultipliers[season] = settings.SquadQueueMultiplier;
-                        recordsTierOrders[season] = settings.RecordsTierOrder;
-
-                        var seasonRanks = new List<(int Mmr, Rank Rank)>();
-
-                        foreach ((string rank, int mmr) in settings.Ranks)
+                        if (int.TryParse(seasonStr, out int season))
                         {
-                            string divisionStr = rank;
-                            int? level = null;
-                            if (rank.Contains(' '))
+                            validSeasons.Add(season);
+                            refreshDelays[season] = settings.LeaderboardRefreshDelay;
+                            sqMultipliers[season] = settings.SquadQueueMultiplier;
+                            recordsTierOrders[season] = settings.RecordsTierOrder;
+
+                            var seasonRanks = new List<(int Mmr, Rank Rank)>();
+
+                            foreach ((string rank, int mmr) in settings.Ranks)
                             {
-                                var rankParts = rank.Split(' ');
-                                divisionStr = rankParts[0];
-                                level = int.Parse(rankParts[1]);
+                                string divisionStr = rank;
+                                int? level = null;
+                                if (rank.Contains(' '))
+                                {
+                                    var rankParts = rank.Split(' ');
+                                    divisionStr = rankParts[0];
+                                    level = int.Parse(rankParts[1]);
+                                }
+
+                                var division = Enum.Parse<Division>(divisionStr);
+                                seasonRanks.Add((mmr, new Rank(division, level)));
                             }
 
-                            var division = Enum.Parse<Division>(divisionStr);
-                            seasonRanks.Add((mmr, new Rank(division, level)));
+                            seasonRanks = seasonRanks.OrderBy(r => r.Mmr).ToList();
+                            mmrRanks[season] = seasonRanks;
                         }
-
-                        seasonRanks = seasonRanks.OrderBy(r => r.Mmr).ToList();
-                        mmrRanks[season] = seasonRanks;
                     }
+
+                    currentSeason[game] = gameSettings.CurrentSeason;
+                    allValidSeasons[game] = validSeasons;
+                    allRefreshDelays[game] = refreshDelays;
+                    allSqMultipliers[game] = sqMultipliers;
+                    allMmrRanks[game] = mmrRanks;
+                    allRecordsTierOrders[game] = recordsTierOrders;
                 }
 
-                return new(loungeSettings.CurrentSeason, validSeasons, refreshDelays, sqMultipliers, mmrRanks, loungeSettings.CountryNames, recordsTierOrders);
+
+                return new(currentSeason, allValidSeasons, allRefreshDelays, allSqMultipliers, allMmrRanks, loungeSettings.CountryNames, allRecordsTierOrders); ;
             }
         }
     }

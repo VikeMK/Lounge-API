@@ -17,6 +17,7 @@ namespace Lounge.Web.Data
         }
 
         public DbSet<Player> Players => Set<Player>();
+        public DbSet<PlayerGameRegistration> PlayerGameRegistrations => Set<PlayerGameRegistration>();
         public DbSet<PlayerSeasonData> PlayerSeasonData => Set<PlayerSeasonData>();
         public DbSet<Table> Tables => Set<Table>();
         public DbSet<TableScore> TableScores => Set<TableScore>();
@@ -29,9 +30,8 @@ namespace Lounge.Web.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            var defaultSeason = loungeSettingsService.CurrentSeason;
-
             modelBuilder.Entity<Player>().ToTable("Players");
+            modelBuilder.Entity<PlayerGameRegistration>().ToTable("PlayerGameRegistrations");
             modelBuilder.Entity<PlayerSeasonData>().ToTable("PlayerSeasonData");
             modelBuilder.Entity<Table>().ToTable("Tables");
             modelBuilder.Entity<TableScore>().ToTable("TableScores");
@@ -57,22 +57,23 @@ namespace Lounge.Web.Data
             modelBuilder.Entity<PlayerChange>()
                 .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
 
-            modelBuilder.Entity<PlayerSeasonData>()
-                .Property(psd => psd.Season)
-                .HasDefaultValue(defaultSeason);
+            modelBuilder.Entity<PlayerGameRegistration>()
+                .HasKey(pgr => new { pgr.PlayerId, pgr.Game });
+
+            modelBuilder.Entity<PlayerGameRegistration>()
+                .HasIndex(pgr => new { pgr.Game });
+
+            modelBuilder.Entity<PlayerGameRegistrationChange>()
+                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => new { x.PlayerId, x.Game });
 
             modelBuilder.Entity<PlayerSeasonData>()
-                .HasKey(psd => new { psd.PlayerId, psd.Season });
+                .HasKey(psd => new { psd.PlayerId, psd.Game, psd.Season });
 
             modelBuilder.Entity<PlayerSeasonData>()
-                .HasIndex(psd => new { psd.Season, psd.Mmr });
+                .HasIndex(psd => new { psd.Game, psd.Season, psd.Mmr });
 
             modelBuilder.Entity<PlayerSeasonDataChange>()
-                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => new { x.PlayerId, x.Season });
-
-            modelBuilder.Entity<Table>()
-                .Property(t => t.Season)
-                .HasDefaultValue(defaultSeason);
+                .HasOne(x => x.Entity).WithMany().HasForeignKey(x => new { x.PlayerId, x.Game, x.Season });
 
             modelBuilder.Entity<TableChange>()
                 .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
@@ -84,31 +85,19 @@ namespace Lounge.Web.Data
                 .HasOne(x => x.Entity).WithMany().HasForeignKey(x => new { x.TableId, x.PlayerId });
 
             modelBuilder.Entity<Penalty>()
-                .HasIndex(p => p.AwardedOn);
-
-            modelBuilder.Entity<Penalty>()
-                .Property(p => p.Season)
-                .HasDefaultValue(defaultSeason);
+                .HasIndex(p => new { p.Game, p.AwardedOn });
 
             modelBuilder.Entity<PenaltyChange>()
                 .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
 
             modelBuilder.Entity<Bonus>()
-                .HasIndex(p => p.AwardedOn);
-
-            modelBuilder.Entity<Bonus>()
-                .Property(b => b.Season)
-                .HasDefaultValue(defaultSeason);
+                .HasIndex(p => new { p.Game, p.AwardedOn });
 
             modelBuilder.Entity<BonusChange>()
                 .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);
 
             modelBuilder.Entity<Placement>()
-                .HasIndex(p => p.AwardedOn);
-
-            modelBuilder.Entity<Placement>()
-                .Property(p => p.Season)
-                .HasDefaultValue(defaultSeason);
+                .HasIndex(p => new { p.Game, p.AwardedOn });
 
             modelBuilder.Entity<PlacementChange>()
                 .HasOne(x => x.Entity).WithMany().HasForeignKey(x => x.Id);

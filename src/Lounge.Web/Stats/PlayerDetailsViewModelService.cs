@@ -1,4 +1,5 @@
 ﻿using Lounge.Web.Data.ChangeTracking;
+using Lounge.Web.Models.Enums;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Settings;
 using System;
@@ -26,12 +27,12 @@ namespace Lounge.Web.Stats
             _dbCache = dbCache;
         }
 
-        public PlayerDetailsViewModel? GetPlayerDetails(int playerId, int season)
+        public PlayerDetailsViewModel? GetPlayerDetails(int playerId, Game game, int season)
         {
-            if (!_playerStatsCache.TryGetPlayerStatsById(playerId, season, out var playerData))
+            if (!_playerStatsCache.TryGetPlayerStatsById(playerId, game, season, out var playerData))
                 return null;
 
-            if (!_playerDetailsCache.TryGetPlayerDetailsById(playerId, season, out var player))
+            if (!_playerDetailsCache.TryGetPlayerDetailsById(playerId, game, season, out var player))
                 return null;
 
             var mmrChanges = new List<PlayerDetailsViewModel.MmrChange>();
@@ -221,13 +222,14 @@ namespace Lounge.Web.Stats
                 CountryName = playerData.CountryCode == null ? null : _loungeSettingsService.CountryNames.GetValueOrDefault(playerData.CountryCode, null!),
                 SwitchFc = playerData.SwitchFc,
                 IsHidden = playerData.IsHidden,
+                Game = game,
                 Season = season,
                 Mmr = playerData.Mmr,
                 MaxMmr = playerData.MaxMmr,
                 OverallRank = playerData.IsHidden ? null : playerData.OverallRank,
                 MmrChanges = mmrChanges,
                 NameHistory = nameHistory,
-                RankData = _loungeSettingsService.GetRank(playerData.Mmr, season),
+                RankData = _loungeSettingsService.GetRank(playerData.Mmr, game, season),
                 EventsPlayed = playerData.EventsPlayed,
                 WinRate = playerData.WinRate,
                 WinsLastTen = playerData.LastTenWins,

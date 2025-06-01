@@ -1,4 +1,5 @@
-﻿using Lounge.Web.Utils;
+﻿using Lounge.Web.Models.Enums;
+using Lounge.Web.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,9 +8,10 @@ namespace Lounge.Web.Models.ViewModels
 {
     public class TableDetailsViewModel
     {
-        public TableDetailsViewModel(int id, int season, DateTime createdOn, DateTime? verifiedOn, DateTime? deletedOn, int numTeams, string url, string tier, List<Team> teams, string? tableMessageId, string? updateMessageId, string? authorId)
+        public TableDetailsViewModel(int id, Game game, int season, DateTime createdOn, DateTime? verifiedOn, DateTime? deletedOn, int numTeams, string url, string tier, List<Team> teams, string? tableMessageId, string? updateMessageId, string? authorId)
         {
             Id = id;
+            Game = game;
             Season = season;
             CreatedOn = createdOn;
             VerifiedOn = verifiedOn;
@@ -25,6 +27,9 @@ namespace Lounge.Web.Models.ViewModels
 
         [Display(Name = "Table ID")]
         public int Id { get; set; }
+
+        [Display(Name = "Game")]
+        public Game Game { get; set; }
 
         [Display(Name = "Season")]
         public int Season { get; set; }

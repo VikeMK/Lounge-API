@@ -4,6 +4,7 @@ namespace Lounge.Web.Data.Entities
 {
     public class PlayerSeasonData
     {
+        public int Game { get; set; } = (int)Models.Enums.Game.MK8DX;
         public int Season { get; set; }
         public int Mmr { get; set; }
         public int? MaxMmr { get; set; }

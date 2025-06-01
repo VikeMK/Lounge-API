@@ -1,5 +1,6 @@
 ﻿using Lounge.Web.Data.Entities;
 using Lounge.Web.Data.Entities.ChangeTracking;
+using Lounge.Web.Models.Enums;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +11,8 @@ namespace Lounge.Web.Data.ChangeTracking
         private readonly IDbCacheUpdateSubscriber[] _subscribers;
 
         private readonly Dictionary<int, Player> _players = new();
-        private readonly Dictionary<int, Dictionary<int, PlayerSeasonData>> _playerSeasonData = new();
+        private readonly Dictionary<Game, Dictionary<int, PlayerGameRegistration>> _playerGameRegistrations = new();
+        private readonly Dictionary<(Game Game, int Season), Dictionary<int, PlayerSeasonData>> _playerSeasonData = new();
         private readonly Dictionary<int, Table> _tables = new();
         private readonly Dictionary<int, Dictionary<int, TableScore>> _tableScores = new();
         private readonly Dictionary<int, Penalty> _penalties = new();
@@ -24,7 +26,8 @@ namespace Lounge.Web.Data.ChangeTracking
         }
 
         public IReadOnlyDictionary<int, Player> Players => _players;
-        public IReadOnlyDictionary<int, Dictionary<int, PlayerSeasonData>> PlayerSeasonData => _playerSeasonData;
+        public IReadOnlyDictionary<Game, Dictionary<int, PlayerGameRegistration>> PlayerGameRegistrations => _playerGameRegistrations;
+        public IReadOnlyDictionary<(Game Game, int Season), Dictionary<int, PlayerSeasonData>> PlayerSeasonData => _playerSeasonData;
         public IReadOnlyDictionary<int, Table> Tables => _tables;
         public IReadOnlyDictionary<int, Dictionary<int, TableScore>> TableScores => _tableScores;
         public IReadOnlyDictionary<int, Penalty> Penalties => _penalties;
@@ -32,7 +35,16 @@ namespace Lounge.Web.Data.ChangeTracking
         public IReadOnlyDictionary<int, Placement> Placements => _placements;
         public IReadOnlyDictionary<int, NameChange> NameChanges => _nameChanges;
 
-        public void Initialize(IEnumerable<Bonus> bonuses, IEnumerable<Penalty> penalties, IEnumerable<Placement> placements, IEnumerable<Player> players, IEnumerable<PlayerSeasonData> playerSeasonData, IEnumerable<Table> tables, IEnumerable<TableScore> tableScores, IEnumerable<NameChange> nameChanges)
+        public void Initialize(
+            IEnumerable<Bonus> bonuses,
+            IEnumerable<Penalty> penalties,
+            IEnumerable<Placement> placements,
+            IEnumerable<Player> players,
+            IEnumerable<PlayerGameRegistration> playerGameRegistrations,
+            IEnumerable<PlayerSeasonData> playerSeasonData,
+            IEnumerable<Table> tables,
+            IEnumerable<TableScore> tableScores,
+            IEnumerable<NameChange> nameChanges)
         {
             foreach (var bonus in bonuses)
                 _bonuses[bonus.Id] = bonus;
@@ -60,12 +72,23 @@ namespace Lounge.Web.Data.ChangeTracking
             foreach (var penalty in penalties)
                 _penalties[penalty.Id] = penalty;
 
+            foreach (var playerGameRegistration in playerGameRegistrations)
+            {
+                if (!_playerGameRegistrations.TryGetValue((Game)playerGameRegistration.Game, out var registrations))
+                {
+                    registrations = new Dictionary<int, PlayerGameRegistration>();
+                    _playerGameRegistrations[(Game)playerGameRegistration.Game] = registrations;
+                }
+                registrations[playerGameRegistration.PlayerId] = playerGameRegistration;
+            }
+
             foreach (var playerSeasonDataEntry in playerSeasonData)
             {
-                if (!_playerSeasonData.TryGetValue(playerSeasonDataEntry.Season, out var seasonData))
+                var key = ((Game)playerSeasonDataEntry.Game, playerSeasonDataEntry.Season);
+                if (!_playerSeasonData.TryGetValue(key, out var seasonData))
                 {
                     seasonData = new Dictionary<int, PlayerSeasonData>();
-                    _playerSeasonData[playerSeasonDataEntry.Season] = seasonData;
+                    _playerSeasonData[key] = seasonData;
                 }
 
                 seasonData[playerSeasonDataEntry.PlayerId] = playerSeasonDataEntry;
@@ -78,7 +101,16 @@ namespace Lounge.Web.Data.ChangeTracking
                 subscriber.OnChange(this);
         }
 
-        public void HandleChanges(List<BonusChange> bonuses, List<PenaltyChange> penalties, List<PlacementChange> placements, List<PlayerChange> players, List<PlayerSeasonDataChange> playerSeasonData, List<TableChange> tables, List<TableScoreChange> tableScores, List<NameChangeChange> nameChanges)
+        public void HandleChanges(
+            List<BonusChange> bonuses,
+            List<PenaltyChange> penalties,
+            List<PlacementChange> placements,
+            List<PlayerChange> players,
+            List<PlayerGameRegistrationChange> registrations,
+            List<PlayerSeasonDataChange> playerSeasonData,
+            List<TableChange> tables,
+            List<TableScoreChange> tableScores,
+            List<NameChangeChange> nameChanges)
         {
             foreach (var bonus in bonuses)
                 _bonuses[bonus.Id] = bonus.Entity!;
@@ -105,11 +137,22 @@ namespace Lounge.Web.Data.ChangeTracking
             foreach (var penalty in penalties)
                 _penalties[penalty.Id] = penalty.Entity!;
 
+            foreach (var registration in registrations)
+            {
+                if (!_playerGameRegistrations.TryGetValue((Game)registration.Game, out var registrationsDict))
+                {
+                    registrationsDict = new Dictionary<int, PlayerGameRegistration>();
+                    _playerGameRegistrations[(Game)registration.Game] = registrationsDict;
+                }
+                registrationsDict[registration.PlayerId] = registration.Entity!;
+            }
+
             foreach (var playerSeasonDataEntry in playerSeasonData)
             {
-                if (!_playerSeasonData.TryGetValue(playerSeasonDataEntry.Season, out var seasonData))
+                var key = ((Game)playerSeasonDataEntry.Game, playerSeasonDataEntry.Season);
+                if (!_playerSeasonData.TryGetValue(key, out var seasonData))
                 {
-                    _playerSeasonData[playerSeasonDataEntry.Season] = seasonData = new Dictionary<int, PlayerSeasonData>();
+                    _playerSeasonData[key] = seasonData = new Dictionary<int, PlayerSeasonData>();
                 }
 
                 seasonData[playerSeasonDataEntry.PlayerId] = playerSeasonDataEntry.Entity!;

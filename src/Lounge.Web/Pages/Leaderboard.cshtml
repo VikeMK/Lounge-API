@@ -21,7 +21,7 @@
         </button>
         <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
             <ul class="navbar-nav">
-                @foreach (var season in LoungeSettingsService.ValidSeasons)
+                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
                 {
                     <li class="nav-item">
                         <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Leaderboard" asp-route-season="@season">@Localizer["Season"] @season</a>

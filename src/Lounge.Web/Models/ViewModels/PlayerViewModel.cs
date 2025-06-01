@@ -1,4 +1,6 @@
-﻿namespace Lounge.Web.Models.ViewModels
+﻿using System.Collections.Generic;
+
+namespace Lounge.Web.Models.ViewModels
 {
     public class PlayerViewModel
     {
@@ -13,5 +15,7 @@
 
         public int? Mmr { get; set; }
         public int? MaxMmr { get; set; }
+
+        public List<string>? Registrations { get; set; }
     }
 }

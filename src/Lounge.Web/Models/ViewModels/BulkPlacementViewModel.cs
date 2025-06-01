@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Lounge.Web.Models.Enums;
+using System.Collections.Generic;
 
 public class BulkPlacementViewModel
 {
+    public Game Game { get; set; } = Game.MK8DX;
     public List<PlayerPlacementViewModel> PlayerPlacements { get; set; } = new();
 
     public class PlayerPlacementViewModel

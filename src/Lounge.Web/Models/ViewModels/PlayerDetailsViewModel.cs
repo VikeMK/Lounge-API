@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lounge.Web.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -24,6 +25,8 @@ namespace Lounge.Web.Models.ViewModels
         public string? SwitchFc { get; init; }
 
         public bool IsHidden { get; init; }
+
+        public Game Game { get; init; }
 
         public int Season { get; init; }
 

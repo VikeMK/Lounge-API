@@ -13,6 +13,7 @@ using Lounge.Web.Settings;
 using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Data.Entities;
 using Lounge.Web.Data.ChangeTracking;
+using Lounge.Web.Models.Enums;
 
 namespace Lounge.Web.Controllers
 {
@@ -42,10 +43,48 @@ namespace Lounge.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, string? fc, [ValidSeason]int? season = null)
+        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, string? fc, Game game = Game.MK8DX, [ValidSeason]int? season = null)
         {
-            season ??= _loungeSettingsService.CurrentSeason;
+            season ??= _loungeSettingsService.CurrentSeason[game];
 
+            Player? player;
+            if (id is not null)
+            {
+                player = await GetGamePlayerByIdAsync(id.Value, game);
+            }
+            else if (name is not null)
+            {
+                player = await GetGamePlayerByNameAsync(name, game);
+            }
+            else if (mkcId is not null)
+            {
+                player = await GetGamePlayerByRegistryIdAsync(mkcId.Value, game);
+            }
+            else if (discordId is not null)
+            {
+                player = await GetGamePlayerByDiscordIdAsync(discordId, game);
+            }
+            else if (fc is not null)
+            {
+                player = await GetGamePlayerByFriendCodeAsync(fc, game);
+            }
+            else
+            {
+                return BadRequest("Must provide name, MKC ID, or discord ID");
+            }
+
+            if (player is null)
+                return NotFound();
+
+            var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == season && s.Game == (int)game);
+
+            return PlayerUtils.GetPlayerViewModel(player, seasonData);
+        }
+
+        [HttpGet("allgames")]
+        [AllowAnonymous]
+        public async Task<ActionResult<PlayerViewModel>> GetPlayerAllGames(string? name, int? id, int? mkcId, string? discordId, string? fc)
+        {
             Player? player;
             if (id is not null)
             {
@@ -75,16 +114,25 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == season);
-
-            return PlayerUtils.GetPlayerViewModel(player, seasonData);
+            return new PlayerViewModel
+            {
+                Id = player.Id,
+                DiscordId = player.DiscordId,
+                MKCId = player.RegistryId ?? -1,
+                RegistryId = player.RegistryId,
+                Name = player.Name,
+                CountryCode = player.CountryCode,
+                SwitchFc = player.SwitchFc,
+                IsHidden = player.IsHidden,
+                Registrations = player.GameRegistrations.Select(r => ((Game)r.Game).GetStringId()).ToList()
+            };
         }
 
         [HttpGet("details")]
         [AllowAnonymous]
-        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, string? discordId = null, string? fc = null, [ValidSeason] int? season = null)
+        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, string? discordId = null, string? fc = null, Game game = Game.MK8DX, [ValidSeason] int? season = null)
         {
-            season ??= _loungeSettingsService.CurrentSeason;
+            season ??= _loungeSettingsService.CurrentSeason[game];
 
             int? playerId;
             if (id is int)
@@ -111,7 +159,7 @@ namespace Lounge.Web.Controllers
                 return NotFound();
             }
 
-            var vm = _playerDetailsViewModelService.GetPlayerDetails(playerId.Value, season.Value);
+            var vm = _playerDetailsViewModelService.GetPlayerDetails(playerId.Value, game, season.Value);
             if (vm is null)
                 return NotFound();
 
@@ -120,12 +168,12 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public ActionResult<PlayerListViewModel> Players(int? minMmr, int? maxMmr, [ValidSeason] int? season=null)
+        public ActionResult<PlayerListViewModel> Players(int? minMmr, int? maxMmr, Game game = Game.MK8DX, [ValidSeason] int? season=null)
         {
-            season ??= _loungeSettingsService.CurrentSeason;
+            season ??= _loungeSettingsService.CurrentSeason[game];
 
             var players = _playerStatCache
-                .GetAllStats(season.Value)
+                .GetAllStats(game, season.Value)
                 .Where(p => (minMmr == null || p.Mmr >= minMmr) && (maxMmr == null || p.Mmr <= maxMmr))
                 .Select(p => new PlayerListViewModel.Player(
                     p.Name,
@@ -143,6 +191,7 @@ namespace Lounge.Web.Controllers
         [AllowAnonymous]
         public ActionResult<LeaderboardViewModel> Leaderboard(
             int season,
+            Game game = Game.MK8DX,
             LeaderboardSortOrder sortBy = LeaderboardSortOrder.Mmr,
             int skip = 0,
             int pageSize = 50,
@@ -162,15 +211,16 @@ namespace Lounge.Web.Controllers
             if (pageSize == 0)
                 pageSize = 50;
 
-            var playerStatsEnumerable = _playerStatCache.GetAllStats(season, sortBy).AsEnumerable();
+            var playerStatsEnumerable = _playerStatCache.GetAllStats(game, season, sortBy).AsEnumerable();
             if (search != null)
             {
                 int? playerId = null;
+                var registrations = _dbCache.PlayerGameRegistrations[game];
                 if (search.StartsWith("mkc=", StringComparison.OrdinalIgnoreCase))
                 {
                     if (int.TryParse(search[4..], out var mkcId))
                     {
-                        playerId = _dbCache.Players.Values.FirstOrDefault(p => p.RegistryId == mkcId)?.Id;
+                        playerId = _dbCache.Players.Values.FirstOrDefault(p => p.RegistryId == mkcId && registrations.ContainsKey(p.Id))?.Id;
                     }
 
                     playerId ??= -1;
@@ -178,12 +228,12 @@ namespace Lounge.Web.Controllers
                 else if (search.StartsWith("discord=", StringComparison.OrdinalIgnoreCase))
                 {
                     var discordId = search[8..];
-                    playerId = _dbCache.Players.Values.FirstOrDefault(p => discordId.Equals(p.DiscordId, StringComparison.OrdinalIgnoreCase))?.Id ?? -1;
+                    playerId = _dbCache.Players.Values.FirstOrDefault(p => discordId.Equals(p.DiscordId, StringComparison.OrdinalIgnoreCase) && registrations.ContainsKey(p.Id))?.Id ?? -1;
                 }
                 else if (search.StartsWith("switch=", StringComparison.OrdinalIgnoreCase))
                 {
                     var switchFc = search[7..];
-                    playerId = _dbCache.Players.Values.FirstOrDefault(p => switchFc.Equals(p.SwitchFc, StringComparison.OrdinalIgnoreCase))?.Id ?? -1;
+                    playerId = _dbCache.Players.Values.FirstOrDefault(p => switchFc.Equals(p.SwitchFc, StringComparison.OrdinalIgnoreCase) && registrations.ContainsKey(p.Id))?.Id ?? -1;
                 }
 
                 if (playerId == null)
@@ -191,7 +241,7 @@ namespace Lounge.Web.Controllers
                     var normalized = PlayerUtils.NormalizeName(search);
                     playerStatsEnumerable = playerStatsEnumerable.Where(p => PlayerUtils.NormalizeName(p.Name).Contains(normalized));
                 }
-                else if (_playerStatCache.TryGetPlayerStatsById(playerId.Value, season, out var playerStats))
+                else if (_playerStatCache.TryGetPlayerStatsById(playerId.Value, game, season, out var playerStats))
                 {
                     playerStatsEnumerable = new[] { playerStats };
                 }
@@ -241,8 +291,8 @@ namespace Lounge.Web.Controllers
                         LargestLoss = player.LargestLoss?.Amount,
                         NoSQAverageScore = player.NoSQAverageScore,
                         NoSQAverageScoreLastTen = player.NoSQAverageLastTen,
-                        MmrRank = _loungeSettingsService.GetRank(player.Mmr, season),
-                        MaxMmrRank = _loungeSettingsService.GetRank(player.MaxMmr, season),
+                        MmrRank = _loungeSettingsService.GetRank(player.Mmr, game, season),
+                        MaxMmrRank = _loungeSettingsService.GetRank(player.MaxMmr, game, season),
                         CountryCode = player.CountryCode
                     });
                 }
@@ -270,12 +320,12 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("stats")]
         [AllowAnonymous]
-        public ActionResult<StatsViewModel> Leaderboard([ValidSeason] int? season = null)
+        public ActionResult<StatsViewModel> Leaderboard(Game game = Game.MK8DX, [ValidSeason] int? season = null)
         {
-            season ??= _loungeSettingsService.CurrentSeason;
+            season ??= _loungeSettingsService.CurrentSeason[game];
 
             var players = _playerStatCache
-                .GetAllStats(season.Value)
+                .GetAllStats(game, season.Value)
                 .Where(p => p.HasEvents)
                 .Select(p => new StatsPlayerViewModel.Player(
                     p.Name,
@@ -310,7 +360,7 @@ namespace Lounge.Web.Controllers
             foreach (var player in players)
             {
                 mmrTotal += player.Mmr ?? 0;
-                string mmrRank = _loungeSettingsService.GetRank(player.Mmr, season.Value)!.Name.ToString();
+                string mmrRank = _loungeSettingsService.GetRank(player.Mmr, game, season.Value)!.Name.ToString();
                 if (currRank != mmrRank)
                 {
                     if (currRank != null)
@@ -389,7 +439,7 @@ namespace Lounge.Web.Controllers
             }
 
             var tables = _dbCache.Tables.Values
-                .Where(t => t.Season == season && t.DeletedOn == null && t.VerifiedOn != null)
+                .Where(t => t.Game == (int)game && t.Season == season && t.DeletedOn == null && t.VerifiedOn != null)
                 .Select(t => new StatsTableViewModel.Table(
                     t.CreatedOn,
                     t.NumTeams,
@@ -451,13 +501,12 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<PlayerViewModel>> Create(string name, int mkcId, int? mmr, string? discordId = null)
+        public async Task<ActionResult<PlayerViewModel>> Create(string name, int mkcId, int? mmr, Game? game = Game.MK8DX, string? discordId = null)
         {
-            var season = _loungeSettingsService.CurrentSeason;
-
             var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(mkcId);
             var normalizedName = PlayerUtils.NormalizeName(name);
 
+            var time = DateTime.UtcNow;
             Player player = new()
             {
                 Name = name,
@@ -470,13 +519,19 @@ namespace Lounge.Web.Controllers
                 NameHistory = new List<NameChange> { new NameChange { Name = name, NormalizedName = normalizedName, ChangedOn = DateTime.UtcNow } }
             };
 
-            PlayerSeasonData? seasonData = null;
-            if (mmr is int mmrValue)
+
+            if (game is Game gameValue)
             {
-                seasonData = new() { Mmr = mmrValue, Season = season };
-                player.SeasonData = new List<PlayerSeasonData> { seasonData };
-                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, Season = season };
-                player.Placements = new List<Placement> { placement };
+                var season = _loungeSettingsService.CurrentSeason[gameValue];
+
+                player.GameRegistrations = [new() { Game = (int)gameValue, RegisteredOn = time }];
+                if (mmr is int mmrValue)
+                {
+                    PlayerSeasonData? seasonData = new() { Mmr = mmrValue, Game = (int)game, Season = season };
+                    player.SeasonData = new List<PlayerSeasonData> { seasonData };
+                    Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, Game = (int)game, Season = season };
+                    player.Placements = new List<Placement> { placement };
+                }
             }
 
             _context.Players.Add(player);
@@ -502,36 +557,85 @@ namespace Lounge.Web.Controllers
                 throw;
             }
 
-            var vm = PlayerUtils.GetPlayerViewModel(player, seasonData);
+            var vm = new PlayerViewModel
+            {
+                Id = player.Id,
+                DiscordId = player.DiscordId,
+                MKCId = player.RegistryId ?? -1,
+                RegistryId = player.RegistryId,
+                Name = player.Name,
+                CountryCode = player.CountryCode,
+                SwitchFc = player.SwitchFc,
+                IsHidden = player.IsHidden,
+                Mmr = mmr,
+                MaxMmr = null,
+            };
+
             return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, vm);
         }
 
-        [HttpPost("placement")]
-        public async Task<ActionResult<PlayerViewModel>> Placement(string name, int mmr, bool force=false)
+        [HttpPost("register")]
+        public async Task<ActionResult<PlayerViewModel>> Register(string name, Game game = Game.MK8DX, int? mmr = null)
         {
             var player = await GetPlayerByNameAsync(name);
             if (player is null)
                 return NotFound();
 
-            var season = _loungeSettingsService.CurrentSeason;
-            var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == season);
+            if (player.GameRegistrations.Any(r => r.Game == (int)game))
+                return BadRequest("Player is already registered for this game.");
+
+            var time = DateTime.UtcNow;
+            player.GameRegistrations.Add(new PlayerGameRegistration
+            {
+                Game = (int)game,
+                RegisteredOn = time
+            });
+
+            PlayerSeasonData? seasonData = null;
+            if (mmr is int mmrValue)
+            {
+                var season = _loungeSettingsService.CurrentSeason[game];
+
+                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, PlayerId = player.Id, Season = season, Game = (int)game };
+                _context.Placements.Add(placement);
+
+                seasonData = new() { Mmr = mmrValue, Game = (int)game, Season = season, PlayerId = player.Id };
+                _context.PlayerSeasonData.Add(seasonData);
+            }
+
+            await _context.SaveChangesAsync();
+
+            var vm = PlayerUtils.GetPlayerViewModel(player, seasonData);
+
+            return CreatedAtAction(nameof(Placement), new { name = player.Name }, vm);
+        }
+
+        [HttpPost("placement")]
+        public async Task<ActionResult<PlayerViewModel>> Placement(string name, int mmr, Game game = Game.MK8DX, bool force=false)
+        {
+            var player = await GetGamePlayerByNameAsync(name, game);
+            if (player is null)
+                return NotFound();
+
+            var season = _loungeSettingsService.CurrentSeason[game];
+            var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == season && s.Game == (int)game);
 
             if (seasonData is not null && !force)
             {
                 // only look at events that have been verified and aren't deleted
                 var eventsPlayed = await _context.TableScores
-                    .CountAsync(s => s.PlayerId == player.Id && s.Table.VerifiedOn != null && s.Table.DeletedOn == null && s.Table.Season == season);
+                    .CountAsync(s => s.PlayerId == player.Id && s.Table.VerifiedOn != null && s.Table.DeletedOn == null && s.Table.Season == season && s.Table.Game == (int)game);
 
                 if (eventsPlayed > 0)
                     return BadRequest("Player already has been placed and has played a match.");
             }
 
-            Placement placement = new() { Mmr = mmr, PrevMmr = seasonData?.Mmr, AwardedOn = DateTime.UtcNow, PlayerId = player.Id, Season = season };
+            Placement placement = new() { Mmr = mmr, PrevMmr = seasonData?.Mmr, AwardedOn = DateTime.UtcNow, PlayerId = player.Id, Season = season, Game = (int)game };
             _context.Placements.Add(placement);
 
             if (seasonData is null)
             {
-                PlayerSeasonData newSeasonData = new() { Mmr = mmr, Season = season, PlayerId = player.Id };
+                PlayerSeasonData newSeasonData = new() { Mmr = mmr, Game = (int)game, Season = season, PlayerId = player.Id };
                 _context.PlayerSeasonData.Add(newSeasonData);
             }
             else
@@ -550,13 +654,14 @@ namespace Lounge.Web.Controllers
         //[HttpPost("bulkPlacement")]
         //public async Task<IActionResult> BulkPlacement([FromBody] BulkPlacementViewModel request)
         //{
-        //    var season = _loungeSettingsService.CurrentSeason;
+        //    var game = request.Game;
+        //    var season = _loungeSettingsService.CurrentSeason[game];
 
         //    // If any matches have been played at all for this season yet, return an error
-        //    if (await _context.TableScores.AnyAsync(s => s.Table.Season == season))
+        //    if (await _context.TableScores.AnyAsync(s => s.Table.Season == season && s.Table.Game == (int)game))
         //        return BadRequest("Cannot bulk place players if matches have already been played for the season.");
 
-        //    var alreadyPlacedIds = (await _context.Placements.Where(p => p.Season == season)
+        //    var alreadyPlacedIds = (await _context.Placements.Where(p => p.Season == season && p.Game == (int)game)
         //        .Select(p => p.PlayerId)
         //        .ToListAsync()).ToHashSet();
 
@@ -571,8 +676,8 @@ namespace Lounge.Web.Controllers
         //        if (alreadyPlacedIds.Contains(playerId.Value))
         //            return BadRequest($"Player {playerPlacement.Name} ({playerId.Value}) has already been placed.");
 
-        //        Placement placement = new() { Mmr = playerPlacement.Mmr, PrevMmr = null, AwardedOn = time, PlayerId = playerId.Value, Season = season };
-        //        PlayerSeasonData newSeasonData = new() { Mmr = playerPlacement.Mmr, Season = season, PlayerId = playerId.Value };
+        //        Placement placement = new() { Mmr = playerPlacement.Mmr, PrevMmr = null, AwardedOn = time, PlayerId = playerId.Value, Season = season, Game = (int)game };
+        //        PlayerSeasonData newSeasonData = new() { Mmr = playerPlacement.Mmr, Game = (int)game, Season = season, PlayerId = playerId.Value };
 
         //        _context.Placements.Add(placement);
         //        _context.PlayerSeasonData.Add(newSeasonData);
@@ -822,26 +927,72 @@ namespace Lounge.Web.Controllers
         }
 
         private Task<Player?> GetPlayerByIdAsync(int id) =>
-            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.Id == id);
+            _context.Players
+                .Include(p => p.GameRegistrations)
+                .SingleOrDefaultAsync(p => p.Id == id);
 
         private Task<Player?> GetPlayerByNameAsync(string name) =>
-            _context.Players.Include(p => p.SeasonData).Include(p => p.NameHistory).SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
+            _context.Players
+                .Include(p => p.GameRegistrations)
+                .Include(p => p.NameHistory)
+                .SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
 
         private Task<Player?> GetPlayerByRegistryIdAsync(int registryId) =>
-            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.RegistryId == registryId);
+            _context.Players
+                .Include(p => p.GameRegistrations)
+                .SingleOrDefaultAsync(p => p.RegistryId == registryId);
 
         private Task<Player?> GetPlayerByDiscordIdAsync(string discordId) =>
-            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.DiscordId == discordId);
+            _context.Players
+                .Include(p => p.GameRegistrations)
+                .SingleOrDefaultAsync(p => p.DiscordId == discordId);
 
         private Task<Player?> GetPlayerByFriendCodeAsync(string fc) =>
-            _context.Players.Include(p => p.SeasonData).SingleOrDefaultAsync(p => p.SwitchFc == fc);
+            _context.Players
+                .Include(p => p.GameRegistrations)
+                .SingleOrDefaultAsync(p => p.SwitchFc == fc);
 
-        private PlayerLeaderboardData? GetPlayerStats(int id, int season)
+        private Task<Player?> GetGamePlayerByIdAsync(int id, Game game) =>
+            _context.PlayerGameRegistrations
+                .Include(g => g.Player.SeasonData)
+                .Where(p => p.Game == (int)game)
+                .Select(p => p.Player)
+                .SingleOrDefaultAsync(p => p.Id == id);
+
+        private Task<Player?> GetGamePlayerByNameAsync(string name, Game game) =>
+            _context.PlayerGameRegistrations
+                .Include(g => g.Player.SeasonData)
+                .Where(p => p.Game == (int)game)
+                .Select(p => p.Player)
+                .SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
+
+        private Task<Player?> GetGamePlayerByRegistryIdAsync(int registryId, Game game) =>
+            _context.PlayerGameRegistrations
+                .Include(g => g.Player.SeasonData)
+                .Where(p => p.Game == (int)game)
+                .Select(p => p.Player)
+                .SingleOrDefaultAsync(p => p.RegistryId == registryId);
+
+        private Task<Player?> GetGamePlayerByDiscordIdAsync(string discordId, Game game) =>
+            _context.PlayerGameRegistrations
+                .Include(g => g.Player.SeasonData)
+                .Where(p => p.Game == (int)game)
+                .Select(p => p.Player)
+                .SingleOrDefaultAsync(p => p.DiscordId == discordId);
+
+        private Task<Player?> GetGamePlayerByFriendCodeAsync(string fc, Game game) =>
+            _context.PlayerGameRegistrations
+                .Include(g => g.Player.SeasonData)
+                .Where(p => p.Game == (int)game)
+                .Select(p => p.Player)
+                .SingleOrDefaultAsync(p => p.SwitchFc == fc);
+
+        private PlayerLeaderboardData? GetPlayerStats(int id, Game game, int season)
         {
             PlayerLeaderboardData? playerStat = null;
             if (id != -1)
             {
-                _playerStatCache.TryGetPlayerStatsById(id, season, out playerStat);
+                _playerStatCache.TryGetPlayerStatsById(id, game, season, out playerStat);
             }
 
             return playerStat;

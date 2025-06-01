@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Lounge.Web.Models.Enums;
+using System;
 
 namespace Lounge.Web.Models.ViewModels
 {
     public class BonusViewModel
     {
         public int Id { get; init; }
+        public Game Game { get; init; }
         public int Season { get; init; }
         public DateTime AwardedOn { get; init; }
         public int PrevMmr { get; init; }

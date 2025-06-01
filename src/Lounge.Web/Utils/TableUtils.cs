@@ -1,4 +1,5 @@
 ﻿using Lounge.Web.Data.Entities;
+using Lounge.Web.Models.Enums;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Settings;
 using System;
@@ -167,6 +168,7 @@ namespace Lounge.Web.Utils
                 UpdateMessageId = t.UpdateMessageId,
                 VerifiedOn = t.VerifiedOn,
                 AuthorId = t.AuthorId,
+                Game = t.Game,
                 Season = t.Season,
                 Scores = t.Scores.Select(s => new TableScore
                 {
@@ -174,7 +176,7 @@ namespace Lounge.Web.Utils
                     Multiplier = s.Multiplier,
                     NewMmr = s.NewMmr,
                     PrevMmr = t.VerifiedOn == null && t.DeletedOn == null
-                        ? s.Player.SeasonData.Where(d => d.Season == t.Season).Select(d => (int?)d.Mmr).FirstOrDefault()
+                        ? s.Player.SeasonData.Where(d => d.Season == t.Season && d.Game == t.Game).Select(d => (int?)d.Mmr).FirstOrDefault()
                         : s.PrevMmr,
                     PlayerId = s.PlayerId,
                     Team = s.Team,
@@ -186,7 +188,7 @@ namespace Lounge.Web.Utils
         {
             var teams = new List<TableDetailsViewModel.Team>();
 
-            var formatMultiplier = GetFormatMultiplier(table, loungeSettingService.SquadQueueMultipliers[table.Season]);
+            var formatMultiplier = GetFormatMultiplier(table, loungeSettingService.SquadQueueMultipliers[(Game)table.Game][table.Season]);
 
             int rank = 1;
             int prevTotalScore = 0;
@@ -223,6 +225,7 @@ namespace Lounge.Web.Utils
 
             return new TableDetailsViewModel(
                 id: table.Id,
+                game: (Game)table.Game,
                 season: table.Season, 
                 createdOn: table.CreatedOn,
                 verifiedOn: table.VerifiedOn,

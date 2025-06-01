@@ -1,4 +1,5 @@
 using Lounge.Web.Controllers.ValidationAttributes;
+using Lounge.Web.Models.Enums;
 using Lounge.Web.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -15,15 +16,17 @@ namespace Lounge.Web.Pages
             _loungeSettingsService = loungeSettingsService;
         }
 
+        public Game Game { get; set; }
         public int Season { get; set; }
 
-        public IActionResult OnGet([ValidSeason] int? season = null)
+        public IActionResult OnGet(Game game = Game.MK8DX, [ValidSeason] int? season = null)
         {
             // if the season is invalid, just redirect to the default stat page
             if (!ModelState.IsValid)
                 return RedirectToPage("Stats");
 
-            Season = season ?? _loungeSettingsService.CurrentSeason;
+            Game = game;
+            Season = season ?? _loungeSettingsService.CurrentSeason[game];
 
             return Page();
         }

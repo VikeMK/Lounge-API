@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lounge.Web.Data.Entities
 {
+
     public class Player
     {
         public int Id { get; set; }
@@ -19,6 +20,7 @@ namespace Lounge.Web.Data.Entities
         public string? PendingName { get; set; } = default!;
         public string? NameChangeRequestMessageId { get; set; } = default!;
 
+        public ICollection<PlayerGameRegistration> GameRegistrations { get; set; } = default!;
         public ICollection<PlayerSeasonData> SeasonData { get; set; } = default!;
         public ICollection<TableScore> TableScores { get; set; } = default!;
         public ICollection<Penalty> Penalties { get; set; } = default!;

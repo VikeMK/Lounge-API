@@ -4,6 +4,7 @@ using Lounge.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lounge.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250520214225_MultiGameSupport")]
+    partial class MultiGameSupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,42 +232,6 @@ namespace Lounge.Web.Migrations
                         .HasColumnName("SYS_CHANGE_VERSION");
 
                     b.HasIndex("Id");
-
-                    b.ToTable((string)null);
-
-                    b.ToView(null, (string)null);
-                });
-
-            modelBuilder.Entity("Lounge.Web.Data.Entities.ChangeTracking.PlayerGameRegistrationChange", b =>
-                {
-                    b.Property<byte[]>("Columns")
-                        .HasColumnType("varbinary(max)")
-                        .HasColumnName("SYS_CHANGE_COLUMNS");
-
-                    b.Property<byte[]>("Context")
-                        .HasColumnType("varbinary(max)")
-                        .HasColumnName("SYS_CHANGE_CONTEXT");
-
-                    b.Property<long?>("CreationVersion")
-                        .HasColumnType("bigint")
-                        .HasColumnName("SYS_CHANGE_CREATION_VERSION");
-
-                    b.Property<int>("Game")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Operation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(1)")
-                        .HasColumnName("SYS_CHANGE_OPERATION");
-
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<long>("Version")
-                        .HasColumnType("bigint")
-                        .HasColumnName("SYS_CHANGE_VERSION");
-
-                    b.HasIndex("PlayerId", "Game");
 
                     b.ToTable((string)null);
 
@@ -557,30 +524,6 @@ namespace Lounge.Web.Migrations
                     b.ToTable("Players", (string)null);
                 });
 
-            modelBuilder.Entity("Lounge.Web.Data.Entities.PlayerGameRegistration", b =>
-                {
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Game")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("RegisteredOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<byte[]>("Timestamp")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.HasKey("PlayerId", "Game");
-
-                    b.HasIndex("Game");
-
-                    b.ToTable("PlayerGameRegistrations", (string)null);
-                });
-
             modelBuilder.Entity("Lounge.Web.Data.Entities.PlayerSeasonData", b =>
                 {
                     b.Property<int>("PlayerId")
@@ -757,17 +700,6 @@ namespace Lounge.Web.Migrations
                     b.Navigation("Entity");
                 });
 
-            modelBuilder.Entity("Lounge.Web.Data.Entities.ChangeTracking.PlayerGameRegistrationChange", b =>
-                {
-                    b.HasOne("Lounge.Web.Data.Entities.PlayerGameRegistration", "Entity")
-                        .WithMany()
-                        .HasForeignKey("PlayerId", "Game")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Entity");
-                });
-
             modelBuilder.Entity("Lounge.Web.Data.Entities.ChangeTracking.PlayerSeasonDataChange", b =>
                 {
                     b.HasOne("Lounge.Web.Data.Entities.PlayerSeasonData", "Entity")
@@ -834,17 +766,6 @@ namespace Lounge.Web.Migrations
                     b.Navigation("Player");
                 });
 
-            modelBuilder.Entity("Lounge.Web.Data.Entities.PlayerGameRegistration", b =>
-                {
-                    b.HasOne("Lounge.Web.Data.Entities.Player", "Player")
-                        .WithMany("GameRegistrations")
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Player");
-                });
-
             modelBuilder.Entity("Lounge.Web.Data.Entities.PlayerSeasonData", b =>
                 {
                     b.HasOne("Lounge.Web.Data.Entities.Player", "Player")
@@ -878,8 +799,6 @@ namespace Lounge.Web.Migrations
             modelBuilder.Entity("Lounge.Web.Data.Entities.Player", b =>
                 {
                     b.Navigation("Bonuses");
-
-                    b.Navigation("GameRegistrations");
 
                     b.Navigation("NameHistory");
 

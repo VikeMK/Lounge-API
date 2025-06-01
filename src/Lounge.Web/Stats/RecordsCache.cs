@@ -1,5 +1,6 @@
 ﻿using Lounge.Web.Data.ChangeTracking;
 using Lounge.Web.Data.Entities;
+using Lounge.Web.Models.Enums;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,11 +14,11 @@ namespace Lounge.Web.Stats
         public record TierRecords(IReadOnlyDictionary<int, FormatRecord> TeamCounts);
         public record SeasonRecords(IReadOnlyDictionary<string, TierRecords> Tiers);
 
-        private IReadOnlyDictionary<int, SeasonRecords> _resultsBySeason = new Dictionary<int, SeasonRecords>();
+        private IReadOnlyDictionary<(Game Game, int Season), SeasonRecords> _resultsBySeason = new Dictionary<(Game Game, int Season), SeasonRecords>();
 
-        public SeasonRecords GetRecords(int season)
+        public SeasonRecords GetRecords(Game game, int season)
         {
-            if (_resultsBySeason.TryGetValue(season, out SeasonRecords? results))
+            if (_resultsBySeason.TryGetValue((game, season), out SeasonRecords? results))
                 return results;
 
             return new SeasonRecords(new Dictionary<string, TierRecords>());
@@ -27,7 +28,7 @@ namespace Lounge.Web.Stats
         {
             _resultsBySeason = dbCache.Tables.Values
                 .Where(t => t.VerifiedOn != null && t.DeletedOn == null)
-                .GroupBy(s => s.Season)
+                .GroupBy(s => ((Game)s.Game, s.Season))
                 .ToDictionary(s => s.Key, tables => GetSeasonRecords(tables, dbCache));
         }
 

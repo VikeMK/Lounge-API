@@ -33,6 +33,9 @@ namespace Lounge.Web.Data.ChangeTracking
         public async Task<List<PlayerChange>> GetPlayerChangesAsync(long lastSynchronizationVersion) =>
             await GetTableChangesAsync<PlayerChange, Player>("Players", lastSynchronizationVersion);
 
+        public async Task<List<PlayerGameRegistrationChange>> GetPlayerGameRegistrationChangesAsync(long lastSynchronizationVersion) =>
+            await GetTableChangesAsync<PlayerGameRegistrationChange, PlayerGameRegistration>("PlayerGameRegistrations", lastSynchronizationVersion);
+
         public async Task<List<PlayerSeasonDataChange>> GetPlayerSeasonDataChangesAsync(long lastSynchronizationVersion) =>
             await GetTableChangesAsync<PlayerSeasonDataChange, PlayerSeasonData>("PlayerSeasonData", lastSynchronizationVersion);
 

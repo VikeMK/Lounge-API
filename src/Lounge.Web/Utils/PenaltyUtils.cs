@@ -1,4 +1,5 @@
 ﻿using Lounge.Web.Data.Entities;
+using Lounge.Web.Models.Enums;
 using Lounge.Web.Models.ViewModels;
 
 namespace Lounge.Web.Utils
@@ -10,6 +11,7 @@ namespace Lounge.Web.Utils
             return new PenaltyViewModel
             {
                 Id = penalty.Id,
+                Game = (Game)penalty.Game,
                 Season = penalty.Season,
                 AwardedOn = penalty.AwardedOn,
                 DeletedOn = penalty.DeletedOn,

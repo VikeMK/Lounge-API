@@ -1,4 +1,5 @@
 ﻿using Lounge.Web.Data.ChangeTracking;
+using Lounge.Web.Models.Enums;
 using Lounge.Web.Settings;
 using Lounge.Web.Utils;
 using System;
@@ -14,16 +15,16 @@ namespace Lounge.Web.Stats
         private IReadOnlyDictionary<string, int> _playerIdByNameLookup = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         private IReadOnlyDictionary<string, int> _playerIdByDiscordLookup = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         private IReadOnlyDictionary<string, int> _playerIdByFCLookup = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-        private IReadOnlyDictionary<int, IReadOnlyDictionary<int, PlayerDetails>> _playerDetailsLookupBySeason = new Dictionary<int, IReadOnlyDictionary<int, PlayerDetails>>();
+        private IReadOnlyDictionary<(Game Game, int Season), IReadOnlyDictionary<int, PlayerDetails>> _playerDetailsLookupBySeason = new Dictionary<(Game Game, int Season), IReadOnlyDictionary<int, PlayerDetails>>();
 
         public PlayerDetailsCache(ILoungeSettingsService loungeSettingsService)
         {
             _loungeSettingsService = loungeSettingsService;
         }
 
-        public bool TryGetPlayerDetailsById(int playerId, int season, [NotNullWhen(returnValue: true)] out PlayerDetails? playerDetails)
+        public bool TryGetPlayerDetailsById(int playerId, Game game, int season, [NotNullWhen(returnValue: true)] out PlayerDetails? playerDetails)
         {
-            if (_playerDetailsLookupBySeason.TryGetValue(season, out var playerDetailsLookup))
+            if (_playerDetailsLookupBySeason.TryGetValue((game, season), out var playerDetailsLookup))
             {
                 return playerDetailsLookup.TryGetValue(playerId, out playerDetails);
             }
@@ -56,46 +57,51 @@ namespace Lounge.Web.Stats
 
         public void OnChange(IDbCache dbCache)
         {
-            var newPlayerDetailsLookup = new Dictionary<int, IReadOnlyDictionary<int, PlayerDetails>>();
-            var seasons = _loungeSettingsService.ValidSeasons;
+            var newPlayerDetailsLookup = new Dictionary<(Game Game, int Season), IReadOnlyDictionary<int, PlayerDetails>>();
 
             var nameChangesByPlayer = dbCache.NameChanges.Values
                 .GroupBy(p => p.PlayerId)
                 .ToDictionary(p => p.Key, p => p.Select(x => x.Id).ToList());
 
-            foreach (var season in seasons)
+            foreach (var game in _loungeSettingsService.ValidGames)
             {
-                var placementsByPlayer = dbCache.Placements.Values
-                    .Where(p => p.Season == season)
-                    .GroupBy(p => p.PlayerId)
-                    .ToDictionary(p => p.Key, p => p.Select(x => x.Id).ToList());
+                var seasons = _loungeSettingsService.ValidSeasons[game];
+                var registrations = dbCache.PlayerGameRegistrations[game];
 
-                var tableScoresByPlayer = dbCache.TableScores.Values
-                    .SelectMany(s => s.Values)
-                    .Where(p => dbCache.Tables.TryGetValue(p.TableId, out var table) && table.Season == season)
-                    .GroupBy(p => p.PlayerId)
-                    .ToDictionary(p => p.Key, p => p.Select(x => x.TableId).ToList());
+                foreach (var season in seasons)
+                {
+                    var placementsByPlayer = dbCache.Placements.Values
+                        .Where(p => p.Season == season && p.Game == (int)game)
+                        .GroupBy(p => p.PlayerId)
+                        .ToDictionary(p => p.Key, p => p.Select(x => x.Id).ToList());
 
-                var penaltiesByPlayer = dbCache.Penalties.Values
-                    .Where(p => p.Season == season)
-                    .GroupBy(p => p.PlayerId)
-                    .ToDictionary(p => p.Key, p => p.Select(x => x.Id).ToList());
+                    var tableScoresByPlayer = dbCache.TableScores.Values
+                        .SelectMany(s => s.Values)
+                        .Where(p => dbCache.Tables.TryGetValue(p.TableId, out var table) && table.Season == season && table.Game == (int)game)
+                        .GroupBy(p => p.PlayerId)
+                        .ToDictionary(p => p.Key, p => p.Select(x => x.TableId).ToList());
 
-                var bonusesByPlayer = dbCache.Bonuses.Values
-                    .Where(p => p.Season == season)
-                    .GroupBy(p => p.PlayerId)
-                    .ToDictionary(p => p.Key, p => p.Select(x => x.Id).ToList());
+                    var penaltiesByPlayer = dbCache.Penalties.Values
+                        .Where(p => p.Season == season && p.Game == (int)game)
+                        .GroupBy(p => p.PlayerId)
+                        .ToDictionary(p => p.Key, p => p.Select(x => x.Id).ToList());
 
-                newPlayerDetailsLookup[season] = dbCache.Players.Values
-                    .ToDictionary(
-                        p => p.Id,
-                        p => new PlayerDetails(
-                            p.Id,
-                            placementsByPlayer.GetValueOrDefault(p.Id) ?? new List<int>(),
-                            tableScoresByPlayer.GetValueOrDefault(p.Id) ?? new List<int>(),
-                            penaltiesByPlayer.GetValueOrDefault(p.Id) ?? new List<int>(),
-                            bonusesByPlayer.GetValueOrDefault(p.Id) ?? new List<int>(),
-                            nameChangesByPlayer.GetValueOrDefault(p.Id) ?? new List<int>()));
+                    var bonusesByPlayer = dbCache.Bonuses.Values
+                        .Where(p => p.Season == season && p.Game == (int)game)
+                        .GroupBy(p => p.PlayerId)
+                        .ToDictionary(p => p.Key, p => p.Select(x => x.Id).ToList());
+
+                    newPlayerDetailsLookup[(game, season)] = registrations.Keys
+                        .ToDictionary(
+                            pId => pId,
+                            pId => new PlayerDetails(
+                                pId,
+                                placementsByPlayer.GetValueOrDefault(pId) ?? new List<int>(),
+                                tableScoresByPlayer.GetValueOrDefault(pId) ?? new List<int>(),
+                                penaltiesByPlayer.GetValueOrDefault(pId) ?? new List<int>(),
+                                bonusesByPlayer.GetValueOrDefault(pId) ?? new List<int>(),
+                                nameChangesByPlayer.GetValueOrDefault(pId) ?? new List<int>()));
+                }
             }
 
             var playerNamesToId = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);

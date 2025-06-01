@@ -11,6 +11,7 @@ using Lounge.Web.Settings;
 using System.Linq;
 using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Data.Entities;
+using Lounge.Web.Models.Enums;
 
 namespace Lounge.Web.Controllers
 {
@@ -51,9 +52,10 @@ namespace Lounge.Web.Controllers
             bool? isStrike = null,
             DateTime? from = null,
             bool includeDeleted = false,
-            [ValidSeason] int? season = null)
+            Game game = Game.MK8DX,
+            [ValidSeason]int? season = null)
         {
-            season ??= _loungeSettingsService.CurrentSeason;
+            season ??= _loungeSettingsService.CurrentSeason[game];
 
             var player = await _context.Players
                 .AsNoTracking()
@@ -62,7 +64,7 @@ namespace Lounge.Web.Controllers
                 {
                     Name = p.Name,
                     Penalties = p.Penalties
-                        .Where(pen => pen.Season == season)
+                        .Where(pen => pen.Season == season && pen.Game == (int)game)
                         .Where(pen => includeDeleted || pen.DeletedOn == null)
                         .Where(pen => isStrike == null || pen.IsStrike == isStrike)
                         .Where(pen => from == null || pen.AwardedOn >= from)
@@ -76,19 +78,19 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<PenaltyViewModel>> Penalise(string name, int amount, bool isStrike)
+        public async Task<ActionResult<PenaltyViewModel>> Penalise(string name, int amount, bool isStrike, Game game = Game.MK8DX)
         {
             if (amount < 0)
                 return BadRequest("Penalty amount must be a non-negative integer");
 
-            var season = _loungeSettingsService.CurrentSeason;
+            var season = _loungeSettingsService.CurrentSeason[game];
             var player = await _context.Players
                 .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
                 .Select(p => new
                 {
                     p.Id,
                     p.Name,
-                    CurrentSeasonData = p.SeasonData.FirstOrDefault(s => s.Season == season),
+                    CurrentSeasonData = p.SeasonData.FirstOrDefault(s => s.Season == season && s.Game == (int)game),
                 })
                 .SingleOrDefaultAsync();
 
@@ -109,6 +111,7 @@ namespace Lounge.Web.Controllers
                 IsStrike = isStrike,
                 PrevMmr = prevMmr,
                 NewMmr = newMmr,
+                Game = (int)game,
                 Season = season,
                 PlayerId = player.Id,
             };
@@ -124,11 +127,11 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, Game game)
         {
             var penaltyData = await _context.Penalties
-                .Where(p => p.Id == id)
-                .Select(p => new { Penalty = p, SeasonData = p.Player.SeasonData.Single(s => s.Season == p.Season) })
+                .Where(p => p.Id == id && p.Game == (int)game)
+                .Select(p => new { Penalty = p, SeasonData = p.Player.SeasonData.Single(s => s.Season == p.Season && s.Game == p.Game) })
                 .FirstOrDefaultAsync();
 
             if (penaltyData is null)
@@ -140,7 +143,7 @@ namespace Lounge.Web.Controllers
             if (penalty.DeletedOn is not null)
                 return BadRequest("Penalty has already been deleted");
 
-            if (penalty.Season != _loungeSettingsService.CurrentSeason)
+            if (penalty.Season != _loungeSettingsService.CurrentSeason[(Game)seasonData.Game])
                 return BadRequest("Penalty is from a previous season and can't be deleted");
 
             penalty.DeletedOn = DateTime.UtcNow;

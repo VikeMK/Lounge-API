@@ -86,14 +86,12 @@ namespace Lounge.Web
             services.AddSingleton<IDatabaseCacheService, DatabaseCacheService>();
             services.AddSingleton<ILoungeSettingsService, LoungeSettingsService>();
             services.AddSingleton<IMkcRegistryApi, MkcRegistryApi>();
-            services.AddTransient<IMkcRegistryDataUpdater, MkcRegistryDataUpdater>();
             services.AddTransient<IChangeTracker, ChangeTracker>();
 
             services.AddSingleton<DbCache>();
             services.AddSingleton<IChangeTrackingSubscriber>(s => s.GetRequiredService<DbCache>());
             services.AddSingleton<IDbCache>(s => s.GetRequiredService<DbCache>());
 
-            services.AddHostedService<MkcRegistrySyncBackgroundService>();
             services.AddHostedService<DbChangeTrackingBackgroundService>();
 
             services.Configure<LoungeSettings>(Configuration);

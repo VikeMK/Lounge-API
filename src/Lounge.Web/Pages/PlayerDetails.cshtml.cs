@@ -1,4 +1,5 @@
 using Lounge.Web.Controllers.ValidationAttributes;
+using Lounge.Web.Models.Enums;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Settings;
 using Lounge.Web.Stats;
@@ -19,16 +20,16 @@ namespace Lounge.Web.Pages
         }
         public required PlayerDetailsViewModel Data { get; set; }
 
-        public IActionResult OnGet(int id, [ValidSeason] int? season = null)
+        public IActionResult OnGet(int id, Game game = Game.MK8DX, [ValidSeason] int? season = null)
         {
             if (!ModelState.IsValid)
                 return RedirectToPage("/PlayerDetails", new { id });
 
-            var vm = _playerDetailsViewModelService.GetPlayerDetails(id, season ?? _loungeSettingsService.CurrentSeason);
+            var vm = _playerDetailsViewModelService.GetPlayerDetails(id, game, season ?? _loungeSettingsService.CurrentSeason[game]);
             if (vm is null)
                 return NotFound();
 
-            vm.ValidSeasons = _loungeSettingsService.ValidSeasons;
+            vm.ValidSeasons = _loungeSettingsService.ValidSeasons[game];
 
             Data = vm;
             return Page();

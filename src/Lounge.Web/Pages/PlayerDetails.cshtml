@@ -45,7 +45,7 @@
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Localizer[Html.DisplayNameFor(model => model.Data.MaxMmr)]</dt>
-            <dd class="rank-@LoungeSettingsService.GetRank(Model.Data.MaxMmr, Model.Data.Season)!.Division">@Html.DisplayFor(model => model.Data.MaxMmr)</dd>
+            <dd class="rank-@LoungeSettingsService.GetRank(Model.Data.MaxMmr, Model.Data.Game, Model.Data.Season)!.Division">@Html.DisplayFor(model => model.Data.MaxMmr)</dd>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Localizer[Html.DisplayNameFor(model => model.Data.WinRate)]</dt>
@@ -159,7 +159,7 @@
                         <td>
                             @Html.DisplayFor(modelItem => change.MmrDelta)
                         </td>
-                        <td class="rank-@LoungeSettingsService.GetRank(change.NewMmr, Model.Data.Season)!.Division">
+                        <td class="rank-@LoungeSettingsService.GetRank(change.NewMmr, Model.Data.Game, Model.Data.Season)!.Division">
                             @Html.DisplayFor(modelItem => change.NewMmr)
                         </td>
                     </tr>

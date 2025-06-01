@@ -1,4 +1,5 @@
 ﻿using Lounge.Web.Data.Entities;
+using Lounge.Web.Models.Enums;
 using Lounge.Web.Models.ViewModels;
 
 namespace Lounge.Web.Utils
@@ -10,6 +11,7 @@ namespace Lounge.Web.Utils
             return new BonusViewModel
             {
                 Id = bonus.Id,
+                Game = (Game)bonus.Game,
                 Season = bonus.Season,
                 AwardedOn = bonus.AwardedOn,
                 DeletedOn = bonus.DeletedOn,

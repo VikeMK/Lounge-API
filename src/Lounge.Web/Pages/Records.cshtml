@@ -19,7 +19,7 @@
         </button>
         <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
             <ul class="navbar-nav">
-                @foreach (var season in LoungeSettingsService.ValidSeasons)
+                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
                 {
                     <li class="nav-item">
                         <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Records" asp-route-season="@season">@Localizer["Season"] @season</a>
@@ -41,7 +41,7 @@
 
         <h2>@TableUtils.FormatDisplay(teamCount)</h2>
         <div class="row mb-4">
-            @foreach (var tier in LoungeSettingsService.RecordsTierOrders[Model.Season])
+            @foreach (var tier in LoungeSettingsService.RecordsTierOrders[Model.Game][Model.Season])
             {
                 var tierRecords = Model.Records.Tiers.TryGetValue(tier, out var x) ? x : null;
                 var formatRecords = tierRecords == null ? null : tierRecords.TeamCounts.GetValueOrDefault(teamCount, null);
