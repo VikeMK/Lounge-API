@@ -1,4 +1,5 @@
 ﻿using Lounge.Web.Data.Entities;
+using Lounge.Web.Models.Enums;
 using Lounge.Web.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,65 +52,41 @@ namespace Lounge.Web.Data.ChangeTracking
         {
             try
             {
-                //var cachedData = await _databaseCacheService.GetLatestCacheDataAsync();
-                //if (cachedData == null)
-                //{
-                    using var scope = _services.CreateScope();
+                using var scope = _services.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var changeTracker = scope.ServiceProvider.GetRequiredService<IChangeTracker>();
+                var synchronizationVersion = await changeTracker.GetCurrentSynchronizationVersionAsync();
 
-                    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                    var changeTracker = scope.ServiceProvider.GetRequiredService<IChangeTracker>();
-                    var synchronizationVersion = await changeTracker.GetCurrentSynchronizationVersionAsync();
+                var bonuses = await context.Bonuses.AsNoTracking().ToListAsync();
+                var penalties = await context.Penalties.AsNoTracking().ToListAsync();
+                var placements = await context.Placements.AsNoTracking().ToListAsync();
+                var players = await context.Players.AsNoTracking().ToListAsync();
+                var playerGameRegistrations = await context.PlayerGameRegistrations.AsNoTracking().ToListAsync();
+                var playerSeasonData = await context.PlayerSeasonData.AsNoTracking().ToListAsync();
 
-                    var bonuses = await context.Bonuses.AsNoTracking().ToListAsync();
-                    var penalties = await context.Penalties.AsNoTracking().ToListAsync();
-                    var placements = await context.Placements.AsNoTracking().ToListAsync();
-                    var players = await context.Players.AsNoTracking().ToListAsync();
-                    var playerGameRegistrations = await context.PlayerGameRegistrations.AsNoTracking().ToListAsync();
-                    var playerSeasonData = await context.PlayerSeasonData.AsNoTracking().ToListAsync();
+                var tables = new List<Table>();
+                var maxTableId = (await context.Tables.AnyAsync())
+                    ? await context.Tables.Select(t => t.Id).MaxAsync()
+                    : 0;
 
-                    var tables = new List<Table>();
-                    var maxTableId = (await context.Tables.AnyAsync())
-                        ? await context.Tables.Select(t => t.Id).MaxAsync()
-                        : 0;
+                for (int i = 0; i < maxTableId; i += 10000)
+                {
+                    tables.AddRange(await context.Tables.Where(t => t.Id >= i && t.Id < (i + 10000)).AsNoTracking().ToListAsync());
+                    await Task.Delay(10);
+                }
 
-                    for (int i = 0; i < maxTableId; i += 10000)
-                    {
-                        tables.AddRange(await context.Tables.Where(t => t.Id >= i && t.Id < (i + 10000)).AsNoTracking().ToListAsync());
-                        await Task.Delay(10);
-                    }
+                var tableScores = new List<TableScore>();
+                for (int i = 0; i < maxTableId; i += 2500)
+                {
+                    tableScores.AddRange(await context.TableScores.Where(t => t.TableId >= i && t.TableId < (i + 2500)).AsNoTracking().ToListAsync());
+                    await Task.Delay(10);
+                }
 
-                    var tableScores = new List<TableScore>();
-                    for (int i = 0; i < maxTableId; i += 2500)
-                    {
-                        tableScores.AddRange(await context.TableScores.Where(t => t.TableId >= i && t.TableId < (i + 2500)).AsNoTracking().ToListAsync());
-                        await Task.Delay(10);
-                    }
+                var nameChanges = await context.NameChanges.AsNoTracking().ToListAsync();
 
-                    var nameChanges = await context.NameChanges.AsNoTracking().ToListAsync();
+                _changeTrackingSubscriber.Initialize(bonuses, penalties, placements, players, playerGameRegistrations, playerSeasonData, tables, tableScores, nameChanges);
 
-                    _changeTrackingSubscriber.Initialize(bonuses, penalties, placements, players, playerGameRegistrations, playerSeasonData, tables, tableScores, nameChanges);
-                    //await _databaseCacheService.UpdateLatestCacheDataAsync(synchronizationVersion, new DbCacheData
-                    //{
-                    //    Bonuses = _dbCache.Bonuses,
-                    //    Penalties = _dbCache.Penalties,
-                    //    Placements = _dbCache.Placements,
-                    //    Players = _dbCache.Players,
-                    //    PlayerSeasonData = _dbCache.PlayerSeasonData,
-                    //    Tables = _dbCache.Tables,
-                    //    TableScores = _dbCache.TableScores,
-                    //    NameChanges = _dbCache.NameChanges,
-                    //});
-
-                    return synchronizationVersion;
-                //}
-                //else
-                //{
-                //    (var version, var data) = cachedData;
-                //    _changeTrackingSubscriber.Initialize(
-                //        data.Bonuses.Values, data.Penalties.Values, data.Placements.Values, data.Players.Values, data.PlayerSeasonData.Values.SelectMany(psd => psd.Values),
-                //        data.Tables.Values, data.TableScores.Values.SelectMany(ts => ts.Values), data.NameChanges.Values);
-                //    return version;
-                //}
+                return synchronizationVersion;
             }
             catch (Exception ex)
             {

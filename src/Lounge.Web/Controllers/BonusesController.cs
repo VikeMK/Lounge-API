@@ -47,12 +47,14 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<BonusViewModel>>> GetBonuses(string name, Game game = Game.MK8DX, [ValidSeason]int? season = null)
+        public async Task<ActionResult<List<BonusViewModel>>> GetBonuses(string name, Game game = Game.mk8dx, [ValidSeason]int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason[game];
 
-            var player = await _context.Players
+            var player = await _context.PlayerGameRegistrations
                 .AsNoTracking()
+                .Where(pgr => pgr.Game == (int)game)
+                .Select(pgr => pgr.Player)
                 .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
                 .Select(p => new { Name = p.Name, Bonuses = p.Bonuses.Where(b => b.Season == season && b.Game == (int)game) })
                 .SingleOrDefaultAsync();
@@ -64,13 +66,15 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<BonusViewModel>> AwardBonus(string? name, int? mkcId, int amount, Game game = Game.MK8DX)
+        public async Task<ActionResult<BonusViewModel>> AwardBonus(string? name, int? mkcId, int amount, Game game = Game.mk8dx)
         {
             if (amount < 0)
                 return BadRequest("Bonus amount must be a non-negative integer");
 
             var season = _loungeSettingsService.CurrentSeason[game];
-            var player = await _context.Players
+            var player = await _context.PlayerGameRegistrations
+                .Where(pgr => pgr.Game == (int)game)
+                .Select(pgr => pgr.Player)
                 .Where(p => 
                     (name == null || p.NormalizedName == PlayerUtils.NormalizeName(name)) && 
                     (mkcId == null || p.RegistryId == mkcId.Value))

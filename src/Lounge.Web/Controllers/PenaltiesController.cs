@@ -52,13 +52,15 @@ namespace Lounge.Web.Controllers
             bool? isStrike = null,
             DateTime? from = null,
             bool includeDeleted = false,
-            Game game = Game.MK8DX,
+            Game game = Game.mk8dx,
             [ValidSeason]int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason[game];
 
-            var player = await _context.Players
+            var player = await _context.PlayerGameRegistrations
                 .AsNoTracking()
+                .Where(pgr => pgr.Game == (int)game)
+                .Select(pgr => pgr.Player)
                 .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
                 .Select(p => new
                 {
@@ -78,7 +80,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<PenaltyViewModel>> Penalise(string name, int amount, bool isStrike, Game game = Game.MK8DX)
+        public async Task<ActionResult<PenaltyViewModel>> Penalise(string name, int amount, bool isStrike, Game game = Game.mk8dx)
         {
             if (amount < 0)
                 return BadRequest("Penalty amount must be a non-negative integer");

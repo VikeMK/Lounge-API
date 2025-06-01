@@ -23,7 +23,7 @@ namespace Lounge.Web.Pages
         public int Season { get; set; }
         public required IReadOnlySet<string> ValidCountries { get; set; }
 
-        public IActionResult OnGet(Game game = Game.MK8DX, [ValidSeason] int? season = null)
+        public IActionResult OnGet(Game game = Game.mk8dx, [ValidSeason] int? season = null)
         {
             // if the season is invalid, just redirect to the default leaderboard
             if (!ModelState.IsValid)

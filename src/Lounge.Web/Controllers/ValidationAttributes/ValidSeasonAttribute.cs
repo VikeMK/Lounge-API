@@ -16,16 +16,17 @@ namespace Lounge.Web.Controllers.ValidationAttributes
                 return ValidationResult.Success;
             }
 
+            Game game = Game.mk8dx;
             PropertyInfo? property = validationContext.ObjectType?.GetProperty("game");
-            if (property is null)
+            if (property is not null)
             {
-                return new ValidationResult("Game property not found in validation context.");
-            }
+                object? gameValue = property.GetValue(validationContext.ObjectInstance);
+                if (gameValue is not Game)
+                {
+                    return new ValidationResult("Game property is not of type Game.");
+                }
 
-            object? gameValue = property.GetValue(validationContext.ObjectInstance);
-            if (gameValue is not Game game)
-            {
-                return new ValidationResult("Game property is not of type Game.");
+                game = (Game)gameValue;
             }
 
             var settingsService = (ILoungeSettingsService)validationContext.GetService(typeof(ILoungeSettingsService))!;

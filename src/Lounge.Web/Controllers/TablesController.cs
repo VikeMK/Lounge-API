@@ -49,7 +49,7 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to, Game game = Game.MK8DX, [ValidSeason] int? season = null)
+        public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to, Game game = Game.mk8dx, [ValidSeason] int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason[game];
 
@@ -64,7 +64,7 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("unverified")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables(Game game = Game.MK8DX, [ValidSeason] int? season = null)
+        public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables(Game game = Game.mk8dx, [ValidSeason] int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason[game];
 
@@ -78,7 +78,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, Game game = Game.MK8DX, bool squadQueue = false)
+        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, Game game = Game.mk8dx, bool squadQueue = false)
         {
             if (vm.Scores.Count != 12)
                 return BadRequest("Must supply 12 scores");
@@ -88,7 +88,12 @@ namespace Lounge.Web.Controllers
             if (playerNames.Count != vm.Scores.Count)
                 return BadRequest("Duplicate player name in scores");
 
-            var players = await _context.Players.Where(p => normalizedPlayerNames.Contains(p.NormalizedName)).ToListAsync();
+            var players = await _context.PlayerGameRegistrations
+                .Where(pgr => pgr.Game == (int)game)
+                .Select(pgr => pgr.Player)
+                .Where(p => normalizedPlayerNames.Contains(p.NormalizedName))
+                .ToListAsync();
+
             if (players.Count != playerNames.Count)
             {
                 var foundPlayers = players.Select(p => p.NormalizedName).ToHashSet();

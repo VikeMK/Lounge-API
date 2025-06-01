@@ -43,7 +43,7 @@ namespace Lounge.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, string? fc, Game game = Game.MK8DX, [ValidSeason]int? season = null)
+        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, string? fc, Game game = Game.mk8dx, [ValidSeason]int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason[game];
 
@@ -130,7 +130,7 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("details")]
         [AllowAnonymous]
-        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, string? discordId = null, string? fc = null, Game game = Game.MK8DX, [ValidSeason] int? season = null)
+        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, string? discordId = null, string? fc = null, Game game = Game.mk8dx, [ValidSeason] int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason[game];
 
@@ -168,7 +168,7 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public ActionResult<PlayerListViewModel> Players(int? minMmr, int? maxMmr, Game game = Game.MK8DX, [ValidSeason] int? season=null)
+        public ActionResult<PlayerListViewModel> Players(int? minMmr, int? maxMmr, Game game = Game.mk8dx, [ValidSeason] int? season=null)
         {
             season ??= _loungeSettingsService.CurrentSeason[game];
 
@@ -191,7 +191,7 @@ namespace Lounge.Web.Controllers
         [AllowAnonymous]
         public ActionResult<LeaderboardViewModel> Leaderboard(
             int season,
-            Game game = Game.MK8DX,
+            Game game = Game.mk8dx,
             LeaderboardSortOrder sortBy = LeaderboardSortOrder.Mmr,
             int skip = 0,
             int pageSize = 50,
@@ -320,7 +320,7 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("stats")]
         [AllowAnonymous]
-        public ActionResult<StatsViewModel> Leaderboard(Game game = Game.MK8DX, [ValidSeason] int? season = null)
+        public ActionResult<StatsViewModel> Leaderboard(Game game = Game.mk8dx, [ValidSeason] int? season = null)
         {
             season ??= _loungeSettingsService.CurrentSeason[game];
 
@@ -501,7 +501,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<PlayerViewModel>> Create(string name, int mkcId, int? mmr, Game? game = Game.MK8DX, string? discordId = null)
+        public async Task<ActionResult<PlayerViewModel>> Create(string name, int mkcId, int? mmr, Game? game = Game.mk8dx, string? discordId = null)
         {
             var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(mkcId);
             var normalizedName = PlayerUtils.NormalizeName(name);
@@ -575,7 +575,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<PlayerViewModel>> Register(string name, Game game = Game.MK8DX, int? mmr = null)
+        public async Task<ActionResult<PlayerViewModel>> Register(string name, Game game = Game.mk8dx, int? mmr = null)
         {
             var player = await GetPlayerByNameAsync(name);
             if (player is null)
@@ -585,8 +585,9 @@ namespace Lounge.Web.Controllers
                 return BadRequest("Player is already registered for this game.");
 
             var time = DateTime.UtcNow;
-            player.GameRegistrations.Add(new PlayerGameRegistration
+            _context.PlayerGameRegistrations.Add(new PlayerGameRegistration
             {
+                PlayerId = player.Id,
                 Game = (int)game,
                 RegisteredOn = time
             });
@@ -611,7 +612,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("placement")]
-        public async Task<ActionResult<PlayerViewModel>> Placement(string name, int mmr, Game game = Game.MK8DX, bool force=false)
+        public async Task<ActionResult<PlayerViewModel>> Placement(string name, int mmr, Game game = Game.mk8dx, bool force=false)
         {
             var player = await GetGamePlayerByNameAsync(name, game);
             if (player is null)

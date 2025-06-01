@@ -5,7 +5,7 @@ namespace Lounge.Web.Data.Entities
     public class Penalty
     {
         public int Id { get; set; }
-        public int Game { get; set; } = (int)Models.Enums.Game.MK8DX;
+        public int Game { get; set; } = (int)Models.Enums.Game.mk8dx;
         public int Season { get; set; }
         public DateTime AwardedOn { get; set; }
         public bool IsStrike { get; set; }

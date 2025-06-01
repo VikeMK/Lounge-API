@@ -10,6 +10,10 @@ namespace Lounge.Web.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            var tablesWithChangeTracking = new string[] { "Bonuses", "Penalties", "Placements", "Players", "PlayerSeasonData", "Tables", "TableScores", "NameChanges" };
+            foreach (var table in tablesWithChangeTracking)
+                migrationBuilder.Sql($"ALTER TABLE {table} DISABLE CHANGE_TRACKING", true);
+
             migrationBuilder.DropPrimaryKey(
                 name: "PK_PlayerSeasonData",
                 table: "PlayerSeasonData");
@@ -134,6 +138,9 @@ namespace Lounge.Web.Migrations
                 name: "IX_Bonuses_Game_AwardedOn",
                 table: "Bonuses",
                 columns: new[] { "Game", "AwardedOn" });
+
+            foreach (var table in tablesWithChangeTracking)
+                migrationBuilder.Sql($"ALTER TABLE {table} ENABLE CHANGE_TRACKING", true);
         }
 
         /// <inheritdoc />

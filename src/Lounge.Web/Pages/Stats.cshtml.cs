@@ -19,7 +19,7 @@ namespace Lounge.Web.Pages
         public Game Game { get; set; }
         public int Season { get; set; }
 
-        public IActionResult OnGet(Game game = Game.MK8DX, [ValidSeason] int? season = null)
+        public IActionResult OnGet(Game game = Game.mk8dx, [ValidSeason] int? season = null)
         {
             // if the season is invalid, just redirect to the default stat page
             if (!ModelState.IsValid)

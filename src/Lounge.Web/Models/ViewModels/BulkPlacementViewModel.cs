@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class BulkPlacementViewModel
 {
-    public Game Game { get; set; } = Game.MK8DX;
+    public Game Game { get; set; } = Game.mk8dx;
     public List<PlayerPlacementViewModel> PlayerPlacements { get; set; } = new();
 
     public class PlayerPlacementViewModel

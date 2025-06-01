@@ -20,7 +20,7 @@ namespace Lounge.Web.Pages
         }
         public required PlayerDetailsViewModel Data { get; set; }
 
-        public IActionResult OnGet(int id, Game game = Game.MK8DX, [ValidSeason] int? season = null)
+        public IActionResult OnGet(int id, Game game = Game.mk8dx, [ValidSeason] int? season = null)
         {
             if (!ModelState.IsValid)
                 return RedirectToPage("/PlayerDetails", new { id });

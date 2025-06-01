@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Lounge.Web.Data.Entities;
 using Microsoft.EntityFrameworkCore.Migrations;
+using System;
+using System.Text.RegularExpressions;
 
 #nullable disable
 
@@ -35,6 +37,13 @@ namespace Lounge.Web.Migrations
                 name: "IX_PlayerGameRegistrations_Game",
                 table: "PlayerGameRegistrations",
                 column: "Game");
+
+            migrationBuilder.Sql("ALTER TABLE PlayerGameRegistrations ENABLE CHANGE_TRACKING", true);
+
+            migrationBuilder.Sql(
+                @"INSERT INTO PlayerGameRegistrations (PlayerId, Game, RegisteredOn) 
+                  SELECT PlayerId, 0, MIN(AwardedOn) FROM Placements
+                  GROUP BY PlayerId", true);
         }
 
         /// <inheritdoc />

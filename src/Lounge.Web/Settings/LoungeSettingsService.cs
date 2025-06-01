@@ -10,7 +10,7 @@ namespace Lounge.Web.Settings
     public class LoungeSettingsService : ILoungeSettingsService
     {
         private Lazy<ParsedLoungeSettings> _settings;
-        private static readonly IReadOnlyList<Game> _validGames = [Game.MK8DX];
+        private static readonly IReadOnlyList<Game> _validGames = [Game.mk8dx];
 
         public LoungeSettingsService(IOptionsMonitor<LoungeSettings> optionsMonitor)
         {
