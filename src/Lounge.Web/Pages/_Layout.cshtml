@@ -1,5 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Lounge.Web.Models.Enums
 @inject IViewLocalizer Localizer
+@{
+    // Get the current game from route data, fallback to mk8dx if not available
+    var currentGame = ViewContext.RouteData.Values["game"]?.ToString() ?? Game.mk8dx.GetStringId();
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,25 +17,23 @@
 <body style="background-color: #212121" class="text-light">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
-            <div class="container">
-                <div style="display: flex">
+            <div class="container">                <div style="display: flex">
                     @await Html.PartialAsync("_SelectLanguagePartial")
-                    <a class="navbar-brand" asp-page="Leaderboard">@Localizer["MK8DX 150cc Lounge"]</a>
+                    <a class="navbar-brand" asp-page="Leaderboard" asp-route-game="@currentGame">@Localizer["MK8DX 150cc Lounge"]</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="mainNavbar">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="mainNavbar">                    <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="Leaderboard">@Localizer["Leaderboard"]</a>
+                            <a class="nav-link" asp-page="Leaderboard" asp-route-game="@currentGame">@Localizer["Leaderboard"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="Records">@Localizer["Records"]</a>
+                            <a class="nav-link" asp-page="Records" asp-route-game="@currentGame">@Localizer["Records"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="Stats">@Localizer["Stats"]</a>
+                            <a class="nav-link" asp-page="Stats" asp-route-game="@currentGame">@Localizer["Stats"]</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="https://discord.com/invite/revmGkE">@Localizer["Discord Invite"]</a>

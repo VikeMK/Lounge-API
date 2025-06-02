@@ -1,5 +1,6 @@
-﻿@page "{id:int}"
+﻿@page "/{game}/PlayerDetails/{id:int}"
 @using Lounge.Web.Models.ViewModels
+@using Lounge.Web.Models.Enums
 @using Lounge.Web.Settings
 @using Lounge.Web.Utils
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -22,7 +23,7 @@
                 @foreach (var season in Model.Data.ValidSeasons!)
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Data.Season ? "active" : "")" asp-page="PlayerDetails" asp-route-id="@Model.Data.PlayerId" asp-route-season="@season">@Localizer["Season"] @season</a>
+                        <a class="nav-link @(season == Model.Data.Season ? "active" : "")" asp-page="PlayerDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@Model.Data.PlayerId" asp-route-season="@season">@Localizer["Season"] @season</a>
                     </li>
                 }
             </ul>
@@ -65,10 +66,9 @@
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Localizer[Html.DisplayNameFor(model => model.Data.LargestGain)]</dt>
-            <dd>
-                @if(Model.Data.LargestGainTableId != null)
+            <dd>                @if(Model.Data.LargestGainTableId != null)
                 {
-                    <a asp-page="TableDetails" asp-route-id="@Model.Data.LargestGainTableId">@Html.DisplayFor(model => model.Data.LargestGain)</a>
+                    <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@Model.Data.LargestGainTableId">@Html.DisplayFor(model => model.Data.LargestGain)</a>
                 }
                 else
                 {
@@ -78,10 +78,9 @@
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
             <dt>@Localizer[Html.DisplayNameFor(model => model.Data.LargestLoss)]</dt>
-            <dd>
-                @if(Model.Data.LargestLossTableId != null)
+            <dd>                @if(Model.Data.LargestLossTableId != null)
                 {
-                    <a asp-page="TableDetails" asp-route-id="@Model.Data.LargestLossTableId">@Html.DisplayFor(model => model.Data.LargestLoss)</a>
+                    <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@Model.Data.LargestLossTableId">@Html.DisplayFor(model => model.Data.LargestLoss)</a>
                 }
                 else
                 {
@@ -137,14 +136,13 @@
                 @foreach (var change in Model.Data.MmrChanges)
                 {
                     <tr>
-                        <td>
-                            @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table)
+                        <td>                            @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table)
                             {
-                                <a asp-page="TableDetails" asp-route-id="@change.ChangeId">@TableUtils.TierDisplayName(change.Tier) @TableUtils.FormatDisplay(change.NumTeams!.Value) (ID: @change.ChangeId)</a>
+                                <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@change.ChangeId">@TableUtils.TierDisplayName(change.Tier) @TableUtils.FormatDisplay(change.NumTeams!.Value) (ID: @change.ChangeId)</a>
                             }
                             else if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete)
                             {
-                                <a asp-page="TableDetails" asp-route-id="@change.ChangeId">@Localizer[Html.DisplayTextFor(modelItem => change.Reason)] (ID: @change.ChangeId)</a>
+                                <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@change.ChangeId">@Localizer[Html.DisplayTextFor(modelItem => change.Reason)] (ID: @change.ChangeId)</a>
                             }
                             else
                             {

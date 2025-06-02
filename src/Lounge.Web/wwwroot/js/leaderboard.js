@@ -1,4 +1,5 @@
 ﻿var season = document.getElementById("seasonInput").value;
+var game = document.getElementById("gameInput").value;
 var nameFilterElement = document.getElementById("nameFilter");
 var countryFilterElement = document.getElementById("countryFilter");
 var minMmrFilterElement = document.getElementById("minMmrFilter");
@@ -27,6 +28,7 @@ function refreshLeaderboard(resetPage = true) {
     var currentSortBy = sortBySelectElement.value;
 
     var queryParams = [];
+    queryParams.push(`game=${game}`);
     queryParams.push(`season=${season}`);
     if (page > 1) queryParams.push(`skip=${(page - 1) * pageSize}`);
     if (pageSize !== 50) queryParams.push(`pageSize=${pageSize}`);
@@ -89,7 +91,7 @@ function updateLeaderboard(leaderboardData, page, pageSize) {
 
         // Name Column
         var playerLinkElement = document.createElement("a");
-        playerLinkElement.href = `/PlayerDetails/${player.id}?season=${season}`;
+        playerLinkElement.href = `/${game}/PlayerDetails/${player.id}?season=${season}`;
         playerLinkElement.style = "color:inherit";
         playerLinkElement.appendChild(document.createTextNode(player.name));
         appendCell(playerLinkElement, mmrRankClass);

@@ -1,4 +1,5 @@
-﻿@page
+﻿@page "/{game}/Records"
+@using Lounge.Web.Models.Enums
 @using Lounge.Web.Settings
 @using Lounge.Web.Utils
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -18,11 +19,10 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
-            <ul class="navbar-nav">
-                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
+            <ul class="navbar-nav">                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Records" asp-route-season="@season">@Localizer["Season"] @season</a>
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Records" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@Localizer["Season"] @season</a>
                     </li>
                 }
             </ul>
@@ -40,11 +40,10 @@
         }
 
         <h2>@TableUtils.FormatDisplay(teamCount)</h2>
-        <div class="row mb-4">
-            @foreach (var tier in LoungeSettingsService.RecordsTierOrders[Model.Game][Model.Season])
+        <div class="row mb-4">            @foreach (var tier in LoungeSettingsService.RecordsTierOrders[Model.Game][Model.Season])
             {
                 var tierRecords = Model.Records.Tiers.TryGetValue(tier, out var x) ? x : null;
-                var formatRecords = tierRecords == null ? null : tierRecords.TeamCounts.GetValueOrDefault(teamCount, null);
+                var formatRecords = tierRecords?.TeamCounts.TryGetValue(teamCount, out var y) == true ? y : null;
                 <div class="col-lg-3 col-md-4 col-6 table-responsive">
                     <h5>Tier @tier</h5>
                     <table class="table table-striped table-dark table-sm">
@@ -74,11 +73,10 @@
                                                 {
                                                     <br />
                                                 }
-                                                <a asp-page="PlayerDetails" asp-route-id="@player.Id" asp-route-season="@Model.Season">@player.Name</a>
+                                                <a asp-page="PlayerDetails" asp-route-game="@Model.Game.GetStringId()" asp-route-id="@player.Id" asp-route-season="@Model.Season">@player.Name</a>
                                             }
-                                        </td>
-                                        <td class="align-middle px-1">
-                                            <a asp-page="TableDetails" asp-route-id="@record.TableId">@record.TotalScore</a>
+                                        </td>                                        <td class="align-middle px-1">
+                                            <a asp-page="TableDetails" asp-route-game="@Model.Game.GetStringId()" asp-route-id="@record.TableId">@record.TotalScore</a>
                                         </td>
                                     </tr>
                                 }

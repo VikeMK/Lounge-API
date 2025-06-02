@@ -1,4 +1,5 @@
-﻿@page "{id:int}"
+﻿@page "/{game}/TableDetails/{id:int}"
+@using Lounge.Web.Models.Enums
 @using Microsoft.AspNetCore.Mvc.Localization
 @model Lounge.Web.Pages.TableDetailsPageModel
 @inject IViewLocalizer Localizer
@@ -115,7 +116,7 @@
                         }
                     </td>
                     <td>
-                        <a asp-page="PlayerDetails" asp-route-id="@score.PlayerId">@Html.DisplayFor(modelItem => score.PlayerName)</a>
+                        <a asp-page="PlayerDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@score.PlayerId">@Html.DisplayFor(modelItem => score.PlayerName)</a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => score.Score)

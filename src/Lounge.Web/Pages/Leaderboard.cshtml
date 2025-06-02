@@ -1,6 +1,7 @@
-﻿@page
+﻿@page "/{game}/Leaderboard"
 @using Lounge.Web.Settings
 @using Lounge.Web.Stats
+@using Lounge.Web.Models.Enums
 @using System.Reflection
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -20,11 +21,10 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
-            <ul class="navbar-nav">
-                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
+            <ul class="navbar-nav">                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Leaderboard" asp-route-season="@season">@Localizer["Season"] @season</a>
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Leaderboard" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@Localizer["Season"] @season</a>
                     </li>
                 }
             </ul>
@@ -32,6 +32,7 @@
     </div>
 </div>
 <!form class="mb-3">
+<input type="hidden" value="@Model.Game.GetStringId()" id="gameInput" />
 <input type="hidden" value="@Model.Season" id="seasonInput" />
 <div class="form-row">
     <div class="form-group col-xl-3 col-6">

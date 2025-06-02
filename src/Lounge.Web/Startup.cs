@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -109,7 +110,7 @@ namespace Lounge.Web
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services
-                .AddRazorPages(options => { options.Conventions.AddPageRoute("/Leaderboard", ""); })
+                .AddRazorPages(options => { options.Conventions.AddPageRoute("/Leaderboard", "/{game}"); })
                 .AddViewLocalization();
 
             services.Configure<RequestLocalizationOptions>(options =>
@@ -139,8 +140,17 @@ namespace Lounge.Web
 
             var locOptions = app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(locOptions.Value);
-
-            app.UseHttpsRedirection();
+            
+            var rewriteOptions = new RewriteOptions()
+                .AddRedirect("^$", "mk8dx")  // / -> /mk8dx
+                .AddRedirect("^Leaderboard", "mk8dx/Leaderboard")  // /Leaderboard -> /mk8dx
+                .AddRedirect("^PlayerDetails/([0-9]+)", "mk8dx/PlayerDetails/$1")  // /PlayerDetails/123 -> /mk8dx/PlayerDetails/123
+                .AddRedirect("^TableDetails/([0-9]+)", "mk8dx/TableDetails/$1")  // /TableDetails/456 -> /mk8dx/TableDetails/456
+                .AddRedirect("^Stats", "mk8dx/Stats")  // /Stats -> /mk8dx/Stats
+                .AddRedirect("^Records", "mk8dx/Records");  // /Records -> /mk8dx/Records
+            
+            app.UseRewriter(rewriteOptions);
+            
             app.UseStaticFiles(new StaticFileOptions
             {
                 OnPrepareResponse = ctx =>
