@@ -7,7 +7,7 @@
 @inject IViewLocalizer Localizer
 @model Lounge.Web.Pages.RecordsPageModel
 @{
-    ViewData["Title"] = $"{Localizer.GetString("Records")} - {Localizer.GetString("Season")} {Model.Season}";
+    ViewData["Title"] = $"{Localizer.GetString("Records")} - {GameUtils.GetSeasonDisplayName(Model.Game, Model.Season)}";
     Layout = "_Layout";
     var resultsToShow = 5;
 }
@@ -19,10 +19,11 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
-            <ul class="navbar-nav">                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
+            <ul class="navbar-nav">
+                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Records" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@Localizer["Season"] @season</a>
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Records" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@GameUtils.GetSeasonDisplayName(Model.Game, season)</a>
                     </li>
                 }
             </ul>
@@ -34,13 +35,14 @@
     @{ var teamCounts = new int[] { 12, 6, 4, 3, 2 }; }
     @foreach (var teamCount in teamCounts)
     {
-        @if (Model.Season > 4 && teamCount == 2)
+        @if ((Model.Game == Game.mkworld || Model.Season > 4) && teamCount == 2)
         {
             continue;
         }
 
         <h2>@TableUtils.FormatDisplay(teamCount)</h2>
-        <div class="row mb-4">            @foreach (var tier in LoungeSettingsService.RecordsTierOrders[Model.Game][Model.Season])
+        <div class="row mb-4">
+            @foreach (var tier in LoungeSettingsService.RecordsTierOrders[Model.Game][Model.Season])
             {
                 var tierRecords = Model.Records.Tiers.TryGetValue(tier, out var x) ? x : null;
                 var formatRecords = tierRecords?.TeamCounts.TryGetValue(teamCount, out var y) == true ? y : null;

@@ -9,5 +9,6 @@ namespace Lounge.Web.Settings
         public TimeSpan LeaderboardRefreshDelay { get; set; }
         public required IReadOnlyDictionary<string, int> Ranks { get; set; }
         public required IReadOnlyList<string> RecordsTierOrder { get; set; }
+        public required IReadOnlyDictionary<string, IReadOnlyList<string>> DivisionsToTier { get; set; }
     }
 }

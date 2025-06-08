@@ -12,6 +12,7 @@
         Silver,
         Bronze,
         Iron,
+        Ranked,
         Placement
     }
 }

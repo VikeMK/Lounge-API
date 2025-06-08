@@ -72,13 +72,11 @@ namespace Lounge.Web.Data.ChangeTracking
             foreach (var penalty in penalties)
                 _penalties[penalty.Id] = penalty;
 
+            _playerGameRegistrations[Game.mk8dx] = new();
+            _playerGameRegistrations[Game.mkworld] = new();
             foreach (var playerGameRegistration in playerGameRegistrations)
             {
-                if (!_playerGameRegistrations.TryGetValue((Game)playerGameRegistration.Game, out var registrations))
-                {
-                    registrations = new Dictionary<int, PlayerGameRegistration>();
-                    _playerGameRegistrations[(Game)playerGameRegistration.Game] = registrations;
-                }
+                var registrations = _playerGameRegistrations[(Game)playerGameRegistration.Game];
                 registrations[playerGameRegistration.PlayerId] = playerGameRegistration;
             }
 
@@ -93,6 +91,7 @@ namespace Lounge.Web.Data.ChangeTracking
 
                 seasonData[playerSeasonDataEntry.PlayerId] = playerSeasonDataEntry;
             }
+            _playerSeasonData[(Game.mkworld, 0)] = new Dictionary<int, PlayerSeasonData>();
 
             foreach (var nameChange in nameChanges)
                 _nameChanges[nameChange.Id] = nameChange;

@@ -22,7 +22,9 @@ namespace Lounge.Web.Pages
 
         public Game Game { get; set; }
         public int Season { get; set; }
-        public required IReadOnlySet<string> ValidCountries { get; set; }        public IActionResult OnGet(string game, [ValidSeason] int? season = null)
+        public required IReadOnlySet<string> ValidCountries { get; set; }
+        
+        public IActionResult OnGet(string game, [ValidSeason] int? season = null)
         {
             // Parse the game from route parameter
             if (!Enum.TryParse<Game>(game, ignoreCase: true, out var parsedGame))

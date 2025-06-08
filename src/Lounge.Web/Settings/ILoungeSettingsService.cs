@@ -4,8 +4,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Lounge.Web.Settings
-{
-    public interface ILoungeSettingsService
+{    public interface ILoungeSettingsService
     {
         IReadOnlyList<Game> ValidGames { get; }
         IReadOnlyDictionary<Game, int> CurrentSeason { get; }
@@ -16,5 +15,8 @@ namespace Lounge.Web.Settings
         IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders { get; }
 
         Rank? GetRank(int? mmr, Game game, int season);
+        IReadOnlyDictionary<string, int> GetRanks(Game game, int season);
+        IReadOnlyList<string> GetRecordsTierOrder(Game game, int season);
+        IReadOnlyDictionary<string, IReadOnlyList<string>> GetDivisionsToTier(Game game, int season);
     }
 }

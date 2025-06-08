@@ -403,12 +403,11 @@ namespace Lounge.Web.Controllers
             }
 
             var median = 0;
-
             if (players.Count > 0)
             {
                 divisionData.Add(new StatsViewModel.Division
                 {
-                    Tier = currRank,
+                    Tier = currRank!,
                     Count = tierCount
                 });
 
@@ -422,17 +421,11 @@ namespace Lounge.Web.Controllers
                 int mid = players.Count / 2;
                 if (players.Count % 2 != 0)
                 {
-                    if (players[mid].Mmr != null)
-                    {
-                        median = players[mid].Mmr.Value;
-                    }
+                    median = players[mid].Mmr ?? 0;
                 }
                 else
                 {
-                    if (players[mid].Mmr != null)
-                    {
-                        median = (players[mid].Mmr.Value + players[mid - 1].Mmr.Value) / 2;
-                    }
+                    median = ((players[mid].Mmr ?? 0) + (players[mid - 1].Mmr ?? 0)) / 2;
                 }
 
                 AverageMmr = mmrTotal / players.Count;
@@ -487,7 +480,6 @@ namespace Lounge.Web.Controllers
                 }
                 activityData.TierActivity[table.Tier]++;
             }
-
             return new StatsViewModel
             {
                 TotalPlayers = players.Count,
@@ -496,7 +488,10 @@ namespace Lounge.Web.Controllers
                 MedianMmr = median,
                 DivisionData = divisionData,
                 CountryData = countryData,
-                ActivityData = activityData
+                ActivityData = activityData,
+                Ranks = _loungeSettingsService.GetRanks(game, season.Value),
+                RecordsTierOrder = _loungeSettingsService.GetRecordsTierOrder(game, season.Value),
+                DivisionsToTier = _loungeSettingsService.GetDivisionsToTier(game, season.Value)
             };
         }
 

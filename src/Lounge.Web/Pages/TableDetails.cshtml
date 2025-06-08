@@ -1,11 +1,12 @@
 ﻿@page "/{game}/TableDetails/{id:int}"
 @using Lounge.Web.Models.Enums
+@using Lounge.Web.Utils
 @using Microsoft.AspNetCore.Mvc.Localization
 @model Lounge.Web.Pages.TableDetailsPageModel
 @inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = $"{Localizer.GetString("Table")} (ID: {Model.Data.Id}) - {Localizer.GetString("Season")} {Model.Data.Season}";
+    ViewData["Title"] = $"{Localizer.GetString("Table")} (ID: {Model.Data.Id}) - {GameUtils.GetSeasonDisplayName(Model.Data.Game, Model.Data.Season)}";
     Layout = "_Layout";
 }
 <div>

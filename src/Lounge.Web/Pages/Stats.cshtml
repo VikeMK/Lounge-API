@@ -1,5 +1,6 @@
 @page "/{game}/Stats"
 @using Lounge.Web.Settings
+@using Lounge.Web.Utils
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Lounge.Web.Models.Enums
 @inject ILoungeSettingsService LoungeSettingsService
@@ -7,7 +8,7 @@
 
 @model Lounge.Web.Pages.StatsPageModel
 @{
-    ViewData["Title"] = $"{Localizer.GetString("Stats")} - {Localizer.GetString("Season")} {Model.Season}";
+    ViewData["Title"] = $"{Localizer.GetString("Stats")} - {GameUtils.GetSeasonDisplayName(Model.Game, Model.Season)}";
     Layout = "_Layout";
 }
 
@@ -18,11 +19,10 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
-            <ul class="navbar-nav">
-                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
+            <ul class="navbar-nav">                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Stats" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@Localizer["Season"] @season</a>
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Stats" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@GameUtils.GetSeasonDisplayName(Model.Game, season)</a>
                     </li>
                 }
             </ul>
@@ -147,9 +147,9 @@
     {
                             <script src="~/lib/jquery/jquery.min.js"></script>
                             <script src="~/lib/chartjs/chart.min.js"></script>
-                            <script src="~/js/stats.js"></script>
-                            <script>
+                            <script src="~/js/stats.js"></script>                            <script>
                                 function updatePage(data) {
+                                    initializeGameConfig(data);
                                     updateStatsChart(data);
                                     updateStats(data);
                                     updatePopulationCountryChart(data);

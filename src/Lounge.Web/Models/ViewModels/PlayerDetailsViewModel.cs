@@ -1,4 +1,5 @@
 ﻿using Lounge.Web.Models.Enums;
+using Lounge.Web.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -29,6 +30,9 @@ namespace Lounge.Web.Models.ViewModels
         public Game Game { get; init; }
 
         public int Season { get; init; }
+
+        [JsonIgnore]
+        public string SeasonDisplayName => GameUtils.GetSeasonDisplayName(Game, Season);
 
         [Display(Name = "MMR")]
         [DisplayFormat(NullDisplayText = "Placement")]

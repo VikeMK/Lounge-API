@@ -22,7 +22,9 @@ namespace Lounge.Web.Pages
             _loungeSettingsService = loungeSettingsService;
         }
 
-        public required TableDetailsViewModel Data { get; set; }        public async Task<IActionResult> OnGetAsync(string game, int id)
+        public required TableDetailsViewModel Data { get; set; }
+        
+        public async Task<IActionResult> OnGetAsync(string game, int id)
         {
             // Parse the game from route parameter
             if (!Enum.TryParse<Game>(game, ignoreCase: true, out var parsedGame))

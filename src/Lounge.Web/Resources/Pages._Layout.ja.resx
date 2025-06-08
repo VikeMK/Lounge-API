@@ -123,8 +123,11 @@
   <data name="Leaderboard" xml:space="preserve">
     <value>リーダーボード</value>
   </data>
-  <data name="MK8DX 150cc Lounge" xml:space="preserve">
+  <data name="mk8dx Lounge" xml:space="preserve">
     <value>MK8DX 150cc Lounge</value>
+  </data>
+  <data name="mkworld Lounge" xml:space="preserve">
+    <value>MKWorld Lounge</value>
   </data>
   <data name="Records" xml:space="preserve">
     <value>記録</value>

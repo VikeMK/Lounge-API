@@ -19,7 +19,9 @@ namespace Lounge.Web.Pages
             _loungeSettingsService = loungeSettingsService;
             _playerDetailsViewModelService = playerDetailsViewModelService;
         }
-        public required PlayerDetailsViewModel Data { get; set; }        public IActionResult OnGet(string game, int id, [ValidSeason] int? season = null)
+        public required PlayerDetailsViewModel Data { get; set; }
+        
+        public IActionResult OnGet(string game, int id, [ValidSeason] int? season = null)
         {
             // Parse the game from route parameter
             if (!Enum.TryParse<Game>(game, ignoreCase: true, out var parsedGame))

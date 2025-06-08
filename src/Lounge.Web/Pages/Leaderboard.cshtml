@@ -2,6 +2,7 @@
 @using Lounge.Web.Settings
 @using Lounge.Web.Stats
 @using Lounge.Web.Models.Enums
+@using Lounge.Web.Utils
 @using System.Reflection
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -14,17 +15,18 @@
     Layout = "_Layout";
 }
 
-<div class="navbar navbar-expand-sm navbar-dark bg-dark rounded py-0" style="margin-bottom: 14px;">
-    <div class="container-fluid">
-        <span class="navbar-brand">@Localizer["Seasons"]</span>
+<div class="navbar navbar-expand-lg navbar-dark bg-dark rounded px-lg-1" style="margin-bottom: 14px;">
+    <div class="container-fluid px-0">
+        <span class="navbar-brand d-lg-none">@Localizer["Seasons"]</span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#seasonSelector">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
-            <ul class="navbar-nav">                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
+            <ul class="navbar-nav">
+                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Leaderboard" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@Localizer["Season"] @season</a>
+                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Leaderboard" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@GameUtils.GetSeasonDisplayName(Model.Game, season)</a>
                     </li>
                 }
             </ul>
@@ -43,11 +45,10 @@
         <label for="countryFilter">@Localizer["Country"]</label>
         <!select class="form-control bg-dark text-light" name="country" id="countryFilter" onchange="refreshLeaderboard()">
         <!option value="" selected>@Localizer["All Countries"]</!option>
-
-                @foreach (var country in Model.ValidCountries.OrderBy(c => LoungeSettingsService.CountryNames[c]))
-                {
-            <!option value="@country">@LoungeSettingsService.CountryNames[country]</!option>
-                }
+            @foreach (var country in Model.ValidCountries.OrderBy(c => LoungeSettingsService.CountryNames[c]))
+            {
+                <!option value="@country">@LoungeSettingsService.CountryNames[country]</!option>
+            }
         </!select>
     </div>
     <div class="form-group col-xl-1 col-sm-2 col-3">
@@ -69,12 +70,12 @@
     <div class="form-group col-xl-2 col-sm-4">
         <label for="nameFilter">@Localizer["Sort By"]</label>
         <!select class="form-control bg-dark text-light" name="sortOrder" id="sortBySelect" onchange="refreshLeaderboard()">
-                @foreach (var sortOrder in Enum.GetValues<LeaderboardSortOrder>())
-                {
-                    var enumName = sortOrder.ToString();
-                    var displyName = typeof(LeaderboardSortOrder).GetMember(enumName).First().GetCustomAttribute<DisplayAttribute>()?.GetName() ?? enumName;
-            <!option value="@enumName" @(sortOrder == LeaderboardSortOrder.Mmr ? "selected" : "")>@Localizer[displyName]</!option>
-                }
+            @foreach (var sortOrder in Enum.GetValues<LeaderboardSortOrder>())
+            {
+                var enumName = sortOrder.ToString();
+                var displyName = typeof(LeaderboardSortOrder).GetMember(enumName).First().GetCustomAttribute<DisplayAttribute>()?.GetName() ?? enumName;
+                <!option value="@enumName" @(sortOrder == LeaderboardSortOrder.Mmr ? "selected" : "")>@Localizer[displyName]</!option>
+            }
         </!select>
     </div>
 </div>

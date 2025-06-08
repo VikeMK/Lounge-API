@@ -1,9 +1,14 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @using Lounge.Web.Models.Enums
+@using Lounge.Web.Utils
 @inject IViewLocalizer Localizer
 @{
     // Get the current game from route data, fallback to mk8dx if not available
     var currentGame = ViewContext.RouteData.Values["game"]?.ToString() ?? Game.mk8dx.GetStringId();
+    var gameEnum = Enum.TryParse(typeof(Game), currentGame, true, out var g) ? (Game)g : Game.mk8dx;
+    var discordInvite = gameEnum == Game.mk8dx
+        ? "https://discord.gg/revmGkE"
+        : "https://discord.gg/WR6JKPn2v9";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -16,16 +21,17 @@
 </head>
 <body style="background-color: #212121" class="text-light">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">                <div style="display: flex">
                     @await Html.PartialAsync("_SelectLanguagePartial")
-                    <a class="navbar-brand" asp-page="Leaderboard" asp-route-game="@currentGame">@Localizer["MK8DX 150cc Lounge"]</a>
+                    <a class="navbar-brand" asp-page="Leaderboard" asp-route-game="@currentGame">@Localizer[$"{gameEnum} Lounge"]</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="mainNavbar">                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between" id="mainNavbar">
+                    <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link" asp-page="Leaderboard" asp-route-game="@currentGame">@Localizer["Leaderboard"]</a>
                         </li>
@@ -36,10 +42,22 @@
                             <a class="nav-link" asp-page="Stats" asp-route-game="@currentGame">@Localizer["Stats"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="https://discord.com/invite/revmGkE">@Localizer["Discord Invite"]</a>
+                            <a class="nav-link" href="@discordInvite">@Localizer["Discord Invite"]</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="https://docs.google.com/document/d/e/2PACX-1vQSfo4pVT4e0HTdJ-djk8OAwVIFoR3nrVpIcx7nW2K-mv0Y4wA9qLZo4sXB09egguOONnqC8n22b1_c/pub">@Localizer["Rules"]</a>
+                        </li>
+                        <li class="nav-item">
+                            @{
+                                var otherGame = gameEnum == Game.mk8dx ? Game.mkworld : Game.mk8dx;
+                                var otherGameKey = $"{otherGame} Lounge";
+                            }
+                            <a class="nav-link" asp-page="Leaderboard" asp-route-game="@otherGame.ToString().ToLower()">
+                                @Localizer[otherGameKey]
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://mkcentral.com">MKCentral</a>
                         </li>
                     </ul>
                 </div>
@@ -54,7 +72,7 @@
 
     <footer class="border-top footer bg-dark">
         <div class="container">
-            &copy; 2022 - Lounge
+            © 2018-2025 mkcentral.com Mario Kart™ and © Nintendo
         </div>
     </footer>
     <script src="~/lib/jquery/jquery.min.js"></script>

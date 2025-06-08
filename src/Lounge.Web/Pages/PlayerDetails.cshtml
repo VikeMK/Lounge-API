@@ -8,7 +8,7 @@
 @inject IViewLocalizer Localizer
 @model Lounge.Web.Pages.PlayerDetailsPageModel
 @{
-    ViewData["Title"] = $"{Model.Data.Name} - {Localizer.GetString("Season")} {Model.Data.Season}";
+    ViewData["Title"] = $"{Model.Data.Name} - {Model.Data.SeasonDisplayName}";
     Layout = "_Layout";
 }
 
@@ -23,7 +23,7 @@
                 @foreach (var season in Model.Data.ValidSeasons!)
                 {
                     <li class="nav-item">
-                        <a class="nav-link @(season == Model.Data.Season ? "active" : "")" asp-page="PlayerDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@Model.Data.PlayerId" asp-route-season="@season">@Localizer["Season"] @season</a>
+                        <a class="nav-link @(season == Model.Data.Season ? "active" : "")" asp-page="PlayerDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@Model.Data.PlayerId" asp-route-season="@season">@GameUtils.GetSeasonDisplayName(Model.Data.Game, season)</a>
                     </li>
                 }
             </ul>

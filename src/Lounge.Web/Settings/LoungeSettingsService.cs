@@ -10,7 +10,7 @@ namespace Lounge.Web.Settings
     public class LoungeSettingsService : ILoungeSettingsService
     {
         private Lazy<ParsedLoungeSettings> _settings;
-        private static readonly IReadOnlyList<Game> _validGames = [Game.mk8dx];
+        private static readonly IReadOnlyList<Game> _validGames = [Game.mk8dx, Game.mkworld];
 
         public LoungeSettingsService(IOptionsMonitor<LoungeSettings> optionsMonitor)
         {
@@ -31,7 +31,7 @@ namespace Lounge.Web.Settings
         public IReadOnlyDictionary<Game, IReadOnlyDictionary<int, double>> SquadQueueMultipliers => _settings.Value.SquadQueueMultipliers;
 
         public IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders => _settings.Value.RecordsTierOrders;
-
+        
         public Rank? GetRank(int? mmr, Game game, int season)
         {
             if (_settings.Value.MmrRanks[game].TryGetValue(season, out var mmrRanks))
@@ -54,14 +54,41 @@ namespace Lounge.Web.Settings
             return null;
         }
 
-        record ParsedLoungeSettings(
+        public IReadOnlyDictionary<string, int> GetRanks(Game game, int season)
+        {
+            if (_settings.Value.RanksByName[game].TryGetValue(season, out var ranks))
+            {
+                return ranks;
+            }
+            return new Dictionary<string, int>();
+        }
+
+        public IReadOnlyList<string> GetRecordsTierOrder(Game game, int season)
+        {
+            if (_settings.Value.RecordsTierOrders[game].TryGetValue(season, out var tierOrder))
+            {
+                return tierOrder;
+            }
+            return Array.Empty<string>();
+        }
+
+        public IReadOnlyDictionary<string, IReadOnlyList<string>> GetDivisionsToTier(Game game, int season)
+        {
+            if (_settings.Value.DivisionsToTier[game].TryGetValue(season, out var divisionsToTier))
+            {
+                return divisionsToTier;
+            }
+            return new Dictionary<string, IReadOnlyList<string>>();
+        }record ParsedLoungeSettings(
             IReadOnlyDictionary<Game, int> CurrentSeason,
             IReadOnlyDictionary<Game, IReadOnlyList<int>> ValidSeasons,
             IReadOnlyDictionary<Game, IReadOnlyDictionary<int, TimeSpan>> LeaderboardRefreshDelays,
             IReadOnlyDictionary<Game, IReadOnlyDictionary<int, double>> SquadQueueMultipliers,
             IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>> MmrRanks,
             IReadOnlyDictionary<string, string> CountryNames,
-            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders)
+            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders,
+            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyDictionary<string, int>>> RanksByName,
+            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<string>>>> DivisionsToTier)
         {
             public static ParsedLoungeSettings Create(LoungeSettings loungeSettings)
             {
@@ -71,6 +98,8 @@ namespace Lounge.Web.Settings
                 var allSqMultipliers = new Dictionary<Game, IReadOnlyDictionary<int, double>>();
                 var allMmrRanks = new Dictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>>();
                 var allRecordsTierOrders = new Dictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>>();
+                var allRanksByName = new Dictionary<Game, IReadOnlyDictionary<int, IReadOnlyDictionary<string, int>>>();
+                var allDivisionsToTier = new Dictionary<Game, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<string>>>>();
 
                 foreach ((var gameStr, var gameSettings) in loungeSettings.Games)
                 {
@@ -81,6 +110,8 @@ namespace Lounge.Web.Settings
                     var sqMultipliers = new Dictionary<int, double>();
                     var mmrRanks = new Dictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>();
                     var recordsTierOrders = new Dictionary<int, IReadOnlyList<string>>();
+                    var ranksByName = new Dictionary<int, IReadOnlyDictionary<string, int>>();
+                    var divisionsToTier = new Dictionary<int, IReadOnlyDictionary<string, IReadOnlyList<string>>>();
 
                     foreach ((var seasonStr, var settings) in gameSettings.Seasons)
                     {
@@ -90,6 +121,8 @@ namespace Lounge.Web.Settings
                             refreshDelays[season] = settings.LeaderboardRefreshDelay;
                             sqMultipliers[season] = settings.SquadQueueMultiplier;
                             recordsTierOrders[season] = settings.RecordsTierOrder;
+                            ranksByName[season] = settings.Ranks;
+                            divisionsToTier[season] = settings.DivisionsToTier;
 
                             var seasonRanks = new List<(int Mmr, Rank Rank)>();
 
@@ -112,17 +145,18 @@ namespace Lounge.Web.Settings
                             mmrRanks[season] = seasonRanks;
                         }
                     }
-
                     currentSeason[game] = gameSettings.CurrentSeason;
                     allValidSeasons[game] = validSeasons;
                     allRefreshDelays[game] = refreshDelays;
                     allSqMultipliers[game] = sqMultipliers;
                     allMmrRanks[game] = mmrRanks;
                     allRecordsTierOrders[game] = recordsTierOrders;
+                    allRanksByName[game] = ranksByName;
+                    allDivisionsToTier[game] = divisionsToTier;
                 }
 
 
-                return new(currentSeason, allValidSeasons, allRefreshDelays, allSqMultipliers, allMmrRanks, loungeSettings.CountryNames, allRecordsTierOrders); ;
+                return new(currentSeason, allValidSeasons, allRefreshDelays, allSqMultipliers, allMmrRanks, loungeSettings.CountryNames, allRecordsTierOrders, allRanksByName, allDivisionsToTier);
             }
         }
     }

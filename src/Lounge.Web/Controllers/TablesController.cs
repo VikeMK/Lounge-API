@@ -80,8 +80,12 @@ namespace Lounge.Web.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, Game game = Game.mk8dx, bool squadQueue = false)
         {
-            if (vm.Scores.Count != 12)
+            var numPlayers = vm.Scores.Count;
+            if (game == Game.mk8dx && numPlayers != 12)
                 return BadRequest("Must supply 12 scores");
+
+            if (game == Game.mkworld && numPlayers < 12)
+                return BadRequest("Must supply at least 12 scores");
 
             var playerNames = vm.Scores.Select(s => s.PlayerName).ToHashSet();
             var normalizedPlayerNames = playerNames.Select(PlayerUtils.NormalizeName).ToHashSet();
@@ -105,10 +109,15 @@ namespace Lounge.Web.Controllers
             var playerCountryCodeLookup = players.ToDictionary(p => p.Name, p => p.CountryCode);
 
             int numTeams = vm.Scores.Max(s => s.Team) + 1;
-            if (numTeams is not (2 or 3 or 4 or 6 or 12))
+            if (game == Game.mk8dx && numTeams is not (2 or 3 or 4 or 6 or 12))
                 return BadRequest("Invalid number of teams");
 
-            int playersPerTeam = 12 / numTeams;
+            int playersPerTeam = numPlayers / numTeams;
+            if (playersPerTeam * numTeams != numPlayers)
+                return BadRequest($"Invalid number of players: {numPlayers} is not divisible by {numTeams}");
+
+            if (playersPerTeam is not (1 or 2 or 3 or 4 or 6))
+                return BadRequest($"Invalid number of players per team. Must be 1, 2, 3, 4, or 6");
 
             var tableScores = new List<TableScore>();
             foreach (var score in vm.Scores)

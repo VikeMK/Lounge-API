@@ -40,9 +40,7 @@ namespace Lounge.Web.Models.ViewModels
             public required string Name { get; init; }
 
             public int Mmr { get; init; }
-        }
-
-        public required Activity ActivityData { get; init; }
+        }        public required Activity ActivityData { get; init; }
 
         public class Activity
         {
@@ -54,5 +52,12 @@ namespace Lounge.Web.Models.ViewModels
 
             public required Dictionary<string, int> TierActivity { get; init; }
         }
+
+        // Season configuration data
+        public required IReadOnlyDictionary<string, int> Ranks { get; init; }
+
+        public required IReadOnlyList<string> RecordsTierOrder { get; init; }
+
+        public required IReadOnlyDictionary<string, IReadOnlyList<string>> DivisionsToTier { get; init; }
     }
 }
