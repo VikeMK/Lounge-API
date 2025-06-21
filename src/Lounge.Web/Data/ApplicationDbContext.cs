@@ -22,6 +22,7 @@ namespace Lounge.Web.Data
         public DbSet<Table> Tables => Set<Table>();
         public DbSet<TableScore> TableScores => Set<TableScore>();
         public DbSet<Penalty> Penalties => Set<Penalty>();
+        public DbSet<PenaltyRequest> PenaltyRequests => Set<PenaltyRequest>();
         public DbSet<Bonus> Bonuses => Set<Bonus>();
         public DbSet<Placement> Placements => Set<Placement>();
         public DbSet<NameChange> NameChanges => Set<NameChange>();
@@ -36,6 +37,7 @@ namespace Lounge.Web.Data
             modelBuilder.Entity<Table>().ToTable("Tables");
             modelBuilder.Entity<TableScore>().ToTable("TableScores");
             modelBuilder.Entity<Penalty>().ToTable("Penalties");
+            modelBuilder.Entity<PenaltyRequest>().ToTable("PenaltyRequests");
             modelBuilder.Entity<Bonus>().ToTable("Bonuses");
             modelBuilder.Entity<Placement>().ToTable("Placements");
             modelBuilder.Entity<NameChange>().ToTable("NameChanges");
