@@ -14,6 +14,7 @@ const staticConfig = {
     Silver: "#cccccc",
     Bronze: "#b45f06",
     Iron: "#817876",
+    Ranked: "#b45f06"
   },
   CountryNames: {
     AF: "Afghanistan",

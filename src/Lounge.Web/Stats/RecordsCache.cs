@@ -1,6 +1,7 @@
 ﻿using Lounge.Web.Data.ChangeTracking;
 using Lounge.Web.Data.Entities;
 using Lounge.Web.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +22,7 @@ namespace Lounge.Web.Stats
             if (_resultsBySeason.TryGetValue((game, season), out SeasonRecords? results))
                 return results;
 
-            return new SeasonRecords(new Dictionary<string, TierRecords>());
+            return new SeasonRecords(new Dictionary<string, TierRecords>(StringComparer.OrdinalIgnoreCase));
         }
 
         public void OnChange(IDbCache dbCache)
@@ -39,7 +40,8 @@ namespace Lounge.Web.Stats
                 .Where(t => t.Key != "SQ")
                 .ToDictionary(
                     s => s.Key,
-                    s => GetTierRecords(s, dbCache));
+                    s => GetTierRecords(s, dbCache),
+                    StringComparer.OrdinalIgnoreCase);
 
             return new(dict);
         }
@@ -47,6 +49,7 @@ namespace Lounge.Web.Stats
         private static TierRecords GetTierRecords(IEnumerable<Table> seasonTables, IDbCache dbCache)
         {
             var dict = seasonTables
+                .Where(t => dbCache.TableScores[t.Id].Count == 12) // TODO: Add support for 24 player records
                 .GroupBy(t => t.NumTeams)
                 .ToDictionary(
                     s => s.Key,

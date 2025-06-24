@@ -11,7 +11,7 @@
 
 @model Lounge.Web.Pages.LeaderboardPageModel
 @{
-    ViewData["Title"] = $"{Localizer.GetString("Leaderboard")} - {Localizer.GetString("Season")} {Model.Season}";
+    ViewData["Title"] = $"{Localizer.GetString("Leaderboard")} - {GameUtils.GetSeasonDisplayName(Model.Game, Model.Season)}";
     Layout = "_Layout";
 }
 
@@ -33,6 +33,14 @@
         </div>
     </div>
 </div>
+
+@if (Model.CachesBeingBuilt)
+{
+    <div class="alert alert-warning text-center mb-3">
+        <strong>@Localizer["Maintenance in Progress"]</strong> - @Localizer["The site is currently undergoing maintenance. Please check back in approximately 20 minutes."]
+    </div>
+}
+
 <!form class="mb-3">
 <input type="hidden" value="@Model.Game.GetStringId()" id="gameInput" />
 <input type="hidden" value="@Model.Season" id="seasonInput" />

@@ -1,10 +1,10 @@
-using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Models.Enums;
 using Lounge.Web.Settings;
 using Lounge.Web.Stats;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
+using System.Linq;
 
 namespace Lounge.Web.Pages
 {
@@ -23,11 +23,14 @@ namespace Lounge.Web.Pages
         public int Season { get; set; }
         public required RecordsCache.SeasonRecords Records { get; set; }
         
-        public IActionResult OnGet(string game, [ValidSeason] int? season = null)
+        public IActionResult OnGet(string game, int? season = null)
         {
             // Parse the game from route parameter
             if (!Enum.TryParse<Game>(game, ignoreCase: true, out var parsedGame))
                 return NotFound();
+
+            if (season != null && !_loungeSettingsService.ValidSeasons[parsedGame].Contains(season.Value))
+                ModelState.AddModelError(nameof(season), $"Invalid season {season} for game {parsedGame}");
 
             // if the season is invalid, just redirect to the default records page
             if (!ModelState.IsValid)

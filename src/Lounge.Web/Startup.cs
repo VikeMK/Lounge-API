@@ -38,7 +38,7 @@ namespace Lounge.Web
             services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddResponseCaching();
+            //services.AddResponseCaching();
             services.AddControllers()
                 .AddJsonOptions(o =>
                 {
@@ -165,7 +165,7 @@ namespace Lounge.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseResponseCaching();
+            //app.UseResponseCaching();
 
             app.UseEndpoints(endpoints =>
             {

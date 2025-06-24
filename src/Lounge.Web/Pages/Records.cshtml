@@ -32,6 +32,7 @@
 </div>
 
 <div>
+    <!-- TODO: Support 24 player records -->
     @{ var teamCounts = new int[] { 12, 6, 4, 3, 2 }; }
     @foreach (var teamCount in teamCounts)
     {
@@ -40,7 +41,7 @@
             continue;
         }
 
-        <h2>@TableUtils.FormatDisplay(teamCount)</h2>
+        <h2>@TableUtils.FormatDisplay(teamCount, 12)</h2>
         <div class="row mb-4">
             @foreach (var tier in LoungeSettingsService.RecordsTierOrders[Model.Game][Model.Season])
             {
@@ -77,7 +78,8 @@
                                                 }
                                                 <a asp-page="PlayerDetails" asp-route-game="@Model.Game.GetStringId()" asp-route-id="@player.Id" asp-route-season="@Model.Season">@player.Name</a>
                                             }
-                                        </td>                                        <td class="align-middle px-1">
+                                        </td>
+                                        <td class="align-middle px-1">
                                             <a asp-page="TableDetails" asp-route-game="@Model.Game.GetStringId()" asp-route-id="@record.TableId">@record.TotalScore</a>
                                         </td>
                                     </tr>

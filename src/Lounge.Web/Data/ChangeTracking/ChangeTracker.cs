@@ -53,7 +53,7 @@ namespace Lounge.Web.Data.ChangeTracking
 #pragma warning disable EF1002 // Risk of vulnerability to SQL injection.
             where TEntity : class =>
             await _context.Set<TChange>()
-                .FromSqlRaw($"SELECT * FROM CHANGETABLE(CHANGES dbo.{tableName}, {{0}}) AS CT", lastSynchronizationVersion)
+                .FromSqlRaw($"SELECT * FROM CHANGETABLE(CHANGES dbo.{tableName}, {{0}}) AS CT", Math.Max(0, lastSynchronizationVersion - 1))
                 .Include(x => x.Entity)
                 .ToListAsync();
 #pragma warning restore EF1002 // Risk of vulnerability to SQL injection.

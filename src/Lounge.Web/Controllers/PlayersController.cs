@@ -10,7 +10,6 @@ using System.Linq;
 using Lounge.Web.Stats;
 using System.Collections.Generic;
 using Lounge.Web.Settings;
-using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Data.Entities;
 using Lounge.Web.Data.ChangeTracking;
 using Lounge.Web.Models.Enums;
@@ -43,8 +42,11 @@ namespace Lounge.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, string? fc, Game game = Game.mk8dx, [ValidSeason]int? season = null)
+        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, string? fc, Game game = Game.mk8dx, int? season = null)
         {
+            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
+                return BadRequest($"Invalid season {season} for game {game}");
+
             season ??= _loungeSettingsService.CurrentSeason[game];
 
             Player? player;
@@ -130,8 +132,11 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("details")]
         [AllowAnonymous]
-        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, string? discordId = null, string? fc = null, Game game = Game.mk8dx, [ValidSeason] int? season = null)
+        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, string? discordId = null, string? fc = null, Game game = Game.mk8dx, int? season = null)
         {
+            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
+                return BadRequest($"Invalid season {season} for game {game}");
+
             season ??= _loungeSettingsService.CurrentSeason[game];
 
             int? playerId;
@@ -163,13 +168,17 @@ namespace Lounge.Web.Controllers
             if (vm is null)
                 return NotFound();
 
+            Response.Headers.CacheControl = "public, max-age=180";
             return vm;
         }
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public ActionResult<PlayerListViewModel> Players(int? minMmr, int? maxMmr, Game game = Game.mk8dx, [ValidSeason] int? season=null)
+        public ActionResult<PlayerListViewModel> Players(int? minMmr, int? maxMmr, Game game = Game.mk8dx, int? season=null)
         {
+            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
+                return BadRequest($"Invalid season {season} for game {game}");
+
             season ??= _loungeSettingsService.CurrentSeason[game];
 
             var players = _playerStatCache
@@ -184,6 +193,7 @@ namespace Lounge.Web.Controllers
                     p.EventsPlayed))
                 .ToList();
 
+            Response.Headers.CacheControl = "public, max-age=600"; // Cache for 10 minutes
             return new PlayerListViewModel { Players = players };
         }
 
@@ -300,6 +310,8 @@ namespace Lounge.Web.Controllers
                 playerCount++;
             }
 
+            Response.Headers.CacheControl = "public, max-age=60";
+
             return new LeaderboardViewModel
             {
                 TotalPlayers = playerCount,
@@ -320,8 +332,11 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("stats")]
         [AllowAnonymous]
-        public ActionResult<StatsViewModel> Leaderboard(Game game = Game.mk8dx, [ValidSeason] int? season = null)
+        public ActionResult<StatsViewModel> Stats(Game game = Game.mk8dx, int? season = null)
         {
+            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
+                return BadRequest($"Invalid season {season} for game {game}");
+
             season ??= _loungeSettingsService.CurrentSeason[game];
 
             var players = _playerStatCache
@@ -335,12 +350,12 @@ namespace Lounge.Web.Controllers
                 .ToList();
 
             var divisionData = new List<StatsViewModel.Division>();
-            var countryData = new Dictionary<string, StatsViewModel.Country>();
+            var countryData = new Dictionary<string, StatsViewModel.Country>(StringComparer.OrdinalIgnoreCase);
             var activityData = new StatsViewModel.Activity
             {
-                FormatData = new Dictionary<string, int>(),
-                DailyActivity = new Dictionary<string, Dictionary<string, int>>(),
-                DayOfWeekActivity = new Dictionary<string, int>
+                FormatData = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase),
+                DailyActivity = new Dictionary<string, Dictionary<string, int>>(StringComparer.OrdinalIgnoreCase),
+                DayOfWeekActivity = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
                 {
                     { "Sunday", 0 },
                     { "Monday", 0 },
@@ -350,7 +365,7 @@ namespace Lounge.Web.Controllers
                     { "Friday", 0 },
                     { "Saturday", 0 },
                 },
-                TierActivity = new Dictionary<string, int>()
+                TierActivity = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
             };
             string? currRank = null;
             var mmrTotal = 0;
@@ -436,7 +451,8 @@ namespace Lounge.Web.Controllers
                 .Select(t => new StatsTableViewModel.Table(
                     t.CreatedOn,
                     t.NumTeams,
-                    t.Tier
+                    t.Tier,
+                    _dbCache.TableScores[t.Id].Count
                 ))
                 .ToList();
 
@@ -445,7 +461,7 @@ namespace Lounge.Web.Controllers
                 mogiTotal++;
                 if (table.Tier != "SQ")
                 {
-                    var tableFormat = TableUtils.FormatDisplay(table.NumTeams)!;
+                    var tableFormat = TableUtils.FormatDisplay(table.NumTeams, table.NumPlayers)!;
                     if (!activityData.FormatData.ContainsKey(tableFormat))
                     {
                         activityData.FormatData[tableFormat] = 0;
@@ -458,7 +474,7 @@ namespace Lounge.Web.Controllers
 
                 if (!activityData.DailyActivity.ContainsKey(normalizedTime))
                 {
-                    var dictionary = new Dictionary<string, int>
+                    var dictionary = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
                     {
                         { "Total", 0 }
                     };
@@ -480,6 +496,9 @@ namespace Lounge.Web.Controllers
                 }
                 activityData.TierActivity[table.Tier]++;
             }
+
+            Response.Headers.CacheControl = "public, max-age=600";
+
             return new StatsViewModel
             {
                 TotalPlayers = players.Count,

@@ -2,5 +2,5 @@
 
 namespace Lounge.Web.Stats
 {
-    public record EventData(int Id, int NumTeams, string Tier, DateTime VerifiedOn);
+    public record EventData(int Id, int NumTeams, int NumPlayers, string Tier, DateTime VerifiedOn);
 }

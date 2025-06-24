@@ -4,7 +4,8 @@ using System;
 using System.Collections.Generic;
 
 namespace Lounge.Web.Settings
-{    public interface ILoungeSettingsService
+{    
+    public interface ILoungeSettingsService
     {
         IReadOnlyList<Game> ValidGames { get; }
         IReadOnlyDictionary<Game, int> CurrentSeason { get; }

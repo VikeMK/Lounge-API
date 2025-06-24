@@ -79,7 +79,9 @@ namespace Lounge.Web.Settings
                 return divisionsToTier;
             }
             return new Dictionary<string, IReadOnlyList<string>>();
-        }record ParsedLoungeSettings(
+        }
+        
+        record ParsedLoungeSettings(
             IReadOnlyDictionary<Game, int> CurrentSeason,
             IReadOnlyDictionary<Game, IReadOnlyList<int>> ValidSeasons,
             IReadOnlyDictionary<Game, IReadOnlyDictionary<int, TimeSpan>> LeaderboardRefreshDelays,

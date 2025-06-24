@@ -8,7 +8,7 @@ namespace Lounge.Web.Models.ViewModels
 {
     public class TableDetailsViewModel
     {
-        public TableDetailsViewModel(int id, Game game, int season, DateTime createdOn, DateTime? verifiedOn, DateTime? deletedOn, int numTeams, string url, string tier, List<Team> teams, string? tableMessageId, string? updateMessageId, string? authorId)
+        public TableDetailsViewModel(int id, Game game, int season, DateTime createdOn, DateTime? verifiedOn, DateTime? deletedOn, int numTeams, int numPlayers, string url, string tier, List<Team> teams, string? tableMessageId, string? updateMessageId, string? authorId)
         {
             Id = id;
             Game = game;
@@ -17,6 +17,7 @@ namespace Lounge.Web.Models.ViewModels
             VerifiedOn = verifiedOn;
             DeletedOn = deletedOn;
             NumTeams = numTeams;
+            NumPlayers = numPlayers;
             Url = url ?? throw new ArgumentNullException(nameof(url));
             Tier = tier?.ToUpperInvariant() ?? throw new ArgumentNullException(nameof(tier));
             Teams = teams ?? throw new ArgumentNullException(nameof(teams));
@@ -46,7 +47,9 @@ namespace Lounge.Web.Models.ViewModels
 
         public int NumTeams { get; set; }
 
-        public string Format => TableUtils.FormatDisplay(NumTeams) ?? $"Invalid Format: {NumTeams} teams";
+        public int NumPlayers { get; set; }
+
+        public string Format => TableUtils.FormatDisplay(NumTeams, NumPlayers) ?? $"Invalid Format";
 
         [Display(Name = "Table Image")]
         public string Url { get; set; }

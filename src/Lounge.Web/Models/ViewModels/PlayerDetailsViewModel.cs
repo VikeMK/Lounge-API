@@ -115,7 +115,7 @@ namespace Lounge.Web.Models.ViewModels
 
         public class MmrChange
         {
-            public MmrChange(int? changeId, int newMmr, int mmrDelta, MmrChangeReason reason, DateTime time, int? score = null, IReadOnlyList<int>? partnerScores = null, IReadOnlyList<int>? partnerIds = null, int? rank = null, string? tier = null, int? numTeams = null)
+            public MmrChange(int? changeId, int newMmr, int mmrDelta, MmrChangeReason reason, DateTime time, int? score = null, IReadOnlyList<int>? partnerScores = null, IReadOnlyList<int>? partnerIds = null, int? rank = null, string? tier = null, int? numTeams = null, int? numPlayers = null)
             {
                 ChangeId = changeId;
                 NewMmr = newMmr;
@@ -128,6 +128,7 @@ namespace Lounge.Web.Models.ViewModels
                 Rank = rank;
                 Tier = tier;
                 NumTeams = numTeams;
+                NumPlayers = numPlayers;
             }
 
             public int? ChangeId { get; set; }
@@ -149,6 +150,7 @@ namespace Lounge.Web.Models.ViewModels
             public int? Rank { get; set; }
             public string? Tier { get; set; }
             public int? NumTeams { get; set; }
+            public int? NumPlayers { get; set; }
         }
 
         public record NameChange(string Name, DateTime ChangedOn);

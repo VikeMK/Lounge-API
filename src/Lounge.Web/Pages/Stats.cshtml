@@ -19,7 +19,8 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
-            <ul class="navbar-nav">                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
+            <ul class="navbar-nav">
+                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
                 {
                     <li class="nav-item">
                         <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Stats" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@GameUtils.GetSeasonDisplayName(Model.Game, season)</a>

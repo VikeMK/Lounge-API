@@ -79,16 +79,18 @@ namespace Lounge.Web.Stats
                     }
 
                     var tablesLookup = new Dictionary<int, EventData>();
-                    foreach (var table in dbCache.Tables.Values.Where(v => v.Season == season && v.Game == (int)game && v.VerifiedOn != null && v.DeletedOn == null))
+                    foreach (var table in dbCache.Tables.Values
+                        .Where(v => v.Season == season && v.Game == (int)game && v.VerifiedOn != null && v.DeletedOn == null))
                     {
-                        var eventData = new EventData(table.Id, table.NumTeams, table.Tier, table.VerifiedOn!.Value);
-                        tablesLookup[table.Id] = eventData;
-
-                        var formatMultiplier = string.Equals(table.Tier, "SQ", StringComparison.OrdinalIgnoreCase) ? sqMultiplier : 1;
-
                         var tableScores = dbCache.TableScores.GetValueOrDefault(table.Id)?.Values?.ToList();
                         if (tableScores is null)
                             continue;
+
+                        var numPlayers = tableScores.Count;
+                        var eventData = new EventData(table.Id, table.NumTeams, numPlayers, table.Tier, table.VerifiedOn!.Value);
+                        tablesLookup[table.Id] = eventData;
+
+                        var formatMultiplier = string.Equals(table.Tier, "SQ", StringComparison.OrdinalIgnoreCase) ? sqMultiplier : 1;
 
                         foreach (var tableScore in tableScores)
                         {
@@ -96,6 +98,11 @@ namespace Lounge.Web.Stats
                             var mmrDelta = tableScore.NewMmr!.Value - tableScore.PrevMmr!.Value;
                             var partnerScores = tableScores.Where(s => s.Team == tableScore.Team && s.PlayerId != tableScore.PlayerId).Select(s => s.Score).ToList();
                             var playerEventData = new PlayerEventData(tableScore.TableId, tableScore.Score, tableScore.Multiplier, mmrDelta, partnerScores, eventData);
+                            if (!playerEventsLookup.ContainsKey(tableScore.PlayerId))
+                            {
+                                Console.Error.WriteLine($"Player game registration for player {tableScore.PlayerId} in game {game} not found when processing table {table.Id}.");
+                                continue;
+                            }
                             playerEventsLookup[tableScore.PlayerId].Add(playerEventData);
                         }
                     }

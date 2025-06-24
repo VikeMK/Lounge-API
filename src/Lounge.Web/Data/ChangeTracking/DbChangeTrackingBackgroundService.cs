@@ -97,18 +97,32 @@ namespace Lounge.Web.Data.ChangeTracking
 
         private async Task<long> HandleChanges(long lastSynchronizationVersion)
         {
+            long synchronizationVersion;
             try
             {
                 using var scope = _services.CreateScope();
                 var changeTracker = scope.ServiceProvider.GetRequiredService<IChangeTracker>();
 
-                var synchronizationVersion = await changeTracker.GetCurrentSynchronizationVersionAsync();
+                synchronizationVersion = await changeTracker.GetCurrentSynchronizationVersionAsync();
+                if (synchronizationVersion == lastSynchronizationVersion)
+                    return lastSynchronizationVersion;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception thrown when passing changes to subscribers");
+                return lastSynchronizationVersion;
+            }
+
+            try
+            {
+                using var scope = _services.CreateScope();
+                var changeTracker = scope.ServiceProvider.GetRequiredService<IChangeTracker>();
 
                 var bonuses = await changeTracker.GetBonusChangesAsync(lastSynchronizationVersion);
                 var penalties = await changeTracker.GetPenaltyChangesAsync(lastSynchronizationVersion);
                 var placements = await changeTracker.GetPlacementChangesAsync(lastSynchronizationVersion);
                 var players = await changeTracker.GetPlayerChangesAsync(lastSynchronizationVersion);
-                var playerGameRegistrations = await changeTracker.GetPlayerGameRegistrationChangesAsync(lastSynchronizationVersion);
+                var playerGameRegistrations = await changeTracker.GetPlayerGameRegistrationChangesAsync(lastSynchronizationVersion - 100);
                 var playerSeasonData = await changeTracker.GetPlayerSeasonDataChangesAsync(lastSynchronizationVersion);
                 var tables = await changeTracker.GetTableChangesAsync(lastSynchronizationVersion);
                 var tableScores = await changeTracker.GetTableScoreChangesAsync(lastSynchronizationVersion);

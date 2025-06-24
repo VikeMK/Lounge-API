@@ -113,6 +113,14 @@ namespace Lounge.Web.Utils
 
             int[] teamDeltas = Enumerable.Range(0, numTeams).Select(GetTeamMmrDelta).ToArray();
 
+            if (numTeams * playersPerTeam == 24)
+            {
+                var teamsWith24 = 24 / playersPerTeam;
+                var teamsWith12 = 12 / playersPerTeam;
+                var scalingRatio = 1.25 * ((teamsWith12 - 1.0) / (teamsWith24 - 1.0));
+                teamDeltas = teamDeltas.Select(delta => (int)Math.Round(delta * scalingRatio)).ToArray();
+            }
+
             var deltas = new Dictionary<string, int>();
             for (int i = 0; i < numTeams; i++)
             {
@@ -231,6 +239,7 @@ namespace Lounge.Web.Utils
                 verifiedOn: table.VerifiedOn,
                 deletedOn: table.DeletedOn,
                 numTeams: table.NumTeams,
+                numPlayers: teams.Sum(t => t.Scores.Count),
                 url: url,
                 tier: table.Tier,
                 teams: teams,
@@ -252,14 +261,18 @@ namespace Lounge.Web.Utils
                 null => "Table",
             };
 
-        public static string? FormatDisplay(int numTeams) => numTeams switch
+        public static string? FormatDisplay(int numTeams, int numPlayers)
         {
-            2 => "6v6",
-            3 => "4v4",
-            4 => "3v3",
-            6 => "2v2",
-            12 => "FFA",
-            int n => null,
-        };
+            if (numTeams == 0)
+                return null;
+
+            var playersPerTeam = numPlayers / numTeams;
+            return playersPerTeam switch
+            {
+                1 => "FFA",
+                2 or 3 or 4 or 6 or 8 or 12 => $"{playersPerTeam}v{playersPerTeam}",
+                int n => null,
+            };
+        }
     }
 }

@@ -136,9 +136,10 @@
                 @foreach (var change in Model.Data.MmrChanges)
                 {
                     <tr>
-                        <td>                            @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table)
+                        <td>
+                            @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table)
                             {
-                                <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@change.ChangeId">@TableUtils.TierDisplayName(change.Tier) @TableUtils.FormatDisplay(change.NumTeams!.Value) (ID: @change.ChangeId)</a>
+                                <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@change.ChangeId">@TableUtils.TierDisplayName(change.Tier) @TableUtils.FormatDisplay(change.NumTeams!.Value, change.NumPlayers ?? 12) (ID: @change.ChangeId)</a>
                             }
                             else if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete)
                             {

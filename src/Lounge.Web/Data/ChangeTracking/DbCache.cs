@@ -80,6 +80,7 @@ namespace Lounge.Web.Data.ChangeTracking
                 registrations[playerGameRegistration.PlayerId] = playerGameRegistration;
             }
 
+            _playerSeasonData[(Game.mkworld, 0)] = new Dictionary<int, PlayerSeasonData>();
             foreach (var playerSeasonDataEntry in playerSeasonData)
             {
                 var key = ((Game)playerSeasonDataEntry.Game, playerSeasonDataEntry.Season);
@@ -91,7 +92,6 @@ namespace Lounge.Web.Data.ChangeTracking
 
                 seasonData[playerSeasonDataEntry.PlayerId] = playerSeasonDataEntry;
             }
-            _playerSeasonData[(Game.mkworld, 0)] = new Dictionary<int, PlayerSeasonData>();
 
             foreach (var nameChange in nameChanges)
                 _nameChanges[nameChange.Id] = nameChange;

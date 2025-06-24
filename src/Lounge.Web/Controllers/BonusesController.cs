@@ -9,7 +9,6 @@ using Lounge.Web.Utils;
 using Lounge.Web.Settings;
 using System.Linq;
 using Lounge.Web.Models.ViewModels;
-using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Data.Entities;
 using Lounge.Web.Models.Enums;
 
@@ -47,8 +46,11 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<BonusViewModel>>> GetBonuses(string name, Game game = Game.mk8dx, [ValidSeason]int? season = null)
+        public async Task<ActionResult<List<BonusViewModel>>> GetBonuses(string name, Game game = Game.mk8dx, int? season = null)
         {
+            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
+                return BadRequest($"Invalid season {season} for game {game}");
+
             season ??= _loungeSettingsService.CurrentSeason[game];
 
             var player = await _context.PlayerGameRegistrations

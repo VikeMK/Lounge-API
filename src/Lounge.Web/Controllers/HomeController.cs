@@ -26,7 +26,6 @@ namespace Lounge.Web.Controllers
         }
 
         // since table images are expensive, lets let them be cached for 30 minutes
-        [ResponseCache(Duration = 30 * 60)]
         [Route("TableImage/{id}.png")]
         public async Task<IActionResult> TableImage(int id)
         {
@@ -72,6 +71,8 @@ namespace Lounge.Web.Controllers
             {
                 // swallow exception
             }
+
+            Response.Headers.CacheControl = "public, max-age=7200"; // 2 hours cache for the table image
 
             return File(tableImage, "image/png");
         }

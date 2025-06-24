@@ -123,7 +123,6 @@ namespace Lounge.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
-
         }
     }
 }

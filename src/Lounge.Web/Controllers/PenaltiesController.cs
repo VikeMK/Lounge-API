@@ -9,7 +9,6 @@ using Lounge.Web.Utils;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Settings;
 using System.Linq;
-using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Data.Entities;
 using Lounge.Web.Models.Enums;
 
@@ -53,8 +52,11 @@ namespace Lounge.Web.Controllers
             DateTime? from = null,
             bool includeDeleted = false,
             Game game = Game.mk8dx,
-            [ValidSeason]int? season = null)
+            int? season = null)
         {
+            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
+                return BadRequest($"Invalid season {season} for game {game}");
+
             season ??= _loungeSettingsService.CurrentSeason[game];
 
             var player = await _context.PlayerGameRegistrations

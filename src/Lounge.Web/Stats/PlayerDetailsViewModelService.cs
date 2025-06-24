@@ -91,7 +91,8 @@ namespace Lounge.Web.Stats
                     partnerIds: partnerIds,
                     rank: rank,
                     tier: table.Tier,
-                    numTeams: table.NumTeams));
+                    numTeams: table.NumTeams,
+                    numPlayers: tableScores.Count));
 
                 if (table.DeletedOn is not null)
                 {

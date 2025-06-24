@@ -1,4 +1,3 @@
-using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Models.Enums;
 using Lounge.Web.Models.ViewModels;
 using Lounge.Web.Settings;
@@ -6,6 +5,7 @@ using Lounge.Web.Stats;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
+using System.Linq;
 
 namespace Lounge.Web.Pages
 {
@@ -21,11 +21,14 @@ namespace Lounge.Web.Pages
         }
         public required PlayerDetailsViewModel Data { get; set; }
         
-        public IActionResult OnGet(string game, int id, [ValidSeason] int? season = null)
+        public IActionResult OnGet(string game, int id, int? season = null)
         {
             // Parse the game from route parameter
             if (!Enum.TryParse<Game>(game, ignoreCase: true, out var parsedGame))
                 return NotFound();
+
+            if (season != null && !_loungeSettingsService.ValidSeasons[parsedGame].Contains(season.Value))
+                ModelState.AddModelError(nameof(season), $"Invalid season {season} for game {parsedGame}");
 
             if (!ModelState.IsValid)
                 return RedirectToPage("/PlayerDetails", new { game, id });
@@ -37,6 +40,8 @@ namespace Lounge.Web.Pages
             vm.ValidSeasons = _loungeSettingsService.ValidSeasons[parsedGame];
 
             Data = vm;
+
+            Response.Headers.CacheControl = "public, max-age=180"; // Cache for 5 minutes
             return Page();
         }
     }

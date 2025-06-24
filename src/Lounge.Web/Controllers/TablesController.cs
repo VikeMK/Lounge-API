@@ -10,7 +10,6 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using Lounge.Web.Storage;
 using Lounge.Web.Settings;
-using Lounge.Web.Controllers.ValidationAttributes;
 using Lounge.Web.Data.Entities;
 using Lounge.Web.Models.Enums;
 
@@ -49,8 +48,11 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to, Game game = Game.mk8dx, [ValidSeason] int? season = null)
+        public async Task<ActionResult<List<TableDetailsViewModel>>> GetTables(DateTime from, DateTime? to, Game game = Game.mk8dx, int? season = null)
         {
+            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
+                return BadRequest($"Invalid season {season} for game {game}");
+
             season ??= _loungeSettingsService.CurrentSeason[game];
 
             var tables = await _context.Tables
@@ -64,8 +66,11 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("unverified")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables(Game game = Game.mk8dx, [ValidSeason] int? season = null)
+        public async Task<ActionResult<List<TableDetailsViewModel>>> GetUnverifiedTables(Game game = Game.mk8dx, int? season = null)
         {
+            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
+                return BadRequest($"Invalid season {season} for game {game}");
+
             season ??= _loungeSettingsService.CurrentSeason[game];
 
             var tables = await _context.Tables
@@ -84,8 +89,8 @@ namespace Lounge.Web.Controllers
             if (game == Game.mk8dx && numPlayers != 12)
                 return BadRequest("Must supply 12 scores");
 
-            if (game == Game.mkworld && numPlayers < 12)
-                return BadRequest("Must supply at least 12 scores");
+            if (game == Game.mkworld && !(numPlayers == 12 || numPlayers == 24))
+                return BadRequest("Must supply 12 or 24 scores");
 
             var playerNames = vm.Scores.Select(s => s.PlayerName).ToHashSet();
             var normalizedPlayerNames = playerNames.Select(PlayerUtils.NormalizeName).ToHashSet();
@@ -109,15 +114,18 @@ namespace Lounge.Web.Controllers
             var playerCountryCodeLookup = players.ToDictionary(p => p.Name, p => p.CountryCode);
 
             int numTeams = vm.Scores.Max(s => s.Team) + 1;
-            if (game == Game.mk8dx && numTeams is not (2 or 3 or 4 or 6 or 12))
-                return BadRequest("Invalid number of teams");
+            if (numPlayers == 24)
+            {
+                if (numTeams is not (2 or 3 or 4 or 6 or 8 or 12 or 24))
+                    return BadRequest("Invalid number of teams");
+            }
+            else
+            {
+                if (numTeams is not (2 or 3 or 4 or 6 or 12))
+                    return BadRequest("Invalid number of teams");
+            }
 
             int playersPerTeam = numPlayers / numTeams;
-            if (playersPerTeam * numTeams != numPlayers)
-                return BadRequest($"Invalid number of players: {numPlayers} is not divisible by {numTeams}");
-
-            if (playersPerTeam is not (1 or 2 or 3 or 4 or 6))
-                return BadRequest($"Invalid number of players per team. Must be 1, 2, 3, 4, or 6");
 
             var tableScores = new List<TableScore>();
             foreach (var score in vm.Scores)
@@ -377,7 +385,10 @@ namespace Lounge.Web.Controllers
                 else
                 {
                     var playerTotalMatches = await _context.TableScores
-                        .CountAsync(s => s.PlayerId == score.PlayerId && s.Table.VerifiedOn != null && s.Table.DeletedOn == null && s.Table.Season == season && s.Table.Game == (int)game);
+                        .AsNoTracking()
+                        .Where(s => s.PlayerId == score.PlayerId && s.Table.VerifiedOn != null && s.Table.DeletedOn == null && s.Table.Season == season && s.Table.Game == (int)game)
+                        .Take(5) // no need to count more than 5
+                        .CountAsync();
 
                     if (playerTotalMatches >= 4)
                     {

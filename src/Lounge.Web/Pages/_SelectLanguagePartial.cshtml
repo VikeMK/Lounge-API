@@ -13,7 +13,7 @@
 }
 
 <div>
-    <form id="selectLanguage" asp-controller="Home" asp-action="SetLanguage" asp-route-returnurl="@returnUrl" method="post" role="form">
+    <form id="selectLanguage" asp-controller="Home" asp-action="SetLanguage" asp-route-returnurl="@returnUrl" asp-antiforgery="false" method="post" role="form">
         <!select class="form-control bg-dark text-light" name="culture" onchange="this.form.submit();">
             <!option value="" disabled="disabled" selected="selected">🌐</!option>
             @foreach (var culture in LocOptions.Value.SupportedUICultures)
