@@ -68,8 +68,8 @@ namespace Lounge.Web.Stats
                 Array.Sort(teamTotals);
                 var rank = numTeams - Array.LastIndexOf(teamTotals, playerTeamTotal);
 
-                List<int> partnerScores = new();
-                List<int> partnerIds = new();
+                List<int> partnerScores = [];
+                List<int> partnerIds = [];
 
                 foreach (var score in tableScores.Values)
                 {
@@ -238,11 +238,10 @@ namespace Lounge.Web.Stats
                 GainLossLastTen = playerData.LastTenGainLoss,
                 LargestGain = playerData.LargestGain?.Amount,
                 LargestGainTableId = playerData.LargestGain?.EventId,
-                LargestLoss = playerData.LargestLoss?.Amount,
-                LargestLossTableId = playerData.LargestLoss?.EventId,
                 AverageScore = playerData.AverageScore,
                 NoSQAverageScore = playerData.NoSQAverageScore,
                 AverageLastTen = playerData.AverageLastTen,
+                NoSQAverageLastTen = playerData.NoSQAverageLastTen,
                 PartnerAverage = playerData.PartnerAverage,
                 NoSQPartnerAverage = playerData.NoSQPartnerAverage
             };

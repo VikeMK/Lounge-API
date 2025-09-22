@@ -96,11 +96,11 @@ namespace Lounge.Web.Stats
                             pId => pId,
                             pId => new PlayerDetails(
                                 pId,
-                                placementsByPlayer.GetValueOrDefault(pId) ?? new List<int>(),
-                                tableScoresByPlayer.GetValueOrDefault(pId) ?? new List<int>(),
-                                penaltiesByPlayer.GetValueOrDefault(pId) ?? new List<int>(),
-                                bonusesByPlayer.GetValueOrDefault(pId) ?? new List<int>(),
-                                nameChangesByPlayer.GetValueOrDefault(pId) ?? new List<int>()));
+                                placementsByPlayer.GetValueOrDefault(pId) ?? [],
+                                tableScoresByPlayer.GetValueOrDefault(pId) ?? [],
+                                penaltiesByPlayer.GetValueOrDefault(pId) ?? [],
+                                bonusesByPlayer.GetValueOrDefault(pId) ?? [],
+                                nameChangesByPlayer.GetValueOrDefault(pId) ?? []));
                 }
             }
 

@@ -1,23 +1,21 @@
-﻿using Lounge.Web.Data;
-using Lounge.Web.Settings;
+﻿using Lounge.Web.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
-namespace Lounge
+namespace Lounge.Web.Data;
+
+public static class SeedData
 {
-    public static class SeedData
+    public static async Task InitializeAsync(IServiceProvider serviceProvider)
     {
-        public static async Task InitializeAsync(IServiceProvider serviceProvider)
-        {
-            using var context = new ApplicationDbContext(
-                serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>(),
-                serviceProvider.GetRequiredService<ILoungeSettingsService>());
+        using var context = new ApplicationDbContext(
+            serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>(),
+            serviceProvider.GetRequiredService<ILoungeSettingsService>());
 
-            // put any data to seed here
+        // put any data to seed here
 
-            await context.SaveChangesAsync();
-        }
+        await context.SaveChangesAsync();
     }
 }

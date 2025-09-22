@@ -12,24 +12,12 @@
     var resultsToShow = 5;
 }
 
-<div class="navbar navbar-expand-sm navbar-dark bg-dark rounded py-0" style="margin-bottom: 14px;">
-    <div class="container-fluid">
-        <span class="navbar-brand">@Localizer["Seasons"]</span>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#seasonSelector">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
-            <ul class="navbar-nav">
-                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
-                {
-                    <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Records" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@GameUtils.GetSeasonDisplayName(Model.Game, season)</a>
-                    </li>
-                }
-            </ul>
-        </div>
-    </div>
-</div>
+@await Html.PartialAsync("Shared/_SeasonSelectorPartial", new Lounge.Web.Models.ViewModels.SeasonSelectorModel {
+    PageName = "Records",
+    Game = Model.Game,
+    CurrentSeason = Model.Season,
+    ValidSeasons = LoungeSettingsService.ValidSeasons[Model.Game]
+})
 
 <div>
     <!-- TODO: Support 24 player records -->

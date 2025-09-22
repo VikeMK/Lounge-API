@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Lounge.Web.Models.ViewModels
 {
@@ -30,17 +31,21 @@ namespace Lounge.Web.Models.ViewModels
 
             public int? GainLossLastTen { get; init; }
 
+            public int? LastWeekRankChange { get; init; }
+
             public int EventsPlayed { get; init; }
 
             public int? LargestGain { get; init; }
 
-            public int? LargestLoss { get; init; }
-            public double? NoSQAverageScore { get; init; }
-            public double? NoSQAverageScoreLastTen { get; init; }
-
             public Rank? MmrRank { get; init; }
 
             public Rank? MaxMmrRank { get; init; }
+
+            public DateTime? AccountCreationDateUtc { get; init; }
+
+            public double? AverageScore12P { get; init; }
+
+            public double? AverageScore24P { get; init; }
         }
     }
 }

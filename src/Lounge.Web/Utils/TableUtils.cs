@@ -13,9 +13,33 @@ namespace Lounge.Web.Utils
 {
     public static class TableUtils
     {
-        private static readonly int[] caps = new[] { 60, 120, 180, 240, -1, 300 };
-        private static readonly int[] scalingFactors = new[] { 9500, 5500, 5100, 4800, -1, 4650 };
-        private static readonly double[] offsets = new[] { 2746.116, 1589.856, 1474.230, 1387.511, -1, 1344.151 };
+        // Given the number of teams in the event, returns how much MMR is gained for beating each opponent if
+        // they had equal MMR to you. For example, if your team wins a 4v4v4, you gain 80 MMR for each opponent
+        // for a total of 160 MMR.
+        private static readonly Dictionary<int, double> GainWhenEqualMmr = new()
+        {
+            [2] = 100, // Winner = 100 Points
+            [3] = 80,  // Winner = 160 Points
+            [4] = 60,  // Winner = 180 Points
+            [6] = 40,  // Winner = 200 Points
+            [8] = 30,  // Winner = 210 Points
+            [12] = 20, // Winner = 220 Points
+            [24] = 10, // Winner = 230 Points
+        };
+
+        // Given the size of a team, returns how much less MMR you need to have than your opponent to gain 1.5x
+        // the MMR than what is listed in GainWhenEqualMmr. As the MMR difference approachs infinity, the MMR gain
+        // approaches 3x the GainWhenEqualMmr value.
+        private static readonly Dictionary<int, double> MmrGapFor150PctGain = new()
+        {
+            [1] = 2746.116,
+            [2] = 1589.856,
+            [3] = 1474.230,
+            [4] = 1387.511,
+            [6] = 1344.151,
+            [8] = 1315.245,
+            [12] = 1300.792,
+        };
 
         public static string BuildUrl(string tier, (string Player, string? CountryCode, int Score)[][] scores)
         {
@@ -66,18 +90,22 @@ namespace Lounge.Web.Utils
             int[] places = GetPlaces(teamTotalScores);
             double[] averageMmrs = scores.Select(t => t.Average(s => s.CurrentMmr)).ToArray();
 
-            int cap = caps[playersPerTeam - 1];
-            int scalingFactor = scalingFactors[playersPerTeam - 1];
-            double offset = offsets[playersPerTeam - 1];
+            double gainWhenEqualMmr = GainWhenEqualMmr[numTeams];
+            double mmrGapFor150PctGain = MmrGapFor150PctGain[playersPerTeam];
+
+            // Max possible MMR gain per opponent with MMR difference approaching infinity
+            double cap = gainWhenEqualMmr * 3;
 
             double GetTeamMmrDeltaWhenWinner(double winnerMmr, double loserMmr)
             {
-                return cap / (1 + Math.Pow(11, -(loserMmr - winnerMmr - offset) / scalingFactor));
+                double delta = loserMmr - winnerMmr;
+                return cap / (1 + Math.Pow(2, 1 - (delta / mmrGapFor150PctGain)));
             }
 
             double GetTeamMmrDeltaWhenTied(double mmr1, double mmr2)
             {
-                return cap / (1 + Math.Pow(11, -(Math.Abs(mmr1 - mmr2) - offset) / scalingFactor)) - cap / 3;
+                double gap = Math.Abs(mmr1 - mmr2);
+                return cap / (1 + Math.Pow(2, 1 - (gap / mmrGapFor150PctGain))) - gainWhenEqualMmr;
             }
 
             int GetTeamMmrDelta(int team)
@@ -112,14 +140,6 @@ namespace Lounge.Web.Utils
             }
 
             int[] teamDeltas = Enumerable.Range(0, numTeams).Select(GetTeamMmrDelta).ToArray();
-
-            if (numTeams * playersPerTeam == 24)
-            {
-                var teamsWith24 = 24 / playersPerTeam;
-                var teamsWith12 = 12 / playersPerTeam;
-                var scalingRatio = 1.25 * ((teamsWith12 - 1.0) / (teamsWith24 - 1.0));
-                teamDeltas = teamDeltas.Select(delta => (int)Math.Round(delta * scalingRatio)).ToArray();
-            }
 
             var deltas = new Dictionary<string, int>();
             for (int i = 0; i < numTeams; i++)

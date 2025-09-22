@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Lounge.Web.MkcRegistry.Contracts;
 using System.Threading.Tasks;
 
-namespace Lounge.Web.Stats
+namespace Lounge.Web.MkcRegistry;
+
+public interface IMkcRegistryApi
 {
-    public interface IMkcRegistryApi
-    {
-        Task<MkcRegistryData> GetPlayerRegistryDataAsync(int registryId);
-    }
+    Task<MkcRegistryData> GetPlayerRegistryDataAsync(int registryId);
 }

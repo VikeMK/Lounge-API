@@ -10,15 +10,15 @@ namespace Lounge.Web.Data.ChangeTracking
     {
         private readonly IDbCacheUpdateSubscriber[] _subscribers;
 
-        private readonly Dictionary<int, Player> _players = new();
-        private readonly Dictionary<Game, Dictionary<int, PlayerGameRegistration>> _playerGameRegistrations = new();
-        private readonly Dictionary<(Game Game, int Season), Dictionary<int, PlayerSeasonData>> _playerSeasonData = new();
-        private readonly Dictionary<int, Table> _tables = new();
-        private readonly Dictionary<int, Dictionary<int, TableScore>> _tableScores = new();
-        private readonly Dictionary<int, Penalty> _penalties = new();
-        private readonly Dictionary<int, Bonus> _bonuses = new();
-        private readonly Dictionary<int, Placement> _placements = new();
-        private readonly Dictionary<int, NameChange> _nameChanges = new();
+        private readonly Dictionary<int, Player> _players = [];
+        private readonly Dictionary<Game, Dictionary<int, PlayerGameRegistration>> _playerGameRegistrations = [];
+        private readonly Dictionary<(Game Game, int Season), Dictionary<int, PlayerSeasonData>> _playerSeasonData = [];
+        private readonly Dictionary<int, Table> _tables = [];
+        private readonly Dictionary<int, Dictionary<int, TableScore>> _tableScores = [];
+        private readonly Dictionary<int, Penalty> _penalties = [];
+        private readonly Dictionary<int, Bonus> _bonuses = [];
+        private readonly Dictionary<int, Placement> _placements = [];
+        private readonly Dictionary<int, NameChange> _nameChanges = [];
 
         public DbCache(IEnumerable<IDbCacheUpdateSubscriber> subscribers)
         {

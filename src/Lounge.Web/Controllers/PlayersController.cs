@@ -13,6 +13,7 @@ using Lounge.Web.Settings;
 using Lounge.Web.Data.Entities;
 using Lounge.Web.Data.ChangeTracking;
 using Lounge.Web.Models.Enums;
+using Lounge.Web.MkcRegistry;
 
 namespace Lounge.Web.Controllers
 {
@@ -210,7 +211,9 @@ namespace Lounge.Web.Controllers
             int? minMmr = null,
             int? maxMmr = null,
             int? minEventsPlayed = null,
-            int? maxEventsPlayed = null)
+            int? maxEventsPlayed = null,
+            DateTime? minCreationDateUtc = null,
+            DateTime? maxCreationDateUtc = null)
         {
             if (pageSize < 0)
                 return BadRequest("pageSize must be non-negative");
@@ -253,7 +256,7 @@ namespace Lounge.Web.Controllers
                 }
                 else if (_playerStatCache.TryGetPlayerStatsById(playerId.Value, game, season, out var playerStats))
                 {
-                    playerStatsEnumerable = new[] { playerStats };
+                    playerStatsEnumerable = [playerStats];
                 }
                 else
                 {
@@ -279,6 +282,12 @@ namespace Lounge.Web.Controllers
             if (maxEventsPlayed != null)
                 playerStatsEnumerable = playerStatsEnumerable.Where(p => p.EventsPlayed <= maxEventsPlayed);
 
+            if (minCreationDateUtc != null)
+                playerStatsEnumerable = playerStatsEnumerable.Where(p => p.AccountCreationDateUtc != null && p.AccountCreationDateUtc >= minCreationDateUtc);
+
+            if (maxCreationDateUtc != null)
+                playerStatsEnumerable = playerStatsEnumerable.Where(p => p.AccountCreationDateUtc != null && p.AccountCreationDateUtc <= maxCreationDateUtc);
+
             int playerCount = 0;
             var data = new List<LeaderboardViewModel.Player>(pageSize);
             foreach (var player in playerStatsEnumerable)
@@ -297,13 +306,14 @@ namespace Lounge.Web.Controllers
                         WinsLastTen = player.LastTenWins,
                         LossesLastTen = player.LastTenLosses,
                         GainLossLastTen = player.HasEvents ? player.LastTenGainLoss : null,
+                        LastWeekRankChange = player.LastWeekRankChange,
                         LargestGain = player.LargestGain?.Amount,
-                        LargestLoss = player.LargestLoss?.Amount,
-                        NoSQAverageScore = player.NoSQAverageScore,
-                        NoSQAverageScoreLastTen = player.NoSQAverageLastTen,
                         MmrRank = _loungeSettingsService.GetRank(player.Mmr, game, season),
                         MaxMmrRank = _loungeSettingsService.GetRank(player.MaxMmr, game, season),
-                        CountryCode = player.CountryCode
+                        CountryCode = player.CountryCode,
+                        AccountCreationDateUtc = player.AccountCreationDateUtc,
+                        AverageScore12P = player.AverageScore12P,
+                        AverageScore24P = player.AverageScore24P
                     });
                 }
 
@@ -375,7 +385,7 @@ namespace Lounge.Web.Controllers
             foreach (var player in players)
             {
                 mmrTotal += player.Mmr ?? 0;
-                string mmrRank = _loungeSettingsService.GetRank(player.Mmr, game, season.Value)!.Name.ToString();
+                string mmrRank = _loungeSettingsService.GetRank(player.Mmr, game, season.Value).Name.ToString();
                 if (currRank != mmrRank)
                 {
                     if (currRank != null)
@@ -542,9 +552,9 @@ namespace Lounge.Web.Controllers
                 if (mmr is int mmrValue)
                 {
                     PlayerSeasonData? seasonData = new() { Mmr = mmrValue, Game = (int)game, Season = season };
-                    player.SeasonData = new List<PlayerSeasonData> { seasonData };
+                    player.SeasonData = [seasonData];
                     Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, Game = (int)game, Season = season };
-                    player.Placements = new List<Placement> { placement };
+                    player.Placements = [placement];
                 }
             }
 
@@ -664,44 +674,6 @@ namespace Lounge.Web.Controllers
 
             return CreatedAtAction(nameof(Placement), new { name = player.Name }, vm);
         }
-
-        // TODO: Get this working
-        //[HttpPost("bulkPlacement")]
-        //public async Task<IActionResult> BulkPlacement([FromBody] BulkPlacementViewModel request)
-        //{
-        //    var game = request.Game;
-        //    var season = _loungeSettingsService.CurrentSeason[game];
-
-        //    // If any matches have been played at all for this season yet, return an error
-        //    if (await _context.TableScores.AnyAsync(s => s.Table.Season == season && s.Table.Game == (int)game))
-        //        return BadRequest("Cannot bulk place players if matches have already been played for the season.");
-
-        //    var alreadyPlacedIds = (await _context.Placements.Where(p => p.Season == season && p.Game == (int)game)
-        //        .Select(p => p.PlayerId)
-        //        .ToListAsync()).ToHashSet();
-
-        //    var time = DateTime.UtcNow;
-
-        //    foreach (var playerPlacement in request.PlayerPlacements)
-        //    {
-        //        // Get player id using cache
-        //        if (!_playerDetailsCache.TryGetPlayerIdByName(playerPlacement.Name, out int? playerId))
-        //            return BadRequest($"Player {playerPlacement.Name} not found.");
-
-        //        if (alreadyPlacedIds.Contains(playerId.Value))
-        //            return BadRequest($"Player {playerPlacement.Name} ({playerId.Value}) has already been placed.");
-
-        //        Placement placement = new() { Mmr = playerPlacement.Mmr, PrevMmr = null, AwardedOn = time, PlayerId = playerId.Value, Season = season, Game = (int)game };
-        //        PlayerSeasonData newSeasonData = new() { Mmr = playerPlacement.Mmr, Game = (int)game, Season = season, PlayerId = playerId.Value };
-
-        //        _context.Placements.Add(placement);
-        //        _context.PlayerSeasonData.Add(newSeasonData);
-        //    }
-
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
 
         [HttpPost("update/name")]
         public async Task<IActionResult> ChangeName(string name, string newName)

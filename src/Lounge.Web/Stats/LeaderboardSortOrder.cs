@@ -12,22 +12,16 @@ namespace Lounge.Web.Stats
         [Display(Name = "Peak MMR")]
         MaxMmr,
 
-        [Display(Name = "Events Played")]
+        [Display(Name = "Last Week")]
+        LastWeekRankChange,
+
+        [Display(Name = "Events")]
         EventsPlayed,
 
-        [Display(Name = "Average Score (No SQ)")]
-        AverageScoreNoSQ,
+        [Display(Name = "Average Score (12P)")]
+        AvgScore12P,
 
-        [Display(Name = "Win Rate")]
-        WinRate,
-
-        [Display(Name = "Win - Loss (Last 10)")]
-        WinLossLast10,
-
-        [Display(Name = "Gain/Loss (Last 10)")]
-        GainLast10,
-
-        [Display(Name = "Average Score (No SQ, Last 10)")]
-        AverageScoreNoSQLast10
+        [Display(Name = "Average Score (24P)")]
+        AvgScore24P
     }
 }

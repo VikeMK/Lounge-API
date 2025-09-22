@@ -128,7 +128,7 @@ namespace Lounge.Web.Data.ChangeTracking
                 var tableScores = await changeTracker.GetTableScoreChangesAsync(lastSynchronizationVersion);
                 var nameChanges = await changeTracker.GetNameChangeChangesAsync(lastSynchronizationVersion);
 
-                if (bonuses.Any() || penalties.Any() || placements.Any() || players.Any() || playerSeasonData.Any() || tables.Any() || tableScores.Any())
+                if (bonuses.Count != 0 || penalties.Count != 0 || placements.Count != 0 || players.Count != 0 || playerSeasonData.Count != 0 || tables.Count != 0 || tableScores.Count != 0)
                     _changeTrackingSubscriber.HandleChanges(bonuses, penalties, placements, players, playerGameRegistrations, playerSeasonData, tables, tableScores, nameChanges);
 
                 return synchronizationVersion;

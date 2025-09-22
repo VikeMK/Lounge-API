@@ -1,6 +1,7 @@
 using Lounge.Web.Authentication;
 using Lounge.Web.Data;
 using Lounge.Web.Data.ChangeTracking;
+using Lounge.Web.MkcRegistry;
 using Lounge.Web.Settings;
 using Lounge.Web.Stats;
 using Lounge.Web.Storage;

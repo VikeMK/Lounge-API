@@ -23,10 +23,11 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body style="background-color: #212121" class="text-light">
+<body class="text-light">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-dark bg-dark border-bottom box-shadow mb-3">
-            <div class="container">                <div style="display: flex">
+        <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-dark bg-dark mb-3">
+            <div class="container">
+                <div class="d-flex">
                     @await Html.PartialAsync("_SelectLanguagePartial")
                     <a class="navbar-brand" asp-page="Leaderboard" asp-route-game="@currentGame">@Localizer[$"{gameEnum} Lounge"]</a>
                 </div>
@@ -74,9 +75,13 @@
         </main>
     </div>
 
-    <footer class="border-top footer bg-dark">
-        <div class="container">
-            © 2018-2025 mkcentral.com Mario Kart™ and © Nintendo
+    <footer class="border-top footer bg-dark mt-auto">
+        <div class="container py-3 text-center">
+            <span class="d-block mb-1">© 2018-2025 mkcentral.com</span>
+            <small class="d-block mb-1 text-muted">
+                MK8DX Lounge and MKWorld Lounge aren't endorsed by Nintendo and don't reflect the views or opinions of Nintendo or anyone officially involved in producing or managing Nintendo properties.
+                Nintendo, Mario Kart, and their respective logos are trademarks of Nintendo.
+            </small>
         </div>
     </footer>
     <script src="~/lib/jquery/jquery.min.js"></script>

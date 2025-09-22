@@ -32,26 +32,24 @@ namespace Lounge.Web.Settings
 
         public IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders => _settings.Value.RecordsTierOrders;
         
-        public Rank? GetRank(int? mmr, Game game, int season)
+        public Rank GetRank(int? mmr, Game game, int season)
         {
-            if (_settings.Value.MmrRanks[game].TryGetValue(season, out var mmrRanks))
+            if (!_settings.Value.MmrRanks[game].TryGetValue(season, out var mmrRanks))
+                throw new Exception($"No MMR ranks configured for game {game} season {season}");
+
+            if (mmr is null)
+                return new Rank(Division.Placement);
+
+            Rank? prev = null;
+            foreach ((int rankMmr, Rank rank) in mmrRanks)
             {
-                if (mmr is null)
-                    return new Rank(Division.Placement);
-
-                Rank? prev = null;
-                foreach ((int rankMmr, Rank rank) in mmrRanks)
-                {
-                    if (mmr >= rankMmr)
-                        prev = rank;
-                    else
-                        return prev;
-                }
-
-                return prev;
+                if (mmr >= rankMmr)
+                    prev = rank;
+                else
+                    break;
             }
 
-            return null;
+            return prev ?? throw new Exception($"No rank found for MMR {mmr} in game {game} season {season}");
         }
 
         public IReadOnlyDictionary<string, int> GetRanks(Game game, int season)

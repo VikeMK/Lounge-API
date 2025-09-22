@@ -15,7 +15,7 @@ namespace Lounge.Web.Settings
         IReadOnlyDictionary<string, string> CountryNames { get; }
         IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders { get; }
 
-        Rank? GetRank(int? mmr, Game game, int season);
+        Rank GetRank(int? mmr, Game game, int season);
         IReadOnlyDictionary<string, int> GetRanks(Game game, int season);
         IReadOnlyList<string> GetRecordsTierOrder(Game game, int season);
         IReadOnlyDictionary<string, IReadOnlyList<string>> GetDivisionsToTier(Game game, int season);

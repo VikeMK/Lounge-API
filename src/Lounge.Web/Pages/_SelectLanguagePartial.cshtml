@@ -8,7 +8,7 @@
 @inject IOptions<RequestLocalizationOptions> LocOptions
 
 @{
-    var currentCulture = Context.Features.Get<IRequestCultureFeature>().RequestCulture.UICulture;
+    var currentCulture = Context.Features.GetRequiredFeature<IRequestCultureFeature>().RequestCulture.UICulture;
     var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
 
@@ -16,7 +16,7 @@
     <form id="selectLanguage" asp-controller="Home" asp-action="SetLanguage" asp-route-returnurl="@returnUrl" asp-antiforgery="false" method="post" role="form">
         <!select class="form-control bg-dark text-light" name="culture" onchange="this.form.submit();">
             <!option value="" disabled="disabled" selected="selected">🌐</!option>
-            @foreach (var culture in LocOptions.Value.SupportedUICultures)
+            @foreach (var culture in (LocOptions.Value.SupportedUICultures ?? []))
             {
                 <!option value="@culture.Name">@culture.NativeName</!option>
             }

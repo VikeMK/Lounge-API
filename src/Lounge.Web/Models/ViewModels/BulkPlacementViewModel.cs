@@ -1,6 +1,8 @@
 ﻿using Lounge.Web.Models.Enums;
 using System.Collections.Generic;
 
+namespace Lounge.Web.Models.ViewModels;
+
 public class BulkPlacementViewModel
 {
     public Game Game { get; set; } = Game.mk8dx;
@@ -12,4 +14,3 @@ public class BulkPlacementViewModel
         public int Mmr { get; set; }
     }
 }
-

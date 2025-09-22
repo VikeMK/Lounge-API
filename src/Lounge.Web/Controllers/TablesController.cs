@@ -83,7 +83,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, Game game = Game.mk8dx, bool squadQueue = false)
+        public async Task<ActionResult<TableDetailsViewModel>> Create(NewTableViewModel vm, Game game = Game.mk8dx)
         {
             var numPlayers = vm.Scores.Count;
             if (game == Game.mk8dx && numPlayers != 12)
@@ -348,7 +348,7 @@ namespace Lounge.Web.Controllers
                 .Select(s => s.Player.Name)
                 .ToArray();
 
-            if (unplacedPlayers.Any())
+            if (unplacedPlayers.Length != 0)
                 return BadRequest($"The following players have not been placed yet: {string.Join(", ", unplacedPlayers)}");
 
             double formatMultiplier = TableUtils.GetFormatMultiplier(table, _loungeSettingsService.SquadQueueMultipliers[game][season]);

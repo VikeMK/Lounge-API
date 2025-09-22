@@ -1,13 +1,9 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
 a.navbar-brand {
     white-space: normal;
     text-align: center;
     word-break: break-all;
 }
 
-/* Provide sufficient contrast against dark background */
 a {
     color: #58a6ff;
 }
@@ -24,121 +20,25 @@ a {
     border-color: #1861ac;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-    font-size: 14px;
-}
-
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
-.border-top {
-    border-top: 1px solid #e5e5e5;
-}
-
-.border-bottom {
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-    font-size: 1rem;
-    line-height: inherit;
-}
-
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-    position: relative;
-    min-height: 100%;
-}
-
 body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #000000 url('/img/background_overlay.png') fixed;
+    background-size: cover;
 }
 
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px; /* Vertically center the text there */
-}
-
-.rank-Grandmaster {
-    color: #a3022c;
-}
-
-.rank-Master {
-    color: #9370db;
-}
-
-.rank-Diamond {
-    color: #b9f2ff;
-}
-
-.rank-Ruby {
-    color: #d51c5e;
-}
-
-.rank-Sapphire {
-    color: #286cd3;
-}
-
-.rank-Platinum {
-    color: #3fabb8;
-}
-
-.rank-Gold {
-    color: #f1c232;
-}
-
-.rank-Silver {
-    color: #cccccc;
-}
-
-.rank-Bronze {
-    color: #b45f06;
-}
-
-.rank-Iron {
-    color: #817876;
-}
-
-.rank-Placement { /*color: #817876*/
-}
-
-/* Ensure that cell values inside tables are not word wrapped */
-.table-dark td {
-    white-space: nowrap
-}
-
-.table-dark {
-    border: 1px solid #454d55;
-}
-
-.table-dark > thead > tr > td,
-.table-dark > thead > tr > th {
-    background-color: #0a2d61;
-}
-
-.table-dark > tbody > tr:nth-child(2n+1) > td,
-.table-dark > tbody > tr:nth-child(2n+1) > th {
-    background-color: #212121;
-}
-
-.table-dark > tbody > tr:nth-child(2n) > td,
-.table-dark > tbody > tr:nth-child(2n) > th {
-    background-color: #2f2f2f;
-}
+.rank-color[data-rank="Grandmaster"] { color: #a3022c; }
+.rank-color[data-rank="Master"] { color: #9370db; }
+.rank-color[data-rank="Diamond"] { color: #b9f2ff; }
+.rank-color[data-rank="Ruby"] { color: #d51c5e; }
+.rank-color[data-rank="Sapphire"] { color: #286cd3; }
+.rank-color[data-rank="Platinum"] { color: #3fabb8; }
+.rank-color[data-rank="Gold"] { color: #f1c232; }
+.rank-color[data-rank="Silver"] { color: #cccccc; }
+.rank-color[data-rank="Bronze"] { color: #b45f06; }
+.rank-color[data-rank="Iron"] { color: #817876; }
+/* Placement does not need a color set as it uses the default color */
 
 .pagination-dark > .page-item > .page-link {
     color: var(--white);
@@ -149,38 +49,6 @@ body {
     color: var(--gray);
 }
 
-#rules > li {
-    padding-bottom: 20px;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 1.5em
-}
-
-#rules > li > ul,
-#rules > li > ol {
-    padding-top: 20px;
-    font-weight: initial;
-    font-size: initial;
-    text-transform: initial;
-}
-
-#rules > li > ol > li {
-    padding-bottom: 10px;
-}
-
-#rules > li > ol > li > ul,
-#rules > li > ol > li > ol {
-    padding-top: 10px;
-}
-
-#rules > li > * li::marker {
-    font-weight: bold;
-}
-
-body::-webkit-scrollbar {
-    display: none;
-}
-
 #selectLanguage > select {
     width: 48px;
     border: none;
@@ -188,23 +56,143 @@ body::-webkit-scrollbar {
     -webkit-appearance: none;
 }
 
-th.table-sub-header {
-    font-size: 0.8rem;
-    border-bottom: none !important;
+#leaderboard {
+    max-width: 930px;
+    margin: 0 auto;
+    font-size: 18px;
 }
 
-th.table-sub-header::after {
-    content: "";
-    display: block;
-    border-bottom: 2px solid teal;
-    width: 96%;
-    position: relative;
-    left: 2%;
-    bottom: -4.8px;
+.table {
+    border-radius: 15px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
 }
 
-tr.table-sub-header-row-2 > th {
-    border-top: none !important;
-    font-size: 0.8rem;
-    width: 110px;
+.table tbody {
+    white-space: nowrap;
+}
+
+#leaderboardTable tbody {
+    table-layout: fixed;
+    width: 100%;
+    overflow: scroll;
+}
+
+.table td, .table th {
+    border-top: none;
+    vertical-align: middle
+}
+
+#leaderboardTable thead td, #leaderboardTable thead th {
+    padding-bottom: 2px;
+}
+
+#leaderboardTable td, #leaderboardTable th {
+    padding: 10px 5px;
+}
+
+.table-dark.table-striped thead tr {
+    background-color: rgba(0, 0, 0, .5);
+}
+
+.table-dark.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, .7);
+}
+
+.table-dark.table-striped tbody tr:nth-of-type(even) {
+    background-color: rgba(0, 0, 0, .5);
+}
+
+.rank-col {
+    width: 8%;
+}
+
+.name-col a {
+    color: white;
+}
+
+#leaderboardTable .country-col, #leaderboardTable .country-col {
+    width: 32px;
+    padding: 1px;
+}
+
+.country-col > img {
+    max-width: 30px;
+}
+
+.equal-width-col {
+    width: 15%;
+}
+
+.rank-change-none {
+    color: white;
+}
+
+.rank-change-up {
+    color: #28a745; /* subtle green */
+}
+
+.rank-change-down {
+    color: #dc3545; /* subtle red */
+}
+
+.rank-change-same {
+    color: white;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.stats-section, #details-section .row {
+    background-color: var(--dark);
+    border-radius: 20px;
+    padding: 8px;
+}
+
+.stats-section .chart-container {
+    margin-bottom: 1em;
+    height: 450px;
+}
+
+@media (max-width: 768px) {
+    #leaderboardTable {
+        font-size: 16px;
+    }
+
+    #leaderboardTable .rank-color[data-rank="Placement"] {
+        font-size: 0; /* Hide original text */
+    }
+
+    #leaderboardTable .rank-color[data-rank="Placement"]::before {
+        content: "—";
+        font-size: 16px;
+    }
+
+    .rank-col {
+        width: 5ch;
+    }
+
+    .equal-width-col {
+        width: 12%;
+    }
+}
+
+@media (max-width: 576px) {
+    #leaderboardTable {
+        table-layout: auto;
+        font-size: 14px;
+    }
+
+    .equal-width-col {
+        width: auto;
+    }
+
+    #stats-table {
+        font-size: 14px;
+    }
+
+    .stats-section .chart-container {
+        margin-bottom: 1em;
+        height: 350px;
+    }
 }

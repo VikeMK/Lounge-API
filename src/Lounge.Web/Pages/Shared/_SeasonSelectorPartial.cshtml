@@ -1,0 +1,43 @@
+@using Lounge.Web.Models.ViewModels
+@using Lounge.Web.Models.Enums
+@using Lounge.Web.Utils
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SeasonSelectorModel
+
+<div class="navbar navbar-expand-lg navbar-dark bg-dark rounded px-lg-1 mb-3">
+    <div class="container-fluid px-0">
+        <span class="navbar-brand d-lg-none">@Localizer["Seasons"]</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#seasonSelector">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
+            <ul class="navbar-nav">
+                @foreach (var season in Model.ValidSeasons)
+                {
+                    <li class="nav-item">
+                        @{
+                            var routeValues = new Dictionary<string, string>
+                            {
+                                ["game"] = Model.Game.GetStringId(),
+                                ["season"] = season.ToString()
+                            };
+                            if (Model.PlayerId.HasValue)
+                                routeValues["id"] = Model.PlayerId.Value.ToString();
+                            if (Model.ExtraRouteValues != null)
+                            {
+                                foreach (var kvp in Model.ExtraRouteValues)
+                                    routeValues[kvp.Key] = kvp.Value?.ToString() ?? string.Empty;
+                            }
+                        }
+                        <a class="nav-link @(season == Model.CurrentSeason ? "active" : "")"
+                           asp-page="@Model.PageName"
+                           asp-all-route-data="@routeValues">
+                            @GameUtils.GetSeasonDisplayName(Model.Game, season)
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

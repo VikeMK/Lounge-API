@@ -15,24 +15,12 @@
     Layout = "_Layout";
 }
 
-<div class="navbar navbar-expand-lg navbar-dark bg-dark rounded px-lg-1" style="margin-bottom: 14px;">
-    <div class="container-fluid px-0">
-        <span class="navbar-brand d-lg-none">@Localizer["Seasons"]</span>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#seasonSelector">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
-            <ul class="navbar-nav">
-                @foreach (var season in LoungeSettingsService.ValidSeasons[Model.Game])
-                {
-                    <li class="nav-item">
-                        <a class="nav-link @(season == Model.Season ? "active" : "")" asp-page="Leaderboard" asp-route-game="@Model.Game.GetStringId()" asp-route-season="@season">@GameUtils.GetSeasonDisplayName(Model.Game, season)</a>
-                    </li>
-                }
-            </ul>
-        </div>
-    </div>
-</div>
+@await Html.PartialAsync("Shared/_SeasonSelectorPartial", new Lounge.Web.Models.ViewModels.SeasonSelectorModel {
+    PageName = "Leaderboard",
+    Game = Model.Game,
+    CurrentSeason = Model.Season,
+    ValidSeasons = LoungeSettingsService.ValidSeasons[Model.Game]
+})
 
 @if (Model.CachesBeingBuilt)
 {
@@ -40,100 +28,142 @@
         <strong>@Localizer["Maintenance in Progress"]</strong> - @Localizer["The site is currently undergoing maintenance. Please check back in approximately 20 minutes."]
     </div>
 }
+else
+{
+    <!form class="mb-3">
+        <input type="hidden" value="@Model.Game.GetStringId()" id="gameInput" />
+        <input type="hidden" value="@Model.Season" id="seasonInput" />
+        <input type="hidden" value="@(Model.IsCurrentSeason.ToString())" id="isCurrentSeasonInput" />
+        <input type="hidden" value="@(Model.ShowExtra ? "1" : "0")" id="extraInput" />
+        <div class="form-row" id="leaderboardFormInputs">
+            <div class="form-group col-xl-3 col-6">
+                <label for="nameFilter">@Localizer["Name"]</label>
+                <input type="text" class="form-control bg-dark text-light" id="nameFilter">
+            </div>
+            <div class="form-group col-xl-3 col-6">
+                <label for="countryFilter">@Localizer["Country"]</label>
+                <!select class="form-control bg-dark text-light" name="country" id="countryFilter">
+                <!option value="" selected>@Localizer["All Countries"]</!option>
+                @foreach (var country in Model.ValidCountries.OrderBy(c => LoungeSettingsService.CountryNames[c]))
+                {
+                    <!option value="@country">@LoungeSettingsService.CountryNames[country]</!option>
+                }
+                </!select>
+            </div>
+            <div class="form-group col-xl-1 col-sm-2 col-3">
+                <label for="minMmrFilter">@Localizer["Min MMR"]</label>
+                <input type="number" class="form-control bg-dark text-light" id="minMmrFilter" min=0>
+            </div>
+            <div class="form-group col-xl-1 col-sm-2 col-3">
+                <label for="maxMMRFilter">@Localizer["Max MMR"]</label>
+                <input type="number" class="form-control bg-dark text-light" id="maxMmrFilter" min=0>
+            </div>
+            <div class="form-group col-xl-1 col-sm-2 col-3">
+                <label for="minEventsFilter">@Localizer["Min Events"]</label>
+                <input type="number" class="form-control bg-dark text-light" id="minEventsFilter" min=0>
+            </div>
+            <div class="form-group col-xl-1 col-sm-2 col-3">
+                <label for="maxEventsFilter">@Localizer["Max Events"]</label>
+                <input type="number" class="form-control bg-dark text-light" id="maxEventsFilter" min=0>
+            </div>
+            <div class="form-group col-xl-2 col-sm-4">
+                <label for="sortBySelect">@Localizer["Sort By"]</label>
+                <!select class="form-control bg-dark text-light" name="sortOrder" id="sortBySelect">
+                @{
+                    var showExtraSorts = Model.ShowExtra;
+                }
+                @foreach (var sortOrder in Enum.GetValues<LeaderboardSortOrder>())
+                {
+                    if (sortOrder == LeaderboardSortOrder.LastWeekRankChange && !Model.IsCurrentSeason)
+                        continue;
 
-<!form class="mb-3">
-<input type="hidden" value="@Model.Game.GetStringId()" id="gameInput" />
-<input type="hidden" value="@Model.Season" id="seasonInput" />
-<div class="form-row">
-    <div class="form-group col-xl-3 col-6">
-        <label for="nameFilter">@Localizer["Name"]</label>
-        <input type="text" class="form-control bg-dark text-light" id="nameFilter">
-    </div>
-    <div class="form-group col-xl-3 col-6">
-        <label for="countryFilter">@Localizer["Country"]</label>
-        <!select class="form-control bg-dark text-light" name="country" id="countryFilter" onchange="refreshLeaderboard()">
-        <!option value="" selected>@Localizer["All Countries"]</!option>
-            @foreach (var country in Model.ValidCountries.OrderBy(c => LoungeSettingsService.CountryNames[c]))
+                    if ((sortOrder == LeaderboardSortOrder.AvgScore12P || sortOrder == LeaderboardSortOrder.AvgScore24P) && !showExtraSorts)
+                        continue;
+
+                    if (sortOrder == LeaderboardSortOrder.AvgScore24P && Model.Game == Game.mk8dx)
+                        continue;
+
+                    var enumName = sortOrder.ToString();
+                    var displyName = typeof(LeaderboardSortOrder).GetMember(enumName).First().GetCustomAttribute<DisplayAttribute>()?.GetName() ?? enumName;
+                    <!option value="@enumName" @(sortOrder == LeaderboardSortOrder.Mmr ? "selected" : "")>@Localizer[displyName]</!option>
+                }
+                </!select>
+            </div>
+            @if (Model.ShowExtra)
             {
-                <!option value="@country">@LoungeSettingsService.CountryNames[country]</!option>
+                <div class="form-group col-xl-3 col-12">
+                    <label>@Localizer["Account Creation Date"]</label>
+                    <div class="d-flex gap-2">
+                        <input type="date" class="form-control bg-dark text-light" id="minCreationDate">
+                        <input type="date" class="form-control bg-dark text-light" id="maxCreationDate">
+                    </div>
+                </div>
             }
-        </!select>
-    </div>
-    <div class="form-group col-xl-1 col-sm-2 col-3">
-        <label for="minMmrFilter">@Localizer["Min MMR"]</label>
-        <input type="number" class="form-control bg-dark text-light" id="minMmrFilter" onchange="refreshLeaderboard()" min=0>
-    </div>
-    <div class="form-group col-xl-1 col-sm-2 col-3">
-        <label for="maxMMRFilter">@Localizer["Max MMR"]</label>
-        <input type="number" class="form-control bg-dark text-light" id="maxMmrFilter" onchange="refreshLeaderboard()" min=0>
-    </div>
-    <div class="form-group col-xl-1 col-sm-2 col-3">
-        <label for="minEventsFilter">@Localizer["Min Events"]</label>
-        <input type="number" class="form-control bg-dark text-light" id="minEventsFilter" onchange="refreshLeaderboard()" min=0>
-    </div>
-    <div class="form-group col-xl-1 col-sm-2 col-3">
-        <label for="maxEventsFilter">@Localizer["Max Events"]</label>
-        <input type="number" class="form-control bg-dark text-light" id="maxEventsFilter" onchange="refreshLeaderboard()" min=0>
-    </div>
-    <div class="form-group col-xl-2 col-sm-4">
-        <label for="nameFilter">@Localizer["Sort By"]</label>
-        <!select class="form-control bg-dark text-light" name="sortOrder" id="sortBySelect" onchange="refreshLeaderboard()">
-            @foreach (var sortOrder in Enum.GetValues<LeaderboardSortOrder>())
-            {
-                var enumName = sortOrder.ToString();
-                var displyName = typeof(LeaderboardSortOrder).GetMember(enumName).First().GetCustomAttribute<DisplayAttribute>()?.GetName() ?? enumName;
-                <!option value="@enumName" @(sortOrder == LeaderboardSortOrder.Mmr ? "selected" : "")>@Localizer[displyName]</!option>
-            }
-        </!select>
-    </div>
-</div>
-</!form>
-<div class="text-center d-none" id="leaderboard">
-    <div class="table-responsive">
-        <table id="leaderboardTable" class="table table-striped table-dark table-sm">
-            <thead>
+        </div>
+    </!form>
+    <div class="text-center" id="leaderboard">
+        <div class="table-responsive">
+            <table id="leaderboardTable" class="table table-striped table-dark table-sm @(Model.IsCurrentSeason ? "current-season" : "historical-season")">
+                <thead>
+                    <tr>
+                        <th class="rank-col">@Localizer["Rank"]</th>
+                        <th class="country-col"></th>
+                        <th class="name-col">@Localizer["Name"]</th>
+                        <th class="equal-width-col">@Localizer["MMR"]</th>
+                        <th class="equal-width-col">@Localizer["Peak MMR"]</th>
+                        @if (Model.IsCurrentSeason)
+                        {
+                            <th class="equal-width-col">@Localizer["Last Week"]</th>
+                        }
+                        @if (Model.ShowExtra)
+                        {
+                            <th class="equal-width-col">@Localizer["Account Created"]</th>
+                            @if (Model.Game == Game.mk8dx)
+                            {
+                                <th class="equal-width-col">@Localizer["Average Score"]</th>
+                            }
+                            else
+                            {
+                                <th class="equal-width-col">@Localizer["Average Score (12P)"]</th>
+                                <th class="equal-width-col">@Localizer["Average Score (24P)"]</th>
+                            }
+                        }
+                        <th class="equal-width-col events-col">@Localizer["Events"]</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardTableBody">
                 <tr>
-                    <th rowspan="2" class="align-middle">@Localizer["Rank"]</th>
-                    <th rowspan="2" style="width: 32px" class="align-middle"><!--Country Column--></th>
-                    <th rowspan="2" class="align-middle">@Localizer["Name"]</th>
-                    <th rowspan="2" class="align-middle">@Localizer["MMR"]</th>
-                    <th rowspan="2" class="align-middle">@Localizer["Peak MMR"]</th>
-                    <th colspan="3" class="table-sub-header">@Localizer["All Events"]</th>
-                    <th colspan="3" class="table-sub-header">@Localizer["Last 10"]</th>
-                </tr>
-                <tr class="table-sub-header-row-2">
-                    <th>@Localizer["Played"]</th>
-                    <th>@Localizer["Win Rate"]</th>
-                    <th>@Localizer["Avg (No SQ)"]</th>
-                    <th>@Localizer["W - L"]</th>
-                    <th>@Localizer["Gain/Loss"]</th>
-                    <th>@Localizer["Avg (No SQ)"]</th>
-                </tr>
-            </thead>
-            <tbody id="leaderboardTableBody">
-                <tr>
-                    <td colspan="11">Fetching Leaderboard Data...</td>
-                </tr>
-            </tbody>
-        </table>
+                    @{ 
+                        var baseCols = 6 + (Model.IsCurrentSeason ? 1 : 0); 
+                        var extraCols = Model.ShowExtra ? (1 + (Model.Game == Game.mk8dx ? 1 : 2)) : 0; 
+                        var totalCols = baseCols + extraCols; 
+                    }
+                    <td colspan="@totalCols">Fetching Leaderboard Data...</td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <span style="float: left" class="form-inline">
+                @Localizer["Page"]&nbsp;
+                <input type="number" value="1" id="pageNumberInput" min="1" max="1" class="form-control bg-dark text-light" style="width: 80px">
+                &nbsp;@Localizer["of"]&nbsp;
+                <span id="maxPageNumber">1</span>
+            </span>
+            <nav>
+                <ul class="pagination pagination-dark justify-content-end">
+                    <li class="page-item disabled" id="prevPageButton"><a class="page-link" href="#">@Localizer["Previous"]</a></li>
+                    <li class="page-item disabled" id="nextPageButton"><a class="page-link" href="#">@Localizer["Next"]</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
-    <div>
-        <span style="float: left" class="form-inline">
-            @Localizer["Page"]&nbsp;
-            <input type="number" value="1" id="pageNumberInput" onchange="onPageChanged()" min="1" max="1" class="form-control bg-dark text-light" style="width: 80px">
-            &nbsp;@Localizer["of"]&nbsp;
-            <span id="maxPageNumber">1</span>
-        </span>
-        <nav>
-            <ul class="pagination pagination-dark justify-content-end">
-                <li class="page-item disabled" onclick="prevPage()" id="prevPageButton"><a class="page-link" href="#">@Localizer["Previous"]</a></li>
-                <li class="page-item disabled" onclick="nextPage()" id="nextPageButton"><a class="page-link" href="#">@Localizer["Next"]</a></li>
-            </ul>
-        </nav>
-    </div>
-</div>
+}
 
 @section Scripts
 {
-    <script src="~/js/leaderboard.js" asp-append-version="true"></script>
+    @if (!Model.CachesBeingBuilt)
+    {
+        <script src="~/js/leaderboard.js" asp-append-version="true"></script>
+    }
 }

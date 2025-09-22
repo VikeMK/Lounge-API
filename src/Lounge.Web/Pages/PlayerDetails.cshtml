@@ -4,6 +4,7 @@
 @using Lounge.Web.Settings
 @using Lounge.Web.Utils
 @using Microsoft.AspNetCore.Mvc.Localization
+@using System.Linq
 @inject ILoungeSettingsService LoungeSettingsService
 @inject IViewLocalizer Localizer
 @model Lounge.Web.Pages.PlayerDetailsPageModel
@@ -12,115 +13,122 @@
     Layout = "_Layout";
 }
 
-<div class="navbar navbar-expand-sm navbar-dark bg-dark rounded py-0" style="margin-bottom: 14px;">
-    <div class="container-fluid">
-        <span class="navbar-brand">@Localizer["Seasons"]</span>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#seasonSelector">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-md-center" id="seasonSelector">
-            <ul class="navbar-nav">
-                @foreach (var season in Model.Data.ValidSeasons!)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link @(season == Model.Data.Season ? "active" : "")" asp-page="PlayerDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@Model.Data.PlayerId" asp-route-season="@season">@GameUtils.GetSeasonDisplayName(Model.Data.Game, season)</a>
-                    </li>
-                }
-            </ul>
-        </div>
-    </div>
-</div>
+@await Html.PartialAsync("Shared/_SeasonSelectorPartial", new Lounge.Web.Models.ViewModels.SeasonSelectorModel {
+    PageName = "PlayerDetails",
+    Game = Model.Data.Game,
+    PlayerId = Model.Data.PlayerId,
+    CurrentSeason = Model.Data.Season,
+    ValidSeasons = Model.Data.ValidSeasons ?? new List<int>()
+})
 
 <h1>@Model.Data.Name - @Html.DisplayFor(model => model.Data.Rank) @(Model.Data.IsHidden ? $"({Localizer["Hidden"]})" : string.Empty)</h1>
+@if (Model.OtherGameRegistered)
+{
+    <div>
+        <a asp-page="PlayerDetails" asp-route-game="@Model.OtherGame.GetStringId()" asp-route-id="@Model.Data.PlayerId">
+            Go to @(Model.OtherGame == Game.mk8dx ? "MK8DX" : "MKWorld") profile
+        </a>
+    </div>
+}
 <hr />
 
 <div>
-    <dl class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.OverallRank)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.OverallRank)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.Mmr)]</dt>
-            <dd class="rank-@Model.Data.RankData.Division">@Html.DisplayFor(model => model.Data.Mmr)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.MaxMmr)]</dt>
-            <dd class="rank-@LoungeSettingsService.GetRank(Model.Data.MaxMmr, Model.Data.Game, Model.Data.Season)!.Division">@Html.DisplayFor(model => model.Data.MaxMmr)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.WinRate)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.WinRate)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.WinLossLastTen)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.WinLossLastTen)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.GainLossLastTen)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.GainLossLastTen)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.EventsPlayed)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.EventsPlayed)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.LargestGain)]</dt>
-            <dd>                @if(Model.Data.LargestGainTableId != null)
-                {
-                    <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@Model.Data.LargestGainTableId">@Html.DisplayFor(model => model.Data.LargestGain)</a>
-                }
-                else
-                {
-                    @Html.DisplayFor(model => model.Data.LargestGain)
-                }
-            </dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.LargestLoss)]</dt>
-            <dd>                @if(Model.Data.LargestLossTableId != null)
-                {
-                    <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@Model.Data.LargestLossTableId">@Html.DisplayFor(model => model.Data.LargestLoss)</a>
-                }
-                else
-                {
-                    @Html.DisplayFor(model => model.Data.LargestLoss)
-                }
-            </dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.AverageScore)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.AverageScore)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.NoSQAverageScore)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.NoSQAverageScore)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.AverageLastTen)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.AverageLastTen)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.PartnerAverage)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.PartnerAverage)</dd>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.NoSQPartnerAverage)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.NoSQPartnerAverage)</dd>
-        </div>
-        @if(Model.Data.RegistryLink != null)
-        {
+    <div id="details-section">
+        <dl class="row mx-0">
             <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-                <dt>@Localizer[Html.DisplayNameFor(model => model.Data.RegistryLink)]</dt>
-                <dd><a href="@Model.Data.RegistryLink">Link</a></dd>
+                <dt>@Localizer[Html.DisplayNameFor(model => model.Data.OverallRank)]</dt>
+                <dd>@Html.DisplayFor(model => model.Data.OverallRank)</dd>
             </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                <dt>@Localizer[Html.DisplayNameFor(model => model.Data.Mmr)]</dt>
+                <dd class="rank-@Model.Data.RankData.Division">@Html.DisplayFor(model => model.Data.Mmr)</dd>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                <dt>@Localizer[Html.DisplayNameFor(model => model.Data.MaxMmr)]</dt>
+                <dd class="rank-@LoungeSettingsService.GetRank(Model.Data.MaxMmr, Model.Data.Game, Model.Data.Season).Division">@Html.DisplayFor(model => model.Data.MaxMmr)</dd>
+            </div>
+            @if(Model.Data.RegistryLink != null)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                    <dt>@Localizer[Html.DisplayNameFor(model => model.Data.RegistryLink)]</dt>
+                    <dd><a href="@Model.Data.RegistryLink">Link</a></dd>
+                </div>
+            }
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                <dt>@Localizer[Html.DisplayNameFor(model => model.Data.CountryName)]</dt>
+                <dd>@Html.DisplayFor(model => model.Data.CountryName)</dd>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                <dt>@Localizer[Html.DisplayNameFor(model => model.Data.EventsPlayed)]</dt>
+                <dd>@Html.DisplayFor(model => model.Data.EventsPlayed)</dd>
+            </div>
+        </dl>
+        <br />
+        @{
+            var roomSizeStatsDict = Model.Data.GetRoomSizeStats();
         }
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-            <dt>@Localizer[Html.DisplayNameFor(model => model.Data.CountryName)]</dt>
-            <dd>@Html.DisplayFor(model => model.Data.CountryName)</dd>
-        </div>
-    </dl>
-    <br />
+        @if (roomSizeStatsDict != null && roomSizeStatsDict.Any())
+        {
+            foreach (var kvp in roomSizeStatsDict.OrderBy(x => x.Key))
+            {
+                var roomSize = kvp.Key;
+                var roomSizeStats = kvp.Value;
+                <h3>@roomSize Player Events</h3>
+                <dl class="row mx-0">
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <dt>@Localizer[Html.DisplayNameFor(model => roomSizeStats.EventsPlayed)]</dt>
+                        <dd>@Html.DisplayFor(model => roomSizeStats.EventsPlayed)</dd>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <dt>@Localizer[Html.DisplayNameFor(model => roomSizeStats.WinRate)]</dt>
+                        <dd>@Html.DisplayFor(model => roomSizeStats.WinRate)</dd>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <dt>@Localizer["Win - Loss (Last 10)"]</dt>
+                        <dd>@Html.DisplayFor(model => roomSizeStats.LastTenWins) - @Html.DisplayFor(model => roomSizeStats.LastTenLosses)</dd>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <dt>@Localizer["Gain/Loss (Last 10)"]</dt>
+                        <dd>@Html.DisplayFor(model => roomSizeStats.LastTenGainLoss)</dd>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <dt>@Localizer["Largest Gain"]</dt>
+                        <dd>
+                            @{
+                                var gain = roomSizeStats.LargestGain;
+                            }
+                            @(gain.HasValue ? gain.Value.Amount.ToString() : "-")
+                        </dd>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <dt>@Localizer["Average Score"]</dt>
+                        <dd>@Html.DisplayFor(model => roomSizeStats.AverageScore)</dd>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <dt>@Localizer["Average Score (No SQ)"]</dt>
+                        <dd>@Html.DisplayFor(model => roomSizeStats.NoSQAverageScore)</dd>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <dt>@Localizer["Average Score (Last 10)"]</dt>
+                        <dd>@Html.DisplayFor(model => roomSizeStats.AverageLastTen)</dd>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <dt>@Localizer["Partner Average Score"]</dt>
+                        <dd>@Html.DisplayFor(model => roomSizeStats.PartnerAverage)</dd>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <dt>@Localizer["Partner Average Score (No SQ)"]</dt>
+                        <dd>@Html.DisplayFor(model => roomSizeStats.NoSQPartnerAverage)</dd>
+                    </div>
+                </dl>
+                <br />
+            }
+        }
+        else
+        {
+            <p>No room size stats available.</p>
+        }
+    </div>
     @if (Model.Data.MmrChanges.Count > 0)
     {
         <div class="table-responsive">
@@ -139,7 +147,10 @@
                         <td>
                             @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table)
                             {
-                                <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@change.ChangeId">@TableUtils.TierDisplayName(change.Tier) @TableUtils.FormatDisplay(change.NumTeams!.Value, change.NumPlayers ?? 12) (ID: @change.ChangeId)</a>
+                                var numPlayers = change.NumPlayers ?? 12;
+                                var roomSizeFormat = Model.Data.Game == Game.mk8dx ? "" : $"{numPlayers}P ";
+                                var tierFormat = Model.Data.Game == Game.mkworld && change.Tier == "Q" ? "" : (TableUtils.TierDisplayName(change.Tier) + " ");
+                                <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@change.ChangeId">@tierFormat@roomSizeFormat@TableUtils.FormatDisplay(change.NumTeams!.Value, numPlayers) (ID: @change.ChangeId)</a>
                             }
                             else if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete)
                             {
@@ -166,4 +177,4 @@
             </table>
         </div>
     }
-</>
+</div>

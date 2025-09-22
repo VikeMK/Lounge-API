@@ -23,9 +23,11 @@ namespace Lounge.Web.Pages
         public bool CachesBeingBuilt { get; set; }
         public Game Game { get; set; }
         public int Season { get; set; }
+        public bool IsCurrentSeason { get; set; }
         public required IReadOnlySet<string> ValidCountries { get; set; }
+        public bool ShowExtra { get; set; }
         
-        public IActionResult OnGet(string game, int? season = null)
+        public IActionResult OnGet(string game, int? season = null, int? extra = null)
         {
             // Parse the game from route parameter
             if (!Enum.TryParse<Game>(game, ignoreCase: true, out var parsedGame))
@@ -40,8 +42,10 @@ namespace Lounge.Web.Pages
 
             Game = parsedGame;
             Season = season ?? _loungeSettingsService.CurrentSeason[parsedGame];
+            IsCurrentSeason = Season == _loungeSettingsService.CurrentSeason[parsedGame];
             ValidCountries = _playerStatCache.GetAllCountryCodes(parsedGame, Season);
             CachesBeingBuilt = ValidCountries.Count == 0; // If no countries, assume caches are being built
+            ShowExtra = extra == 1;
 
             return Page();
         }

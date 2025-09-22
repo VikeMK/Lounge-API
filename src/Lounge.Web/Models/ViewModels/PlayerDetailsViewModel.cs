@@ -3,6 +3,7 @@ using Lounge.Web.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Lounge.Web.Models.ViewModels
@@ -70,12 +71,6 @@ namespace Lounge.Web.Models.ViewModels
 
         public int? LargestGainTableId { get; init; }
 
-        [Display(Name = "Largest Loss")]
-        [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:+#;-#;0}")]
-        public int? LargestLoss { get; init; }
-
-        public int? LargestLossTableId { get; init; }
-
         [Display(Name = "Average Score")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
         public double? AverageScore { get; init; }
@@ -87,6 +82,10 @@ namespace Lounge.Web.Models.ViewModels
         [Display(Name = "Average Score (Last 10)")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
         public double? AverageLastTen { get; init; }
+
+        [Display(Name = "Average Score (No SQ, Last 10)")]
+        [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+        public double? NoSQAverageLastTen { get; init; }
 
         [Display(Name = "Partner Average Score")]
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
@@ -101,9 +100,9 @@ namespace Lounge.Web.Models.ViewModels
         public required List<NameChange> NameHistory { get; init; }
 
         [JsonIgnore]
-        public Rank? RankData { get; init; }
+        public required Rank RankData { get; init; }
 
-        public string? Rank => RankData?.Name;
+        public string Rank => RankData.Name;
 
         [Display(Name = "Registry Link")]
         public string? RegistryLink =>
@@ -112,6 +111,86 @@ namespace Lounge.Web.Models.ViewModels
         [JsonIgnore]
         public IReadOnlyList<int>? ValidSeasons { get; set; }
 
+        // Computes per-room-size statistics from table events in MmrChanges
+        public Dictionary<int, RoomSizeLeaderboardData> GetRoomSizeStats()
+        {
+            // Ensure descending by time like other stats expect
+            var tableEvents = MmrChanges
+                .Where(c => c.Reason == MmrChangeReason.Table && c.NumPlayers.HasValue)
+                .OrderByDescending(c => c.Time)
+                .ToList();
+
+            var result = tableEvents
+                .GroupBy(e => e.NumPlayers!.Value)
+                .ToDictionary(
+                    g => g.Key,
+                    g => new RoomSizeLeaderboardData
+                    {
+                        EventsPlayed = g.Count(),
+                        WinRate = g.Any() ? (decimal)g.Count(e => e.MmrDelta > 0) / g.Count() : null,
+                        LastTenWins = g.Take(10).Count(e => e.MmrDelta > 0),
+                        LastTenLosses = g.Take(10).Count(e => e.MmrDelta <= 0),
+                        LastTenGainLoss = g.Take(10).Sum(e => e.MmrDelta),
+                        LargestGain = g.Where(e => e.MmrDelta > 0).Max(e => ((int, int)?)(e.MmrDelta, e.ChangeId!.Value)),
+                        AverageScore = g.Average(e => (int?)e.Score),
+                        NoSQAverageScore = g.Where(e => !string.Equals(e.Tier, "SQ", StringComparison.OrdinalIgnoreCase)).Average(e => (int?)e.Score),
+                        AverageLastTen = g.Take(10).Average(e => (int?)e.Score),
+                        NoSQAverageLastTen = g.Where(e => !string.Equals(e.Tier, "SQ", StringComparison.OrdinalIgnoreCase)).Take(10).Average(e => (int?)e.Score),
+                        PartnerAverage = g.SelectMany(p => p.PartnerScores ?? Array.Empty<int>()).Cast<int?>().Average(),
+                        NoSQPartnerAverage = g.Where(e => !string.Equals(e.Tier, "SQ", StringComparison.OrdinalIgnoreCase)).SelectMany(p => p.PartnerScores ?? Array.Empty<int>()).Cast<int?>().Average(),
+                    }
+                );
+
+            return result;
+        }
+
+        public class RoomSizeLeaderboardData
+        {
+            [Display(Name = "Events Played")]
+            public int EventsPlayed { get; init; }
+
+            [Display(Name = "Win Rate")]
+            [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:P1}")]
+            public decimal? WinRate { get; init; }
+
+            [Display(Name = "Wins (Last 10)")]
+            public int LastTenWins { get; init; }
+
+            [Display(Name = "Losses (Last 10)")]
+            public int LastTenLosses { get; init; }
+
+            [Display(Name = "Gain/Loss (Last 10)")]
+            [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:+#;-#;0}")]
+            public int LastTenGainLoss { get; init; }
+
+            [Display(Name = "Largest Gain")]
+            [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:+#;-#;0}")]
+            public (int Amount, int EventId)? LargestGain { get; init; }
+
+            [Display(Name = "Average Score")]
+            [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+            public double? AverageScore { get; init; }
+
+            [Display(Name = "Average Score (No SQ)")]
+            [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+            public double? NoSQAverageScore { get; init; }
+
+            [Display(Name = "Average Score (Last 10)")]
+            [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+            public double? AverageLastTen { get; init; }
+
+            [Display(Name = "Average Score (No SQ, Last 10)")]
+            [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+            public double? NoSQAverageLastTen { get; init; }
+
+            [Display(Name = "Partner Average Score")]
+            [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+            public double? PartnerAverage { get; init; }
+
+            [Display(Name = "Partner Average Score (No SQ)")]
+            [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:F1}")]
+            public double? NoSQPartnerAverage { get; init; }
+        }
 
         public class MmrChange
         {

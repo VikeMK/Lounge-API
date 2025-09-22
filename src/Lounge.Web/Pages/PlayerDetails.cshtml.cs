@@ -20,6 +20,8 @@ namespace Lounge.Web.Pages
             _playerDetailsViewModelService = playerDetailsViewModelService;
         }
         public required PlayerDetailsViewModel Data { get; set; }
+        public bool OtherGameRegistered { get; set; }
+        public Game OtherGame { get; set; }
         
         public IActionResult OnGet(string game, int id, int? season = null)
         {
@@ -38,8 +40,12 @@ namespace Lounge.Web.Pages
                 return NotFound();
 
             vm.ValidSeasons = _loungeSettingsService.ValidSeasons[parsedGame];
-
             Data = vm;
+
+            // Calculate other game and registration status
+            OtherGame = parsedGame == Game.mk8dx ? Game.mkworld : Game.mk8dx;
+            var otherGameDetails = _playerDetailsViewModelService.GetPlayerDetails(id, OtherGame, _loungeSettingsService.CurrentSeason[OtherGame]);
+            OtherGameRegistered = otherGameDetails != null && otherGameDetails.PlayerId != 0;
 
             Response.Headers.CacheControl = "public, max-age=180"; // Cache for 5 minutes
             return Page();

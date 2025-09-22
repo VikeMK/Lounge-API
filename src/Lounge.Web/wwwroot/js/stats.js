@@ -1,6 +1,8 @@
 // Configuration will be loaded from API response
 let gameConfig = null;
 
+Chart.defaults.color = "#fff";
+
 // Static configuration that doesn't change between seasons/games
 const staticConfig = {
   Colors: {
@@ -180,7 +182,9 @@ function updateMogiTables(data, season) {
     (a, b) => tierSortOrder.indexOf(b[0]) - tierSortOrder.indexOf(a[0])
   );
 
-  const tierTableBody = document.getElementById("mogi-tier-table");
+  const tierTable = document.getElementById("mogi-tier-table");
+  const tierTableBody = document.createElement("tbody");
+  tierTable.appendChild(tierTableBody);
   for (const index in mogiTierData) {
     const tier = mogiTierData[index];
     const tr = document.createElement("tr");
@@ -255,7 +259,9 @@ function updateMogiTables(data, season) {
       weekdayTableSortOrder.indexOf(a[0]) - weekdayTableSortOrder.indexOf(b[0])
   );
 
-  const weekdayTableBody = document.getElementById("mogi-weekday-table");
+  const weekdayTable = document.getElementById("mogi-weekday-table");
+  const weekdayTableBody = document.createElement("tbody");
+  weekdayTable.appendChild(weekdayTableBody);
   for (const index in mogiWeekdayData) {
     const day = mogiWeekdayData[index];
     const tr = document.createElement("tr");
@@ -328,6 +334,8 @@ function updateMogiActivityChart(data, season) {
       }),
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         title: {
           display: true,
@@ -367,11 +375,6 @@ function updateMogiFormatChart(data) {
   );
   const noSQMogiTotal = mogiFormatData.reduce((a, b) => a + b[1], 0);
 
-  const windowSize = Math.max(
-    document.documentElement.clientWidth,
-    window.innerWidth || 0
-  );
-
   new Chart(document.getElementById("statMogiFormatChartBody"), {
     type: "pie",
     data: {
@@ -387,16 +390,7 @@ function updateMogiFormatChart(data) {
     },
     options: {
       responsive: true,
-      aspectRatio: windowSize <= 767 ? 1.1 : windowSize <= 991 ? 1.4 : 2,
-      onResize: (chart, size) => {
-        const windowSize = Math.max(
-          document.documentElement.clientWidth,
-          window.innerWidth || 0
-        );
-
-        chart.options.aspectRatio =
-          windowSize <= 767 ? 1.1 : windowSize <= 991 ? 1.4 : 2;
-      },
+      maintainAspectRatio: false,
       plugins: {
         title: {
           display: true,
@@ -407,7 +401,7 @@ function updateMogiFormatChart(data) {
           text: "Number of Mogis per Format (No SQ)",
         },
         tooltip: {
-          enabled: false,
+          enabled: true,
         },
         legend: {
           position: "bottom",
@@ -425,7 +419,9 @@ function updateMogiFormatChart(data) {
     },
   });
 
-  const mogiTableBody = document.getElementById("mogi-format-table");
+  const mogiTable = document.getElementById("mogi-format-table");
+  const mogiTableBody = document.createElement("tbody");
+  mogiTable.appendChild(mogiTableBody);
   for (const index in mogiFormatData) {
     const format = mogiFormatData[index];
     const tr = document.createElement("tr");
@@ -489,6 +485,8 @@ function updateTopCountryChart(data, season) {
       ],
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         title: {
           display: true,
@@ -512,6 +510,8 @@ function updateTopCountryChart(data, season) {
         xAxes: {
           ticks: {
             autoSkip: false,
+            maxRotation: 90,
+            minRotation: 90
           },
         },
       },
@@ -557,6 +557,17 @@ function updateOverallCountryChart(data, season) {
       ],
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        xAxes: {
+          ticks: {
+            autoSkip: false,
+            maxRotation: 90,
+            minRotation: 90
+          },
+        },
+      },
       plugins: {
         title: {
           display: true,
@@ -620,16 +631,7 @@ function updatePopulationCountryChart(data) {
     },
     options: {
       responsive: true,
-      aspectRatio: windowSize <= 767 ? 1 : windowSize <= 991 ? 1.4 : 2,
-      onResize: (chart, size) => {
-        const windowSize = Math.max(
-          document.documentElement.clientWidth,
-          window.innerWidth || 0
-        );
-
-        chart.options.aspectRatio =
-          windowSize <= 767 ? 1 : windowSize <= 991 ? 1.4 : 2;
-      },
+      maintainAspectRatio: false,
       plugins: {
         title: {
           display: true,
@@ -640,7 +642,7 @@ function updatePopulationCountryChart(data) {
           text: "Country Population",
         },
         tooltip: {
-          enabled: false,
+          enabled: true,
         },
         legend: {
           position: "bottom",
@@ -658,9 +660,9 @@ function updatePopulationCountryChart(data) {
     },
   });
 
-  const countryPopulationTableBody = document.getElementById(
-    "country-population-table"
-  );
+  const countryPopulationTable = document.getElementById("country-population-table");
+  const countryPopulationTableBody = document.createElement("tbody");
+  countryPopulationTable.appendChild(countryPopulationTableBody);
   for (const index in populationCountryData) {
     const country = populationCountryData[index];
     const tr = document.createElement("tr");
@@ -692,7 +694,9 @@ function updatePopulationCountryChart(data) {
 }
 
 function updateStats(data) {
-  const statsTableBody = document.getElementById("stats-table");
+  const statsTable = document.getElementById("stats-table");
+  const statsTableBody = document.createElement("tbody");
+  statsTable.appendChild(statsTableBody);
   let currPlayers = data.totalPlayers;
   for (const tier of data.divisionData) {
     const tr = document.createElement("tr");
@@ -751,18 +755,28 @@ function updateStatsChart(data) {
       ],
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        xAxes: {
+          ticks: {
+            autoSkip: false
+          },
+        },
+      },
       plugins: {
         title: {
           display: true,
           font: {
             size: 16,
+            color: "white"
           },
           padding: 20,
-          text: "Players per Rank",
+          text: "Players per Rank"
         },
         legend: {
           display: false,
-        },
+        }
       },
     },
   });
