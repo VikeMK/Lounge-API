@@ -69,6 +69,12 @@ namespace Lounge.Web.Models.ViewModels
         [DisplayFormat(NullDisplayText = "-", DataFormatString = "{0:+#;-#;0}")]
         public int? LargestGain { get; init; }
 
+        // DEPRECATED - No Longer Set
+        public int? LargestLoss { get; init; }
+
+        // DEPRECATED - No Longer Set
+        public int? LargestLossTableId { get; init; }
+
         public int? LargestGainTableId { get; init; }
 
         [Display(Name = "Average Score")]
@@ -100,9 +106,9 @@ namespace Lounge.Web.Models.ViewModels
         public required List<NameChange> NameHistory { get; init; }
 
         [JsonIgnore]
-        public required Rank RankData { get; init; }
+        public Rank RankData { get; init; }
 
-        public string Rank => RankData.Name;
+        public string Rank => RankData!.Name;
 
         [Display(Name = "Registry Link")]
         public string? RegistryLink =>

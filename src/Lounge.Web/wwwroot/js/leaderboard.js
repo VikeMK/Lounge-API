@@ -126,10 +126,10 @@ function updateLeaderboard(leaderboardData, page, pageSize) {
         lastWeekCell.innerHTML = "—";
         lastWeekCell.classList.add("rank-change-none");
       } else if (player.lastWeekRankChange < 0) {
-        lastWeekCell.innerHTML = `${Math.abs(player.lastWeekRankChange)}&nbsp;⮝`;
+        lastWeekCell.innerHTML = `${Math.abs(player.lastWeekRankChange)}&nbsp;▲`;
         lastWeekCell.classList.add("rank-change-up");
       } else if (player.lastWeekRankChange > 0) {
-        lastWeekCell.innerHTML = `${player.lastWeekRankChange}&nbsp;⮟`;
+        lastWeekCell.innerHTML = `${player.lastWeekRankChange}&nbsp;▼`;
         lastWeekCell.classList.add("rank-change-down");
       } else {
         lastWeekCell.innerHTML = "=";
