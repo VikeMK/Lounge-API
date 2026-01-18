@@ -1,6 +1,7 @@
-
 *.user
 [Bb]in/
 [Oo]bj/
 .vs/
 **/wwwroot/lib/
+*.pubxml
+*.arm.json
