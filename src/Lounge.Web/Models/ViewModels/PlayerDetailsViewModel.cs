@@ -28,12 +28,12 @@ namespace Lounge.Web.Models.ViewModels
 
         public bool IsHidden { get; init; }
 
-        public Game Game { get; init; }
+        public GameMode Game { get; init; }
 
         public int Season { get; init; }
 
         [JsonIgnore]
-        public string SeasonDisplayName => GameUtils.GetSeasonDisplayName(Game, Season);
+        public string SeasonDisplayName => GameUtils.GetSeasonDisplayName(Season);
 
         [Display(Name = "MMR")]
         [DisplayFormat(NullDisplayText = "Placement")]
@@ -113,9 +113,6 @@ namespace Lounge.Web.Models.ViewModels
         [Display(Name = "Registry Link")]
         public string? RegistryLink =>
             RegistryId != null ? $"https://mkcentral.com/registry/players/profile?id={RegistryId}" : null;
-
-        [JsonIgnore]
-        public IReadOnlyList<int>? ValidSeasons { get; set; }
 
         // Computes per-room-size statistics from table events in MmrChanges
         public Dictionary<int, RoomSizeLeaderboardData> GetRoomSizeStats()

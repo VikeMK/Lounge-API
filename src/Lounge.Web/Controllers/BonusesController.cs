@@ -1,16 +1,16 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using Microsoft.AspNetCore.Authorization;
-using Lounge.Web.Data;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Lounge.Web.Utils;
-using Lounge.Web.Settings;
-using System.Linq;
-using Lounge.Web.Models.ViewModels;
+﻿using Lounge.Web.Data;
 using Lounge.Web.Data.Entities;
 using Lounge.Web.Models.Enums;
+using Lounge.Web.Models.ViewModels;
+using Lounge.Web.Settings;
+using Lounge.Web.Utils;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Lounge.Web.Controllers
 {
@@ -46,19 +46,17 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<BonusViewModel>>> GetBonuses(string name, Game game = Game.mk8dx, int? season = null)
+        public async Task<ActionResult<List<BonusViewModel>>> GetBonuses(string name, GameMode game = GameMode.mk8dx, int? season = null)
         {
-            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
-                return BadRequest($"Invalid season {season} for game {game}");
-
-            season ??= _loungeSettingsService.CurrentSeason[game];
+            if (!_loungeSettingsService.ValidateGameAndSeason(ref game, ref season, out var error, allowMkWorldFallback: false))
+                return BadRequest(error);
 
             var player = await _context.PlayerGameRegistrations
                 .AsNoTracking()
-                .Where(pgr => pgr.Game == (int)game)
+                .Where(pgr => pgr.Game == game.GetRegistrationGameMode())
                 .Select(pgr => pgr.Player)
                 .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(name))
-                .Select(p => new { Name = p.Name, Bonuses = p.Bonuses.Where(b => b.Season == season && b.Game == (int)game) })
+                .Select(p => new { Name = p.Name, Bonuses = p.Bonuses.Where(b => b.Season == season && b.Game == game) })
                 .SingleOrDefaultAsync();
 
             if (player is null)
@@ -68,14 +66,16 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<BonusViewModel>> AwardBonus(string? name, int? mkcId, int amount, Game game = Game.mk8dx)
+        public async Task<ActionResult<BonusViewModel>> AwardBonus(string? name, int? mkcId, int amount, GameMode game = GameMode.mk8dx)
         {
+            if (!_loungeSettingsService.ValidateCurrentGame(ref game, out var currentSeason, out var error, allowMkWorldFallback: false))
+                return BadRequest(error);
+
             if (amount < 0)
                 return BadRequest("Bonus amount must be a non-negative integer");
 
-            var season = _loungeSettingsService.CurrentSeason[game];
             var player = await _context.PlayerGameRegistrations
-                .Where(pgr => pgr.Game == (int)game)
+                .Where(pgr => pgr.Game == game.GetRegistrationGameMode())
                 .Select(pgr => pgr.Player)
                 .Where(p => 
                     (name == null || p.NormalizedName == PlayerUtils.NormalizeName(name)) && 
@@ -84,7 +84,7 @@ namespace Lounge.Web.Controllers
                 {
                     p.Id,
                     p.Name,
-                    CurrentSeasonData = p.SeasonData.FirstOrDefault(s => s.Season == season && s.Game == (int)game),
+                    CurrentSeasonData = p.SeasonData.FirstOrDefault(s => s.Season == currentSeason && s.Game == game),
                 })
                 .SingleOrDefaultAsync();
 
@@ -103,8 +103,8 @@ namespace Lounge.Web.Controllers
                 AwardedOn = DateTime.UtcNow,
                 PrevMmr = prevMmr,
                 NewMmr = newMmr,
-                Game = (int)game,
-                Season = season,
+                Game = game,
+                Season = currentSeason.Value,
                 PlayerId = player.Id
             };
 
@@ -122,10 +122,10 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id, Game game)
+        public async Task<IActionResult> Delete(int id, GameMode game)
         {
             var bonusData = await _context.Bonuses
-                .Where(b => b.Id == id && b.Game == (int)game)
+                .Where(b => b.Id == id)
                 .Select(b => new { Bonus = b, SeasonData = b.Player.SeasonData.Single(s => s.Season == b.Season && s.Game == b.Game) })
                 .FirstOrDefaultAsync();
 
@@ -135,11 +135,11 @@ namespace Lounge.Web.Controllers
             var bonus = bonusData.Bonus;
             var seasonData = bonusData.SeasonData;
 
+            if (!_loungeSettingsService.ValidateGameMatchesAndFromCurrentSeason(game, bonus.Season, bonus.Game, out var error))
+                return BadRequest(error);
+
             if (bonus.DeletedOn is not null)
                 return BadRequest("Bonus has already been deleted");
-
-            if (bonus.Season != _loungeSettingsService.CurrentSeason[(Game)seasonData.Game])
-                return BadRequest("Bonus is from a previous season and can't be deleted");
 
             bonus.DeletedOn = DateTime.UtcNow;
 

@@ -7,7 +7,7 @@ namespace Lounge.Web.Data.Entities
     public class Table
     {
         public int Id { get; set; }
-        public int Game { get; set; } = (int)Models.Enums.Game.mk8dx;
+        public Models.Enums.GameMode Game { get; set; } = Models.Enums.GameMode.mk8dx;
         public int Season { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? VerifiedOn { get; set; }

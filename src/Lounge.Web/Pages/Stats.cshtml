@@ -8,7 +8,7 @@
 
 @model Lounge.Web.Pages.StatsPageModel
 @{
-    ViewData["Title"] = $"{Localizer.GetString("Stats")} - {GameUtils.GetSeasonDisplayName(Model.Game, Model.Season)}";
+    ViewData["Title"] = $"{Localizer.GetString("Stats")} - {GameUtils.GetSeasonDisplayName(Model.Season)}";
     Layout = "_Layout";
 }
 
@@ -16,7 +16,7 @@
     PageName = "Stats",
     Game = Model.Game,
     CurrentSeason = Model.Season,
-    ValidSeasons = LoungeSettingsService.ValidSeasons[Model.Game]
+    ValidSeasons = Model.ValidSeasons
 })
 
 <h1 class="m-4 text-center">@Localizer["Division Data"]</h1>

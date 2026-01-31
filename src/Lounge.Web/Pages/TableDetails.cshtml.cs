@@ -27,7 +27,7 @@ namespace Lounge.Web.Pages
         public async Task<IActionResult> OnGetAsync(string game, int id)
         {
             // Parse the game from route parameter
-            if (!Enum.TryParse<Game>(game, ignoreCase: true, out var parsedGame))
+            if (!Enum.TryParse<RegistrationGameMode>(game, ignoreCase: true, out var parsedGame))
                 return NotFound();
 
             var table = await _context.Tables
@@ -39,7 +39,7 @@ namespace Lounge.Web.Pages
                 return NotFound();
 
             // Validate that the table belongs to the specified game
-            if ((Game)table.Game != parsedGame)
+            if (table.Game.GetRegistrationGameMode() != parsedGame)
                 return NotFound();
 
             Data = TableUtils.GetTableDetails(table, _loungeSettingsService);

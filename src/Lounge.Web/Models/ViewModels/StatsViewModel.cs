@@ -1,3 +1,4 @@
+using Lounge.Web.Models.Enums;
 using System.Collections.Generic;
 
 namespace Lounge.Web.Models.ViewModels
@@ -5,7 +6,8 @@ namespace Lounge.Web.Models.ViewModels
     public class StatsViewModel
     {
         public int TotalPlayers { get; init; }
-
+        public required GameMode Game { get; init; }
+        public required int Season { get; init; }
         public int TotalMogis { get; init; }
 
         public double AverageMmr { get; init; }
@@ -40,7 +42,9 @@ namespace Lounge.Web.Models.ViewModels
             public required string Name { get; init; }
 
             public int Mmr { get; init; }
-        }        public required Activity ActivityData { get; init; }
+        }
+        
+        public required Activity ActivityData { get; init; }
 
         public class Activity
         {

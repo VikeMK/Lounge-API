@@ -18,17 +18,33 @@
     Game = Model.Data.Game,
     PlayerId = Model.Data.PlayerId,
     CurrentSeason = Model.Data.Season,
-    ValidSeasons = Model.Data.ValidSeasons ?? new List<int>()
+    ValidSeasons = Model.ValidSeasons
 })
 
 <h1>@Model.Data.Name - @Html.DisplayFor(model => model.Data.Rank) @(Model.Data.IsHidden ? $"({Localizer["Hidden"]})" : string.Empty)</h1>
 @if (Model.OtherGameRegistered)
 {
-    <div>
-        <a asp-page="PlayerDetails" asp-route-game="@Model.OtherGame.GetStringId()" asp-route-id="@Model.Data.PlayerId">
-            Go to @(Model.OtherGame == Game.mk8dx ? "MK8DX" : "MKWorld") profile
-        </a>
-    </div>
+    if (Model.OtherGame == RegistrationGameMode.mk8dx)
+    {
+        <div>
+            <a asp-page="PlayerDetails" asp-route-game="@RegistrationGameMode.mk8dx.GetStringId()" asp-route-id="@Model.Data.PlayerId">
+                Go to MK8DX profile
+            </a>
+        </div>
+    }
+    else
+    {
+        <div>
+            <a asp-page="PlayerDetails" asp-route-game="@RegistrationGameMode.mkworld.GetStringId()" asp-route-id="@Model.Data.PlayerId" asp-route-p="12">
+                Go to MKWorld 12P profile
+            </a>
+        </div>
+        <div>
+            <a asp-page="PlayerDetails" asp-route-game="@RegistrationGameMode.mkworld.GetStringId()" asp-route-id="@Model.Data.PlayerId" asp-route-p="24">
+                Go to MKWorld 24P profile
+            </a>
+        </div>
+    }
 }
 <hr />
 
@@ -148,13 +164,13 @@
                             @if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.Table)
                             {
                                 var numPlayers = change.NumPlayers ?? 12;
-                                var roomSizeFormat = Model.Data.Game == Game.mk8dx ? "" : $"{numPlayers}P ";
-                                var tierFormat = Model.Data.Game == Game.mkworld && change.Tier == "Q" ? "" : (TableUtils.TierDisplayName(change.Tier) + " ");
-                                <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@change.ChangeId">@tierFormat@roomSizeFormat@TableUtils.FormatDisplay(change.NumTeams!.Value, numPlayers) (ID: @change.ChangeId)</a>
+                                var roomSizeFormat = Model.Data.Game != GameMode.mkworld ? "" : $"{numPlayers}P ";
+                                var tierFormat = Model.Data.Game != GameMode.mk8dx && change.Tier == "Q" ? "" : (TableUtils.TierDisplayName(change.Tier) + " ");
+                                <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetRegistrationGameMode().GetStringId()" asp-route-id="@change.ChangeId">@tierFormat@roomSizeFormat@TableUtils.FormatDisplay(change.NumTeams!.Value, numPlayers) (ID: @change.ChangeId)</a>
                             }
                             else if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete)
                             {
-                                <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@change.ChangeId">@Localizer[Html.DisplayTextFor(modelItem => change.Reason)] (ID: @change.ChangeId)</a>
+                                <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetRegistrationGameMode().GetStringId()" asp-route-id="@change.ChangeId">@Localizer[Html.DisplayTextFor(modelItem => change.Reason)] (ID: @change.ChangeId)</a>
                             }
                             else
                             {

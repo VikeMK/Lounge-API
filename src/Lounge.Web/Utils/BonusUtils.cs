@@ -11,7 +11,7 @@ namespace Lounge.Web.Utils
             return new BonusViewModel
             {
                 Id = bonus.Id,
-                Game = (Game)bonus.Game,
+                Game = bonus.Game,
                 Season = bonus.Season,
                 AwardedOn = bonus.AwardedOn,
                 DeletedOn = bonus.DeletedOn,

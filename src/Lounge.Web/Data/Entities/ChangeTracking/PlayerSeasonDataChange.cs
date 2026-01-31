@@ -2,7 +2,7 @@
 {
     public class PlayerSeasonDataChange : Change<PlayerSeasonData>
     {
-        public int Game { get; set; }
+        public Models.Enums.GameMode Game { get; set; }
         public int Season { get; set; }
         public int PlayerId { get; set; }
     }

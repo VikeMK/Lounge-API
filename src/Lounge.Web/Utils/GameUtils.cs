@@ -9,15 +9,10 @@ public static class GameUtils
     /// For mkworld, Season 0 is displayed as "Preseason".
     /// For other games, returns "Season {seasonNumber}".
     /// </summary>
-    /// <param name="game">The game</param>
-    /// <param name="seasonNumber">The season number</param>
+    /// <param name="season">The season number</param>
     /// <returns>The display name for the season</returns>
-    public static string GetSeasonDisplayName(Game game, int seasonNumber)
+    public static string GetSeasonDisplayName(int season)
     {
-        if (seasonNumber == 0)
-        {
-            return "Preseason";
-        }
-        return $"Season {seasonNumber}";
+        return season == 0 ? "Preseason" : $"Season {season}";
     }
 }

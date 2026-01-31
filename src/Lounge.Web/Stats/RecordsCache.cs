@@ -15,9 +15,9 @@ namespace Lounge.Web.Stats
         public record TierRecords(IReadOnlyDictionary<int, FormatRecord> TeamCounts);
         public record SeasonRecords(IReadOnlyDictionary<string, TierRecords> Tiers);
 
-        private IReadOnlyDictionary<(Game Game, int Season), SeasonRecords> _resultsBySeason = new Dictionary<(Game Game, int Season), SeasonRecords>();
+        private IReadOnlyDictionary<(GameMode Game, int Season), SeasonRecords> _resultsBySeason = new Dictionary<(GameMode Game, int Season), SeasonRecords>();
 
-        public SeasonRecords GetRecords(Game game, int season)
+        public SeasonRecords GetRecords(GameMode game, int season)
         {
             if (_resultsBySeason.TryGetValue((game, season), out SeasonRecords? results))
                 return results;
@@ -29,7 +29,7 @@ namespace Lounge.Web.Stats
         {
             _resultsBySeason = dbCache.Tables.Values
                 .Where(t => t.VerifiedOn != null && t.DeletedOn == null)
-                .GroupBy(s => ((Game)s.Game, s.Season))
+                .GroupBy(s => (s.Game, s.Season))
                 .ToDictionary(s => s.Key, tables => GetSeasonRecords(tables, dbCache));
         }
 
@@ -49,7 +49,7 @@ namespace Lounge.Web.Stats
         private static TierRecords GetTierRecords(IEnumerable<Table> seasonTables, IDbCache dbCache)
         {
             var dict = seasonTables
-                .Where(t => dbCache.TableScores[t.Id].Count == 12) // TODO: Add support for 24 player records
+                .Where(t => t.Game != GameMode.mkworld || dbCache.TableScores[t.Id].Count == 12) // TODO: Add support for 24 player records
                 .GroupBy(t => t.NumTeams)
                 .ToDictionary(
                     s => s.Key,

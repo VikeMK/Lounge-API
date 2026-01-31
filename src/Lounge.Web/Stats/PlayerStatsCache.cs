@@ -18,14 +18,14 @@ namespace Lounge.Web.Stats
 
         private readonly ILoungeSettingsService _loungeSettingsService;
 
-        private IReadOnlyDictionary<(Game Game, int Season), SeasonStatsData> _seasonStats = new Dictionary<(Game Game, int Season), SeasonStatsData>();
+        private IReadOnlyDictionary<(GameMode Game, int Season), SeasonStatsData> _seasonStats = new Dictionary<(GameMode Game, int Season), SeasonStatsData>();
 
         public PlayerStatsCache(ILoungeSettingsService loungeSettingsService)
         {
             _loungeSettingsService = loungeSettingsService;
         }
 
-        public IReadOnlyList<PlayerLeaderboardData> GetAllStats(Game game, int season, LeaderboardSortOrder sortOrder = LeaderboardSortOrder.Mmr)
+        public IReadOnlyList<PlayerLeaderboardData> GetAllStats(GameMode game, int season, LeaderboardSortOrder sortOrder = LeaderboardSortOrder.Mmr)
         {
             if (!_seasonStats.TryGetValue((game, season), out var seasonStats))
                 return Array.Empty<PlayerLeaderboardData>();
@@ -38,12 +38,12 @@ namespace Lounge.Web.Stats
             return sortedStats;
         }
 
-        public IReadOnlySet<string> GetAllCountryCodes(Game game, int season)
+        public IReadOnlySet<string> GetAllCountryCodes(GameMode game, int season)
         {
             return _seasonStats.TryGetValue((game, season), out var seasonData) ? seasonData.CountryCodes : ImmutableHashSet<string>.Empty;
         }
 
-        public bool TryGetPlayerStatsById(int id, Game game, int season, [NotNullWhen(true)] out PlayerLeaderboardData? playerStat)
+        public bool TryGetPlayerStatsById(int id, GameMode game, int season, [NotNullWhen(true)] out PlayerLeaderboardData? playerStat)
         {
             playerStat = null;
             return _seasonStats.TryGetValue((game, season), out var seasonStats) && seasonStats.Players.TryGetValue(id, out playerStat);
@@ -51,12 +51,12 @@ namespace Lounge.Web.Stats
 
         public void OnChange(IDbCache dbCache)
         {
-            var newSeasonStats = new Dictionary<(Game Game, int Season), SeasonStatsData>();
+            var newSeasonStats = new Dictionary<(GameMode Game, int Season), SeasonStatsData>();
             var countryNames = _loungeSettingsService.CountryNames;
             foreach (var game in _loungeSettingsService.ValidGames)
             {
                 var seasons = _loungeSettingsService.ValidSeasons[game];
-                var registrations = dbCache.PlayerGameRegistrations[game];
+                var registrations = dbCache.PlayerGameRegistrations[game.GetRegistrationGameMode()];
 
                 foreach (var season in seasons)
                 {
@@ -80,7 +80,7 @@ namespace Lounge.Web.Stats
 
                     var tablesLookup = new Dictionary<int, EventData>();
                     foreach (var table in dbCache.Tables.Values
-                        .Where(v => v.Season == season && v.Game == (int)game && v.VerifiedOn != null && v.DeletedOn == null))
+                        .Where(v => v.Season == season && v.Game == game && v.VerifiedOn != null && v.DeletedOn == null))
                     {
                         var tableScores = dbCache.TableScores.GetValueOrDefault(table.Id)?.Values?.ToList();
                         if (tableScores is null)

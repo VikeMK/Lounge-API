@@ -20,20 +20,18 @@ namespace Lounge.Web.Controllers
     public class PenaltyRequestsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILoungeSettingsService _loungeSettingsService;
 
-        public PenaltyRequestsController(ApplicationDbContext context, ILoungeSettingsService loungeSettingsService)
+        public PenaltyRequestsController(ApplicationDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _loungeSettingsService = loungeSettingsService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<PenaltyRequestViewModel>> GetPenaltyRequest(int id, Game game = Game.mk8dx)
+        public async Task<ActionResult<PenaltyRequestViewModel>> GetPenaltyRequest(int id, GameMode game = GameMode.mk8dx)
         {
             var requestData = await _context.PenaltyRequests
                 .AsNoTracking()
-                .Where(r => r.Id == id && r.Game == (int)game)
+                .Where(r => r.Id == id)
                 .Select(r => new { PenaltyRequest = r, PlayerName = r.Player.Name, ReporterName = r.Reporter == null ? string.Empty : r.Reporter.Name })
                 .FirstOrDefaultAsync();
 
@@ -42,15 +40,18 @@ namespace Lounge.Web.Controllers
                 return NotFound();
             }
 
+            if (requestData.PenaltyRequest.Game.GetRegistrationGameMode() != game.GetRegistrationGameMode())
+                return BadRequest("Table game mode does not match");
+
             return PenaltyRequestUtils.GetPenaltyRequestDetails(requestData.PenaltyRequest, requestData.PlayerName, requestData.ReporterName);
         }
 
         [HttpGet("list")]
-        public async Task<ActionResult<List<PenaltyRequestViewModel>>> GetPenaltyRequests(Game game = Game.mk8dx)
+        public async Task<ActionResult<List<PenaltyRequestViewModel>>> GetPenaltyRequests(GameMode game = GameMode.mk8dx)
         {
             var requestsData = await _context.PenaltyRequests
                 .AsNoTracking()
-                .Where(r => r.Game == (int)game)
+                .Where(r => r.Game == game)
                 .Select(r => new { PenaltyRequest = r, PlayerName = r.Player.Name, ReporterName = r.Reporter == null ? string.Empty : r.Reporter.Name})
                 .ToArrayAsync();
 
@@ -63,35 +64,41 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<PenaltyRequestViewModel>> SubmitPenaltyRequest(string penaltyType, string playerName, string reporterName, int tableID, int numberOfRaces, Game game = Game.mk8dx)
+        public async Task<ActionResult<PenaltyRequestViewModel>> SubmitPenaltyRequest(string penaltyType, string playerName, string reporterName, int tableID, int numberOfRaces, GameMode game = GameMode.mk8dx)
         {
             var player = await _context.PlayerGameRegistrations
-                .Where(pgr => pgr.Game == (int)game)
+                .Where(pgr => pgr.Game == game.GetRegistrationGameMode())
                 .Select(pgr => pgr.Player)
                 .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(playerName))
                 .Select(p => new { p.Id, p.Name })
                 .SingleOrDefaultAsync();
 
             if (player is null) 
-            { 
                 return NotFound();
-            }
 
             var reporter = await _context.PlayerGameRegistrations
-                .Where(pgr => pgr.Game == (int)game)
+                .Where(pgr => pgr.Game == game.GetRegistrationGameMode())
                 .Select(pgr => pgr.Player)
                 .Where(p => p.NormalizedName == PlayerUtils.NormalizeName(reporterName))
                 .Select(p => new { p.Id, p.Name })
                 .SingleOrDefaultAsync();
 
             if (reporter is null)
-            {
                 return NotFound();
-            }
+
+            var table = await _context.Tables
+                .Where(t => t.Id == tableID)
+                .FirstOrDefaultAsync();
+
+            if (table is null)
+                return NotFound();
+
+            if (table.Game.GetRegistrationGameMode() != game.GetRegistrationGameMode())
+                return BadRequest("Table game mode does not match");
 
             PenaltyRequest request = new()
             {
-                Game = (int)game,
+                Game = table.Game,
                 PenaltyName = penaltyType,
                 TableId = tableID,
                 NumberOfRaces = numberOfRaces,
@@ -107,17 +114,18 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id, Game game = Game.mk8dx)
+        public async Task<IActionResult> Delete(int id, GameMode game = GameMode.mk8dx)
         {
             var requestData = await _context.PenaltyRequests
-                .Where(r => r.Id == id && r.Game == (int)game)
+                .Where(r => r.Id == id)
                 .Select(r => new { PenaltyRequest = r })
                 .FirstOrDefaultAsync();
 
             if (requestData is null)
-            {
                 return NotFound();
-            }
+
+            if (requestData.PenaltyRequest.Game.GetRegistrationGameMode() != game.GetRegistrationGameMode())
+                return BadRequest("Table game mode does not match");
 
             _context.PenaltyRequests.Remove(requestData.PenaltyRequest);
             await _context.SaveChangesAsync();

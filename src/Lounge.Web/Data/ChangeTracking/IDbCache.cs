@@ -10,8 +10,8 @@ namespace Lounge.Web.Data.ChangeTracking
         IReadOnlyDictionary<int, Penalty> Penalties { get; }
         IReadOnlyDictionary<int, Placement> Placements { get; }
         IReadOnlyDictionary<int, Player> Players { get; }
-        IReadOnlyDictionary<Game, Dictionary<int, PlayerGameRegistration>> PlayerGameRegistrations { get; }
-        IReadOnlyDictionary<(Game Game, int Season), Dictionary<int, PlayerSeasonData>> PlayerSeasonData { get; }
+        IReadOnlyDictionary<RegistrationGameMode, Dictionary<int, PlayerGameRegistration>> PlayerGameRegistrations { get; }
+        IReadOnlyDictionary<(GameMode Game, int Season), Dictionary<int, PlayerSeasonData>> PlayerSeasonData { get; }
         IReadOnlyDictionary<int, Table> Tables { get; }
         IReadOnlyDictionary<int, Dictionary<int, TableScore>> TableScores { get; }
         IReadOnlyDictionary<int, NameChange> NameChanges { get; }

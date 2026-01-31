@@ -8,7 +8,7 @@ namespace Lounge.Web.Models.ViewModels
 {
     public class TableDetailsViewModel
     {
-        public TableDetailsViewModel(int id, Game game, int season, DateTime createdOn, DateTime? verifiedOn, DateTime? deletedOn, int numTeams, int numPlayers, string url, string tier, List<Team> teams, string? tableMessageId, string? updateMessageId, string? authorId)
+        public TableDetailsViewModel(int id, GameMode game, int season, DateTime createdOn, DateTime? verifiedOn, DateTime? deletedOn, int numTeams, int numPlayers, string url, string tier, List<Team> teams, string? tableMessageId, string? updateMessageId, string? authorId)
         {
             Id = id;
             Game = game;
@@ -30,7 +30,7 @@ namespace Lounge.Web.Models.ViewModels
         public int Id { get; set; }
 
         [Display(Name = "Game")]
-        public Game Game { get; set; }
+        public GameMode Game { get; set; }
 
         [Display(Name = "Season")]
         public int Season { get; set; }

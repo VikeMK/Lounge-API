@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Lounge.Web.Models.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Lounge.Web.Models.ViewModels
 {
     public class LeaderboardViewModel
     {
-        public int TotalPlayers { get; init; }
+        public required int TotalPlayers { get; init; }
+        public required GameMode Game { get; init; }
+        public required int Season { get; init; }
 
         public required List<Player> Data { get; init; }
 

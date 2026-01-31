@@ -33,6 +33,12 @@ namespace Lounge.Web.Storage
             return await blobClient.OpenReadAsync();
         }
 
+        public async Task DeleteTableImageAsync(int tableId)
+        {
+            BlobClient blobClient = await GetBlobClientAsync(tableId);
+            await blobClient.DeleteIfExistsAsync();
+        }
+
         private async Task<BlobClient> GetBlobClientAsync(int tableId)
         {
             var blobServiceClient = new BlobServiceClient(this.AzureStorageConnectionString);

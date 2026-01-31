@@ -11,7 +11,7 @@ namespace Lounge.Web.Utils
             return new PenaltyViewModel
             {
                 Id = penalty.Id,
-                Game = (Game)penalty.Game,
+                Game = penalty.Game,
                 Season = penalty.Season,
                 AwardedOn = penalty.AwardedOn,
                 DeletedOn = penalty.DeletedOn,
