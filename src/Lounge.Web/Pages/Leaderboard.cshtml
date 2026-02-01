@@ -19,7 +19,8 @@
     PageName = "Leaderboard",
     Game = Model.Game,
     CurrentSeason = Model.Season,
-    ValidSeasons = Model.ValidSeasons
+    ValidSeasons = Model.ValidSeasons,
+    PlayerCount = Model.Game == GameMode.mkworld12p ? 12 : Model.Game == GameMode.mkworld24p ? 24 : null
 })
 
 @if (Model.CachesBeingBuilt)

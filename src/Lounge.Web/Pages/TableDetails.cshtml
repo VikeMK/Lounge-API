@@ -117,8 +117,16 @@
                         }
                     </td>
                     <td>
-                        <!-- TODO: Put p in route values for MKWorld -->
-                        <a asp-page="PlayerDetails" asp-route-game="@Model.Data.Game.GetRegistrationGameMode().GetStringId()" asp-route-id="@score.PlayerId" asp-route-season="@Model.Data.Season">@Html.DisplayFor(modelItem => score.PlayerName)</a>
+                        @{
+                            int? p = Model.Data.Game switch
+                            {
+                                GameMode.mkworld12p => 12,
+                                GameMode.mkworld24p => 24,
+                                _ => null
+                            };
+                        }
+
+                        <a asp-page="PlayerDetails" asp-route-game="@Model.Data.Game.GetRegistrationGameMode().GetStringId()" asp-route-id="@score.PlayerId" asp-route-season="@Model.Data.Season" asp-route-p="@p?.ToString()">@Html.DisplayFor(modelItem => score.PlayerName)</a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => score.Score)

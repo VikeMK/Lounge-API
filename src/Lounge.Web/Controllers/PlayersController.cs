@@ -14,6 +14,7 @@ using Lounge.Web.Data.Entities;
 using Lounge.Web.Data.ChangeTracking;
 using Lounge.Web.Models.Enums;
 using Lounge.Web.MkcRegistry;
+using System.Diagnostics;
 
 namespace Lounge.Web.Controllers
 {
@@ -893,6 +894,368 @@ namespace Lounge.Web.Controllers
             await _context.SaveChangesAsync();
 
             return new NameChangeListViewModel.Player(player.Id, player.DiscordId, player.Name, newName!, nameChangeRequestedOn.Value, messageId);
+        }
+
+        // [HttpGet("mkworldSplitMmrSimulation")]
+        // [AllowAnonymous]
+        public async Task<ActionResult<MkWorldSimulationViewModel>> SimulateMkWorldSplitMmr()
+        {
+            var tables = _dbCache.Tables.Values.Where(t => t.Game == GameMode.mkworld && t.Season == 1).ToList();
+            var bonuses = _dbCache.Bonuses.Values.Where(b => b.Game == GameMode.mkworld && b.Season == 1).ToList();
+            var penalties = _dbCache.Penalties.Values.Where(p => p.Game == GameMode.mkworld && p.Season == 1).ToList();
+            var placements = _dbCache.Placements.Values.Where(p => p.Game == GameMode.mkworld && p.Season == 1).ToList();
+
+            var events = new List<(DateTime Time, SimulationEventType Type, int EntityId)>();
+
+            tables = tables.Where(t => t.VerifiedOn is not null && t.DeletedOn is null).ToList();
+            bonuses = bonuses.Where(b => b.DeletedOn is null).ToList();
+            penalties = penalties.Where(p => p.DeletedOn is null).ToList();
+
+            foreach (var table in tables)
+            {
+                if (table.VerifiedOn != null)
+                {
+                    events.Add((table.VerifiedOn.Value, SimulationEventType.TableVerify, table.Id));
+                    if (table.DeletedOn != null)
+                    {
+                        events.Add((table.DeletedOn.Value, SimulationEventType.TableRevert, table.Id));
+                    }
+                }
+            }
+
+            foreach (var bonus in bonuses)
+            {
+                events.Add((bonus.AwardedOn, SimulationEventType.BonusCreate, bonus.Id));
+                if (bonus.DeletedOn != null)
+                {
+                    events.Add((bonus.DeletedOn.Value, SimulationEventType.BonusDelete, bonus.Id));
+                }
+            }
+
+            foreach (var penalty in penalties)
+            {
+                events.Add((penalty.AwardedOn, SimulationEventType.PenaltyCreate, penalty.Id));
+                if (penalty.DeletedOn != null)
+                {
+                    events.Add((penalty.DeletedOn.Value, SimulationEventType.PenaltyDelete, penalty.Id));
+                }
+            }
+
+            var placementsFromPreseason = new Dictionary<int, int>();
+            var preseasonData = _dbCache.PlayerSeasonData[(GameMode.mkworld, 0)];
+
+            foreach (var placement in placements)
+            {
+                events.Add((placement.AwardedOn, SimulationEventType.PlacementCreate, placement.Id));
+
+                if (preseasonData.TryGetValue(placement.PlayerId, out var placementMmr))
+                    placementsFromPreseason[placement.PlayerId] = placementMmr.Mmr;
+            }
+
+            events.Sort();
+
+            var mmrs12P = new Dictionary<int, int>();
+            var mmrs24P = new Dictionary<int, int>();
+
+            var counts12p = new Dictionary<int, int>();
+            var counts24p = new Dictionary<int, int>();
+
+            var last12P = new Dictionary<int, DateTime>();
+            var last24P = new Dictionary<int, DateTime>();
+
+            var tableMmrChanges = new Dictionary<int, List<(int PlayerId, int PrevMmr, int NewMmr)>>();
+            var bonusMmrChanges = new Dictionary<int, (bool Is12P, int PlayerId, int PrevMmr, int NewMmr)>();
+            var penaltyMmrChanges = new Dictionary<int, (bool Is12P, int PlayerId, int PrevMmr, int NewMmr)>();
+
+            var tableDatesByPlayer = new Dictionary<int, List<(DateTime, bool Is12P)>>();
+            foreach (var table in tables)
+            {
+                var scores = _dbCache.TableScores[table.Id].Values;
+                Debug.Assert(scores.Count is 12 or 24);
+                var is12P = scores.Count == 12;
+                foreach (var score in scores)
+                {
+                    if (!tableDatesByPlayer.TryGetValue(score.PlayerId, out var dateList))
+                    {
+                        dateList = [];
+                        tableDatesByPlayer[score.PlayerId] = dateList;
+                    }
+
+                    dateList.Add((table.CreatedOn, is12P));
+
+                    if (table.VerifiedOn != null && table.DeletedOn == null)
+                    {
+                        var countsDict = is12P ? counts12p : counts24p;
+                        if (!countsDict.ContainsKey(score.PlayerId))
+                            countsDict[score.PlayerId] = 0;
+                        countsDict[score.PlayerId]++;
+                    }
+                }
+            }
+
+            // sort all date lists
+            foreach (var dateList in tableDatesByPlayer.Values)
+            {
+                dateList.Sort();
+            }
+
+            var placedWithNoEvents = new Dictionary<int, int>();
+
+            foreach (var evt in events)
+            {
+                switch (evt.Type)
+                {
+                    case SimulationEventType.TableVerify:
+                        {
+                            var table = _dbCache.Tables[evt.EntityId];
+                            var scores = _dbCache.TableScores[table.Id].Values;
+                            var is12P = scores.Count == 12;
+                            var mmrDict = is12P ? mmrs12P : mmrs24P;
+
+                            var numTeams = table.NumTeams;
+
+                            var roomMmrs = new Dictionary<int, int>();
+                            var missingMmrs = new List<int>();
+                            foreach (var score in scores)
+                            {
+                                if (mmrDict.TryGetValue(score.PlayerId, out var playerMmr))
+                                {
+                                    roomMmrs[score.PlayerId] = playerMmr;
+                                }
+                                else
+                                {
+                                    missingMmrs.Add(score.PlayerId);
+                                }
+                            }
+
+                            if (missingMmrs.Count > 0)
+                            {
+                                Debug.Assert(roomMmrs.Count > 4);
+                                var roomAverage = roomMmrs.Values.Average();
+                                foreach (var playerId in missingMmrs)
+                                {
+                                    if (placementsFromPreseason.TryGetValue(playerId, out var placementMmr))
+                                        roomMmrs[playerId] = placementMmr;
+                                    else
+                                        roomMmrs[playerId] = (int)Math.Round(roomAverage);
+                                }
+                            }
+
+                            var scoresGrouped = new (string Player, int Score, int CurrentMmr, double Multiplier)[numTeams][];
+                            for (int i = 0; i < numTeams; i++)
+                            {
+                                scoresGrouped[i] = scores
+                                    .Where(score => score.Team == i)
+                                    .Select(s => (s.PlayerId.ToString(), s.Score, roomMmrs[s.PlayerId], s.Multiplier))
+                                    .ToArray();
+                            }
+
+                            var mmrDeltas = TableUtils.GetMMRDeltas(scoresGrouped);
+                            var mmrChanges = new List<(int PlayerId, int PrevMmr, int NewMmr)>();
+                            foreach (var score in scores)
+                            {
+                                var playerId = score.PlayerId;
+                                var delta = mmrDeltas[playerId.ToString()];
+                                var prevMmr = roomMmrs[playerId];
+                                var newMmr = Math.Max(prevMmr + delta, 0);
+
+                                mmrDict[playerId] = newMmr;
+                                mmrChanges.Add((playerId, prevMmr, newMmr));
+
+                                if (table.DeletedOn is null)
+                                {
+                                    if (is12P)
+                                        last12P[playerId] = table.CreatedOn;
+                                    else
+                                        last24P[playerId] = table.CreatedOn;
+                                }
+                            }
+
+                            tableMmrChanges[evt.EntityId] = mmrChanges;
+                            break;
+                        }
+                    case SimulationEventType.TableRevert:
+                        {
+                            Debug.Assert(false);
+                            var changes = tableMmrChanges[evt.EntityId];
+                            var mmrDict = changes.Count == 12 ? mmrs12P : mmrs24P;
+                            foreach (var change in changes)
+                            {
+                                var diff = change.NewMmr - change.PrevMmr;
+                                var newMmr = Math.Max(mmrDict[change.PlayerId] - diff, 0);
+                                mmrDict[change.PlayerId] = newMmr;
+                            }
+                            break;
+                        }
+                    case SimulationEventType.BonusCreate:
+                        {
+                            var bonus = _dbCache.Bonuses[evt.EntityId];
+                            var is12P = NearestIs12P(bonus.PlayerId, evt.Time, beforeOnly: true);
+                            Debug.Assert(is12P is not null);
+
+                            var mmrDict = is12P.Value ? mmrs12P : mmrs24P;
+                            var prevMmr = mmrDict[bonus.PlayerId];
+                            var amount = bonus.NewMmr - bonus.PrevMmr;
+                            var newMmr = prevMmr + amount;
+                            Debug.Assert(newMmr >= 0);
+
+                            mmrDict[bonus.PlayerId] = newMmr;
+                            bonusMmrChanges[bonus.Id] = (is12P.Value, bonus.PlayerId, prevMmr, newMmr);
+                            break;
+                        }
+                    case SimulationEventType.BonusDelete:
+                        {
+                            Debug.Assert(false);
+                            var change = bonusMmrChanges[evt.EntityId];
+                            var mmrDict = change.Is12P ? mmrs12P : mmrs24P;
+                            var diff = change.NewMmr - change.PrevMmr;
+                            var newMmr = Math.Max(mmrDict[change.PlayerId] - diff, 0);
+                            mmrDict[change.PlayerId] = newMmr;
+                            break;
+                        }
+                    case SimulationEventType.PenaltyCreate:
+                        {
+                            var penalty = _dbCache.Penalties[evt.EntityId];
+                            var is12P = NearestIs12P(penalty.PlayerId, evt.Time, beforeOnly: true);
+                            if (is12P is null)
+                            {
+                                penaltyMmrChanges[penalty.Id] = (false, penalty.PlayerId, penalty.NewMmr, penalty.NewMmr);
+                                break;
+                            }
+
+                            var mmrDict = is12P.Value ? mmrs12P : mmrs24P;
+                            if (!mmrDict.TryGetValue(penalty.PlayerId, out var prevMmr))
+                            {
+                                prevMmr = penalty.PrevMmr;
+                                mmrDict[penalty.PlayerId] = prevMmr;
+                            }
+
+                            var amount = penalty.NewMmr - penalty.PrevMmr;
+                            var newMmr = Math.Max(prevMmr - amount, 0);
+
+                            mmrDict[penalty.PlayerId] = newMmr;
+                            penaltyMmrChanges[penalty.Id] = (is12P.Value, penalty.PlayerId, prevMmr, newMmr);
+                            break;
+                        }
+                    case SimulationEventType.PenaltyDelete:
+                        {
+                            Debug.Assert(false);
+                            var change = penaltyMmrChanges[evt.EntityId];
+                            var mmrDict = change.Is12P ? mmrs12P : mmrs24P;
+                            var diff = change.NewMmr - change.PrevMmr;
+                            if (diff == 0)
+                                break;
+
+                            var newMmr = change.PrevMmr - diff;
+                            Debug.Assert(newMmr >= 0);
+                            mmrDict[change.PlayerId] = newMmr;
+                            break;
+                        }
+                    case SimulationEventType.PlacementCreate:
+                        {
+                            var placement = _dbCache.Placements[evt.EntityId];
+                            if (placement.PrevMmr is null)
+                            {
+                                var is12P = NearestIs12P(placement.PlayerId, evt.Time, beforeOnly: false);
+                                if (is12P is null)
+                                {
+                                    placedWithNoEvents[placement.PlayerId] = placement.Mmr;
+                                    break;
+                                }
+
+                                var mmrDict = is12P.Value ? mmrs12P : mmrs24P;
+                                Debug.Assert(!mmrDict.ContainsKey(placement.PlayerId));
+                                mmrDict[placement.PlayerId] = placement.Mmr;
+                            }
+                            else
+                            {
+                                if (mmrs12P.ContainsKey(placement.PlayerId))
+                                    mmrs12P[placement.PlayerId] = placement.Mmr;
+                                if (mmrs24P.ContainsKey(placement.PlayerId))
+                                    mmrs24P[placement.PlayerId] = placement.Mmr;
+                            }
+
+                            break;
+                        }
+                }
+            }
+
+            var playerNames = _dbCache.Players.ToDictionary(p => p.Key, p => p.Value.Name);
+
+            return new MkWorldSimulationViewModel
+            {
+                MmrsWithNoTables = placedWithNoEvents.Select(kvp =>
+                {
+                    var pId = kvp.Key;
+                    var name = playerNames[pId];
+                    var mmr = kvp.Value;
+                    return new MkWorldSimulationViewModel.PlayerWithNoTableData(pId, name, mmr);
+                }).ToList(),
+                Mmrs12P = mmrs12P.Select(kvp => 
+                {
+                    var pId = kvp.Key;
+                    var name = playerNames[pId];
+                    var eventsPlayed = counts12p[pId];
+                    return new MkWorldSimulationViewModel.PlayerData(pId, name, kvp.Value, eventsPlayed, last12P[pId]);
+                }).ToList(),
+                Mmrs24P = mmrs24P.Select(kvp =>
+                {
+                    var pId = kvp.Key;
+                    var name = playerNames[pId];
+                    var eventsPlayed = counts24p[pId];
+                    return new MkWorldSimulationViewModel.PlayerData(pId, name, kvp.Value, eventsPlayed, last24P[pId]);
+                }).ToList(),
+            };
+
+            bool? NearestIs12P(int playerId, DateTime time, bool beforeOnly)
+            {
+                var dateList = tableDatesByPlayer.GetValueOrDefault(playerId, []);
+                if (dateList.Count == 0)
+                    return null;
+
+                (DateTime, bool) best = dateList[0];
+                if (beforeOnly && best.Item1 > time)
+                    return null;
+
+                var bestDiff = (best.Item1 - time).Duration();
+
+                for (int i = 1; i < dateList.Count; i++)
+                {
+                    var date = dateList[i];
+                    if (beforeOnly && date.Item1 > time)
+                        break;
+
+                    var diff = (date.Item1 - time).Duration();
+                    if (diff < bestDiff)
+                    {
+                        best = date;
+                        bestDiff = diff;
+                    }
+                }
+
+                return best.Item2;
+            }
+        }
+
+        public class MkWorldSimulationViewModel
+        {
+            public List<PlayerWithNoTableData> MmrsWithNoTables { get; set; }
+            public List<PlayerData> Mmrs12P { get; set; }
+            public List<PlayerData> Mmrs24P { get; set; }
+
+            public record PlayerWithNoTableData(int PlayerId, string PlayerName, int Mmr);
+            public record PlayerData(int PlayerId, string PlayerName, int Mmr, int EventsPlayed, DateTime LastPlayed);
+        }
+
+        public enum SimulationEventType
+        {
+            TableVerify,
+            TableRevert,
+            BonusCreate,
+            BonusDelete,
+            PenaltyCreate,
+            PenaltyDelete,
+            PlacementCreate,
         }
 
         private Task<Player?> GetPlayerByIdAsync(int id) =>

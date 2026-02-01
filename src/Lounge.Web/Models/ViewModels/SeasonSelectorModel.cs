@@ -11,5 +11,10 @@ namespace Lounge.Web.Models.ViewModels
         public int CurrentSeason { get; set; }
         public IReadOnlyList<int> ValidSeasons { get; set; } = new List<int>();
         public Dictionary<string, object>? ExtraRouteValues { get; set; } // For additional routing needs
+        
+        /// <summary>
+        /// The player count for the current view (12 or 24). Only used for MKWorld game mode.
+        /// </summary>
+        public int? PlayerCount { get; set; }
     }
 }

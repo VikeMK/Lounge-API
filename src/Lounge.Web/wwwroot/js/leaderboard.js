@@ -61,7 +61,7 @@ function computeColspan() {
   if (extra) {
     // account created + avg score(s)
     cols += 1; // account created
-    if (game === 'mk8dx') cols += 1; else cols += 2;
+    if (game === 'mkworld') cols += 2; else cols += 1;
   }
   return cols;
 }
@@ -105,7 +105,17 @@ function updateLeaderboard(leaderboardData, page, pageSize) {
 
     // Name Column
     var playerLinkElement = document.createElement("a");
-    playerLinkElement.href = `/${game}/PlayerDetails/${player.id}?season=${season}`;
+    // Handle split game modes - use base game in route and add p parameter
+    var routeGame = game;
+    var pParam = "";
+    if (game === "mkworld12p") {
+      routeGame = "mkworld";
+      pParam = "&p=12";
+    } else if (game === "mkworld24p") {
+      routeGame = "mkworld";
+      pParam = "&p=24";
+    }
+    playerLinkElement.href = `/${routeGame}/PlayerDetails/${player.id}?season=${season}${pParam}`;
     playerLinkElement.appendChild(document.createTextNode(player.name));
     appendCell(playerLinkElement, "name-col");
 
@@ -153,14 +163,20 @@ function updateLeaderboard(leaderboardData, page, pageSize) {
       tr.appendChild(dateCell);
 
       // Average score columns
-      if (game === 'mk8dx') {
-        var avg = player.averageScore12P ?? null;
-        appendCell(document.createTextNode(avg != null ? avg.toFixed(1) : "-"), "equal-width-col");
-      } else {
+      if (game === 'mkworld') {
+        // Legacy mkworld shows both 12P and 24P columns
         var avg12 = player.averageScore12P ?? null;
         var avg24 = player.averageScore24P ?? null;
         appendCell(document.createTextNode(avg12 != null ? avg12.toFixed(1) : "-"), "equal-width-col");
         appendCell(document.createTextNode(avg24 != null ? avg24.toFixed(1) : "-"), "equal-width-col");
+      } else if (game === 'mkworld24p') {
+        // mkworld24p shows only 24P average
+        var avg = player.averageScore24P ?? null;
+        appendCell(document.createTextNode(avg != null ? avg.toFixed(1) : "-"), "equal-width-col");
+      } else {
+        // mk8dx and mkworld12p show only 12P average
+        var avg = player.averageScore12P ?? null;
+        appendCell(document.createTextNode(avg != null ? avg.toFixed(1) : "-"), "equal-width-col");
       }
     }
 

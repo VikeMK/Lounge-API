@@ -18,7 +18,8 @@
     Game = Model.Data.Game,
     PlayerId = Model.Data.PlayerId,
     CurrentSeason = Model.Data.Season,
-    ValidSeasons = Model.ValidSeasons
+    ValidSeasons = Model.ValidSeasons,
+    PlayerCount = Model.Data.Game == GameMode.mkworld12p ? 12 : Model.Data.Game == GameMode.mkworld24p ? 24 : null
 })
 
 <h1>@Model.Data.Name - @Html.DisplayFor(model => model.Data.Rank) @(Model.Data.IsHidden ? $"({Localizer["Hidden"]})" : string.Empty)</h1>
@@ -165,7 +166,7 @@
                             {
                                 var numPlayers = change.NumPlayers ?? 12;
                                 var roomSizeFormat = Model.Data.Game != GameMode.mkworld ? "" : $"{numPlayers}P ";
-                                var tierFormat = Model.Data.Game != GameMode.mk8dx && change.Tier == "Q" ? "" : (TableUtils.TierDisplayName(change.Tier) + " ");
+                                var tierFormat = (TableUtils.TierDisplayName(change.Tier) + " ");
                                 <a asp-page="TableDetails" asp-route-game="@Model.Data.Game.GetRegistrationGameMode().GetStringId()" asp-route-id="@change.ChangeId">@tierFormat@roomSizeFormat@TableUtils.FormatDisplay(change.NumTeams!.Value, numPlayers) (ID: @change.ChangeId)</a>
                             }
                             else if (change.Reason is PlayerDetailsViewModel.MmrChangeReason.TableDelete)

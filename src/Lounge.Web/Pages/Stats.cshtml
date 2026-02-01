@@ -16,7 +16,8 @@
     PageName = "Stats",
     Game = Model.Game,
     CurrentSeason = Model.Season,
-    ValidSeasons = Model.ValidSeasons
+    ValidSeasons = Model.ValidSeasons,
+    PlayerCount = Model.Game == GameMode.mkworld12p ? 12 : Model.Game == GameMode.mkworld24p ? 24 : null
 })
 
 <h1 class="m-4 text-center">@Localizer["Division Data"]</h1>
