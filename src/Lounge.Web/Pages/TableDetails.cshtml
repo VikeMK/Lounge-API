@@ -6,7 +6,7 @@
 @inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = $"{Localizer.GetString("Table")} (ID: {Model.Data.Id}) - {GameUtils.GetSeasonDisplayName(Model.Data.Game, Model.Data.Season)}";
+    ViewData["Title"] = $"{Localizer.GetString("Table")} (ID: {Model.Data.Id}) - {GameUtils.GetSeasonDisplayName(Model.Data.Season)}";
     Layout = "_Layout";
 }
 <div>
@@ -117,7 +117,16 @@
                         }
                     </td>
                     <td>
-                        <a asp-page="PlayerDetails" asp-route-game="@Model.Data.Game.GetStringId()" asp-route-id="@score.PlayerId">@Html.DisplayFor(modelItem => score.PlayerName)</a>
+                        @{
+                            int? p = Model.Data.Game switch
+                            {
+                                GameMode.mkworld12p => 12,
+                                GameMode.mkworld24p => 24,
+                                _ => null
+                            };
+                        }
+
+                        <a asp-page="PlayerDetails" asp-route-game="@Model.Data.Game.GetRegistrationGameMode().GetStringId()" asp-route-id="@score.PlayerId" asp-route-season="@Model.Data.Season" asp-route-p="@p?.ToString()">@Html.DisplayFor(modelItem => score.PlayerName)</a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => score.Score)

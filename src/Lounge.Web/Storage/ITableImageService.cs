@@ -7,5 +7,6 @@ namespace Lounge.Web.Storage
     {
         Task<Stream?> DownloadTableImageAsync(int tableId);
         Task UploadTableImageAsync(int tableId, byte[] image);
+        Task DeleteTableImageAsync(int tableId);
     }
 }

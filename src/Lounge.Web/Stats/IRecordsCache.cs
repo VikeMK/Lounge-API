@@ -4,6 +4,6 @@ namespace Lounge.Web.Stats
 {
     public interface IRecordsCache
     {
-        RecordsCache.SeasonRecords GetRecords(Game game, int season);
+        RecordsCache.SeasonRecords GetRecords(GameMode game, int season);
     }
 }

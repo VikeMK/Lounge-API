@@ -18,20 +18,17 @@ namespace Lounge.Web.Data.ChangeTracking
         private readonly ILogger<DbChangeTrackingBackgroundService> _logger;
         private readonly IServiceProvider _services;
         private readonly IChangeTrackingSubscriber _changeTrackingSubscriber;
-        private readonly IDatabaseCacheService _databaseCacheService;
         private readonly IDbCache _dbCache;
 
         public DbChangeTrackingBackgroundService(
             ILogger<DbChangeTrackingBackgroundService> logger,
             IServiceProvider services,
             IChangeTrackingSubscriber dbCache,
-            IDatabaseCacheService databaseCacheService,
             IDbCache dbCacheDataSource)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _services = services ?? throw new ArgumentNullException(nameof(services));
             _changeTrackingSubscriber = dbCache ?? throw new ArgumentNullException(nameof(dbCache));
-            _databaseCacheService = databaseCacheService ?? throw new ArgumentNullException(nameof(databaseCacheService));
             _dbCache = dbCacheDataSource ?? throw new ArgumentNullException(nameof(dbCacheDataSource));
         }
 

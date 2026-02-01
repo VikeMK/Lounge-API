@@ -1,13 +1,19 @@
 @using Lounge.Web.Models.ViewModels
 @using Lounge.Web.Models.Enums
 @using Lounge.Web.Utils
-@using Microsoft.AspNetCore.Mvc.Localization
-@inject IViewLocalizer Localizer
 @model SeasonSelectorModel
+
+@{
+    var registrationGame = Model.Game.GetRegistrationGameMode();
+    var isMkWorld = registrationGame == RegistrationGameMode.mkworld;
+    var isSeason2OrLater = Model.CurrentSeason >= 2;
+    var showPlayerCountToggle = isMkWorld && isSeason2OrLater;
+    var currentPlayerCount = Model.PlayerCount ?? (Model.Game == GameMode.mkworld12p ? 12 : 24);
+}
 
 <div class="navbar navbar-expand-lg navbar-dark bg-dark rounded px-lg-1 mb-3">
     <div class="container-fluid px-0">
-        <span class="navbar-brand d-lg-none">@Localizer["Seasons"]</span>
+        <span class="navbar-brand d-lg-none">Seasons</span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#seasonSelector">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -19,7 +25,7 @@
                         @{
                             var routeValues = new Dictionary<string, string>
                             {
-                                ["game"] = Model.Game.GetStringId(),
+                                ["game"] = registrationGame.GetStringId(),
                                 ["season"] = season.ToString()
                             };
                             if (Model.PlayerId.HasValue)
@@ -33,11 +39,60 @@
                         <a class="nav-link @(season == Model.CurrentSeason ? "active" : "")"
                            asp-page="@Model.PageName"
                            asp-all-route-data="@routeValues">
-                            @GameUtils.GetSeasonDisplayName(Model.Game, season)
+                            @GameUtils.GetSeasonDisplayName(season)
                         </a>
                     </li>
                 }
             </ul>
+            @if (showPlayerCountToggle)
+            {
+                <div class="navbar-nav ml-lg-3 border-lg-left pl-lg-3">
+                    @{
+                        var routeValues12P = new Dictionary<string, string>
+                        {
+                            ["game"] = registrationGame.GetStringId(),
+                            ["season"] = Model.CurrentSeason.ToString(),
+                            ["p"] = "12"
+                        };
+                        var routeValues24P = new Dictionary<string, string>
+                        {
+                            ["game"] = registrationGame.GetStringId(),
+                            ["season"] = Model.CurrentSeason.ToString(),
+                            ["p"] = "24"
+                        };
+                        if (Model.PlayerId.HasValue)
+                        {
+                            routeValues12P["id"] = Model.PlayerId.Value.ToString();
+                            routeValues24P["id"] = Model.PlayerId.Value.ToString();
+                        }
+                        if (Model.ExtraRouteValues != null)
+                        {
+                            foreach (var kvp in Model.ExtraRouteValues)
+                            {
+                                routeValues12P[kvp.Key] = kvp.Value?.ToString() ?? string.Empty;
+                                routeValues24P[kvp.Key] = kvp.Value?.ToString() ?? string.Empty;
+                            }
+                        }
+                    }
+                    <a class="nav-link @(currentPlayerCount == 12 ? "active" : "")"
+                       asp-page="@Model.PageName"
+                       asp-all-route-data="@routeValues12P">
+                        12P
+                    </a>
+                    <a class="nav-link @(currentPlayerCount == 24 ? "active" : "")"
+                       asp-page="@Model.PageName"
+                       asp-all-route-data="@routeValues24P">
+                        24P
+                    </a>
+                </div>
+            }
         </div>
     </div>
 </div>
+
+@if (isMkWorld && !isSeason2OrLater)
+{
+    <div class="alert alert-info mb-3">
+        <strong>Note:</strong> In the Preseason and Season 1 of MKWorld Lounge, 12-player and 24-player events both applied to a single MMR. They are only separated from Season 2 onwards.
+    </div>
+}

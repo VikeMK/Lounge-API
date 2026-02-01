@@ -4,13 +4,13 @@
 @inject IViewLocalizer Localizer
 @{
     // Get the current game from route data, fallback to mk8dx if not available
-    var currentGame = ViewContext.RouteData.Values["game"]?.ToString() ?? Game.mk8dx.GetStringId();
-    var gameEnum = Enum.TryParse(typeof(Game), currentGame, true, out var g) ? (Game)g : Game.mk8dx;
-    var discordInvite = gameEnum == Game.mk8dx
+    var currentGame = ViewContext.RouteData.Values["game"]?.ToString() ?? GameMode.mk8dx.GetStringId();
+    var gameEnum = Enum.TryParse(typeof(RegistrationGameMode), currentGame, true, out var g) ? (RegistrationGameMode)g : RegistrationGameMode.mk8dx;
+    var discordInvite = gameEnum == RegistrationGameMode.mk8dx
         ? "https://discord.gg/revmGkE"
         : "https://discord.gg/WR6JKPn2v9";
 
-    var rulesLink = gameEnum == Game.mk8dx
+    var rulesLink = gameEnum == RegistrationGameMode.mk8dx
         ? "https://docs.google.com/document/d/e/2PACX-1vTMPvg2_Nw4c6tVM8xlAVIoP1zEk6ZLVdKB32xwJ-AgGwljKFGHfl54VqPpb-35cBGg6g3HQ2etINFd/pub"
         : "https://docs.google.com/document/d/e/2PACX-1vT16yZirwz_ehjYIq6KeemuGKx3rCCvKJU-iNuTl0S2FPs7AYv1y44bsfDMLKbRfA5TOxShsmJxomJq/pub";
 }
@@ -27,6 +27,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-dark bg-dark mb-3">
             <div class="container">
+                <!-- TODO: Update this for split leaderboard -->
                 <div class="d-flex">
                     @await Html.PartialAsync("_SelectLanguagePartial")
                     <a class="navbar-brand" asp-page="Leaderboard" asp-route-game="@currentGame">@Localizer[$"{gameEnum} Lounge"]</a>
@@ -54,7 +55,7 @@
                         </li>
                         <li class="nav-item">
                             @{
-                                var otherGame = gameEnum == Game.mk8dx ? Game.mkworld : Game.mk8dx;
+                                var otherGame = gameEnum == RegistrationGameMode.mk8dx ? RegistrationGameMode.mkworld : RegistrationGameMode.mk8dx;
                                 var otherGameKey = $"{otherGame} Lounge";
                             }
                             <a class="nav-link" asp-page="Leaderboard" asp-route-game="@otherGame.ToString().ToLower()">
@@ -77,7 +78,7 @@
 
     <footer class="border-top footer bg-dark mt-auto">
         <div class="container py-3 text-center">
-            <span class="d-block mb-1">© 2018-2025 mkcentral.com</span>
+            <span class="d-block mb-1">© 2018-2026 mkcentral.com</span>
             <small class="d-block mb-1 text-muted">
                 MK8DX Lounge and MKWorld Lounge aren't endorsed by Nintendo and don't reflect the views or opinions of Nintendo or anyone officially involved in producing or managing Nintendo properties.
                 Nintendo, Mario Kart, and their respective logos are trademarks of Nintendo.

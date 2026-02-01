@@ -5,7 +5,7 @@ namespace Lounge.Web.Data.Entities
     public class PenaltyRequest
     {
         public int Id { get; set; }
-        public int Game { get; set; } = (int)Models.Enums.Game.mk8dx;
+        public Models.Enums.GameMode Game { get; set; } = Models.Enums.GameMode.mk8dx;
         public string PenaltyName { get; set; } = default!;
         public int TableId { get; set; }
         public Table Table { get; set; } = default!;

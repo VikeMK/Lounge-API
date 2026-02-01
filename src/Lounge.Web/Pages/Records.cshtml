@@ -7,7 +7,7 @@
 @inject IViewLocalizer Localizer
 @model Lounge.Web.Pages.RecordsPageModel
 @{
-    ViewData["Title"] = $"{Localizer.GetString("Records")} - {GameUtils.GetSeasonDisplayName(Model.Game, Model.Season)}";
+    ViewData["Title"] = $"{Localizer.GetString("Records")} - {GameUtils.GetSeasonDisplayName(Model.Season)}";
     Layout = "_Layout";
     var resultsToShow = 5;
 }
@@ -16,20 +16,28 @@
     PageName = "Records",
     Game = Model.Game,
     CurrentSeason = Model.Season,
-    ValidSeasons = LoungeSettingsService.ValidSeasons[Model.Game]
+    ValidSeasons = Model.ValidSeasons,
+    PlayerCount = Model.Game == GameMode.mkworld12p ? 12 : Model.Game == GameMode.mkworld24p ? 24 : null
 })
 
 <div>
-    <!-- TODO: Support 24 player records -->
-    @{ var teamCounts = new int[] { 12, 6, 4, 3, 2 }; }
+    @{
+        var numPlayers = 12;
+        var teamCounts = new List<int> { 12, 6, 4, 3, 2 };
+        if (Model.Game == GameMode.mkworld24p)
+        {
+            numPlayers = 24;
+            teamCounts.Insert(0, 24);
+        }
+    }
     @foreach (var teamCount in teamCounts)
     {
-        @if ((Model.Game == Game.mkworld || Model.Season > 4) && teamCount == 2)
+        @if ((Model.Game != GameMode.mk8dx || Model.Season > 4) && teamCount == 2)
         {
             continue;
         }
 
-        <h2>@TableUtils.FormatDisplay(teamCount, 12)</h2>
+        <h2>@TableUtils.FormatDisplay(teamCount, numPlayers)</h2>
         <div class="row mb-4">
             @foreach (var tier in LoungeSettingsService.RecordsTierOrders[Model.Game][Model.Season])
             {
@@ -64,11 +72,12 @@
                                                 {
                                                     <br />
                                                 }
-                                                <a asp-page="PlayerDetails" asp-route-game="@Model.Game.GetStringId()" asp-route-id="@player.Id" asp-route-season="@Model.Season">@player.Name</a>
+                                                <!-- Put p in route values for MKWorld -->
+                                                <a asp-page="PlayerDetails" asp-route-game="@Model.Game.GetRegistrationGameMode().GetStringId()" asp-route-id="@player.Id" asp-route-season="@Model.Season">@player.Name</a>
                                             }
                                         </td>
                                         <td class="align-middle px-1">
-                                            <a asp-page="TableDetails" asp-route-game="@Model.Game.GetStringId()" asp-route-id="@record.TableId">@record.TotalScore</a>
+                                            <a asp-page="TableDetails" asp-route-game="@Model.Game.GetRegistrationGameMode().GetStringId()" asp-route-id="@record.TableId">@record.TotalScore</a>
                                         </td>
                                     </tr>
                                 }

@@ -11,7 +11,7 @@ namespace Lounge.Web.Utils
             return new PenaltyRequestViewModel
             {
                 Id = request.Id,
-                Game = (Game)request.Game,
+                Game = request.Game,
                 PenaltyName = request.PenaltyName,
                 TableId = request.TableId,
                 NumberOfRaces = request.NumberOfRaces,

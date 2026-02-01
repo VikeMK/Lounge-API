@@ -14,6 +14,7 @@ using Lounge.Web.Data.Entities;
 using Lounge.Web.Data.ChangeTracking;
 using Lounge.Web.Models.Enums;
 using Lounge.Web.MkcRegistry;
+using System.Diagnostics;
 
 namespace Lounge.Web.Controllers
 {
@@ -43,12 +44,10 @@ namespace Lounge.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<PlayerViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, string? fc, Game game = Game.mk8dx, int? season = null)
+        public async Task<ActionResult<PlayerGameViewModel>> GetPlayer(string? name, int? id, int? mkcId, string? discordId, string? fc, GameMode game = GameMode.mk8dx, int? season = null)
         {
-            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
-                return BadRequest($"Invalid season {season} for game {game}");
-
-            season ??= _loungeSettingsService.CurrentSeason[game];
+            if (!_loungeSettingsService.ValidateGameAndSeason(ref game, ref season, out var error, allowMkWorldFallback: true))
+                return BadRequest(error);
 
             Player? player;
             if (id is not null)
@@ -79,14 +78,14 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == season && s.Game == (int)game);
+            var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == season && s.Game == game);
 
-            return PlayerUtils.GetPlayerViewModel(player, seasonData);
+            return new PlayerGameViewModel(player, game, season.Value, seasonData);
         }
 
         [HttpGet("allgames")]
         [AllowAnonymous]
-        public async Task<ActionResult<PlayerViewModel>> GetPlayerAllGames(string? name, int? id, int? mkcId, string? discordId, string? fc)
+        public async Task<ActionResult<PlayerAllGamesViewModel>> GetPlayerAllGames(string? name, int? id, int? mkcId, string? discordId, string? fc)
         {
             Player? player;
             if (id is not null)
@@ -117,28 +116,15 @@ namespace Lounge.Web.Controllers
             if (player is null)
                 return NotFound();
 
-            return new PlayerViewModel
-            {
-                Id = player.Id,
-                DiscordId = player.DiscordId,
-                MKCId = player.RegistryId ?? -1,
-                RegistryId = player.RegistryId,
-                Name = player.Name,
-                CountryCode = player.CountryCode,
-                SwitchFc = player.SwitchFc,
-                IsHidden = player.IsHidden,
-                Registrations = player.GameRegistrations.Select(r => ((Game)r.Game).GetStringId()).ToList()
-            };
+            return new PlayerAllGamesViewModel(player, player.GameRegistrations.Select(r => r.Game.GetStringId()).ToList());
         }
 
         [HttpGet("details")]
         [AllowAnonymous]
-        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, string? discordId = null, string? fc = null, Game game = Game.mk8dx, int? season = null)
+        public ActionResult<PlayerDetailsViewModel> Details(string? name, int? id, string? discordId = null, string? fc = null, GameMode game = GameMode.mk8dx, int? season = null)
         {
-            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
-                return BadRequest($"Invalid season {season} for game {game}");
-
-            season ??= _loungeSettingsService.CurrentSeason[game];
+            if (!_loungeSettingsService.ValidateGameAndSeason(ref game, ref season, out var error, allowMkWorldFallback: true))
+                return BadRequest(error);
 
             int? playerId;
             if (id is int)
@@ -175,12 +161,10 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("list")]
         [AllowAnonymous]
-        public ActionResult<PlayerListViewModel> Players(int? minMmr, int? maxMmr, Game game = Game.mk8dx, int? season=null)
+        public ActionResult<PlayerListViewModel> Players(int? minMmr, int? maxMmr, GameMode game = GameMode.mk8dx, int? season=null)
         {
-            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
-                return BadRequest($"Invalid season {season} for game {game}");
-
-            season ??= _loungeSettingsService.CurrentSeason[game];
+            if (!_loungeSettingsService.ValidateGameAndSeason(ref game, ref season, out var error, allowMkWorldFallback: false))
+                return BadRequest(error);
 
             var players = _playerStatCache
                 .GetAllStats(game, season.Value)
@@ -195,14 +179,14 @@ namespace Lounge.Web.Controllers
                 .ToList();
 
             Response.Headers.CacheControl = "public, max-age=600"; // Cache for 10 minutes
-            return new PlayerListViewModel { Players = players };
+            return new PlayerListViewModel { Game = game, Season = season.Value, Players = players };
         }
 
         [HttpGet("leaderboard")]
         [AllowAnonymous]
         public ActionResult<LeaderboardViewModel> Leaderboard(
-            int season,
-            Game game = Game.mk8dx,
+            int? season = null,
+            GameMode game = GameMode.mk8dx,
             LeaderboardSortOrder sortBy = LeaderboardSortOrder.Mmr,
             int skip = 0,
             int pageSize = 50,
@@ -215,6 +199,9 @@ namespace Lounge.Web.Controllers
             DateTime? minCreationDateUtc = null,
             DateTime? maxCreationDateUtc = null)
         {
+            if (!_loungeSettingsService.ValidateGameAndSeason(ref game, ref season, out var error, allowMkWorldFallback: true))
+                return BadRequest(error);
+
             if (pageSize < 0)
                 return BadRequest("pageSize must be non-negative");
 
@@ -224,11 +211,11 @@ namespace Lounge.Web.Controllers
             if (pageSize == 0)
                 pageSize = 50;
 
-            var playerStatsEnumerable = _playerStatCache.GetAllStats(game, season, sortBy).AsEnumerable();
+            var playerStatsEnumerable = _playerStatCache.GetAllStats(game, season.Value, sortBy).AsEnumerable();
             if (search != null)
             {
                 int? playerId = null;
-                var registrations = _dbCache.PlayerGameRegistrations[game];
+                var registrations = _dbCache.PlayerGameRegistrations[game.GetRegistrationGameMode()];
                 if (search.StartsWith("mkc=", StringComparison.OrdinalIgnoreCase))
                 {
                     if (int.TryParse(search[4..], out var mkcId))
@@ -254,7 +241,7 @@ namespace Lounge.Web.Controllers
                     var normalized = PlayerUtils.NormalizeName(search);
                     playerStatsEnumerable = playerStatsEnumerable.Where(p => PlayerUtils.NormalizeName(p.Name).Contains(normalized));
                 }
-                else if (_playerStatCache.TryGetPlayerStatsById(playerId.Value, game, season, out var playerStats))
+                else if (_playerStatCache.TryGetPlayerStatsById(playerId.Value, game, season.Value, out var playerStats))
                 {
                     playerStatsEnumerable = [playerStats];
                 }
@@ -308,8 +295,8 @@ namespace Lounge.Web.Controllers
                         GainLossLastTen = player.HasEvents ? player.LastTenGainLoss : null,
                         LastWeekRankChange = player.LastWeekRankChange,
                         LargestGain = player.LargestGain?.Amount,
-                        MmrRank = _loungeSettingsService.GetRank(player.Mmr, game, season),
-                        MaxMmrRank = _loungeSettingsService.GetRank(player.MaxMmr, game, season),
+                        MmrRank = _loungeSettingsService.GetRank(player.Mmr, game, season.Value),
+                        MaxMmrRank = _loungeSettingsService.GetRank(player.MaxMmr, game, season.Value),
                         CountryCode = player.CountryCode,
                         AccountCreationDateUtc = player.AccountCreationDateUtc,
                         AverageScore12P = player.AverageScore12P,
@@ -325,7 +312,9 @@ namespace Lounge.Web.Controllers
             return new LeaderboardViewModel
             {
                 TotalPlayers = playerCount,
-                Data = data
+                Data = data,
+                Game = game,
+                Season = season.Value
             };
         }
 
@@ -342,21 +331,20 @@ namespace Lounge.Web.Controllers
 
         [HttpGet("stats")]
         [AllowAnonymous]
-        public ActionResult<StatsViewModel> Stats(Game game = Game.mk8dx, int? season = null)
+        public ActionResult<StatsViewModel> Stats(GameMode game = GameMode.mk8dx, int? season = null)
         {
-            if (season != null && !_loungeSettingsService.ValidSeasons[game].Contains(season.Value))
-                return BadRequest($"Invalid season {season} for game {game}");
-
-            season ??= _loungeSettingsService.CurrentSeason[game];
+            if (!_loungeSettingsService.ValidateGameAndSeason(ref game, ref season, out var error, allowMkWorldFallback: true))
+                return BadRequest(error);
 
             var players = _playerStatCache
                 .GetAllStats(game, season.Value)
                 .Where(p => p.HasEvents)
-                .Select(p => new StatsPlayerViewModel.Player(
+                .Select(p => new
+                {
                     p.Name,
                     p.Mmr,
                     p.CountryCode
-                    ))
+                })
                 .ToList();
 
             var divisionData = new List<StatsViewModel.Division>();
@@ -457,7 +445,7 @@ namespace Lounge.Web.Controllers
             }
 
             var tables = _dbCache.Tables.Values
-                .Where(t => t.Game == (int)game && t.Season == season && t.DeletedOn == null && t.VerifiedOn != null)
+                .Where(t => t.Game == game && t.Season == season && t.DeletedOn == null && t.VerifiedOn != null)
                 .Select(t => new StatsTableViewModel.Table(
                     t.CreatedOn,
                     t.NumTeams,
@@ -513,6 +501,8 @@ namespace Lounge.Web.Controllers
             {
                 TotalPlayers = players.Count,
                 TotalMogis = mogiTotal,
+                Game = game,
+                Season = season.Value,
                 AverageMmr = AverageMmr,
                 MedianMmr = median,
                 DivisionData = divisionData,
@@ -525,7 +515,7 @@ namespace Lounge.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<PlayerViewModel>> Create(string name, int mkcId, int? mmr, Game? game = Game.mk8dx, string? discordId = null)
+        public async Task<ActionResult<PlayerViewModel>> Create(string name, int mkcId, int? mmr, GameMode? game = GameMode.mk8dx, string? discordId = null)
         {
             var registryData = await _mkcRegistryApi.GetPlayerRegistryDataAsync(mkcId);
             var normalizedName = PlayerUtils.NormalizeName(name);
@@ -543,17 +533,18 @@ namespace Lounge.Web.Controllers
                 NameHistory = new List<NameChange> { new NameChange { Name = name, NormalizedName = normalizedName, ChangedOn = DateTime.UtcNow } }
             };
 
-
-            if (game is Game gameValue)
+            PlayerSeasonData? seasonData = null;
+            if (game is GameMode gameValue)
             {
-                var season = _loungeSettingsService.CurrentSeason[gameValue];
-
-                player.GameRegistrations = [new() { Game = (int)gameValue, RegisteredOn = time }];
+                player.GameRegistrations = [new() { Game = gameValue.GetRegistrationGameMode(), RegisteredOn = time }];
                 if (mmr is int mmrValue)
                 {
-                    PlayerSeasonData? seasonData = new() { Mmr = mmrValue, Game = (int)game, Season = season };
+                    if (!_loungeSettingsService.ValidateCurrentGame(ref gameValue, out var currentSeason, out var error, allowMkWorldFallback: false))
+                        return BadRequest(error);
+
+                    seasonData = new() { Mmr = mmrValue, Game = gameValue, Season = currentSeason.Value };
                     player.SeasonData = [seasonData];
-                    Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, Game = (int)game, Season = season };
+                    Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, Game = gameValue, Season = currentSeason.Value };
                     player.Placements = [placement];
                 }
             }
@@ -581,87 +572,79 @@ namespace Lounge.Web.Controllers
                 throw;
             }
 
-            var vm = new PlayerViewModel
-            {
-                Id = player.Id,
-                DiscordId = player.DiscordId,
-                MKCId = player.RegistryId ?? -1,
-                RegistryId = player.RegistryId,
-                Name = player.Name,
-                CountryCode = player.CountryCode,
-                SwitchFc = player.SwitchFc,
-                IsHidden = player.IsHidden,
-                Mmr = mmr,
-                MaxMmr = null,
-            };
-
+            var vm = seasonData == null ? new PlayerViewModel(player) : new PlayerGameViewModel(player, seasonData.Game, seasonData.Season, seasonData);
             return CreatedAtAction(nameof(GetPlayer), new { name = player.Name }, vm);
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<PlayerViewModel>> Register(string name, Game game = Game.mk8dx, int? mmr = null)
+        public async Task<ActionResult<PlayerViewModel>> Register(string name, GameMode game = GameMode.mk8dx, int? mmr = null)
         {
             var player = await GetPlayerByNameAsync(name);
             if (player is null)
                 return NotFound();
 
-            if (player.GameRegistrations.Any(r => r.Game == (int)game))
+            var registrationGameMode = game.GetRegistrationGameMode();
+
+            if (player.GameRegistrations.Any(r => r.Game == registrationGameMode))
                 return BadRequest("Player is already registered for this game.");
 
             var time = DateTime.UtcNow;
             _context.PlayerGameRegistrations.Add(new PlayerGameRegistration
             {
                 PlayerId = player.Id,
-                Game = (int)game,
+                Game = registrationGameMode,
                 RegisteredOn = time
             });
 
             PlayerSeasonData? seasonData = null;
             if (mmr is int mmrValue)
             {
-                var season = _loungeSettingsService.CurrentSeason[game];
+                if (!_loungeSettingsService.ValidateCurrentGame(ref game, out var currentSeason, out var error, allowMkWorldFallback: false))
+                    return BadRequest(error);
 
-                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, PlayerId = player.Id, Season = season, Game = (int)game };
+                Placement placement = new() { Mmr = mmrValue, PrevMmr = null, AwardedOn = DateTime.UtcNow, PlayerId = player.Id, Season = currentSeason.Value, Game = game };
                 _context.Placements.Add(placement);
 
-                seasonData = new() { Mmr = mmrValue, Game = (int)game, Season = season, PlayerId = player.Id };
+                seasonData = new() { Mmr = mmrValue, Game = game, Season = currentSeason.Value, PlayerId = player.Id };
                 _context.PlayerSeasonData.Add(seasonData);
             }
 
             await _context.SaveChangesAsync();
 
-            var vm = PlayerUtils.GetPlayerViewModel(player, seasonData);
-
+            var vm = seasonData == null ? new PlayerViewModel(player) : new PlayerGameViewModel(player, seasonData.Game, seasonData.Season, seasonData);
             return CreatedAtAction(nameof(Placement), new { name = player.Name }, vm);
         }
 
         [HttpPost("placement")]
-        public async Task<ActionResult<PlayerViewModel>> Placement(string name, int mmr, Game game = Game.mk8dx, bool force=false)
+        public async Task<ActionResult<PlayerGameViewModel>> Placement(string name, int mmr, GameMode game = GameMode.mk8dx, bool force=false)
         {
             var player = await GetGamePlayerByNameAsync(name, game);
             if (player is null)
                 return NotFound();
 
-            var season = _loungeSettingsService.CurrentSeason[game];
-            var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == season && s.Game == (int)game);
+            if (!_loungeSettingsService.ValidateCurrentGame(ref game, out var currentSeason, out var error, allowMkWorldFallback: false))
+                return BadRequest(error);
+
+            var seasonData = player.SeasonData.FirstOrDefault(s => s.Season == currentSeason.Value && s.Game == game);
 
             if (seasonData is not null && !force)
             {
                 // only look at events that have been verified and aren't deleted
                 var eventsPlayed = await _context.TableScores
-                    .CountAsync(s => s.PlayerId == player.Id && s.Table.VerifiedOn != null && s.Table.DeletedOn == null && s.Table.Season == season && s.Table.Game == (int)game);
+                    .CountAsync(s => s.PlayerId == player.Id && s.Table.VerifiedOn != null && s.Table.DeletedOn == null && s.Table.Season == currentSeason.Value && s.Table.Game == game);
 
                 if (eventsPlayed > 0)
                     return BadRequest("Player already has been placed and has played a match.");
             }
 
-            Placement placement = new() { Mmr = mmr, PrevMmr = seasonData?.Mmr, AwardedOn = DateTime.UtcNow, PlayerId = player.Id, Season = season, Game = (int)game };
+            Placement placement = new() { Mmr = mmr, PrevMmr = seasonData?.Mmr, AwardedOn = DateTime.UtcNow, PlayerId = player.Id, Season = currentSeason.Value, Game = game };
             _context.Placements.Add(placement);
 
             if (seasonData is null)
             {
-                PlayerSeasonData newSeasonData = new() { Mmr = mmr, Game = (int)game, Season = season, PlayerId = player.Id };
+                PlayerSeasonData newSeasonData = new() { Mmr = mmr, Game = game, Season = currentSeason.Value, PlayerId = player.Id };
                 _context.PlayerSeasonData.Add(newSeasonData);
+                seasonData = newSeasonData;
             }
             else
             {
@@ -670,7 +653,7 @@ namespace Lounge.Web.Controllers
 
             await _context.SaveChangesAsync();
 
-            var vm = PlayerUtils.GetPlayerViewModel(player, seasonData);
+            var vm = new PlayerGameViewModel(player, seasonData.Game, seasonData.Season, seasonData);
 
             return CreatedAtAction(nameof(Placement), new { name = player.Name }, vm);
         }
@@ -913,6 +896,368 @@ namespace Lounge.Web.Controllers
             return new NameChangeListViewModel.Player(player.Id, player.DiscordId, player.Name, newName!, nameChangeRequestedOn.Value, messageId);
         }
 
+        // [HttpGet("mkworldSplitMmrSimulation")]
+        // [AllowAnonymous]
+        public async Task<ActionResult<MkWorldSimulationViewModel>> SimulateMkWorldSplitMmr()
+        {
+            var tables = _dbCache.Tables.Values.Where(t => t.Game == GameMode.mkworld && t.Season == 1).ToList();
+            var bonuses = _dbCache.Bonuses.Values.Where(b => b.Game == GameMode.mkworld && b.Season == 1).ToList();
+            var penalties = _dbCache.Penalties.Values.Where(p => p.Game == GameMode.mkworld && p.Season == 1).ToList();
+            var placements = _dbCache.Placements.Values.Where(p => p.Game == GameMode.mkworld && p.Season == 1).ToList();
+
+            var events = new List<(DateTime Time, SimulationEventType Type, int EntityId)>();
+
+            tables = tables.Where(t => t.VerifiedOn is not null && t.DeletedOn is null).ToList();
+            bonuses = bonuses.Where(b => b.DeletedOn is null).ToList();
+            penalties = penalties.Where(p => p.DeletedOn is null).ToList();
+
+            foreach (var table in tables)
+            {
+                if (table.VerifiedOn != null)
+                {
+                    events.Add((table.VerifiedOn.Value, SimulationEventType.TableVerify, table.Id));
+                    if (table.DeletedOn != null)
+                    {
+                        events.Add((table.DeletedOn.Value, SimulationEventType.TableRevert, table.Id));
+                    }
+                }
+            }
+
+            foreach (var bonus in bonuses)
+            {
+                events.Add((bonus.AwardedOn, SimulationEventType.BonusCreate, bonus.Id));
+                if (bonus.DeletedOn != null)
+                {
+                    events.Add((bonus.DeletedOn.Value, SimulationEventType.BonusDelete, bonus.Id));
+                }
+            }
+
+            foreach (var penalty in penalties)
+            {
+                events.Add((penalty.AwardedOn, SimulationEventType.PenaltyCreate, penalty.Id));
+                if (penalty.DeletedOn != null)
+                {
+                    events.Add((penalty.DeletedOn.Value, SimulationEventType.PenaltyDelete, penalty.Id));
+                }
+            }
+
+            var placementsFromPreseason = new Dictionary<int, int>();
+            var preseasonData = _dbCache.PlayerSeasonData[(GameMode.mkworld, 0)];
+
+            foreach (var placement in placements)
+            {
+                events.Add((placement.AwardedOn, SimulationEventType.PlacementCreate, placement.Id));
+
+                if (preseasonData.TryGetValue(placement.PlayerId, out var placementMmr))
+                    placementsFromPreseason[placement.PlayerId] = placementMmr.Mmr;
+            }
+
+            events.Sort();
+
+            var mmrs12P = new Dictionary<int, int>();
+            var mmrs24P = new Dictionary<int, int>();
+
+            var counts12p = new Dictionary<int, int>();
+            var counts24p = new Dictionary<int, int>();
+
+            var last12P = new Dictionary<int, DateTime>();
+            var last24P = new Dictionary<int, DateTime>();
+
+            var tableMmrChanges = new Dictionary<int, List<(int PlayerId, int PrevMmr, int NewMmr)>>();
+            var bonusMmrChanges = new Dictionary<int, (bool Is12P, int PlayerId, int PrevMmr, int NewMmr)>();
+            var penaltyMmrChanges = new Dictionary<int, (bool Is12P, int PlayerId, int PrevMmr, int NewMmr)>();
+
+            var tableDatesByPlayer = new Dictionary<int, List<(DateTime, bool Is12P)>>();
+            foreach (var table in tables)
+            {
+                var scores = _dbCache.TableScores[table.Id].Values;
+                Debug.Assert(scores.Count is 12 or 24);
+                var is12P = scores.Count == 12;
+                foreach (var score in scores)
+                {
+                    if (!tableDatesByPlayer.TryGetValue(score.PlayerId, out var dateList))
+                    {
+                        dateList = [];
+                        tableDatesByPlayer[score.PlayerId] = dateList;
+                    }
+
+                    dateList.Add((table.CreatedOn, is12P));
+
+                    if (table.VerifiedOn != null && table.DeletedOn == null)
+                    {
+                        var countsDict = is12P ? counts12p : counts24p;
+                        if (!countsDict.ContainsKey(score.PlayerId))
+                            countsDict[score.PlayerId] = 0;
+                        countsDict[score.PlayerId]++;
+                    }
+                }
+            }
+
+            // sort all date lists
+            foreach (var dateList in tableDatesByPlayer.Values)
+            {
+                dateList.Sort();
+            }
+
+            var placedWithNoEvents = new Dictionary<int, int>();
+
+            foreach (var evt in events)
+            {
+                switch (evt.Type)
+                {
+                    case SimulationEventType.TableVerify:
+                        {
+                            var table = _dbCache.Tables[evt.EntityId];
+                            var scores = _dbCache.TableScores[table.Id].Values;
+                            var is12P = scores.Count == 12;
+                            var mmrDict = is12P ? mmrs12P : mmrs24P;
+
+                            var numTeams = table.NumTeams;
+
+                            var roomMmrs = new Dictionary<int, int>();
+                            var missingMmrs = new List<int>();
+                            foreach (var score in scores)
+                            {
+                                if (mmrDict.TryGetValue(score.PlayerId, out var playerMmr))
+                                {
+                                    roomMmrs[score.PlayerId] = playerMmr;
+                                }
+                                else
+                                {
+                                    missingMmrs.Add(score.PlayerId);
+                                }
+                            }
+
+                            if (missingMmrs.Count > 0)
+                            {
+                                Debug.Assert(roomMmrs.Count > 4);
+                                var roomAverage = roomMmrs.Values.Average();
+                                foreach (var playerId in missingMmrs)
+                                {
+                                    if (placementsFromPreseason.TryGetValue(playerId, out var placementMmr))
+                                        roomMmrs[playerId] = placementMmr;
+                                    else
+                                        roomMmrs[playerId] = (int)Math.Round(roomAverage);
+                                }
+                            }
+
+                            var scoresGrouped = new (string Player, int Score, int CurrentMmr, double Multiplier)[numTeams][];
+                            for (int i = 0; i < numTeams; i++)
+                            {
+                                scoresGrouped[i] = scores
+                                    .Where(score => score.Team == i)
+                                    .Select(s => (s.PlayerId.ToString(), s.Score, roomMmrs[s.PlayerId], s.Multiplier))
+                                    .ToArray();
+                            }
+
+                            var mmrDeltas = TableUtils.GetMMRDeltas(scoresGrouped);
+                            var mmrChanges = new List<(int PlayerId, int PrevMmr, int NewMmr)>();
+                            foreach (var score in scores)
+                            {
+                                var playerId = score.PlayerId;
+                                var delta = mmrDeltas[playerId.ToString()];
+                                var prevMmr = roomMmrs[playerId];
+                                var newMmr = Math.Max(prevMmr + delta, 0);
+
+                                mmrDict[playerId] = newMmr;
+                                mmrChanges.Add((playerId, prevMmr, newMmr));
+
+                                if (table.DeletedOn is null)
+                                {
+                                    if (is12P)
+                                        last12P[playerId] = table.CreatedOn;
+                                    else
+                                        last24P[playerId] = table.CreatedOn;
+                                }
+                            }
+
+                            tableMmrChanges[evt.EntityId] = mmrChanges;
+                            break;
+                        }
+                    case SimulationEventType.TableRevert:
+                        {
+                            Debug.Assert(false);
+                            var changes = tableMmrChanges[evt.EntityId];
+                            var mmrDict = changes.Count == 12 ? mmrs12P : mmrs24P;
+                            foreach (var change in changes)
+                            {
+                                var diff = change.NewMmr - change.PrevMmr;
+                                var newMmr = Math.Max(mmrDict[change.PlayerId] - diff, 0);
+                                mmrDict[change.PlayerId] = newMmr;
+                            }
+                            break;
+                        }
+                    case SimulationEventType.BonusCreate:
+                        {
+                            var bonus = _dbCache.Bonuses[evt.EntityId];
+                            var is12P = NearestIs12P(bonus.PlayerId, evt.Time, beforeOnly: true);
+                            Debug.Assert(is12P is not null);
+
+                            var mmrDict = is12P.Value ? mmrs12P : mmrs24P;
+                            var prevMmr = mmrDict[bonus.PlayerId];
+                            var amount = bonus.NewMmr - bonus.PrevMmr;
+                            var newMmr = prevMmr + amount;
+                            Debug.Assert(newMmr >= 0);
+
+                            mmrDict[bonus.PlayerId] = newMmr;
+                            bonusMmrChanges[bonus.Id] = (is12P.Value, bonus.PlayerId, prevMmr, newMmr);
+                            break;
+                        }
+                    case SimulationEventType.BonusDelete:
+                        {
+                            Debug.Assert(false);
+                            var change = bonusMmrChanges[evt.EntityId];
+                            var mmrDict = change.Is12P ? mmrs12P : mmrs24P;
+                            var diff = change.NewMmr - change.PrevMmr;
+                            var newMmr = Math.Max(mmrDict[change.PlayerId] - diff, 0);
+                            mmrDict[change.PlayerId] = newMmr;
+                            break;
+                        }
+                    case SimulationEventType.PenaltyCreate:
+                        {
+                            var penalty = _dbCache.Penalties[evt.EntityId];
+                            var is12P = NearestIs12P(penalty.PlayerId, evt.Time, beforeOnly: true);
+                            if (is12P is null)
+                            {
+                                penaltyMmrChanges[penalty.Id] = (false, penalty.PlayerId, penalty.NewMmr, penalty.NewMmr);
+                                break;
+                            }
+
+                            var mmrDict = is12P.Value ? mmrs12P : mmrs24P;
+                            if (!mmrDict.TryGetValue(penalty.PlayerId, out var prevMmr))
+                            {
+                                prevMmr = penalty.PrevMmr;
+                                mmrDict[penalty.PlayerId] = prevMmr;
+                            }
+
+                            var amount = penalty.NewMmr - penalty.PrevMmr;
+                            var newMmr = Math.Max(prevMmr - amount, 0);
+
+                            mmrDict[penalty.PlayerId] = newMmr;
+                            penaltyMmrChanges[penalty.Id] = (is12P.Value, penalty.PlayerId, prevMmr, newMmr);
+                            break;
+                        }
+                    case SimulationEventType.PenaltyDelete:
+                        {
+                            Debug.Assert(false);
+                            var change = penaltyMmrChanges[evt.EntityId];
+                            var mmrDict = change.Is12P ? mmrs12P : mmrs24P;
+                            var diff = change.NewMmr - change.PrevMmr;
+                            if (diff == 0)
+                                break;
+
+                            var newMmr = change.PrevMmr - diff;
+                            Debug.Assert(newMmr >= 0);
+                            mmrDict[change.PlayerId] = newMmr;
+                            break;
+                        }
+                    case SimulationEventType.PlacementCreate:
+                        {
+                            var placement = _dbCache.Placements[evt.EntityId];
+                            if (placement.PrevMmr is null)
+                            {
+                                var is12P = NearestIs12P(placement.PlayerId, evt.Time, beforeOnly: false);
+                                if (is12P is null)
+                                {
+                                    placedWithNoEvents[placement.PlayerId] = placement.Mmr;
+                                    break;
+                                }
+
+                                var mmrDict = is12P.Value ? mmrs12P : mmrs24P;
+                                Debug.Assert(!mmrDict.ContainsKey(placement.PlayerId));
+                                mmrDict[placement.PlayerId] = placement.Mmr;
+                            }
+                            else
+                            {
+                                if (mmrs12P.ContainsKey(placement.PlayerId))
+                                    mmrs12P[placement.PlayerId] = placement.Mmr;
+                                if (mmrs24P.ContainsKey(placement.PlayerId))
+                                    mmrs24P[placement.PlayerId] = placement.Mmr;
+                            }
+
+                            break;
+                        }
+                }
+            }
+
+            var playerNames = _dbCache.Players.ToDictionary(p => p.Key, p => p.Value.Name);
+
+            return new MkWorldSimulationViewModel
+            {
+                MmrsWithNoTables = placedWithNoEvents.Select(kvp =>
+                {
+                    var pId = kvp.Key;
+                    var name = playerNames[pId];
+                    var mmr = kvp.Value;
+                    return new MkWorldSimulationViewModel.PlayerWithNoTableData(pId, name, mmr);
+                }).ToList(),
+                Mmrs12P = mmrs12P.Select(kvp => 
+                {
+                    var pId = kvp.Key;
+                    var name = playerNames[pId];
+                    var eventsPlayed = counts12p[pId];
+                    return new MkWorldSimulationViewModel.PlayerData(pId, name, kvp.Value, eventsPlayed, last12P[pId]);
+                }).ToList(),
+                Mmrs24P = mmrs24P.Select(kvp =>
+                {
+                    var pId = kvp.Key;
+                    var name = playerNames[pId];
+                    var eventsPlayed = counts24p[pId];
+                    return new MkWorldSimulationViewModel.PlayerData(pId, name, kvp.Value, eventsPlayed, last24P[pId]);
+                }).ToList(),
+            };
+
+            bool? NearestIs12P(int playerId, DateTime time, bool beforeOnly)
+            {
+                var dateList = tableDatesByPlayer.GetValueOrDefault(playerId, []);
+                if (dateList.Count == 0)
+                    return null;
+
+                (DateTime, bool) best = dateList[0];
+                if (beforeOnly && best.Item1 > time)
+                    return null;
+
+                var bestDiff = (best.Item1 - time).Duration();
+
+                for (int i = 1; i < dateList.Count; i++)
+                {
+                    var date = dateList[i];
+                    if (beforeOnly && date.Item1 > time)
+                        break;
+
+                    var diff = (date.Item1 - time).Duration();
+                    if (diff < bestDiff)
+                    {
+                        best = date;
+                        bestDiff = diff;
+                    }
+                }
+
+                return best.Item2;
+            }
+        }
+
+        public class MkWorldSimulationViewModel
+        {
+            public List<PlayerWithNoTableData> MmrsWithNoTables { get; set; }
+            public List<PlayerData> Mmrs12P { get; set; }
+            public List<PlayerData> Mmrs24P { get; set; }
+
+            public record PlayerWithNoTableData(int PlayerId, string PlayerName, int Mmr);
+            public record PlayerData(int PlayerId, string PlayerName, int Mmr, int EventsPlayed, DateTime LastPlayed);
+        }
+
+        public enum SimulationEventType
+        {
+            TableVerify,
+            TableRevert,
+            BonusCreate,
+            BonusDelete,
+            PenaltyCreate,
+            PenaltyDelete,
+            PlacementCreate,
+        }
+
         private Task<Player?> GetPlayerByIdAsync(int id) =>
             _context.Players
                 .Include(p => p.GameRegistrations)
@@ -939,50 +1284,39 @@ namespace Lounge.Web.Controllers
                 .Include(p => p.GameRegistrations)
                 .SingleOrDefaultAsync(p => p.SwitchFc == fc);
 
-        private Task<Player?> GetGamePlayerByIdAsync(int id, Game game) =>
+        private Task<Player?> GetGamePlayerByIdAsync(int id, GameMode game) =>
             _context.PlayerGameRegistrations
                 .Include(g => g.Player.SeasonData)
-                .Where(p => p.Game == (int)game)
+                .Where(p => p.Game == game.GetRegistrationGameMode())
                 .Select(p => p.Player)
                 .SingleOrDefaultAsync(p => p.Id == id);
 
-        private Task<Player?> GetGamePlayerByNameAsync(string name, Game game) =>
+        private Task<Player?> GetGamePlayerByNameAsync(string name, GameMode game) =>
             _context.PlayerGameRegistrations
                 .Include(g => g.Player.SeasonData)
-                .Where(p => p.Game == (int)game)
+                .Where(p => p.Game == game.GetRegistrationGameMode())
                 .Select(p => p.Player)
                 .SingleOrDefaultAsync(p => p.NormalizedName == PlayerUtils.NormalizeName(name));
 
-        private Task<Player?> GetGamePlayerByRegistryIdAsync(int registryId, Game game) =>
+        private Task<Player?> GetGamePlayerByRegistryIdAsync(int registryId, GameMode game) =>
             _context.PlayerGameRegistrations
                 .Include(g => g.Player.SeasonData)
-                .Where(p => p.Game == (int)game)
+                .Where(p => p.Game == game.GetRegistrationGameMode())
                 .Select(p => p.Player)
                 .SingleOrDefaultAsync(p => p.RegistryId == registryId);
 
-        private Task<Player?> GetGamePlayerByDiscordIdAsync(string discordId, Game game) =>
+        private Task<Player?> GetGamePlayerByDiscordIdAsync(string discordId, GameMode game) =>
             _context.PlayerGameRegistrations
                 .Include(g => g.Player.SeasonData)
-                .Where(p => p.Game == (int)game)
+                .Where(p => p.Game == game.GetRegistrationGameMode())
                 .Select(p => p.Player)
                 .SingleOrDefaultAsync(p => p.DiscordId == discordId);
 
-        private Task<Player?> GetGamePlayerByFriendCodeAsync(string fc, Game game) =>
+        private Task<Player?> GetGamePlayerByFriendCodeAsync(string fc, GameMode game) =>
             _context.PlayerGameRegistrations
                 .Include(g => g.Player.SeasonData)
-                .Where(p => p.Game == (int)game)
+                .Where(p => p.Game == game.GetRegistrationGameMode())
                 .Select(p => p.Player)
                 .SingleOrDefaultAsync(p => p.SwitchFc == fc);
-
-        private PlayerLeaderboardData? GetPlayerStats(int id, Game game, int season)
-        {
-            PlayerLeaderboardData? playerStat = null;
-            if (id != -1)
-            {
-                _playerStatCache.TryGetPlayerStatsById(id, game, season, out playerStat);
-            }
-
-            return playerStat;
-        }
     }
 }

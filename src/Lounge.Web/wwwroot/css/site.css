@@ -154,6 +154,13 @@ body {
     height: 450px;
 }
 
+/* Player count toggle (12P/24P) styling */
+@media (min-width: 992px) {
+    .border-lg-left {
+        border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+}
+
 @media (max-width: 768px) {
     #leaderboardTable {
         font-size: 16px;

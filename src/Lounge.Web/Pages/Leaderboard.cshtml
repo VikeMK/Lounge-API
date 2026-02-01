@@ -11,7 +11,7 @@
 
 @model Lounge.Web.Pages.LeaderboardPageModel
 @{
-    ViewData["Title"] = $"{Localizer.GetString("Leaderboard")} - {GameUtils.GetSeasonDisplayName(Model.Game, Model.Season)}";
+    ViewData["Title"] = $"{Localizer.GetString("Leaderboard")} - {GameUtils.GetSeasonDisplayName(Model.Season)}";
     Layout = "_Layout";
 }
 
@@ -19,7 +19,8 @@
     PageName = "Leaderboard",
     Game = Model.Game,
     CurrentSeason = Model.Season,
-    ValidSeasons = LoungeSettingsService.ValidSeasons[Model.Game]
+    ValidSeasons = Model.ValidSeasons,
+    PlayerCount = Model.Game == GameMode.mkworld12p ? 12 : Model.Game == GameMode.mkworld24p ? 24 : null
 })
 
 @if (Model.CachesBeingBuilt)
@@ -80,7 +81,10 @@ else
                     if ((sortOrder == LeaderboardSortOrder.AvgScore12P || sortOrder == LeaderboardSortOrder.AvgScore24P) && !showExtraSorts)
                         continue;
 
-                    if (sortOrder == LeaderboardSortOrder.AvgScore24P && Model.Game == Game.mk8dx)
+                    if (sortOrder == LeaderboardSortOrder.AvgScore24P && Model.Game is GameMode.mk8dx or GameMode.mkworld12p)
+                        continue;
+
+                    if (sortOrder == LeaderboardSortOrder.AvgScore12P && Model.Game == GameMode.mkworld24p)
                         continue;
 
                     var enumName = sortOrder.ToString();
@@ -118,7 +122,7 @@ else
                         @if (Model.ShowExtra)
                         {
                             <th class="equal-width-col">@Localizer["Account Created"]</th>
-                            @if (Model.Game == Game.mk8dx)
+                            @if (Model.Game != GameMode.mkworld)
                             {
                                 <th class="equal-width-col">@Localizer["Average Score"]</th>
                             }
@@ -135,7 +139,7 @@ else
                 <tr>
                     @{ 
                         var baseCols = 6 + (Model.IsCurrentSeason ? 1 : 0); 
-                        var extraCols = Model.ShowExtra ? (1 + (Model.Game == Game.mk8dx ? 1 : 2)) : 0; 
+                        var extraCols = Model.ShowExtra ? (1 + (Model.Game == GameMode.mkworld ? 2 : 1)) : 0; 
                         var totalCols = baseCols + extraCols; 
                     }
                     <td colspan="@totalCols">Fetching Leaderboard Data...</td>

@@ -27,7 +27,7 @@ namespace Lounge.Web.Stats
             _dbCache = dbCache;
         }
 
-        public PlayerDetailsViewModel? GetPlayerDetails(int playerId, Game game, int season)
+        public PlayerDetailsViewModel? GetPlayerDetails(int playerId, GameMode game, int season)
         {
             if (!_playerStatsCache.TryGetPlayerStatsById(playerId, game, season, out var playerData))
                 return null;

@@ -5,6 +5,6 @@ namespace Lounge.Web.Stats
 {
     public interface IPlayerDetailsViewModelService
     {
-        PlayerDetailsViewModel? GetPlayerDetails(int playerId, Game game, int season);
+        PlayerDetailsViewModel? GetPlayerDetails(int playerId, GameMode game, int season);
     }
 }

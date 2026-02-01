@@ -216,7 +216,7 @@ namespace Lounge.Web.Utils
         {
             var teams = new List<TableDetailsViewModel.Team>();
 
-            var formatMultiplier = GetFormatMultiplier(table, loungeSettingService.SquadQueueMultipliers[(Game)table.Game][table.Season]);
+            var formatMultiplier = GetFormatMultiplier(table, loungeSettingService.SquadQueueMultipliers[table.Game][table.Season]);
 
             int rank = 1;
             int prevTotalScore = 0;
@@ -253,7 +253,7 @@ namespace Lounge.Web.Utils
 
             return new TableDetailsViewModel(
                 id: table.Id,
-                game: (Game)table.Game,
+                game: table.Game,
                 season: table.Season, 
                 createdOn: table.CreatedOn,
                 verifiedOn: table.VerifiedOn,

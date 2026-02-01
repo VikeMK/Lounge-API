@@ -3,6 +3,7 @@ using Lounge.Web.Models.ViewModels;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Lounge.Web.Settings
@@ -10,7 +11,7 @@ namespace Lounge.Web.Settings
     public class LoungeSettingsService : ILoungeSettingsService
     {
         private Lazy<ParsedLoungeSettings> _settings;
-        private static readonly IReadOnlyList<Game> _validGames = [Game.mk8dx, Game.mkworld];
+        private static readonly IReadOnlyList<GameMode> _validGames = [GameMode.mk8dx, GameMode.mkworld, GameMode.mkworld12p, GameMode.mkworld24p];
 
         public LoungeSettingsService(IOptionsMonitor<LoungeSettings> optionsMonitor)
         {
@@ -18,21 +19,33 @@ namespace Lounge.Web.Settings
             optionsMonitor.OnChange((settings) => _settings = new Lazy<ParsedLoungeSettings>(() => ParsedLoungeSettings.Create(optionsMonitor.CurrentValue)));
         }
 
-        public IReadOnlyList<Game> ValidGames => _validGames;
+        public IReadOnlyList<GameMode> ValidGames => _validGames;
 
-        public IReadOnlyDictionary<Game, int> CurrentSeason => _settings.Value.CurrentSeason;
+        public bool TryGetCurrentSeason(GameMode gameMode, [NotNullWhen(true)] out int? season)
+        {
+            if (_settings.Value.CurrentSeason.TryGetValue(gameMode, out var s))
+            {
+                season = s;
+                return true;
+            }
+            else
+            {
+                season = null;
+                return false;
+            }
+        }
 
-        public IReadOnlyDictionary<Game, IReadOnlyList<int>> ValidSeasons => _settings.Value.ValidSeasons;
+        public IReadOnlyDictionary<GameMode, IReadOnlyList<int>> ValidSeasons => _settings.Value.ValidSeasons;
 
         public IReadOnlyDictionary<string, string> CountryNames => _settings.Value.CountryNames;
 
-        public IReadOnlyDictionary<Game, IReadOnlyDictionary<int, TimeSpan>> LeaderboardRefreshDelays => _settings.Value.LeaderboardRefreshDelays;
+        public IReadOnlyDictionary<GameMode, IReadOnlyDictionary<int, TimeSpan>> LeaderboardRefreshDelays => _settings.Value.LeaderboardRefreshDelays;
 
-        public IReadOnlyDictionary<Game, IReadOnlyDictionary<int, double>> SquadQueueMultipliers => _settings.Value.SquadQueueMultipliers;
+        public IReadOnlyDictionary<GameMode, IReadOnlyDictionary<int, double>> SquadQueueMultipliers => _settings.Value.SquadQueueMultipliers;
 
-        public IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders => _settings.Value.RecordsTierOrders;
+        public IReadOnlyDictionary<GameMode, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders => _settings.Value.RecordsTierOrders;
         
-        public Rank GetRank(int? mmr, Game game, int season)
+        public Rank GetRank(int? mmr, GameMode game, int season)
         {
             if (!_settings.Value.MmrRanks[game].TryGetValue(season, out var mmrRanks))
                 throw new Exception($"No MMR ranks configured for game {game} season {season}");
@@ -52,7 +65,7 @@ namespace Lounge.Web.Settings
             return prev ?? throw new Exception($"No rank found for MMR {mmr} in game {game} season {season}");
         }
 
-        public IReadOnlyDictionary<string, int> GetRanks(Game game, int season)
+        public IReadOnlyDictionary<string, int> GetRanks(GameMode game, int season)
         {
             if (_settings.Value.RanksByName[game].TryGetValue(season, out var ranks))
             {
@@ -61,7 +74,7 @@ namespace Lounge.Web.Settings
             return new Dictionary<string, int>();
         }
 
-        public IReadOnlyList<string> GetRecordsTierOrder(Game game, int season)
+        public IReadOnlyList<string> GetRecordsTierOrder(GameMode game, int season)
         {
             if (_settings.Value.RecordsTierOrders[game].TryGetValue(season, out var tierOrder))
             {
@@ -70,7 +83,7 @@ namespace Lounge.Web.Settings
             return Array.Empty<string>();
         }
 
-        public IReadOnlyDictionary<string, IReadOnlyList<string>> GetDivisionsToTier(Game game, int season)
+        public IReadOnlyDictionary<string, IReadOnlyList<string>> GetDivisionsToTier(GameMode game, int season)
         {
             if (_settings.Value.DivisionsToTier[game].TryGetValue(season, out var divisionsToTier))
             {
@@ -80,30 +93,30 @@ namespace Lounge.Web.Settings
         }
         
         record ParsedLoungeSettings(
-            IReadOnlyDictionary<Game, int> CurrentSeason,
-            IReadOnlyDictionary<Game, IReadOnlyList<int>> ValidSeasons,
-            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, TimeSpan>> LeaderboardRefreshDelays,
-            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, double>> SquadQueueMultipliers,
-            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>> MmrRanks,
+            IReadOnlyDictionary<GameMode, int> CurrentSeason,
+            IReadOnlyDictionary<GameMode, IReadOnlyList<int>> ValidSeasons,
+            IReadOnlyDictionary<GameMode, IReadOnlyDictionary<int, TimeSpan>> LeaderboardRefreshDelays,
+            IReadOnlyDictionary<GameMode, IReadOnlyDictionary<int, double>> SquadQueueMultipliers,
+            IReadOnlyDictionary<GameMode, IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>> MmrRanks,
             IReadOnlyDictionary<string, string> CountryNames,
-            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders,
-            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyDictionary<string, int>>> RanksByName,
-            IReadOnlyDictionary<Game, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<string>>>> DivisionsToTier)
+            IReadOnlyDictionary<GameMode, IReadOnlyDictionary<int, IReadOnlyList<string>>> RecordsTierOrders,
+            IReadOnlyDictionary<GameMode, IReadOnlyDictionary<int, IReadOnlyDictionary<string, int>>> RanksByName,
+            IReadOnlyDictionary<GameMode, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<string>>>> DivisionsToTier)
         {
             public static ParsedLoungeSettings Create(LoungeSettings loungeSettings)
             {
-                var currentSeason = new Dictionary<Game, int>();
-                var allValidSeasons = new Dictionary<Game, IReadOnlyList<int>>();
-                var allRefreshDelays = new Dictionary<Game, IReadOnlyDictionary<int, TimeSpan>>();
-                var allSqMultipliers = new Dictionary<Game, IReadOnlyDictionary<int, double>>();
-                var allMmrRanks = new Dictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>>();
-                var allRecordsTierOrders = new Dictionary<Game, IReadOnlyDictionary<int, IReadOnlyList<string>>>();
-                var allRanksByName = new Dictionary<Game, IReadOnlyDictionary<int, IReadOnlyDictionary<string, int>>>();
-                var allDivisionsToTier = new Dictionary<Game, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<string>>>>();
+                var currentSeason = new Dictionary<GameMode, int>();
+                var allValidSeasons = new Dictionary<GameMode, IReadOnlyList<int>>();
+                var allRefreshDelays = new Dictionary<GameMode, IReadOnlyDictionary<int, TimeSpan>>();
+                var allSqMultipliers = new Dictionary<GameMode, IReadOnlyDictionary<int, double>>();
+                var allMmrRanks = new Dictionary<GameMode, IReadOnlyDictionary<int, IReadOnlyList<(int Mmr, Rank Rank)>>>();
+                var allRecordsTierOrders = new Dictionary<GameMode, IReadOnlyDictionary<int, IReadOnlyList<string>>>();
+                var allRanksByName = new Dictionary<GameMode, IReadOnlyDictionary<int, IReadOnlyDictionary<string, int>>>();
+                var allDivisionsToTier = new Dictionary<GameMode, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<string>>>>();
 
                 foreach ((var gameStr, var gameSettings) in loungeSettings.Games)
                 {
-                    var game = Enum.Parse<Game>(gameStr, true);
+                    var game = Enum.Parse<GameMode>(gameStr, true);
 
                     var validSeasons = new List<int>();
                     var refreshDelays = new Dictionary<int, TimeSpan>();
@@ -145,7 +158,9 @@ namespace Lounge.Web.Settings
                             mmrRanks[season] = seasonRanks;
                         }
                     }
-                    currentSeason[game] = gameSettings.CurrentSeason;
+
+                    if (gameSettings.CurrentSeason is int currentSeasonValue)
+                        currentSeason[game] = currentSeasonValue;
                     allValidSeasons[game] = validSeasons;
                     allRefreshDelays[game] = refreshDelays;
                     allSqMultipliers[game] = sqMultipliers;

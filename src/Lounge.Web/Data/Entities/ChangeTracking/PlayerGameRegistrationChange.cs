@@ -3,6 +3,6 @@
     public class  PlayerGameRegistrationChange : Change<PlayerGameRegistration>
     {
         public int PlayerId { get; set; }
-        public int Game { get; set; }
+        public Models.Enums.RegistrationGameMode Game { get; set; }
     }
 }

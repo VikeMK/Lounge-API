@@ -6,7 +6,7 @@ namespace Lounge.Web.Models.ViewModels
     public class PenaltyViewModel
     {
         public int Id { get; init; }
-        public Game Game { get; init; }
+        public GameMode Game { get; init; }
         public int Season { get; init; }
         public DateTime AwardedOn { get; init; }
         public bool IsStrike { get; init; }
