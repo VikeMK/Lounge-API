@@ -46,7 +46,7 @@ namespace Lounge.Web.Settings
 
         bool ValidateGameMatchesAndFromCurrentSeason(GameMode game, int season, GameMode actualGame, [NotNullWhen(false)] out string? error)
         {
-            var matches = (game == actualGame) || (game == GameMode.mkworld && (actualGame is GameMode.mkworld12p or GameMode.mkworld24p));
+            var matches = (game == actualGame) || ((game is GameMode.mkworld or GameMode.mkworld12p or GameMode.mkworld24p) && (actualGame is GameMode.mkworld12p or GameMode.mkworld24p));
             if (!matches)
             {
                 error = $"Game {game} does not match actual game {actualGame}";
