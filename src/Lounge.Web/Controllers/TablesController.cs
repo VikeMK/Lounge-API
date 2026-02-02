@@ -88,19 +88,11 @@ namespace Lounge.Web.Controllers
                     if (numPlayers != 12)
                         return BadRequest("Must supply 12 scores");
                     break;
-                case GameMode.mkworld:
+                case GameMode.mkworld or GameMode.mkworld12p or GameMode.mkworld24p:
                     if (numPlayers is not (12 or 24))
                         return BadRequest("Must supply 12 or 24 scores");
 
                     game = numPlayers == 12 ? GameMode.mkworld12p : GameMode.mkworld24p;
-                    break;
-                case GameMode.mkworld12p:
-                    if (numPlayers != 12)
-                        return BadRequest("Must supply 12 scores");
-                    break;
-                case GameMode.mkworld24p:
-                    if (numPlayers != 24)
-                        return BadRequest("Must supply 24 scores");
                     break;
             }
 
