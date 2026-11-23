@@ -5,3 +5,4 @@
 **/wwwroot/lib/
 *.pubxml
 *.arm.json
+.env

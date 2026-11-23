@@ -1,0 +1,78 @@
+name: lounge-api
+
+x-db-conn: &db-conn "Server=db,1433;Database=Lounge;User Id=sa;Password=${SA_PASSWORD:?set SA_PASSWORD in .env};TrustServerCertificate=True;MultipleActiveResultSets=true"
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
+    ports:
+      - "1433:1433"   # so you can connect from SSMS / Azure Data Studio on Windows
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -b -Q 'SELECT 1' > /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: azurite-blob --blobHost 0.0.0.0 --location /data --loose --skipApiVersionCheck
+    ports:
+      - "10000:10000"
+    volumes:
+      - azurite-data:/data
+
+  migrate:
+    build:
+      context: .
+      target: migrator
+    environment:
+      ConnectionStrings__DefaultConnection: *db-conn
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  web:
+    build:
+      context: .
+      target: final
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ConnectionStrings__DefaultConnection: *db-conn
+      # Azurite's well-known local dev account (public, not a secret)
+      ConnectionStrings__AzureStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
+      APICredentials__Username: ${API_USERNAME:-admin}
+      APICredentials__Password: ${API_PASSWORD:-admin}
+      APICredentials__PasswordSecondary: ${API_PASSWORD_SECONDARY:-admin2}
+    ports:
+      - "5000:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      azurite:
+        condition: service_started
+    restart: unless-stopped
+
+  # Web SQL client at http://localhost:8978. Only runs when COMPOSE_PROFILES includes "development" (see .env)
+  dbui:
+    image: dbeaver/cloudbeaver:latest
+    profiles: ["development"]
+    ports:
+      - "127.0.0.1:8978:8978"   # localhost only, never expose this publicly
+    volumes:
+      - cloudbeaver-data:/opt/cloudbeaver/workspace
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mssql-data:
+  azurite-data:
+  cloudbeaver-data:
