@@ -14,19 +14,28 @@ services:
     volumes:
       - mssql-data:/var/opt/mssql
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -b -Q 'SELECT 1' > /dev/null"]
+      # Healthy only once every database is ONLINE. SQL Server accepts logins before it has finished opening
+      # existing databases; if migrate connects in that window, EF thinks Lounge doesn't exist and tries to create it.
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -b -Q \"IF EXISTS (SELECT 1 FROM sys.databases WHERE state_desc <> 'ONLINE') RAISERROR('databases still starting', 16, 1)\" > /dev/null"]
       interval: 10s
       timeout: 5s
       retries: 20
       start_period: 30s
 
-  azurite:
-    image: mcr.microsoft.com/azure-storage/azurite
-    command: azurite-blob --blobHost 0.0.0.0 --location /data --loose --skipApiVersionCheck
+  # Local S3 emulator standing in for Cloudflare R2 (table images). Development only.
+  # Creates the bucket on startup, accepts any credentials and serves objects publicly at
+  # http://localhost:9090/lounge-table-images/<id>.png, like the public R2 domain in production.
+  s3mock:
+    image: adobe/s3mock:5.2.3
+    profiles: ["development"]
+    environment:
+      COM_ADOBE_TESTING_S3MOCK_STORE_INITIAL_BUCKETS: lounge-table-images
+      COM_ADOBE_TESTING_S3MOCK_STORE_ROOT: /s3mockroot   # must be this path for a named volume (see S3Mock README)
+      COM_ADOBE_TESTING_S3MOCK_STORE_RETAIN_FILES_ON_EXIT: "true"
     ports:
-      - "10000:10000"
+      - "9090:9090"
     volumes:
-      - azurite-data:/data
+      - s3mock-data:/s3mockroot
 
   migrate:
     build:
@@ -46,8 +55,17 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       ConnectionStrings__DefaultConnection: *db-conn
-      # Azurite's well-known local dev account (public, not a secret)
-      ConnectionStrings__AzureStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
+      # Table image bucket. Defaults point at the local s3mock; production sets the R2_* values in .env.
+      # S3Endpoint is where the app uploads (inside Docker); PublicBaseUrl is where browsers get redirected.
+      TableImages__S3Endpoint: ${R2_ENDPOINT:-http://s3mock:9090}
+      TableImages__Region: auto
+      TableImages__AccessKeyId: ${R2_ACCESS_KEY_ID:-dev}
+      TableImages__SecretAccessKey: ${R2_SECRET_ACCESS_KEY:-dev}
+      TableImages__Bucket: ${R2_BUCKET:-lounge-table-images}
+      TableImages__PublicBaseUrl: ${TABLE_IMAGE_BASE_URL:-http://localhost:9090/lounge-table-images}
+      # Cloudflare cache purge for re-uploaded images. Empty locally (purging is then skipped).
+      Cloudflare__ZoneId: ${CLOUDFLARE_ZONE_ID:-}
+      Cloudflare__PurgeToken: ${CLOUDFLARE_PURGE_TOKEN:-}
       APICredentials__Username: ${API_USERNAME:-admin}
       APICredentials__Password: ${API_PASSWORD:-admin}
       APICredentials__PasswordSecondary: ${API_PASSWORD_SECONDARY:-admin2}
@@ -56,8 +74,9 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-      azurite:
+      s3mock:
         condition: service_started
+        required: false   # s3mock only exists in the development profile
     restart: unless-stopped
 
   # Web SQL client at http://localhost:8978. Only runs when COMPOSE_PROFILES includes "development" (see .env)
@@ -74,5 +93,5 @@ services:
 
 volumes:
   mssql-data:
-  azurite-data:
+  s3mock-data:
   cloudbeaver-data:

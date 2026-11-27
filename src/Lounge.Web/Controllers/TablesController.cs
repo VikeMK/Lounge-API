@@ -21,13 +21,13 @@ namespace Lounge.Web.Controllers
     public class TablesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly ITableImageService _tableImageService;
+        private readonly TableImageManager _tableImageManager;
         private readonly ILoungeSettingsService _loungeSettingsService;
 
-        public TablesController(ApplicationDbContext context, ITableImageService tableImageService, ILoungeSettingsService loungeSettingsService)
+        public TablesController(ApplicationDbContext context, TableImageManager tableImageManager, ILoungeSettingsService loungeSettingsService)
         {
             _context = context;
-            _tableImageService = tableImageService;
+            _tableImageManager = tableImageManager;
             _loungeSettingsService = loungeSettingsService;
         }
 
@@ -172,16 +172,8 @@ namespace Lounge.Web.Controllers
             await _context.Tables.AddAsync(table);
             await _context.SaveChangesAsync();
 
-            try
-            {
-                string tableUrl = TableUtils.BuildUrl(vm.Tier, scores);
-                var tableImage = await TableUtils.GetImageDataAsync(tableUrl);
-                await _tableImageService.UploadTableImageAsync(table.Id, tableImage);
-            }
-            catch
-            {
-                // swallow exception
-            }
+            // Failures are logged and otherwise ignored; the image is generated on first request instead.
+            await _tableImageManager.TryGenerateAndStoreAsync(table.Id, vm.Tier, scores);
 
             return CreatedAtAction(nameof(GetTable), new { tableId = table.Id }, TableUtils.GetTableDetails(table, _loungeSettingsService));
         }
@@ -282,19 +274,12 @@ namespace Lounge.Web.Controllers
                     .ToArray();
             }
 
-            try
-            {
-                string tableUrl = TableUtils.BuildUrl(table.Tier, newScores);
-                var tableImage = await TableUtils.GetImageDataAsync(tableUrl);
-                await _tableImageService.UploadTableImageAsync(tableId, tableImage);
-            }
-            catch
-            {
-                // Delete so that a stale image isn't shown
-                await _tableImageService.DeleteTableImageAsync(tableId);
-            }
-
             await _context.SaveChangesAsync();
+
+            // Regenerate after saving. If that fails, remove the old image so a stale one isn't shown;
+            // the next request for it will regenerate it.
+            if (!await _tableImageManager.TryGenerateAndStoreAsync(tableId, table.Tier, newScores))
+                await _tableImageManager.InvalidateAsync(tableId);
 
             return Ok();
 

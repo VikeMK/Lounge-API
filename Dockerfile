@@ -26,7 +26,10 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS migrator
 WORKDIR /app
 COPY --from=bundle /app/efbundle .
 COPY --from=build /app/publish/appsettings*.json ./
-ENTRYPOINT ["sh", "-c", "./efbundle --connection \"$ConnectionStrings__DefaultConnection\""]
+# Retries because right after SQL Server restarts, an existing database can briefly refuse connections even though
+# it's ONLINE. EF then thinks it doesn't exist, tries CREATE DATABASE and fails with "already exists".
+# A later attempt finds the database and migrates normally.
+ENTRYPOINT ["sh", "-c", "for i in 1 2 3 4 5 6; do ./efbundle --connection \"$ConnectionStrings__DefaultConnection\" && exit 0; echo \"Migration attempt $i failed, retrying in 10s...\"; sleep 10; done; echo 'Migrations failed after 6 attempts'; exit 1"]
 
 # ---------- runtime (default target) ----------
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final

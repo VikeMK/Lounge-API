@@ -26,6 +26,7 @@ namespace Lounge.Web.Data
         public DbSet<Bonus> Bonuses => Set<Bonus>();
         public DbSet<Placement> Placements => Set<Placement>();
         public DbSet<NameChange> NameChanges => Set<NameChange>();
+        public DbSet<TableImage> TableImages => Set<TableImage>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +42,13 @@ namespace Lounge.Web.Data
             modelBuilder.Entity<Bonus>().ToTable("Bonuses");
             modelBuilder.Entity<Placement>().ToTable("Placements");
             modelBuilder.Entity<NameChange>().ToTable("NameChanges");
+            modelBuilder.Entity<TableImage>().ToTable("TableImages");
+
+            // One optional image row per table. No navigation properties, so Table/DbCache are unaffected.
+            modelBuilder.Entity<TableImage>()
+                .HasOne<Table>()
+                .WithOne()
+                .HasForeignKey<TableImage>(ti => ti.TableId);
 
             modelBuilder.Entity<Player>()
                 .HasIndex(p => p.RegistryId);

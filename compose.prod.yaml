@@ -1,0 +1,66 @@
+# Production overrides, layered on top of compose.yaml.
+#
+# Enable on the server by adding this to .env (then plain `docker compose ...` uses both files):
+#   COMPOSE_FILE=compose.yaml:compose.prod.yaml
+# or pass both explicitly:
+#   docker compose -f compose.yaml -f compose.prod.yaml up -d --build
+#
+# Traffic comes in only through the Cloudflare Tunnel (cloudflared below), so nothing publishes ports.
+# `!reset []` removes the ports that compose.yaml publishes for local development (needs Compose v2.24+).
+
+services:
+  db:
+    environment:
+      MSSQL_PID: ${MSSQL_PID:-Express}   # Developer edition isn't licensed for production
+    ports: !reset []
+    volumes:
+      - mssql-backups:/var/opt/mssql/backup   # BACKUP DATABASE writes here (see deploy/backup-db.sh)
+    restart: unless-stopped
+
+  web:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # Table images live in Cloudflare R2 in production; refuse to start without it configured
+      # (compose.yaml would otherwise fall back to the local s3mock defaults).
+      TableImages__S3Endpoint: ${R2_ENDPOINT:?set R2_ENDPOINT in .env}
+      TableImages__AccessKeyId: ${R2_ACCESS_KEY_ID:?set R2_ACCESS_KEY_ID in .env}
+      TableImages__SecretAccessKey: ${R2_SECRET_ACCESS_KEY:?set R2_SECRET_ACCESS_KEY in .env}
+      TableImages__Bucket: ${R2_BUCKET:?set R2_BUCKET in .env}
+      TableImages__PublicBaseUrl: ${TABLE_IMAGE_BASE_URL:?set TABLE_IMAGE_BASE_URL in .env}
+      # Without these, edited table images would stay stale in Cloudflare's cache.
+      Cloudflare__ZoneId: ${CLOUDFLARE_ZONE_ID:?set CLOUDFLARE_ZONE_ID in .env}
+      Cloudflare__PurgeToken: ${CLOUDFLARE_PURGE_TOKEN:?set CLOUDFLARE_PURGE_TOKEN in .env}
+    ports: !reset []
+
+  # Outbound-only connection to Cloudflare. In the Cloudflare dashboard, the tunnel's
+  # public hostname points at http://web:8080 (the service name inside this compose network).
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?set CLOUDFLARE_TUNNEL_TOKEN in .env}
+    depends_on:
+      - web
+    restart: unless-stopped
+
+  # Uploads database backups to a Cloudflare R2 bucket (separate from the table images bucket; same R2 token,
+  # which must be allowed on both buckets). Not a long-running service: deploy/backup-db.sh starts it with
+  # `docker compose run` after each backup.
+  # rclone is configured entirely through RCLONE_CONFIG_<REMOTE>_<OPTION> env vars, remote name "r2".
+  backup-upload:
+    image: rclone/rclone:latest
+    profiles: ["backup"]   # never started by `up`; `docker compose run backup-upload` still works
+    environment:
+      RCLONE_CONFIG_R2_TYPE: s3
+      RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+      RCLONE_CONFIG_R2_ENDPOINT: ${R2_ENDPOINT:-}
+      RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"   # the token can't create buckets, and the bucket already exists
+      BACKUP_R2_BUCKET: ${BACKUP_R2_BUCKET:-}
+      BACKUP_RETENTION: ${BACKUP_RETENTION:-30d}
+    volumes:
+      - mssql-backups:/backups
+
+volumes:
+  mssql-backups:

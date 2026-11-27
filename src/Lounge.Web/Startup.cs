@@ -84,7 +84,11 @@ namespace Lounge.Web
 
             services.AddSingleton<IPlayerDetailsViewModelService, PlayerDetailsViewModelService>();
 
-            services.AddSingleton<ITableImageService, TableImageService>();
+            services.Configure<TableImageStorageOptions>(Configuration.GetSection(TableImageStorageOptions.SectionName));
+            services.AddSingleton<ITableImageStorage, S3TableImageStorage>();
+            services.Configure<CloudflareCacheOptions>(Configuration.GetSection(CloudflareCacheOptions.SectionName));
+            services.AddHttpClient<ICdnCachePurger, CloudflareCachePurger>();
+            services.AddScoped<TableImageManager>();
             services.AddSingleton<ILoungeSettingsService, LoungeSettingsService>();
             services.AddSingleton<IMkcRegistryApi, MkcRegistryApi>();
             services.AddTransient<IChangeTracker, ChangeTracker>();

@@ -699,6 +699,19 @@ namespace Lounge.Web.Migrations
                     b.ToTable("Tables", (string)null);
                 });
 
+            modelBuilder.Entity("Lounge.Web.Data.Entities.TableImage", b =>
+                {
+                    b.Property<int>("TableId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("TableId");
+
+                    b.ToTable("TableImages", (string)null);
+                });
+
             modelBuilder.Entity("Lounge.Web.Data.Entities.TableScore", b =>
                 {
                     b.Property<int>("TableId")
@@ -917,6 +930,15 @@ namespace Lounge.Web.Migrations
                         .IsRequired();
 
                     b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("Lounge.Web.Data.Entities.TableImage", b =>
+                {
+                    b.HasOne("Lounge.Web.Data.Entities.Table", null)
+                        .WithOne()
+                        .HasForeignKey("Lounge.Web.Data.Entities.TableImage", "TableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Lounge.Web.Data.Entities.TableScore", b =>
